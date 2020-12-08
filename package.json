@@ -1,0 +1,26 @@
+{
+  "name": "umai",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "lint": "eslint --ext .ts,.vue src",
+    "deploy": "scripts/deploy.sh",
+    "build": "vuedx-typecheck . && vite build"
+  },
+  "dependencies": {
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.1",
+    "vue": "^3.0.4"
+  },
+  "devDependencies": {
+    "@noeldemartin/eslint-config-typescript": "0.0.0-next.41d83998a6e9cec60561e887a4b994345c6e9a5f",
+    "@vue/compiler-sfc": "^3.0.4",
+    "@vuedx/typecheck": "^0.3.1-insiders-1607121235.0",
+    "@vuedx/typescript-plugin-vue": "^0.3.1-insiders-1607121235.0",
+    "autoprefixer": "^9.8.6",
+    "eslint": "^7.15.0",
+    "eslint-plugin-vue": "^7.2.0",
+    "postcss": "^7.0.35",
+    "vite": "^1.0.0-rc.13"
+  }
+}
