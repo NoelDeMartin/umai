@@ -12,6 +12,7 @@ module.exports = {
             files: [
                 'tailwind.config.js',
                 'postcss.config.js',
+                'babel.config.js',
             ],
             env: { node: true },
         },
