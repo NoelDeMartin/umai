@@ -5,11 +5,10 @@
         "moduleResolution": "node",
         "strict": true,
         "sourceMap": true,
+        "resolveJsonModule": true,
         "esModuleInterop": true,
-        "skipLibCheck": true,
-        "isolatedModules": true,
         "lib": ["esnext", "dom"],
-        "plugins": [{ "name": "@vuedx/typescript-plugin-vue" }]
+        "types": ["vite/client"]
     },
     "include": [
         "src/**/*.ts",

@@ -1,4 +1,4 @@
 module.exports = {
-    purge: ['./src/**/*.{vue,ts}'],
+    purge: ['./index.html', './src/**/*.{vue,ts}'],
     darkMode: false,
 };
