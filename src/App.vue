@@ -11,18 +11,15 @@ import { defineComponent } from 'vue';
 import Home from '@/pages/Home.vue';
 import Login from '@/pages/Login.vue';
 
-interface Data {
-    loggedIn: boolean;
-}
-
 export default defineComponent({
     name: 'App',
-    components: {
-        Home,
-        Login,
-    },
-    data(): Data {
-        return { loggedIn: false };
-    },
+    components: { Home, Login },
+    data: () => ({ loggedIn: false }),
 });
 </script>
+
+<style>
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+</style>
