@@ -10,11 +10,5 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import AppHeader from './AppHeader.vue';
-
-export default defineComponent({
-    components: {
-        AppHeader,
-    },
-});
+export default defineComponent({});
 </script>

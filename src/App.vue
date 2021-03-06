@@ -8,7 +8,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import AppLayout from '@/components/AppLayout.vue';
 import Home from '@/pages/Home.vue';
 import Login from '@/pages/Login.vue';
 
@@ -19,7 +18,6 @@ interface Data {
 export default defineComponent({
     name: 'App',
     components: {
-        AppLayout,
         Home,
         Login,
     },

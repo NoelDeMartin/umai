@@ -1,8 +1,8 @@
 <template>
-    <header class="self-stretch p-8 text-center">
-        <a href="/">
+    <header class="flex items-center self-stretch justify-center p-8">
+        <a href="/" title="Umai">
             <span class="sr-only">Umai</span>
-            <span class="text-4xl">🍜</span>
+            <i-twemoji-steaming-bowl class="w-12 h-12" />
         </a>
     </header>
 </template>
