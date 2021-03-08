@@ -10,6 +10,8 @@
     "lint:vue": "vti diagnostics"
   },
   "dependencies": {
+    "@noeldemartin/utils": "0.0.1-next.5af1713d6197bebaf0b10a93adc4fc71e4194c1a",
+    "soukai-solid": "^0.4.1-next.0eb615db3e197a43294e9dd62c7ab747fa6b21a8",
     "tailwindcss": "^2.0.3",
     "vue": "^3.0.5"
   },
@@ -22,10 +24,12 @@
     "eslint": "^7.21.0",
     "eslint-plugin-vue": "^7.7.0",
     "postcss": "^8.2.7",
+    "soukai": "^0.4.1-next.54c1eece7f37f3ac643b5b975b833e29724f2e3d",
     "typescript": "^4.1.5",
     "vite": "^2.0.5",
     "vite-plugin-components": "^0.8.0",
     "vite-plugin-icons": "^0.3.2",
+    "vite-plugin-vue-svg": "^0.1.0",
     "vti": "^0.1.1"
   },
   "engines": {

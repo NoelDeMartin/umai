@@ -8,8 +8,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import Home from '@/pages/Home.vue';
-import Login from '@/pages/Login.vue';
+import Home from '@/pages/home/Home.vue';
+import Login from '@/pages/login/Login.vue';
 
 export default defineComponent({
     name: 'App',
