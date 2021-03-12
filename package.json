@@ -7,24 +7,31 @@
     "serve": "vite preview",
     "lint": "npm run lint:js && npm run lint:vue",
     "lint:js": "eslint src",
-    "lint:vue": "vti diagnostics"
+    "lint:vue": "vti diagnostics",
+    "test": "jest --verbose",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
-    "@noeldemartin/utils": "0.0.1-next.5af1713d6197bebaf0b10a93adc4fc71e4194c1a",
+    "@noeldemartin/utils": "0.0.1-next.5ad0a6c8791659048b5d96c16de7cac2a0745979",
     "soukai": "^0.4.1-next.40da8240aef77a31e598e6d78d41d38fcbb381f0",
     "soukai-solid": "^0.4.1-next.c730985c249d378315e8f903576ec699cab0eeff",
     "tailwindcss": "^2.0.3",
-    "vue": "^3.0.5"
+    "vue": "^3.0.5",
+    "vuex": "^4.0.0"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.13.10",
     "@iconify/json": "^1.1.313",
     "@noeldemartin/eslint-config-vue": "0.0.0-next.1490173fadf5d9d1e13a6ab1a41d43f5e280d6ae",
+    "@types/jest": "^26.0.20",
     "@vitejs/plugin-vue": "^1.1.5",
     "@vue/compiler-sfc": "^3.0.5",
     "autoprefixer": "^10.2.5",
     "eslint": "^7.21.0",
     "eslint-plugin-vue": "^7.7.0",
+    "jest": "^26.6.3",
     "postcss": "^8.2.7",
+    "ts-jest": "^26.5.3",
     "typescript": "^4.1.5",
     "vite": "^2.0.5",
     "vite-plugin-components": "^0.8.0",

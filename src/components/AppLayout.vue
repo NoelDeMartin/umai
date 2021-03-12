@@ -4,5 +4,6 @@
         <div class="flex self-stretch flex-grow">
             <slot />
         </div>
+        <AppFooter />
     </div>
 </template>
