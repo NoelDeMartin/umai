@@ -33,4 +33,10 @@ export default defineConfig({
             '@': resolve(__dirname, './src'),
         },
     },
+    build: {
+        terserOptions: {
+            keep_classnames: /Error$/,
+            keep_fnames: /Error$/,
+        },
+    },
 });

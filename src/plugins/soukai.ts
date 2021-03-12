@@ -1,8 +1,4 @@
-import Soukai, { IndexedDBEngine } from 'soukai';
-import SoukaiSolid from 'soukai-solid';
+import { IndexedDBEngine, bootModelsFromViteGlob, setEngine } from 'soukai';
 
-import Recipe from '@/models/Recipe';
-
-SoukaiSolid.loadSolidModels();
-Soukai.loadModels({ Recipe });
-Soukai.useEngine(new IndexedDBEngine);
+setEngine(new IndexedDBEngine);
+bootModelsFromViteGlob(import.meta.globEager('../models/*.ts'));
