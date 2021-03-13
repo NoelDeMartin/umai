@@ -1,25 +1,15 @@
-import Services from '@/framework/services/Services';
+import { Cookbook } from './Cookbook';
 
-import { Auth } from '@/services/Auth';
-
-const appServices = {
-    $auth: new Auth,
+const services = {
+    $cookbook: new Cookbook,
 };
 
-Object.assign(Services, appServices);
-
-type AppServices = typeof appServices;
-
-declare module '@vue/runtime-core' {
-
-    export interface ComponentCustomProperties extends AppServices {}
-
-}
-
 declare module '@/framework/services/Services' {
+
+    type AppServices = typeof services;
 
     export interface Services extends AppServices {}
 
 }
 
-export default appServices;
+export default services;

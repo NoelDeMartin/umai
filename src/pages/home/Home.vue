@@ -11,8 +11,8 @@
 </template>
 
 <script lang="ts">
+import { arr } from '@noeldemartin/utils';
 import { defineComponent, nextTick, onMounted, ref } from 'vue';
-import { fluent } from '@noeldemartin/utils';
 import type { FluentArray } from '@noeldemartin/utils';
 
 import Recipe from '@/models/Recipe';
@@ -32,7 +32,7 @@ export default defineComponent({
         };
 
         onMounted(async () => {
-            recipes.value = fluent(await Recipe.all());
+            recipes.value = arr(await Recipe.all());
 
             await nextTick();
 

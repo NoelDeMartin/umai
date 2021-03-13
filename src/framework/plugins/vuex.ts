@@ -14,4 +14,12 @@ declare module '@vue/runtime-core' {
 
 }
 
+declare module '@/framework/services/Services' {
+
+    export interface Services {
+        $store: typeof store;
+    }
+
+}
+
 export default store;

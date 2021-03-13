@@ -1,9 +1,8 @@
 import { Storage } from '@noeldemartin/utils';
 
 import Service from '@/framework/services/Service';
+import Services from '@/framework/services/Services';
 import type { ComputedStateDefinitions , IService } from '@/framework/services/Service';
-
-import Recipe from '@/models/Recipe';
 
 interface User {
     name: string;
@@ -27,6 +26,8 @@ export class Auth extends Service<State, ComputedState> {
         this.user = { name: 'John Doe' };
 
         Storage.set('user', this.user);
+
+        await Services.$events.emit('login', this.user);
     }
 
     public async logout(): Promise<void> {
@@ -34,9 +35,7 @@ export class Auth extends Service<State, ComputedState> {
 
         Storage.remove('user');
 
-        const recipes = await Recipe.all();
-
-        await Promise.all(recipes.map(recipe => recipe.delete()));
+        await Services.$events.emit('logout');
     }
 
     protected async boot(): Promise<void> {

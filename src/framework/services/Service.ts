@@ -1,12 +1,10 @@
+import type { Constructor } from '@noeldemartin/utils';
 import type { Store } from 'vuex';
 
 import Services from '@/framework/services/Services';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ServiceState = Record<string, any>;
-
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type DefaultServiceState = {};
+export type ServiceState = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+export type DefaultServiceState = {}; // eslint-disable-line @typescript-eslint/ban-types
 
 export type ComputedStateDefinitions<State, ComputedState> = {
     [ComputedProperty in keyof ComputedState]:
@@ -18,19 +16,38 @@ export type IService<
     ComputedState extends ServiceState = DefaultServiceState
 > = State & ComputedState;
 
-export default abstract class Service<
+export type ServiceConstructor<T extends Service> = Constructor<T> & typeof Service;
+
+export default class Service<
     State extends ServiceState = DefaultServiceState,
     ComputedState extends ServiceState = DefaultServiceState
 > {
 
-    protected _namespace: string;
+    public static __constructingPure: boolean = false;
+    public static __classProperties: string[];
+    private static pureInstances = new WeakMap;
+
+    protected static pureInstance<T extends Service>(this: ServiceConstructor<T>): T {
+        if (!this.pureInstances.has(this)) {
+            this.__constructingPure = true;
+            this.pureInstances.set(this, new this);
+            this.__constructingPure = false;
+        }
+
+        return this.pureInstances.get(this);
+    }
+
+    protected _namespace!: string;
 
     private _proxy!: this;
-    private _ready: Promise<void>;
+    private _ready!: Promise<void>;
     private _resolveReady!: () => void;
     private _rejectReady!: () => void;
 
     constructor() {
+        if (this.static('__constructingPure'))
+            return;
+
         this._namespace = new.target.name;
         this._ready = new Promise((resolve, reject) => {
             this._resolveReady = resolve;
@@ -42,6 +59,18 @@ export default abstract class Service<
         return this._proxy;
     }
 
+    public static(): ServiceConstructor<this>;
+    public static<T extends keyof ServiceConstructor<this>>(property: T): ServiceConstructor<this>[T];
+    public static<T extends keyof ServiceConstructor<this>>(
+        property?: T,
+    ): ServiceConstructor<this> | ServiceConstructor<this>[T] {
+        const constructor = this.constructor as ServiceConstructor<this>;
+
+        return property
+            ? constructor[property] as ServiceConstructor<this>[T]
+            : constructor;
+    }
+
     public launch(namespace?: string): Promise<void> {
         this._namespace = namespace ?? this._namespace;
 
@@ -51,15 +80,24 @@ export default abstract class Service<
     }
 
     protected initialize(): void {
-        this._proxy = new Proxy(this, {
-            get(target, property, receiver) {
-                if (typeof property !== 'string' || property in target)
-                    return Reflect.get(target, property, receiver);
+        if (!this.static('__classProperties')) {
+            const instance = this.static().pureInstance();
 
-                return target.getState()[property] ?? target.getComputedState(property);
-            },
+            this.static().__classProperties = Object.getOwnPropertyNames(instance);
+        }
+
+        const isReservedProperty = (target: this, property: string | number | symbol): property is number | symbol =>
+            typeof property !== 'string' ||
+            property in target ||
+            target.static('__classProperties').includes(property);
+
+        this._proxy = new Proxy(this, {
+            get: (target, property, receiver) =>
+                isReservedProperty(target, property)
+                    ? Reflect.get(target, property, receiver)
+                    : (target.getState()[property] ?? target.getComputedState(property)),
             set(target, property, value, receiver) {
-                if (typeof property !== 'string' || property in target)
+                if (isReservedProperty(target, property))
                     return Reflect.set(target, property, value, receiver);
 
                 target.setState({ [property]: value } as Partial<State>);
