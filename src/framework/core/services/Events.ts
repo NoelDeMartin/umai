@@ -1,7 +1,7 @@
 import { arr } from '@noeldemartin/utils';
 import type { FluentArray } from '@noeldemartin/utils';
 
-import Service from '@/framework/services/Service';
+import Service from '@/framework/core/Service';
 
 export type EventListener = (payload?: unknown) => void | Promise<void>;
 

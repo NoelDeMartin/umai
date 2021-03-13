@@ -1,5 +1,5 @@
-import Service from '@/framework/services/Service';
-import Services from '@/framework/services/Services';
+import Service from '@/framework/core/Service';
+import Services from '@/framework/core/Services';
 
 import Recipe from '@/models/Recipe';
 

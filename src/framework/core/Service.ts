@@ -1,7 +1,7 @@
 import type { Constructor } from '@noeldemartin/utils';
 import type { Store } from 'vuex';
 
-import Services from '@/framework/services/Services';
+import Services from '@/framework/core/Services';
 
 export type ServiceState = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 export type DefaultServiceState = {}; // eslint-disable-line @typescript-eslint/ban-types
@@ -14,7 +14,7 @@ export type ComputedStateDefinitions<State, ComputedState> = {
 export type IService<
     State extends ServiceState,
     ComputedState extends ServiceState = DefaultServiceState
-> = State & ComputedState;
+> = State & Readonly<ComputedState>;
 
 export type ServiceConstructor<T extends Service> = Constructor<T> & typeof Service;
 

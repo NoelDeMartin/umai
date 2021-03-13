@@ -5,7 +5,7 @@
             type="button"
             class="text-gray-500 hover:text-red-500"
             title="Log out"
-            @click="$auth.logout"
+            @click="$auth.logout()"
         >
             <i-heroicons-solid-logout />
         </button>

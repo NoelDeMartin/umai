@@ -1,14 +1,13 @@
+import { Auth } from './services/Auth';
+import { Events } from './services/Events';
 import type { Services } from './Services';
 
-import { Auth } from './Auth';
-import { Events } from './Events';
-
-const services = {
+export const services = {
     $auth: new Auth,
     $events: new Events,
 };
 
-declare module '@/framework/services/Services' {
+declare module '@/framework/core/Services' {
 
     type BaseServices = typeof services;
 
@@ -21,5 +20,3 @@ declare module '@vue/runtime-core' {
     export interface ComponentCustomProperties extends Services {}
 
 }
-
-export default services;

@@ -4,7 +4,7 @@ const services = {
     $cookbook: new Cookbook,
 };
 
-declare module '@/framework/services/Services' {
+declare module '@/framework/core/Services' {
 
     type AppServices = typeof services;
 

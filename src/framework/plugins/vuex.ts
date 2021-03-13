@@ -1,6 +1,6 @@
 import { createStore } from 'vuex';
 
-import Services from '@/framework/services/Services';
+import Services from '@/framework/core/Services';
 
 const store = createStore({});
 
@@ -14,7 +14,7 @@ declare module '@vue/runtime-core' {
 
 }
 
-declare module '@/framework/services/Services' {
+declare module '@/framework/core/Services' {
 
     export interface Services {
         $store: typeof store;

@@ -2,7 +2,7 @@ import { createStore } from 'vuex';
 import { tt } from '@noeldemartin/utils';
 import type { Equals, Expect } from '@noeldemartin/utils';
 
-import Services from '@/framework/services/Services';
+import Services from '@/framework/core/Services';
 
 import Service from './Service';
 import type { ComputedStateDefinitions, IService } from './Service';
@@ -81,7 +81,7 @@ describe('Service types', () => {
     it('has correct types', tt<
         Expect<Equals<Stub['foo'], string | null>> |
         Expect<Equals<Stub['bar'], number | null>> |
-        Expect<Equals<Stub['hasFoo'], boolean>> |
+        Expect<Equals<Pick<Stub, 'hasFoo'>, Readonly<{ hasFoo: boolean }>>> |
         true
     >());
 
