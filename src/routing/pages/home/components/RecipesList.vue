@@ -3,7 +3,7 @@
         <li v-for="recipe of recipes" :key="recipe.id" class="flex justify-between p-4">
             <span><i-twemoji-fork-and-knife class="inline w-4 h-4" /> {{ recipe.name }}</span>
             <button type="button" title="Remove" @click="$emit('remove', recipe)">
-                <i-zondicons-trash class="w-4 h-4 text-red-500 opacity-30 hover:opacity-100" />
+                <i-zondicons-trash class="w-4 h-4 text-gray-500 opacity-30 hover:opacity-100 hover:text-red-500" />
             </button>
         </li>
     </ul>

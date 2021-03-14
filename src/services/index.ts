@@ -1,5 +1,9 @@
 import { Cookbook } from './Cookbook';
 
+const services = {
+    $cookbook: Cookbook,
+};
+
 declare module '@/framework/core' {
 
     type AppServices = typeof services;
@@ -7,9 +11,5 @@ declare module '@/framework/core' {
     export interface Services extends AppServices {}
 
 }
-
-const services = {
-    $cookbook: Cookbook,
-};
 
 export default services;
