@@ -18,6 +18,7 @@
     "soukai-solid": "^0.4.1-next.c730985c249d378315e8f903576ec699cab0eeff",
     "tailwindcss": "^2.0.3",
     "vue": "^3.0.5",
+    "vue-router": "^4.0.5",
     "vuex": "^4.0.0"
   },
   "devDependencies": {

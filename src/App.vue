@@ -1,7 +1,6 @@
 <template>
     <AppLayout>
-        <Home v-if="$auth.loggedIn" />
-        <Login v-else />
+        <router-view />
     </AppLayout>
 </template>
 

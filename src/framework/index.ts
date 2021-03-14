@@ -43,4 +43,6 @@ export async function bootstrapApplication(
     await Promise.all(Object.entries(services).map(([name, service]) => service.launch(name.slice(1))));
 
     app.mount(options.selector ?? '#app');
+
+    Events.emit('application-ready');
 }

@@ -1,3 +1,4 @@
+import router from './router';
 import store from './vuex';
 
-export default [store()];
+export default [router(), store()];

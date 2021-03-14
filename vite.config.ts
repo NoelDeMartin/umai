@@ -14,9 +14,9 @@ export default defineConfig({
             importPathTransform: path => path.endsWith('.svg') ? `${path}?component` : undefined,
             customComponentResolvers: ViteIconsResolver(),
             dirs: [
-                'src/components',
-                'src/pages',
                 'src/assets/icons',
+                'src/components',
+                'src/routing/pages',
             ],
             deep: true,
         }),

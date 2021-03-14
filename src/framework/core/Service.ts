@@ -58,6 +58,10 @@ export default class Service<
         return this._proxy;
     }
 
+    public get ready(): Promise<void> {
+        return this._ready;
+    }
+
     public static(): ServiceConstructor<this>;
     public static<T extends keyof ServiceConstructor<this>>(property: T): ServiceConstructor<this>[T];
     public static<T extends keyof ServiceConstructor<this>>(
