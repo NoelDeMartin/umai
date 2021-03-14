@@ -1,13 +1,30 @@
 import { LocalStorageAuthenticator } from './authenticators/LocalStorageAuthenticator';
+import type Authenticator from './Authenticator';
+
+const _authenticators = {} as Authenticators;
+
+type BaseAuthenticators = typeof authenticators;
 
 export const authenticators = {
     localStorage: new LocalStorageAuthenticator,
 };
 
-declare module '@/framework/auth/Authenticators' {
+export function setDefaultAuthenticator(authenticator: Authenticator): void {
+    _authenticators.default = authenticator;
+}
 
-    type BaseAuthenticators = typeof authenticators;
+export function getAuthenticator<T extends AuthenticatorName>(name: T): Authenticators[T] {
+    return _authenticators[name];
+}
 
-    export interface Authenticators extends BaseAuthenticators {}
+export function registerAuthenticator<T extends AuthenticatorName>(name: T, authenticator: Authenticators[T]): void {
+    _authenticators[name] = authenticator;
 
+    authenticator.name = authenticator.name ?? name;
+}
+
+export type AuthenticatorName = keyof Authenticators;
+
+export interface Authenticators extends BaseAuthenticators {
+    default: Authenticator;
 }

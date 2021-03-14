@@ -2,56 +2,24 @@ import { createStore } from 'vuex';
 import { tt } from '@noeldemartin/utils';
 import type { Equals, Expect } from '@noeldemartin/utils';
 
-import Services from '@/framework/core/Services';
+import Store from '@/framework/core/facades/Store';
 
 import Service from './Service';
 import type { ComputedStateDefinitions, IService } from './Service';
 
-interface State {
-    foo: string | null;
-    bar: number | null;
-}
-
-interface ComputedState {
-    hasFoo: boolean;
-}
-
-class Stub extends Service<State, ComputedState> {
-
-    public getState(): State {
-        return super.getState();
-    }
-
-    public setState(state: Partial<State>): void {
-        super.setState(state);
-    }
-
-    public getInitialState(): State {
-        return {
-            foo: null,
-            bar: null,
-        };
-    }
-
-    protected getComputedStateDefinitions(): ComputedStateDefinitions<State, ComputedState> {
-        return {
-            hasFoo: state => state.foo !== null,
-        };
-    }
-
-}
-
-interface Stub extends IService<State, ComputedState> {}
-
 describe('Service', () => {
 
-    let instance: Stub;
+    let instance: StubService;
 
-    beforeEach(async () => {
-        instance = new Stub;
-        Services.$store = createStore({});
+    beforeAll(async () => {
+        instance = new StubService;
+        Store.setInstance(createStore({}));
 
         await instance.launch();
+    });
+
+    beforeEach(() => {
+        instance.setState(instance.getInitialState());
     });
 
     it('has magic state getters', () => {
@@ -79,10 +47,46 @@ describe('Service', () => {
 describe('Service types', () => {
 
     it('has correct types', tt<
-        Expect<Equals<Stub['foo'], string | null>> |
-        Expect<Equals<Stub['bar'], number | null>> |
-        Expect<Equals<Pick<Stub, 'hasFoo'>, Readonly<{ hasFoo: boolean }>>> |
+        Expect<Equals<StubService['foo'], string | null>> |
+        Expect<Equals<StubService['bar'], number | null>> |
+        Expect<Equals<Pick<StubService, 'hasFoo'>, Readonly<{ hasFoo: boolean }>>> |
         true
     >());
 
 });
+
+interface State {
+    foo: string | null;
+    bar: number | null;
+}
+
+interface ComputedState {
+    hasFoo: boolean;
+}
+
+class StubService extends Service<State, ComputedState> {
+
+    public getState(): State {
+        return super.getState();
+    }
+
+    public setState(state: Partial<State>): void {
+        super.setState(state);
+    }
+
+    public getInitialState(): State {
+        return {
+            foo: null,
+            bar: null,
+        };
+    }
+
+    protected getComputedStateDefinitions(): ComputedStateDefinitions<State, ComputedState> {
+        return {
+            hasFoo: state => state.foo !== null,
+        };
+    }
+
+}
+
+interface StubService extends IService<State, ComputedState> {}

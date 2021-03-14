@@ -1,15 +1,15 @@
 import { Cookbook } from './Cookbook';
 
-const services = {
-    $cookbook: new Cookbook,
-};
-
-declare module '@/framework/core/Services' {
+declare module '@/framework/core' {
 
     type AppServices = typeof services;
 
     export interface Services extends AppServices {}
 
 }
+
+const services = {
+    $cookbook: Cookbook,
+};
 
 export default services;

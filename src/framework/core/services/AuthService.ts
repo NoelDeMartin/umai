@@ -1,10 +1,10 @@
 import { Storage } from '@noeldemartin/utils';
 
+import { getAuthenticator } from '@/framework/auth';
 import Service from '@/framework/core/Service';
-import Services from '@/framework/core/Services';
-import Authenticators from '@/framework/auth/Authenticators';
+import Events from '@/framework/core/facades/Events';
 import type Authenticator from '@/framework/auth/Authenticator';
-import type { AuthenticatorName } from '@/framework/auth/Authenticators';
+import type { AuthenticatorName } from '@/framework/auth';
 import type { AuthSession } from '@/framework/auth/Authenticator';
 import type { ComputedStateDefinitions , IService } from '@/framework/core/Service';
 
@@ -28,7 +28,7 @@ interface StorageData {
     authenticator: AuthenticatorName;
 }
 
-export class Auth extends Service<State, ComputedState> {
+export default class AuthService extends Service<State, ComputedState> {
 
     public isLoggedIn(): this is { user: User; authenticator: Authenticator } {
         return this.loggedIn;
@@ -82,7 +82,7 @@ export class Auth extends Service<State, ComputedState> {
     }
 
     private async bootAuthenticator(name: AuthenticatorName): Promise<Authenticator> {
-        const authenticator = Authenticators[name];
+        const authenticator = getAuthenticator(name);
 
         authenticator.addListener({
             onSessionStarted: async session => {
@@ -90,14 +90,14 @@ export class Auth extends Service<State, ComputedState> {
 
                 Storage.set<StorageData>(STORAGE_KEY, { authenticator: session.authenticator.name });
 
-                await Services.$events.emit('login', session.user);
+                await Events.emit('login', session.user);
             },
             onSessionEnded: async () => {
                 this.session = null;
 
                 Storage.remove(STORAGE_KEY);
 
-                await Services.$events.emit('logout');
+                await Events.emit('logout');
             },
         });
 
@@ -108,4 +108,4 @@ export class Auth extends Service<State, ComputedState> {
 
 }
 
-export interface Auth extends IService<State, ComputedState> {}
+export default interface AuthService extends IService<State, ComputedState> {}

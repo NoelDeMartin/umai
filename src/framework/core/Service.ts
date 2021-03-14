@@ -1,7 +1,6 @@
 import type { Constructor } from '@noeldemartin/utils';
-import type { Store } from 'vuex';
 
-import Services from '@/framework/core/Services';
+import Store from '@/framework/core/facades/Store';
 
 export type ServiceState = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 export type DefaultServiceState = {}; // eslint-disable-line @typescript-eslint/ban-types
@@ -108,17 +107,17 @@ export default class Service<
     }
 
     protected getState(): State {
-        const appState = Services.$store.state as Record<string, State>;
+        const appState = Store.state as Record<string, State>;
 
         return appState[this._namespace] ?? this.getInitialState();
     }
 
     protected setState(state: Partial<State>): void {
-        Services.$store.commit(`${this._namespace}/setState`, state);
+        Store.commit(`${this._namespace}/setState`, state);
     }
 
     protected getComputedState<P extends keyof ComputedState>(property: P): ComputedState[P] {
-        return Services.$store.getters[`${this._namespace}/${property}`];
+        return Store.getters[`${this._namespace}/${property}`];
     }
 
     protected getInitialState(): State {
@@ -130,16 +129,16 @@ export default class Service<
     }
 
     protected async boot(): Promise<void> {
-        this.registerStoreModule(Services.$store as Store<State>);
+        this.registerStoreModule();
     }
 
-    protected registerStoreModule(store: Store<State>): void {
+    protected registerStoreModule(): void {
         const initialState = this.getInitialState();
 
         if (Object.keys(initialState).length === 0)
             return;
 
-        store.registerModule(this._namespace, {
+        Store.registerModule(this._namespace, {
             namespaced: true,
             state: initialState,
             mutations: {

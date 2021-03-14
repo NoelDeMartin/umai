@@ -1,12 +1,16 @@
 import { createApp } from 'vue';
 import type { Component , Plugin } from 'vue';
 
+import {
+    authenticators as baseAuthenticators,
+    getAuthenticator,
+    registerAuthenticator,
+    setDefaultAuthenticator,
+} from '@/framework/auth';
 import { services as baseServices } from '@/framework/core';
-import { authenticators as baseAuthenticators } from '@/framework/auth';
-import Authenticators from '@/framework/auth/Authenticators';
 import basePlugins from '@/framework/plugins';
-import Services from '@/framework/core/Services';
-import type { AuthenticatorName } from '@/framework/auth/Authenticators';
+import Events from '@/framework/core/facades/Events';
+import type { AuthenticatorName } from '@/framework/auth';
 import type Authenticator from '@/framework/auth/Authenticator';
 import type Service from '@/framework/core/Service';
 
@@ -15,7 +19,7 @@ export type BootstrapApplicationOptions = Partial<{
     plugins: Plugin[];
     services: Record<string, Service>;
     authenticators: Record<string, Authenticator>;
-    defaultAuthenticator: keyof typeof Authenticators;
+    defaultAuthenticator: AuthenticatorName;
 }>;
 
 export async function bootstrapApplication(
@@ -29,12 +33,12 @@ export async function bootstrapApplication(
 
     plugins.forEach(plugin => app.use(plugin));
 
-    Object.assign(Authenticators, authenticators);
-    Object.assign(Services, services);
     Object.assign(app.config.globalProperties, services);
-    Object.entries(authenticators).forEach(([name, authenticator]) => authenticator.name = name as AuthenticatorName);
+    Object
+        .entries(authenticators)
+        .forEach(([name, authenticator]) => registerAuthenticator(name as AuthenticatorName, authenticator));
 
-    Authenticators.default = Authenticators[options.defaultAuthenticator ?? 'localStorage'];
+    setDefaultAuthenticator(getAuthenticator(options.defaultAuthenticator ?? 'localStorage'));
 
     await Promise.all(Object.entries(services).map(([name, service]) => service.launch(name.slice(1))));
 

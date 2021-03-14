@@ -3,9 +3,9 @@ import type { FluentArray } from '@noeldemartin/utils';
 
 import Service from '@/framework/core/Service';
 
-export type EventListener = (payload?: unknown) => void | Promise<void>;
+export type EventListener = (payload?: unknown) => unknown;
 
-export class Events extends Service {
+export default class EventsService extends Service {
 
     private listeners: Record<string, FluentArray<EventListener>> = {};
 

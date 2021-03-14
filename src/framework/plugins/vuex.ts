@@ -1,25 +1,25 @@
 import { createStore } from 'vuex';
+import { tap } from '@noeldemartin/utils';
+import type { Plugin } from 'vue';
 
-import Services from '@/framework/core/Services';
-
-const store = createStore({});
-
-Services.$store = store;
+import Store from '@/framework/core/facades/Store';
 
 declare module '@vue/runtime-core' {
 
     export interface ComponentCustomProperties {
-        $store: typeof store;
+        $store: NonNullable<typeof Store['instance']>;
     }
 
 }
 
-declare module '@/framework/core/Services' {
+declare module '@/framework/core' {
 
     export interface Services {
-        $store: typeof store;
+        $store: NonNullable<typeof Store['instance']>;
     }
 
 }
 
-export default store;
+export default function(): Plugin {
+    return tap(createStore({}), store => Store.setInstance(store));
+}
