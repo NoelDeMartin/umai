@@ -1,45 +1,37 @@
 <template>
     <div class="flex flex-col items-center justify-center flex-grow max-w-2xl p-8 m-auto">
-        <p v-if="!recipes">
+        <p v-if="!$cookbook.recipes">
             <loading-dots class="w-16 h-12 text-indigo-500" />
         </p>
         <div v-else class="w-full bg-white rounded shadow">
-            <RecipesList :recipes="recipes" @remove="removeRecipe" />
-            <RecipeForm ref="form" @created="addRecipe" />
+            <RecipesList :recipes="$cookbook.recipes" />
+
+            <div class="p-4">
+                <router-link
+                    :to="{ name: 'recipes.create' }"
+                    class="block w-full px-4 py-2 text-sm font-medium text-center text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                    New Recipe
+                </router-link>
+            </div>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import { arr } from '@noeldemartin/utils';
 import { defineComponent, nextTick, onMounted, ref } from 'vue';
-import type { FluentArray } from '@noeldemartin/utils';
-
-import Recipe from '@/models/Recipe';
 
 export default defineComponent({
     setup() {
-        const recipes = ref<FluentArray<Recipe>>();
         const form = ref<{ focus(): void }>();
-        const addRecipe = (recipe: Recipe) => {
-            recipes.value?.push(recipe);
-            form.value?.focus();
-        };
-        const removeRecipe = async (recipe: Recipe) => {
-            await recipe.delete();
-
-            recipes.value?.remove(recipe);
-        };
 
         onMounted(async () => {
-            recipes.value = arr(await Recipe.all());
-
             await nextTick();
 
             form.value?.focus();
         });
 
-        return { recipes, form, addRecipe, removeRecipe };
+        return { form };
     },
 });
 </script>

@@ -1,12 +1,12 @@
-import { Cookbook } from './Cookbook';
+import Cookbook from './facades/Cookbook';
 
 const services = {
     $cookbook: Cookbook,
 };
 
-declare module '@/framework/core' {
+type AppServices = typeof services;
 
-    type AppServices = typeof services;
+declare module '@/framework/core' {
 
     export interface Services extends AppServices {}
 

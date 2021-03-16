@@ -1,8 +1,8 @@
 <template>
     <header class="flex items-center self-stretch justify-center p-8">
-        <a href="/" title="Umai">
+        <router-link :to="{ name: 'home' }" title="Umai">
             <span class="sr-only">Umai</span>
             <i-twemoji-steaming-bowl class="w-12 h-12" />
-        </a>
+        </router-link>
     </header>
 </template>

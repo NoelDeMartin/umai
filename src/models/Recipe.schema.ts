@@ -6,4 +6,5 @@ export default SolidModel.schema({
         type: FieldType.String,
         required: true,
     },
+    description: FieldType.String,
 });
