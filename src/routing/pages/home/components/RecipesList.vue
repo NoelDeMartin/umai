@@ -4,7 +4,7 @@
             <span>
                 <i-twemoji-fork-and-knife class="inline w-4 h-4 mr-2" />
                 <router-link
-                    :to="{ name: 'recipes.show', params: { uuid: recipe.uuid } }"
+                    :to="{ name: 'recipes.show', params: { recipe: recipe.uuid } }"
                     class="text-gray-800 hover:text-indigo-700"
                 >
                     {{ recipe.name }}

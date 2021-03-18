@@ -11,20 +11,16 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
 
-import Cookbook from '@/services/facades/Cookbook';
+import type Recipe from '@/models/Recipe';
 
 export default defineComponent({
     props: {
-        uuid: {
-            type: String,
+        recipe: {
+            type: Object as PropType<Recipe>,
             required: true,
         },
-    },
-    setup(props) {
-        const recipe = Cookbook.recipes?.find(recipe => recipe.uuid === props.uuid);
-
-        return { recipe };
     },
 });
 </script>

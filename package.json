@@ -13,7 +13,7 @@
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
-    "@noeldemartin/utils": "0.0.1-next.1acf033b72de152130542e42aac6edf8e9740a2d",
+    "@noeldemartin/utils": "0.0.1-next.e3601c39cf2c3141c0ea550c21b83d9dde609541",
     "soukai": "^0.4.1-next.40da8240aef77a31e598e6d78d41d38fcbb381f0",
     "soukai-solid": "^0.4.1-next.c730985c249d378315e8f903576ec699cab0eeff",
     "tailwindcss": "^2.0.3",
