@@ -33,12 +33,12 @@
                 type="submit"
                 class="inline-flex px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-                Create
+                {{ recipe ? 'Save' : 'Create' }}
             </button>
             <button
                 type="button"
                 class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
-                @click="$router.back()"
+                @click="$emit('cancel')"
             >
                 Cancel
             </button>
@@ -48,28 +48,36 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
+import type { PropType } from 'vue';
 
 import Recipe from '@/models/Recipe';
-import Cookbook from '@/services/facades/Cookbook';
 
 export default defineComponent({
-    emits: ['done'],
-    setup(_, { emit }) {
-        const name = ref('');
-        const description = ref('');
+    props: {
+        recipe: {
+            type: Object as PropType<Recipe>,
+            default: null,
+        },
+    },
+    emits: ['done', 'cancel'],
+    setup(props, { emit }) {
+        const name = ref(props.recipe?.name || '');
+        const description = ref(props.recipe?.description || '');
         const nameInput = ref<HTMLInputElement>();
         const focus = () => nameInput.value?.focus();
         const submit = async () => {
             if (!name.value)
                 return;
 
-            const recipe = await Recipe.create({
+            const attributes = {
                 name: name.value,
                 description: description.value || null,
-            });
+            };
+            const recipe = props.recipe
+                ? await props.recipe.update(attributes)
+                : await Recipe.create(attributes);
 
-            Cookbook.addRecipe(recipe);
-            emit('done');
+            emit('done', recipe);
         };
 
         return { name, description, nameInput, focus, submit };

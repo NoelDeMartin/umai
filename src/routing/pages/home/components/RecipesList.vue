@@ -10,9 +10,14 @@
                     {{ recipe.name }}
                 </router-link>
             </span>
-            <button type="button" title="Remove" @click="$cookbook.removeRecipe(recipe)">
-                <i-zondicons-trash class="w-4 h-4 text-gray-500 opacity-30 hover:opacity-100 hover:text-red-500" />
-            </button>
+            <div class="flex space-x-2">
+                <button type="button" title="Remove" @click="$cookbook.removeRecipe(recipe)">
+                    <i-zondicons-trash class="w-4 h-4 text-gray-500 opacity-30 hover:opacity-100 hover:text-red-500" />
+                </button>
+                <router-link :to="{ name: 'recipes.edit', params: { recipe: recipe.uuid } }" title="Edit">
+                    <i-zondicons-edit-pencil class="w-4 h-4 text-gray-500 opacity-30 hover:opacity-100 hover:text-gray-800" />
+                </router-link>
+            </div>
         </li>
     </ul>
     <div v-else class="p-8 text-center">
