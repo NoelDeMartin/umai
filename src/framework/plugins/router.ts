@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { defineComponent, h } from 'vue';
-import { fail } from '@noeldemartin/utils';
+import { Storage, fail, once } from '@noeldemartin/utils';
 import type { Component, ComponentOptions , Plugin } from 'vue';
-import type { RouteRecordRaw } from 'vue-router';
+import type { RouteLocationRaw , RouteRecordRaw } from 'vue-router';
 import type { SolidModel } from 'soukai-solid';
 
 import Events from '@/framework/core/facades/Events';
@@ -65,6 +65,12 @@ function enhanceRoute(route: RouteRecordRaw): RouteRecordRaw {
     return route;
 }
 
+function handleGithubPagesRedirect(): void {
+    const route = Storage.pull<RouteLocationRaw>('github-pages-redirect');
+
+    route && Router.replace(route);
+}
+
 export default function(routes: RouteRecordRaw[]): Plugin {
     const router = createRouter({
         history: createWebHistory(),
@@ -73,12 +79,13 @@ export default function(routes: RouteRecordRaw[]): Plugin {
 
     router.modelBindings = {};
     router.registerModelBinding = (model, resolver) => router.modelBindings[model] = resolver;
+    router.beforeEach(once(handleGithubPagesRedirect));
 
+    Router.setInstance(router);
     Events.on('application-ready', () => {
         Events.on('login', () => Router.replace({ name: 'home' }));
         Events.on('logout', () => Router.replace({ name: 'login' }));
     });
-    Router.setInstance(router);
 
     return router;
 }
