@@ -1,0 +1,1 @@
+import"./dynamic-import-polyfill.b3685604.js";function t(t){const a={};return t.searchParams.forEach(((t,o)=>a[o]=t)),a}!function(){const a=new URL(location.href),o={path:a.pathname,hash:a.hash,query:t(a)};localStorage.setItem("github-pages-redirect",JSON.stringify(o)),location.href="/"}();
