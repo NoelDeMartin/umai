@@ -1,6 +1,8 @@
+import Cloud from './facades/Cloud';
 import Cookbook from './facades/Cookbook';
 
 const services = {
+    $cloud: Cloud,
     $cookbook: Cookbook,
 };
 

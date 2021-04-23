@@ -5,12 +5,8 @@ import Service from '@/framework/core/Service';
 import Events from '@/framework/core/facades/Events';
 import type Authenticator from '@/framework/auth/Authenticator';
 import type { AuthenticatorName } from '@/framework/auth';
-import type { AuthSession } from '@/framework/auth/Authenticator';
+import type { AuthSession, User } from '@/framework/auth/Authenticator';
 import type { ComputedStateDefinitions , IService } from '@/framework/core/Service';
-
-interface User {
-    name: string;
-}
 
 interface State {
     session: AuthSession | null;

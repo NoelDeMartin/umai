@@ -2,10 +2,11 @@ import { PromisedValue, arr } from '@noeldemartin/utils';
 import type { Fetch } from 'soukai-solid';
 import type { FluentArray } from '@noeldemartin/utils';
 
-import type { AuthenticatorName } from '@/framework/auth/Authenticators';
+import type { AuthenticatorName } from '@/framework/auth';
 
 export interface User {
     name: string;
+    storageUrl: string;
 }
 
 export interface AuthSession {

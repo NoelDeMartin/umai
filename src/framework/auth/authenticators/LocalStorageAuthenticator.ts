@@ -13,7 +13,10 @@ export class LocalStorageAuthenticator extends Authenticator {
     }
 
     public async login(): Promise<AuthSession> {
-        const user: User = { name: 'John Doe' };
+        const user: User = {
+            name: prompt('What is your name?', 'John Doe') ?? 'John Doe',
+            storageUrl: prompt('Where is your storage?', 'http://localhost:4000') ?? 'http://localhost:4000',
+        };
 
         Storage.set(STORAGE_KEY, user);
 
