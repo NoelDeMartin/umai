@@ -14,7 +14,7 @@ export const enum ApplicationComponents {
 
 export default class UIService extends Service {
 
-    registerComponent(name: ApplicationComponents, component: Component): void {
+    public registerComponent(name: ApplicationComponents, component: Component): void {
         this.components[name] = component;
     }
 

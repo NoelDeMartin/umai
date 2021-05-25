@@ -4,7 +4,7 @@ import Model from './Recipe.schema';
 
 export default class Recipe extends Model {
 
-    static rdfContexts = { schema: 'https://schema.org' };
+    public static rdfContexts = { schema: 'https://schema.org' };
 
     public get uuid(): string | null {
         return this.url

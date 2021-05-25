@@ -24,7 +24,7 @@
   "devDependencies": {
     "@babel/preset-env": "^7.13.10",
     "@iconify/json": "^1.1.313",
-    "@noeldemartin/eslint-config-vue": "0.0.0-next.1490173fadf5d9d1e13a6ab1a41d43f5e280d6ae",
+    "@noeldemartin/eslint-config-vue": "0.0.0-next.9814af6f5eb0b490ad6123462e5f070dec0648b9",
     "@noeldemartin/scripts": "0.0.0-next.8e9b39a3905f902a1ff864a8f06ae398a3653033",
     "@tailwindcss/jit": "^0.1.1",
     "@types/jest": "^26.0.20",
