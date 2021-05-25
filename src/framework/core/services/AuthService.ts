@@ -24,6 +24,16 @@ interface StorageData {
     authenticator: AuthenticatorName;
 }
 
+
+declare module '@/framework/core/services/EventsService' {
+
+    export interface EventsPayload {
+        login: User;
+        logout: void;
+    }
+
+}
+
 export default class AuthService extends Service<State, ComputedState> {
 
     public isLoggedIn(): this is { user: User; authenticator: Authenticator } {

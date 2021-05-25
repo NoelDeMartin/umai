@@ -16,6 +16,14 @@ import type { AuthenticatorName } from '@/framework/auth';
 import type Authenticator from '@/framework/auth/Authenticator';
 import type Service from '@/framework/core/Service';
 
+declare module '@/framework/core/services/EventsService' {
+
+    export interface EventsPayload {
+        'application-ready': void;
+    }
+
+}
+
 export type BootstrapApplicationOptions = Partial<{
     selector: string;
     plugins: Plugin[];
