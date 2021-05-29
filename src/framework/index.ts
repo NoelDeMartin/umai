@@ -31,7 +31,8 @@ export type BootstrapApplicationOptions = Partial<{
     services: Record<string, Service>;
     authenticators: Record<string, Authenticator>;
     defaultAuthenticator: AuthenticatorName;
-    beforeMount(): Promise<void> | void;
+    beforeLaunch(): Promise<unknown> | unknown;
+    beforeMount(): Promise<unknown> | unknown;
 }>;
 
 export async function bootstrapApplication(
@@ -53,6 +54,7 @@ export async function bootstrapApplication(
 
     setDefaultAuthenticator(getAuthenticator(options.defaultAuthenticator ?? 'localStorage'));
 
+    await options.beforeLaunch?.call(null);
     await Promise.all(Object.entries(services).map(([name, service]) => service.launch(name.slice(1))));
     await options.beforeMount?.call(null);
 

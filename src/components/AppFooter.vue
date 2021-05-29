@@ -4,6 +4,7 @@
             <button
                 type="button"
                 title="Sync"
+                aria-label="Sync"
                 class="relative w-6 h-6 group"
                 @click="sync()"
             >
@@ -12,7 +13,7 @@
                     <i-zondicons-refresh v-if="syncing" class="w-3 h-3 animate-spin" />
                     <template v-else>
                         <i-zondicons-refresh class="hidden w-3 h-3 group-hover:block" />
-                        <span v-if="$cloud.pendingOperations > 0" class="text-xs group-hover:hidden">{{ $cloud.pendingOperations }}</span>
+                        <span v-if="$cloud.dirty" class="text-xs group-hover:hidden">{{ $cloud.dirtyOperations.length }}</span>
                         <i-zondicons-checkmark v-else class="w-2 h-3 group-hover:hidden" />
                     </template>
                 </div>
@@ -43,7 +44,7 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 
-import Cloud from '@/services/facades/Cloud';
+import Cloud from '@/framework/core/facades/Cloud';
 import { after } from '@noeldemartin/utils';
 
 export default defineComponent({

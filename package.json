@@ -13,9 +13,9 @@
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
-    "@noeldemartin/utils": "0.0.1-next.1637dba89d7d54e5d8138a39218c1777e0c17d40",
-    "soukai": "^0.4.1-next.b908de34a73f26ee9e9da300ee2e82a89c51fd61",
-    "soukai-solid": "^0.4.1-next.551235ff5022eaf5243390fb1fa7905fdb2e805f",
+    "@noeldemartin/utils": "0.1.0-next.9da9e2f99f1acd72995cdfeef05ed1e1dbcceec3",
+    "soukai": "^0.4.1-next.fa3829a49327817b67c5d858cc367608a9494021",
+    "soukai-solid": "^0.4.1-next.88b8fcd80fb33bfcba8c92aa21cb01d067408541",
     "tailwindcss": "^2.0.3",
     "vue": "^3.0.5",
     "vue-router": "^4.0.5",
