@@ -1,0 +1,16 @@
+INSERT DATA {
+    @prefix schema: <https://schema.org/> .
+    @prefix soukai: <https://soukai.noeldemartin.com/vocab/> .
+    @prefix dcmi: <http://purl.org/dc/elements/1.1/> .
+    @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+    <#it>
+        a schema:Recipe ;
+        schema:name "Ramen" .
+
+    <#it-metadata>
+        a soukai:Metadata ;
+        soukai:resource <#it> ;
+        soukai:createdAt "[[.*]]"^^xsd:dateTime ;
+        soukai:updatedAt "[[.*]]"^^xsd:dateTime .
+}

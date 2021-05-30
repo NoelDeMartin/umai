@@ -1,0 +1,45 @@
+DELETE DATA {
+    @prefix schema: <https://schema.org/> .
+    @prefix soukai: <https://soukai.noeldemartin.com/vocab/> .
+    @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+	<#it>
+        schema:name "Ramen" .
+
+    <#it-metadata>
+        soukai:updatedAt "[[.*]]"^^xsd:dateTime .
+} ;
+
+INSERT DATA {
+    @prefix schema: <https://schema.org/> .
+    @prefix soukai: <https://soukai.noeldemartin.com/vocab/> .
+    @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+    <#it>
+        schema:name "Ramen!" ;
+        schema:description "is life" .
+
+    <#it-metadata>
+        soukai:updatedAt "[[.*]]"^^xsd:dateTime .
+
+    <#it-operation-[[.*]]>
+        a soukai:Operation ;
+        soukai:resource <#it> ;
+        soukai:date "[[.*]]"^^xsd:dateTime ;
+        soukai:property schema:name ;
+        soukai:value "Ramen" .
+
+    <#it-operation-[[.*]]>
+        a soukai:Operation ;
+        soukai:resource <#it> ;
+        soukai:date "[[.*]]"^^xsd:dateTime ;
+        soukai:property schema:name ;
+        soukai:value "Ramen!" .
+
+    <#it-operation-[[.*]]>
+        a soukai:Operation ;
+        soukai:resource <#it> ;
+        soukai:date "[[.*]]"^^xsd:dateTime ;
+        soukai:property schema:description ;
+        soukai:value "is life" .
+}
