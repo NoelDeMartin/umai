@@ -10,7 +10,7 @@ module.exports = {
         '<rootDir>/src/main.ts',
     ],
     moduleFileExtensions: ['js', 'ts'],
-    moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, { prefix: '<rootDir>/src/' }),
+    moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, { prefix: '<rootDir>/' }),
     globals: {
         'ts-jest': {
             babelConfig: {
