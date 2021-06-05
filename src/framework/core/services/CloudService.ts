@@ -7,7 +7,7 @@ import { remote } from '@/framework/models/RemoteModel';
 import Auth from '@/framework/core/facades/Auth';
 import Service from '@/framework/core/Service';
 import type { ComputedStateDefinitions, IService } from '@/framework/core/Service';
-import type { User } from '@/framework/auth/Authenticator';
+import type { SolidUserProfile } from '@noeldemartin/solid-utils';
 
 interface State {
     remoteModels: ObjectsMap<SolidModel>;
@@ -237,11 +237,11 @@ export default class CloudService extends Service<State, ComputedState> {
     }
 
     protected async fetchRemoteModels(): Promise<SolidModel[]> {
-        const user = Auth.user as User;
+        const user = Auth.user as SolidUserProfile;
         const models = await Promise.all(
             this.handlers.map(
                 // TODO read from type index instead
-                handler => this.getRemoteClass(handler.modelClass).from(`${user.storageUrl}cookbook/`).all(),
+                handler => this.getRemoteClass(handler.modelClass).from(`${user.storageUrls[0]}cookbook/`).all(),
             ),
         );
 

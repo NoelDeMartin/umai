@@ -12,13 +12,15 @@
             "@types/jest",
             "vite/client"
         ],
-        "baseUrl": "./src",
+        "baseUrl": ".",
         "paths": {
-            "@/*": ["./*"]
+            "@/*": ["./src/*"],
+            "@webpack/*": ["./webpack/dist/*"]
         }
     },
     "include": [
         "src/**/*.ts",
-        "src/**/*.vue"
+        "src/**/*.vue",
+        "webpack/dist/**/*.js"
     ]
 }

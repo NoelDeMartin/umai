@@ -13,7 +13,7 @@ describe('Cookbook', () => {
         });
 
         cy.visit('/');
-        cy.window().then(window => window.prompt = () => null);
+        cy.window().then(window => window.prompt = (_, defaultValue) => defaultValue || null);
 
         // TODO this should be done in the app
         cy.request({

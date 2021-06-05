@@ -18,7 +18,7 @@ export function facade<T extends object>(instance: T | null = null): Facade<T> {
 
     return new Proxy(facade, {
         get: (_, property, receiver) => {
-            const t = property in facade ? facade : facade.requireInstance();
+            const t = property !== 'constructor' && property in facade ? facade : facade.requireInstance();
 
             return Reflect.get(t, property, receiver);
         },

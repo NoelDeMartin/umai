@@ -25,6 +25,7 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': resolve(__dirname, './src'),
+            '@webpack': resolve(__dirname, './webpack/dist'),
         },
     },
     build: {

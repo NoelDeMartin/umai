@@ -6,6 +6,7 @@ import routes, { registerRouterBindings } from './routing';
 import services, { registerCloudHandlers } from './services';
 
 bootstrapApplication(App, {
+    name: 'Umai',
     plugins,
     services,
     routes,

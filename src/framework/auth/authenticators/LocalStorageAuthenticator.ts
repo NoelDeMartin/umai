@@ -1,26 +1,39 @@
-import { Storage } from '@noeldemartin/utils';
+import { Storage, fail } from '@noeldemartin/utils';
 import type { Fetch } from 'soukai-solid';
 
 import Authenticator from '@/framework/auth/Authenticator';
-import type { AuthSession , User } from '@/framework/auth/Authenticator';
+import AuthenticationCancelledError from '@/framework/auth/errors/AuthenticationCancelledError';
+import type { AuthSession } from '@/framework/auth/Authenticator';
+import type { SolidUserProfile } from '@noeldemartin/solid-utils';
 
 const STORAGE_KEY = 'local-storage-authenticator';
 
-export class LocalStorageAuthenticator extends Authenticator {
+interface StorageData {
+    loginUrl: string;
+    user: SolidUserProfile;
+}
+
+export default class LocalStorageAuthenticator extends Authenticator {
 
     public get fetch(): Fetch {
         return window.fetch.bind(window);
     }
 
-    public async login(): Promise<AuthSession> {
-        const user: User = {
-            name: prompt('What is your name?', 'John Doe') ?? 'John Doe',
-            storageUrl: prompt('Where is your storage?', 'http://localhost:4000/') ?? 'http://localhost:4000/',
-        };
+    public async login(loginUrl: string, user?: SolidUserProfile): Promise<AuthSession> {
+        user = user ?? {
+            name: prompt('What is your name?', 'John Doe') ?? fail(AuthenticationCancelledError),
+            storageUrls: [
+                prompt('Where is your storage?', 'http://localhost:4000/') ?? fail(AuthenticationCancelledError),
+            ],
+            oidcIssuerUrl: loginUrl,
 
-        Storage.set(STORAGE_KEY, user);
+            // TODO
+            privateTypeIndexUrl: '',
+        } as SolidUserProfile;
 
-        return this.startSession({ user });
+        Storage.set<StorageData>(STORAGE_KEY, { loginUrl, user });
+
+        return this.startSession({ loginUrl, user });
     }
 
     public async logout(): Promise<void> {
@@ -33,7 +46,7 @@ export class LocalStorageAuthenticator extends Authenticator {
         if (!Storage.has(STORAGE_KEY))
             return;
 
-        await this.startSession({ user: Storage.require<User>(STORAGE_KEY) });
+        await this.startSession(Storage.require<StorageData>(STORAGE_KEY));
     }
 
 }

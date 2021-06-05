@@ -18,11 +18,12 @@
     "cy:test": "start-server-and-test test:serve-app http-get://localhost:3000 test:serve-pod http-get://localhost:4000 cy:run"
   },
   "dependencies": {
-    "@noeldemartin/utils": "0.1.0-next.9da9e2f99f1acd72995cdfeef05ed1e1dbcceec3",
+    "@noeldemartin/solid-utils": "0.0.0-next.679bd731e99dbfd174d0ae5eb665c8334a2bfed0",
+    "@noeldemartin/utils": "0.1.0-next.91a3480e4349e6d139165513334b562337510595",
     "soukai": "^0.4.1-next.e8f1024e75faa60f544c9d020084390da4d682dc",
     "soukai-solid": "^0.4.1-next.8d6ebb77942d9327b7c641a8f23978f964634aaa",
     "tailwindcss": "^2.0.3",
-    "vue": "^3.0.5",
+    "vue": "^3.0.11",
     "vue-router": "^4.0.5",
     "vuex": "^4.0.0"
   },
@@ -31,7 +32,6 @@
     "@iconify/json": "^1.1.313",
     "@noeldemartin/eslint-config-vue": "0.0.0-next.9814af6f5eb0b490ad6123462e5f070dec0648b9",
     "@noeldemartin/scripts": "0.0.0-next.8e9b39a3905f902a1ff864a8f06ae398a3653033",
-    "@noeldemartin/solid-utils": "0.0.0-next.823e616e6c422beb1d6e136fae13c56fe56a46e8",
     "@solid/community-server": "^0.9.0",
     "@tailwindcss/jit": "^0.1.1",
     "@types/jest": "^26.0.20",
@@ -48,7 +48,7 @@
     "start-server-and-test": "^1.12.3",
     "ts-jest": "^26.5.3",
     "typescript": "^4.1.5",
-    "vite": "^2.0.5",
+    "vite": "^2.3.6",
     "vite-plugin-components": "^0.8.0",
     "vite-plugin-icons": "^0.5.0",
     "vite-plugin-vue-svg": "^0.1.0",

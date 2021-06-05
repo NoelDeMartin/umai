@@ -34,7 +34,7 @@ export default class CookbookService extends Service<State> {
         Events.on('login', user => {
             // TODO read from type index instead
             // TODO upon logging in, local recipes must be updated with a remote url
-            Recipe.collection = `${user.storageUrl}cookbook/`;
+            Recipe.collection = `${user.storageUrls[0]}cookbook/`;
         });
 
         Events.on('logout', () => {
@@ -52,7 +52,7 @@ export default class CookbookService extends Service<State> {
     private async loadRecipes(): Promise<void> {
         const recipes = Auth.isLoggedIn()
             // TODO read from type index instead
-            ? await Recipe.from(`${Auth.user.storageUrl}cookbook/`).all()
+            ? await Recipe.from(`${Auth.user.storageUrls[0]}cookbook/`).all()
             : await Recipe.all();
 
         this.recipes = arr(recipes);

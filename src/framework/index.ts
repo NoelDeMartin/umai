@@ -9,6 +9,7 @@ import {
     setDefaultAuthenticator,
 } from '@/framework/auth';
 import { services as baseServices } from '@/framework/core';
+import App from '@/framework/core/facades/App';
 import basePlugins from '@/framework/plugins';
 import baseRoutes from '@/framework/routing';
 import Events from '@/framework/core/facades/Events';
@@ -25,6 +26,7 @@ declare module '@/framework/core/services/EventsService' {
 }
 
 export type BootstrapApplicationOptions = Partial<{
+    name: string;
     selector: string;
     plugins: Plugin[];
     routes: RouteRecordRaw[];
@@ -44,6 +46,8 @@ export async function bootstrapApplication(
     const plugins = [...basePlugins(routes), ...(options.plugins ?? [])];
     const services = { ...baseServices, ...(options.services ?? {}) };
     const authenticators = { ...baseAuthenticators, ...(options.authenticators ?? {}) };
+
+    App.name = options.name ?? App.name;
 
     plugins.forEach(plugin => app.use(plugin));
 

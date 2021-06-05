@@ -1,34 +1,36 @@
-import { Storage } from '@noeldemartin/utils';
+import { tap, urlRoot } from '@noeldemartin/utils';
+import { fetchLoginUserProfile } from '@noeldemartin/solid-utils';
+import type { SolidUserProfile } from '@noeldemartin/solid-utils';
 
 import { getAuthenticator } from '@/framework/auth';
+import AuthenticationCancelledError from '@/framework/auth/errors/AuthenticationCancelledError';
+import AuthenticationTimeoutError from '@/framework/auth/errors/AuthenticationTimeoutError';
 import Service from '@/framework/core/Service';
 import Events from '@/framework/core/facades/Events';
 import type Authenticator from '@/framework/auth/Authenticator';
 import type { AuthenticatorName } from '@/framework/auth';
-import type { AuthSession, User } from '@/framework/auth/Authenticator';
+import type { AuthSession } from '@/framework/auth/Authenticator';
 import type { ComputedStateDefinitions , IService } from '@/framework/core/Service';
 
 interface State {
     session: AuthSession | null;
+    profiles: Record<string, SolidUserProfile>;
+    previousSession: {
+        authenticator: AuthenticatorName;
+        loginUrl: string;
+    } | null;
 }
 
 interface ComputedState {
     authenticator: Authenticator | null;
     loggedIn: boolean;
-    user: User | null;
+    user: SolidUserProfile | null;
 }
-
-const STORAGE_KEY = 'auth';
-
-interface StorageData {
-    authenticator: AuthenticatorName;
-}
-
 
 declare module '@/framework/core/services/EventsService' {
 
     export interface EventsPayload {
-        login: User;
+        login: SolidUserProfile;
         logout: void;
     }
 
@@ -36,23 +38,48 @@ declare module '@/framework/core/services/EventsService' {
 
 export default class AuthService extends Service<State, ComputedState> {
 
-    public isLoggedIn(): this is { user: User; authenticator: Authenticator } {
+    public static persist: Array<keyof State> = ['previousSession', 'profiles'];
+
+    public isLoggedIn(): this is { user: SolidUserProfile; authenticator: Authenticator } {
         return this.loggedIn;
     }
 
-    public async login(authenticatorName: AuthenticatorName = 'default'): Promise<void> {
+    public async login(loginUrl: string, authenticatorName: AuthenticatorName = 'default'): Promise<void> {
         if (this.loggedIn)
             return;
 
         try {
+            const profile = await this.getUserProfile(loginUrl);
+            const oidcIssuerUrl = profile?.oidcIssuerUrl ?? urlRoot(profile?.webId ?? loginUrl);
             const authenticator = await this.bootAuthenticator(authenticatorName);
 
-            await authenticator.login();
+            this.setState({ previousSession: { loginUrl, authenticator: authenticatorName } });
+
+            // TODO show "logging in..." alert
+            await authenticator.login(oidcIssuerUrl);
         } catch (error) {
+            if (error instanceof AuthenticationTimeoutError) {
+                alert('This is taking too long...');
+
+                return;
+            }
+
+            this.setState({ previousSession: null });
+
+            if (error instanceof AuthenticationCancelledError)
+                return;
+
             console.error(error);
 
             alert('Could not log in');
         }
+    }
+
+    public async reconnect(): Promise<void> {
+        if (!this.previousSession)
+            return;
+
+        await this.login(this.previousSession.loginUrl, this.previousSession.authenticator);
     }
 
     public async logout(): Promise<void> {
@@ -62,20 +89,22 @@ export default class AuthService extends Service<State, ComputedState> {
         await this.authenticator.logout();
     }
 
+    public async getUserProfile(url: string): Promise<SolidUserProfile | null> {
+        return this.profiles[url]
+            ?? tap(await fetchLoginUserProfile(url), profile => profile && this.rememberProfile(profile));
+    }
+
     protected async boot(): Promise<void> {
         await super.boot();
 
-        if (!Storage.has(STORAGE_KEY))
-            return;
-
-        const { authenticator } = Storage.require<StorageData>(STORAGE_KEY);
-
-        await this.bootAuthenticator(authenticator);
+        this.previousSession && await this.bootAuthenticator(this.previousSession.authenticator);
     }
 
     protected getInitialState(): State {
         return {
             session: null,
+            previousSession: null,
+            profiles: {},
         };
     }
 
@@ -92,16 +121,12 @@ export default class AuthService extends Service<State, ComputedState> {
 
         authenticator.addListener({
             onSessionStarted: async session => {
-                this.session = session;
-
-                Storage.set<StorageData>(STORAGE_KEY, { authenticator: session.authenticator.name });
+                this.setState({ session });
 
                 await Events.emit('login', session.user);
             },
             onSessionEnded: async () => {
-                this.session = null;
-
-                Storage.remove(STORAGE_KEY);
+                this.setState({ session: null, previousSession: null });
 
                 await Events.emit('logout');
             },
@@ -110,6 +135,15 @@ export default class AuthService extends Service<State, ComputedState> {
         await authenticator.boot();
 
         return authenticator;
+    }
+
+    private rememberProfile(profile: SolidUserProfile): void {
+        this.setState({
+            profiles: {
+                ...this.profiles,
+                [profile.webId]: profile,
+            },
+        });
     }
 
 }

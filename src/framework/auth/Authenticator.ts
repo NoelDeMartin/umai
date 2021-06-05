@@ -1,16 +1,13 @@
 import { PromisedValue, arr } from '@noeldemartin/utils';
 import type { Fetch } from 'soukai-solid';
 import type { FluentArray } from '@noeldemartin/utils';
+import type { SolidUserProfile } from '@noeldemartin/solid-utils';
 
 import type { AuthenticatorName } from '@/framework/auth';
 
-export interface User {
-    name: string;
-    storageUrl: string;
-}
-
 export interface AuthSession {
-    user: User;
+    user: SolidUserProfile;
+    loginUrl: string;
     authenticator: Authenticator;
 }
 
@@ -27,7 +24,7 @@ export default abstract class Authenticator {
     private booted?: PromisedValue<void>;
     private listeners: FluentArray<AuthenticatorListener> = arr<AuthenticatorListener>([]);
 
-    public abstract login(): Promise<AuthSession>;
+    public abstract login(loginUrl: string, user?: SolidUserProfile): Promise<AuthSession>;
 
     public abstract logout(): Promise<void>;
 

@@ -19,8 +19,25 @@
                 </div>
             </button>
             <span class="text-sm text-gray-500">
-                you're connected to <a :href="$auth.user.storageUrl" class="underline hover:text-gray-700" target="_blank">{{ $auth.user.storageUrl }}</a>
+                you're connected to <a :href="$auth.user.storageUrls[0]" class="underline hover:text-gray-700" target="_blank">{{ $auth.user.storageUrls[0] }}</a>
             </span>
+            <button
+                type="button"
+                class="text-gray-500 hover:text-red-500"
+                title="Log out"
+                @click="$auth.logout()"
+            >
+                <i-heroicons-solid-logout />
+            </button>
+        </template>
+        <template v-else-if="$auth.previousSession?.loginUrl">
+            <button
+                type="button"
+                class="text-sm text-indigo-500 underline hover:text-indigo-700"
+                @click="$auth.reconnect()"
+            >
+                Reconnect to {{ $auth.previousSession?.loginUrl }}
+            </button>
             <button
                 type="button"
                 class="text-gray-500 hover:text-red-500"
@@ -34,7 +51,7 @@
             v-else
             type="button"
             class="text-sm text-indigo-500 underline hover:text-indigo-700"
-            @click="$auth.login()"
+            @click="login()"
         >
             Connect storage
         </button>
@@ -42,10 +59,11 @@
 </template>
 
 <script lang="ts">
+import { after } from '@noeldemartin/utils';
 import { defineComponent, ref } from 'vue';
 
+import Auth from '@/framework/core/facades/Auth';
 import Cloud from '@/framework/core/facades/Cloud';
-import { after } from '@noeldemartin/utils';
 
 export default defineComponent({
     setup() {
@@ -58,8 +76,13 @@ export default defineComponent({
             await after({ milliseconds: Math.max(0, 1000 - (Date.now() - start)) });
             syncing.value = false;
         };
+        const login = () => {
+            const loginUrl = prompt('Login url?', 'https://');
 
-        return { syncing, sync };
+            loginUrl && Auth.login(loginUrl);
+        };
+
+        return { login, syncing, sync };
     },
 });
 </script>

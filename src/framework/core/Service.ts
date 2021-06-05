@@ -1,3 +1,4 @@
+import { Storage, isEmpty, objectOnly } from '@noeldemartin/utils';
 import type { Constructor } from '@noeldemartin/utils';
 
 import Store from '@/framework/core/facades/Store';
@@ -19,9 +20,11 @@ export type ServiceConstructor<T extends Service> = Constructor<T> & typeof Serv
 
 export default class Service<
     State extends ServiceState = DefaultServiceState,
-    ComputedState extends ServiceState = DefaultServiceState
+    ComputedState extends ServiceState = DefaultServiceState,
+    ServiceStorage = Partial<State>
 > {
 
+    public static persist: string[] = [];
     public static __constructingPure: boolean = false;
     public static __classProperties: string[];
     private static pureInstances = new WeakMap;
@@ -118,6 +121,18 @@ export default class Service<
 
     protected setState(state: Partial<State>): void {
         Store.commit(`${this._namespace}/setState`, state);
+
+        const persisted = objectOnly(state, this.static('persist'));
+
+        if (isEmpty(persisted))
+            return;
+
+        const storage = Storage.require<ServiceStorage>(this._namespace);
+
+        Storage.set(this._namespace, {
+            ...storage,
+            ...persisted,
+        });
     }
 
     protected getComputedState<P extends keyof ComputedState>(property: P): ComputedState[P] {
@@ -134,6 +149,19 @@ export default class Service<
 
     protected async boot(): Promise<void> {
         this.registerStoreModule();
+
+        if (isEmpty(this.static('persist')))
+            return;
+
+        if (Storage.has(this._namespace)) {
+            const persisted = Storage.require<ServiceStorage>(this._namespace);
+
+            this.setState(persisted);
+
+            return;
+        }
+
+        Storage.set(this._namespace, objectOnly(this.getState(), this.static('persist')));
     }
 
     protected registerStoreModule(): void {
