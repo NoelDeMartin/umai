@@ -18,7 +18,7 @@
     "cy:test": "start-server-and-test test:serve-app http-get://localhost:3000 test:serve-pod http-get://localhost:4000 cy:run"
   },
   "dependencies": {
-    "@noeldemartin/solid-utils": "0.0.0-next.679bd731e99dbfd174d0ae5eb665c8334a2bfed0",
+    "@noeldemartin/solid-utils": "0.0.0-next.9c6f08d4c6984dae5092cd509713190d17c054de",
     "@noeldemartin/utils": "0.1.0-next.91a3480e4349e6d139165513334b562337510595",
     "soukai": "^0.4.1-next.e8f1024e75faa60f544c9d020084390da4d682dc",
     "soukai-solid": "^0.4.1-next.8d6ebb77942d9327b7c641a8f23978f964634aaa",
