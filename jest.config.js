@@ -15,7 +15,7 @@ module.exports = {
         'ts-jest': {
             babelConfig: {
                 presets: [
-                    ['@babel/preset-env', { targets: { node: '12' } }],
+                    ['@babel/preset-env', { targets: { node: '14' } }],
                 ],
             },
         },
