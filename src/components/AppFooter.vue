@@ -64,6 +64,7 @@ import { defineComponent, ref } from 'vue';
 
 import Auth from '@/framework/core/facades/Auth';
 import Cloud from '@/framework/core/facades/Cloud';
+import type { AuthenticatorName } from '@/framework/auth';
 
 export default defineComponent({
     setup() {
@@ -78,8 +79,10 @@ export default defineComponent({
         };
         const login = () => {
             const loginUrl = prompt('Login url?', 'https://');
+            const authenticator =
+                new URL(location.href).searchParams.get('authenticator') as AuthenticatorName ?? 'default';
 
-            loginUrl && Auth.login(loginUrl);
+            loginUrl && Auth.login(loginUrl, authenticator);
         };
 
         return { login, syncing, sync };

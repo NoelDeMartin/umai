@@ -3,10 +3,16 @@ let prompts: Record<string, string>;
 const commands = {
 
     login(): void {
-        // TODO use shortcut instead of logging with the UI
-        cy.respondPrompt('Login url?', 'https://alice.example.com');
+        // TODO use shortcut instead of logging in with the UI
+        cy.intercept('https://alice.example.com', { statusCode: 404 });
+        cy.intercept('https://alice.example.com/profile/card', { fixture: 'profile.ttl' });
+        cy.prepareAnswer('Login url?', 'https://alice.example.com');
         cy.contains('Connect storage').click();
         cy.waitForReload();
+    },
+
+    prepareAnswer(question: string, answer: string): void {
+        prompts[question] = answer;
     },
 
     resetPrompts(): void {
@@ -16,10 +22,6 @@ const commands = {
     resetStorage(): void {
         indexedDB.deleteDatabase('soukai');
         indexedDB.deleteDatabase('soukai-meta');
-    },
-
-    respondPrompt(question: string, answer: string): void {
-        prompts[question] = answer;
     },
 
     startApp(): void {
@@ -51,8 +53,6 @@ export default function installCustomCommands(): void {
         cy.task('resetSolidPOD');
         cy.resetStorage();
         cy.resetPrompts();
-        cy.intercept('https://alice.example.com', { statusCode: 404 });
-        cy.intercept('https://alice.example.com/profile/card', { fixture: 'profile.ttl' });
     });
 
     for (const [name, implementation] of Object.entries(commands)) {
