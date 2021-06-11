@@ -18,17 +18,31 @@ describe('Authentication', () => {
 
     it('logs in using the Inrupt authenticator', () => {
         // Arrange
+        cy.intercept('PATCH', 'http://localhost:4000/settings/privateTypeIndex.ttl').as('registerCookbook');
+        cy.intercept('POST', 'http://localhost:4000/').as('createCookbook');
+        cy.intercept('PATCH', 'http://localhost:4000/cookbook/ramen').as('patchRamen');
         cy.prepareAnswer('Login url?', 'http://localhost:4000/alice/');
         cy.visit('/?authenticator=inrupt');
         cy.startApp();
 
-        // Act
+        // Act - Log in
         cy.contains('Connect storage').click();
         cssAuthorize();
         cy.waitForReload();
 
+        // Act - Create recipe
+        cy.contains('New Recipe').click();
+        cy.get('#name').type('Ramen');
+        cy.contains('Create').click();
+        cy.get('[aria-label="Sync"]').click();
+        cy.get('.animate-spin').should('not.exist');
+
         // Assert
         cy.contains('you\'re connected to http://localhost:4000/', { timeout: 10000 }).should('be.visible');
+
+        cy.get('@registerCookbook').its('request.headers.authorization').should('match', /DPoP .*/);
+        cy.get('@createCookbook').its('request.headers.authorization').should('match', /DPoP .*/);
+        cy.get('@patchRamen').its('request.headers.authorization').should('match', /DPoP .*/);
     });
 
 });

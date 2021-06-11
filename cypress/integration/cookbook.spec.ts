@@ -23,7 +23,7 @@ describe('Cookbook', () => {
         // Arrange
         cy.login();
 
-        cy.intercept('PATCH', 'http://localhost:4000/cookbook/ramen').as('patch');
+        cy.intercept('PATCH', 'http://localhost:4000/cookbook/ramen').as('patchRamen');
 
         // Act - Create
         cy.contains('New Recipe').click();
@@ -56,9 +56,9 @@ describe('Cookbook', () => {
             cy.fixture('update-ramen-1.sparql').then(fixture => fixtures.push(fixture)),
             cy.fixture('update-ramen-2.sparql').then(fixture => fixtures.push(fixture)),
         ]).then(() => {
-            fixtures.forEach(fixture => cy.wait('@patch').its('request.body').should('be.sparql', fixture));
+            fixtures.forEach(fixture => cy.wait('@patchRamen').its('request.body').should('be.sparql', fixture));
 
-            cy.get('@patch.all').should('have.length', fixtures.length);
+            cy.get('@patchRamen.all').should('have.length', fixtures.length);
         });
     });
 
