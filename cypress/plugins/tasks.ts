@@ -8,7 +8,17 @@ const tasks: Cypress.Tasks = {
         await SolidContainerModel.withEngine(new SolidEngine(fetch), async () => {
             const cookbook = await SolidContainerModel.find('http://localhost:4000/cookbook/');
 
-            await Promise.all(cookbook?.resourceUrls.map(url => fetch(url, { method: 'DELETE' })) ?? []);
+            await cookbook?.delete();
+        });
+
+        await fetch('http://localhost:4000/settings/privateTypeIndex.ttl', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'text/turtle' },
+            body: `
+                <> a
+                    <http://www.w3.org/ns/solid/terms#TypeIndex>,
+                    <http://www.w3.org/ns/solid/terms#UnlistedDocument> .
+            `,
         });
 
         return null;

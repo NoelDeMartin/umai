@@ -6,8 +6,9 @@ import type { SolidModel , SolidModelConstructor , SolidModelOperation } from 's
 import { remote } from '@/framework/models/RemoteModel';
 import Auth from '@/framework/core/facades/Auth';
 import Service from '@/framework/core/Service';
+import Events from '@/framework/core/facades/Events';
 import type { ComputedStateDefinitions, IService } from '@/framework/core/Service';
-import type { SolidUserProfile } from '@noeldemartin/solid-utils';
+import type Authenticator from '@/framework/auth/Authenticator';
 
 interface State {
     remoteModels: ObjectsMap<SolidModel>;
@@ -31,6 +32,7 @@ export default class CloudService extends Service<State, ComputedState> {
     protected asyncLock: Semaphore = new Semaphore();
     protected localClasses: WeakMap<SolidModelConstructor, SolidModelConstructor> = new WeakMap();
     protected remoteClasses: WeakMap<SolidModelConstructor, SolidModelConstructor> = new WeakMap();
+    protected engine: SolidEngine | null = null;
 
     public async sync(): Promise<void> {
         if (!Auth.isLoggedIn())
@@ -47,13 +49,20 @@ export default class CloudService extends Service<State, ComputedState> {
         modelClass: SolidModelConstructor<T>,
         handler: Omit<CloudHandler<T>, 'modelClass'>,
     ): void {
-        this.handlers.push({ modelClass, ...handler });
+        this.engine && this.getRemoteClass(modelClass).setEngine(this.engine);
 
-        // TODO use authenticated fetch
-        this.getRemoteClass(modelClass).setEngine(new SolidEngine(window.fetch.bind(window)));
+        this.handlers.push({ modelClass, ...handler });
 
         modelClass.on('created', model => this.createRemoteModel(model));
         modelClass.on('updated', model => this.updateRemoteModel(model));
+    }
+
+    protected async boot(): Promise<void> {
+        await super.boot();
+
+        Auth.authenticator && this.initializeEngine(Auth.authenticator);
+
+        Events.on('login', ({ authenticator }) => this.initializeEngine(authenticator));
     }
 
     protected getInitialState(): State {
@@ -71,6 +80,14 @@ export default class CloudService extends Service<State, ComputedState> {
                 [] as SolidModelOperation[],
             ),
         };
+    }
+
+    protected initializeEngine(authenticator: Authenticator): void {
+        this.engine = new SolidEngine(authenticator.fetch.bind(authenticator));
+
+        for (const handler of this.handlers) {
+            this.getRemoteClass(handler.modelClass).setEngine(this.engine);
+        }
     }
 
     protected async pullRemote(): Promise<void> {
@@ -237,12 +254,8 @@ export default class CloudService extends Service<State, ComputedState> {
     }
 
     protected async fetchRemoteModels(): Promise<SolidModel[]> {
-        const user = Auth.user as SolidUserProfile;
         const models = await Promise.all(
-            this.handlers.map(
-                // TODO read from type index instead
-                handler => this.getRemoteClass(handler.modelClass).from(`${user.storageUrls[0]}cookbook/`).all(),
-            ),
+            this.handlers.map(handler => this.getRemoteClass(handler.modelClass).all()),
         );
 
         return models.flat();

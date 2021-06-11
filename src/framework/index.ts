@@ -63,5 +63,7 @@ export async function bootstrapApplication(
     await options.beforeMount?.call(null);
 
     app.mount(options.selector ?? '#app');
+    app._container?.classList.remove('loading');
+
     Events.emit('application-ready');
 }

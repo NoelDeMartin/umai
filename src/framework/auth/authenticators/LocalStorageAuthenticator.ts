@@ -1,10 +1,11 @@
-import { Storage, fail } from '@noeldemartin/utils';
+import { Storage, after, fail } from '@noeldemartin/utils';
 import type { Fetch } from 'soukai-solid';
+import type { SolidUserProfile } from '@noeldemartin/solid-utils';
 
 import Authenticator from '@/framework/auth/Authenticator';
 import AuthenticationCancelledError from '@/framework/auth/errors/AuthenticationCancelledError';
+import AuthenticationTimeoutError from '@/framework/auth/errors/AuthenticationTimeoutError';
 import type { AuthSession } from '@/framework/auth/Authenticator';
-import type { SolidUserProfile } from '@noeldemartin/solid-utils';
 
 const STORAGE_KEY = 'local-storage-authenticator';
 
@@ -25,15 +26,20 @@ export default class LocalStorageAuthenticator extends Authenticator {
             storageUrls: [
                 prompt('Where is your storage?', 'http://localhost:4000/') ?? fail(AuthenticationCancelledError),
             ],
+            privateTypeIndexUrl:
+                prompt('Where is the type index?', 'http://localhost:4000/settings/privateTypeIndex.ttl') ??
+                fail(AuthenticationCancelledError),
             oidcIssuerUrl: loginUrl,
-
-            // TODO
-            privateTypeIndexUrl: '',
         } as SolidUserProfile;
 
         Storage.set<StorageData>(STORAGE_KEY, { loginUrl, user });
 
-        return this.startSession({ loginUrl, user });
+        // TODO support authentication without reloading
+        location.reload();
+
+        await after({ seconds: 10 });
+
+        throw new AuthenticationTimeoutError();
     }
 
     public async logout(): Promise<void> {

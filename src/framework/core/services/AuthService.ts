@@ -30,7 +30,7 @@ interface ComputedState {
 declare module '@/framework/core/services/EventsService' {
 
     export interface EventsPayload {
-        login: SolidUserProfile;
+        login: AuthSession;
         logout: void;
     }
 
@@ -83,8 +83,16 @@ export default class AuthService extends Service<State, ComputedState> {
     }
 
     public async logout(): Promise<void> {
-        if (!this.isLoggedIn())
+        if (!this.previousSession)
             return;
+
+        this.setState({ previousSession: null });
+
+        if (!this.isLoggedIn()) {
+            Events.emit('logout');
+
+            return;
+        }
 
         await this.authenticator.logout();
     }
@@ -123,7 +131,7 @@ export default class AuthService extends Service<State, ComputedState> {
             onSessionStarted: async session => {
                 this.setState({ session });
 
-                await Events.emit('login', session.user);
+                await Events.emit('login', session);
             },
             onSessionEnded: async () => {
                 this.setState({ session: null, previousSession: null });

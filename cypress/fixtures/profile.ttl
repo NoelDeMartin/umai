@@ -1,0 +1,8 @@
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix solid: <http://www.w3.org/ns/solid/terms#>.
+@prefix pim: <http://www.w3.org/ns/pim/space#>.
+
+<#me>
+    a foaf:Person;
+    pim:storage <http://localhost:4000/>;
+    solid:privateTypeIndex <http://localhost:4000/settings/privateTypeIndex.ttl>.

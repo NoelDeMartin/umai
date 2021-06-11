@@ -1,31 +1,8 @@
 describe('Cookbook', () => {
 
     beforeEach(() => {
-        indexedDB.deleteDatabase('soukai');
-        indexedDB.deleteDatabase('soukai-meta');
-
-        cy.task('resetSolidPOD');
-        cy.intercept('**', req => {
-            if (req.url.startsWith('http://localhost'))
-                return;
-
-            req.reply({ statusCode: 500, body: 'External requests not allowed in Cypress tests!' });
-        });
-
         cy.visit('/');
-        cy.window().then(window => window.prompt = (_, defaultValue) => defaultValue || null);
-
-        // TODO this should be done in the app
-        cy.request({
-            method: 'POST',
-            url: 'http://localhost:4000',
-            headers: {
-                'Slug': 'cookbook',
-                'Content-Type': 'text/turtle',
-                'Link': '<http://www.w3.org/ns/ldp#BasicContainer>; rel="type"',
-            },
-            body: '<> <http://www.w3.org/2000/01/rdf-schema#label> "My Cookbook" .',
-        });
+        cy.startApp();
     });
 
     it('creates recipes', () => {
@@ -44,13 +21,9 @@ describe('Cookbook', () => {
 
     it('sends model updates to the cloud', function() {
         // Arrange
-        cy.intercept('PATCH', 'http://localhost:4000/cookbook/ramen').as('patch');
+        cy.login();
 
-        // Act - Initial sync
-        cy.contains('Connect storage').click();
-        cy.contains('you\'re connected to').should('be.visible');
-        cy.get('[aria-label="Sync"]').click();
-        cy.get('.animate-spin').should('not.exist');
+        cy.intercept('PATCH', 'http://localhost:4000/cookbook/ramen').as('patch');
 
         // Act - Create
         cy.contains('New Recipe').click();
