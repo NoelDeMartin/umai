@@ -5,7 +5,8 @@ DELETE DATA {
 
 	<#it>
         schema:name "Ramen!" ;
-        schema:description "is life" .
+        schema:description "is life" ;
+        schema:recipeIngredient "Toppings" .
 
     <#it-metadata> soukai:updatedAt "[[.*]]"^^xsd:dateTime .
 } ;
@@ -17,7 +18,8 @@ INSERT DATA {
 
     <#it>
         schema:name "Jun's Ramen" ;
-        schema:description "Instructions: https://www.youtube.com/watch?v=9WXIrnWsaCo" .
+        schema:description "Instructions: https://www.youtube.com/watch?v=9WXIrnWsaCo" ;
+        schema:recipeIngredient "Shiitake", "Nori" .
 
     <#it-metadata> soukai:updatedAt "[[.*]]"^^xsd:dateTime .
 
@@ -34,4 +36,20 @@ INSERT DATA {
         soukai:date "[[.*]]"^^xsd:dateTime ;
         soukai:property schema:description ;
         soukai:value "Instructions: https://www.youtube.com/watch?v=9WXIrnWsaCo" .
+
+    <#it-operation-[[.*]]>
+        a soukai:Operation ;
+        soukai:resource <#it> ;
+        soukai:type soukai:AddOperation ;
+        soukai:date "[[.*]]"^^xsd:dateTime ;
+        soukai:property schema:recipeIngredient ;
+        soukai:value "Shiitake", "Nori" .
+
+    <#it-operation-[[.*]]>
+        a soukai:Operation ;
+        soukai:resource <#it> ;
+        soukai:type soukai:RemoveOperation ;
+        soukai:date "[[.*]]"^^xsd:dateTime ;
+        soukai:property schema:recipeIngredient ;
+        soukai:value "Toppings" .
 }

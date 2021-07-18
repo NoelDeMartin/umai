@@ -12,11 +12,18 @@ describe('Cookbook', () => {
         // Act
         cy.contains('New Recipe').click();
         cy.get('#name').type('Ramen');
+        cy.get('#new-ingredient').type('Broth');
+        cy.get('[aria-label="Add ingredient"]').click();
+        cy.get('#new-ingredient').type('Noodles');
+        cy.get('[aria-label="Add ingredient"]').click();
         cy.contains('Create').click();
+        cy.reload();
 
         // Assert
         cy.contains('Ramen').should('be.visible');
         cy.contains('No description').should('be.visible');
+        cy.contains('Broth').should('be.visible');
+        cy.contains('Noodles').should('be.visible');
     });
 
     it('sends model updates to the cloud', function() {
@@ -28,6 +35,10 @@ describe('Cookbook', () => {
         // Act - Create
         cy.contains('New Recipe').click();
         cy.get('#name').type('Ramen');
+        cy.get('#new-ingredient').type('Broth');
+        cy.get('[aria-label="Add ingredient"]').click();
+        cy.get('#new-ingredient').type('Noodles');
+        cy.get('[aria-label="Add ingredient"]').click();
         cy.contains('Create').click();
         cy.get('[aria-label="Sync"]').click();
         cy.get('.animate-spin').should('not.exist');
@@ -36,6 +47,8 @@ describe('Cookbook', () => {
         cy.contains('edit').click();
         cy.get('#name').type('!');
         cy.get('#description').type('is life');
+        cy.get('#new-ingredient').type('Toppings');
+        cy.get('[aria-label="Add ingredient"]').click();
         cy.contains('Save').click();
         cy.get('[aria-label="Sync"]').click();
         cy.get('.animate-spin').should('not.exist');
@@ -44,6 +57,11 @@ describe('Cookbook', () => {
         cy.contains('edit').click();
         cy.get('#name').clear().type('Jun\'s Ramen');
         cy.get('#description').clear().type('Instructions: https://www.youtube.com/watch?v=9WXIrnWsaCo');
+        cy.get('[aria-label="Remove \'Toppings\' ingredient"]').click();
+        cy.get('#new-ingredient').type('Shiitake');
+        cy.get('[aria-label="Add ingredient"]').click();
+        cy.get('#new-ingredient').type('Nori');
+        cy.get('[aria-label="Add ingredient"]').click();
         cy.contains('Save').click();
         cy.get('[aria-label="Sync"]').click();
         cy.get('.animate-spin').should('not.exist');

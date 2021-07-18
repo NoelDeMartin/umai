@@ -18,10 +18,10 @@
     "cy:test": "start-server-and-test test:serve-app http-get://localhost:3000 test:serve-pod http-get://localhost:4000 cy:run"
   },
   "dependencies": {
-    "@noeldemartin/solid-utils": "0.0.0-next.b1938d5492a46c1362960b1ed28a8a7b020af439",
-    "@noeldemartin/utils": "0.1.0-next.91a3480e4349e6d139165513334b562337510595",
-    "soukai": "^0.4.1-next.e8f1024e75faa60f544c9d020084390da4d682dc",
-    "soukai-solid": "^0.4.1-next.e552fcd48fa9cfb3ae7d5d44ba37e6aeb3443d1d",
+    "@noeldemartin/solid-utils": "0.0.0-next.dc85122f7bdaba7991c9fd71c19667225f8baf2f",
+    "@noeldemartin/utils": "0.1.0-next.0e0307d17a50feadaeb4e31f45dca52f11496bb4",
+    "soukai": "^0.4.1-next.71f0ece01885ed0d16d51f074de9106ad12a1c29",
+    "soukai-solid": "^0.4.1-next.afa4c96df0f8c10e7c99f905cfc85ad2da33d0c9",
     "tailwindcss": "^2.0.3",
     "vue": "^3.0.11",
     "vue-router": "^4.0.5",

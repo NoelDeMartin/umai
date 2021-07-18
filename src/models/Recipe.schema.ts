@@ -7,4 +7,9 @@ export default SolidModel.schema({
         required: true,
     },
     description: FieldType.String,
+    ingredients: {
+        type: FieldType.Array,
+        rdfProperty: 'schema:recipeIngredient',
+        items: FieldType.String,
+    },
 });

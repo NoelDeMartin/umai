@@ -58,4 +58,9 @@ export default function installCustomCommands(): void {
     for (const [name, implementation] of Object.entries(commands)) {
         Cypress.Commands.add(name, implementation);
     }
+
+    Cypress.Commands.overwrite('reload', originalReload => {
+        originalReload();
+        cy.startApp();
+    });
 }

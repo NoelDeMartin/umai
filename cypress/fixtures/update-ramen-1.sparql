@@ -17,7 +17,8 @@ INSERT DATA {
 
     <#it>
         schema:name "Ramen!" ;
-        schema:description "is life" .
+        schema:description "is life" ;
+	    schema:recipeIngredient "Toppings" .
 
     <#it-metadata>
         soukai:updatedAt "[[.*]]"^^xsd:dateTime .
@@ -33,6 +34,13 @@ INSERT DATA {
         a soukai:Operation ;
         soukai:resource <#it> ;
         soukai:date "[[.*]]"^^xsd:dateTime ;
+        soukai:property schema:recipeIngredient ;
+        soukai:value "Broth", "Noodles" .
+
+    <#it-operation-[[.*]]>
+        a soukai:Operation ;
+        soukai:resource <#it> ;
+        soukai:date "[[.*]]"^^xsd:dateTime ;
         soukai:property schema:name ;
         soukai:value "Ramen!" .
 
@@ -42,4 +50,12 @@ INSERT DATA {
         soukai:date "[[.*]]"^^xsd:dateTime ;
         soukai:property schema:description ;
         soukai:value "is life" .
+
+    <#it-operation-[[.*]]>
+        a soukai:Operation ;
+        soukai:resource <#it> ;
+        soukai:type soukai:AddOperation ;
+        soukai:date "[[.*]]"^^xsd:dateTime ;
+        soukai:property schema:recipeIngredient ;
+        soukai:value "Toppings" .
 }

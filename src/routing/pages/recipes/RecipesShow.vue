@@ -16,6 +16,11 @@
             <p class="mt-2 text-sm italic text-gray-500">
                 {{ recipe.description || 'No description' }}
             </p>
+            <ul v-if="recipe.ingredients.length > 0" class="mt-2 ml-2 list-disc">
+                <li v-for="(ingredient, index) of recipe.ingredients" :key="index" class="text-xs">
+                    {{ ingredient }}
+                </li>
+            </ul>
         </div>
     </div>
 </template>
