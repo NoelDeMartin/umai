@@ -83,7 +83,7 @@ export default class CloudService extends Service<State, ComputedState> {
     }
 
     protected initializeEngine(authenticator: Authenticator): void {
-        this.engine = new SolidEngine(authenticator.fetch.bind(authenticator));
+        this.engine = new SolidEngine(authenticator.requireAuthenticatedFetch());
 
         for (const handler of this.handlers) {
             this.getRemoteClass(handler.modelClass).setEngine(this.engine);

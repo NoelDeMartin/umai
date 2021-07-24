@@ -1,5 +1,4 @@
 import { Storage, after, fail } from '@noeldemartin/utils';
-import type { Fetch } from 'soukai-solid';
 import type { SolidUserProfile } from '@noeldemartin/solid-utils';
 
 import Authenticator from '@/framework/auth/Authenticator';
@@ -16,10 +15,6 @@ interface StorageData {
 
 export default class LocalStorageAuthenticator extends Authenticator {
 
-    public get fetch(): Fetch {
-        return window.fetch.bind(window);
-    }
-
     public async login(loginUrl: string, user?: SolidUserProfile): Promise<AuthSession> {
         user = user ?? {
             name: prompt('What is your name?', 'John Doe') ?? fail(AuthenticationCancelledError),
@@ -27,7 +22,7 @@ export default class LocalStorageAuthenticator extends Authenticator {
                 prompt('Where is your storage?', 'http://localhost:4000/') ?? fail(AuthenticationCancelledError),
             ],
             privateTypeIndexUrl:
-                prompt('Where is the type index?', 'http://localhost:4000/settings/privateTypeIndex.ttl') ??
+                prompt('Where is the type index?', 'http://localhost:4000/settings/privateTypeIndex') ??
                 fail(AuthenticationCancelledError),
             oidcIssuerUrl: loginUrl,
         } as SolidUserProfile;
@@ -52,6 +47,7 @@ export default class LocalStorageAuthenticator extends Authenticator {
         if (!Storage.has(STORAGE_KEY))
             return;
 
+        await this.initAuthenticatedFetch(window.fetch.bind(window));
         await this.startSession(Storage.require<StorageData>(STORAGE_KEY));
     }
 

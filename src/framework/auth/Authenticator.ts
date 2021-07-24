@@ -1,4 +1,4 @@
-import { PromisedValue, arr } from '@noeldemartin/utils';
+import { PromisedValue, arr, fail } from '@noeldemartin/utils';
 import type { Fetch } from 'soukai-solid';
 import type { FluentArray } from '@noeldemartin/utils';
 import type { SolidUserProfile } from '@noeldemartin/solid-utils';
@@ -14,19 +14,24 @@ export interface AuthSession {
 export interface AuthenticatorListener {
     onSessionStarted?: (session: AuthSession) => Promise<void> | void;
     onSessionEnded?: () => Promise<void> | void;
+    onAuthenticatedFetchReady?: (fetch: Fetch) => Promise<void> | void;
 }
 
 export default abstract class Authenticator {
 
     public name!: AuthenticatorName;
-    public abstract fetch: Fetch;
 
+    private authenticatedFetch?: Fetch;
     private booted?: PromisedValue<void>;
     private listeners: FluentArray<AuthenticatorListener> = arr<AuthenticatorListener>([]);
 
     public abstract login(loginUrl: string, user?: SolidUserProfile): Promise<AuthSession>;
 
     public abstract logout(): Promise<void>;
+
+    public requireAuthenticatedFetch(): Fetch {
+        return this.authenticatedFetch ?? fail('Authenticated fetch is not ready');
+    }
 
     public addListener(listener: AuthenticatorListener): () => void {
         if (!this.listeners.includes(listener))
@@ -56,6 +61,18 @@ export default abstract class Authenticator {
     }
 
     protected abstract restoreSession(): Promise<void>;
+
+    protected async initAuthenticatedFetch(fetch: Fetch): Promise<void> {
+        this.authenticatedFetch = fetch;
+
+        await Promise.all(
+            this.listeners.toArray().map(
+                async listener => {
+                    await listener.onAuthenticatedFetchReady?.call(listener, fetch);
+                },
+            ),
+        );
+    }
 
     protected async startSession(sessionData: Omit<AuthSession, 'authenticator'>): Promise<AuthSession> {
         const session: AuthSession = {

@@ -1,7 +1,6 @@
 import { PromisedValue, arr, fail, tap } from '@noeldemartin/utils';
 import { SolidContainerModel, SolidEngine } from 'soukai-solid';
 import type { FluentArray } from '@noeldemartin/utils';
-import type { SolidUserProfile } from '@noeldemartin/solid-utils';
 
 import Auth from '@/framework/core/facades/Auth';
 import Events from '@/framework/core/facades/Events';
@@ -76,12 +75,11 @@ export default class CookbookService extends Service<State> {
     }
 
     private async resolveCookbook(): Promise<SolidContainerModel> {
-        if (Auth.user && Auth.authenticator) {
-            const { user, authenticator } = Auth;
-            const engine = new SolidEngine(authenticator.fetch.bind(authenticator));
+        if (Auth.isLoggedIn()) {
+            const engine = new SolidEngine(Auth.authenticator.requireAuthenticatedFetch());
 
             return SolidContainerModel.withEngine(engine, async () => tap(
-                await this.findCookbook(user) ?? await this.createCookbook(user),
+                await this.findCookbook() ?? await this.createCookbook(),
                 cookbook => {
                     Recipe.collection = cookbook.url;
 
@@ -96,17 +94,25 @@ export default class CookbookService extends Service<State> {
         return new SolidContainerModel({ url: Recipe.collection, name: 'cookbook' });
     }
 
-    private findCookbook(user: SolidUserProfile): Promise<SolidContainerModel | null> {
-        return SolidContainerModel.fromTypeIndex(user.privateTypeIndexUrl, Recipe);
+    private async findCookbook(): Promise<SolidContainerModel | null> {
+        const user = Auth.requireUser();
+
+        return user.privateTypeIndexUrl
+            ? SolidContainerModel.fromTypeIndex(user.privateTypeIndexUrl, Recipe)
+            : null;
     }
 
-    private async createCookbook(user: SolidUserProfile): Promise<SolidContainerModel> {
+    private async createCookbook(): Promise<SolidContainerModel> {
+        const user = Auth.requireUser();
         const name = prompt('We need to create a new Cookbook, how do you want to call it?', 'Cookbook') ?? fail();
-        const storageUrl = prompt('Where would you like to store it?', user.storageUrls[0]) ?? fail();
+        const storageUrl = prompt('Where would you like to store it?', user.storageUrls[0] ?? '') || fail();
 
         return tap(new SolidContainerModel({ name }), async container => {
             await container.save(storageUrl);
-            await container.register(user.privateTypeIndexUrl, Recipe);
+
+            const typeIndexUrl = user.privateTypeIndexUrl ?? await Auth.createPrivateTypeIndex();
+
+            await container.register(typeIndexUrl, Recipe);
         });
     }
 

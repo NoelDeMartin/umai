@@ -12,7 +12,7 @@ const STORAGE_KEY = 'inrupt-authenticator';
 
 export default class InruptAuthenticator extends Authenticator {
 
-    public fetch!: Fetch;
+    private _fetch!: Fetch;
     private _login!: typeof login;
     private _logout!: typeof logout;
     private _handleIncomingRedirect!: typeof handleIncomingRedirect;
@@ -40,7 +40,7 @@ export default class InruptAuthenticator extends Authenticator {
     protected async restoreSession(): Promise<void> {
         const { fetch, handleIncomingRedirect, login, logout } = await import('@webpack/inrupt');
 
-        this.fetch = fetch;
+        this._fetch = fetch;
         this._login = login;
         this._logout = logout;
         this._handleIncomingRedirect = handleIncomingRedirect;
@@ -56,6 +56,8 @@ export default class InruptAuthenticator extends Authenticator {
         const session = await this._handleIncomingRedirect(window.location.href);
 
         if (session?.isLoggedIn && session.webId) {
+            await this.initAuthenticatedFetch(this._fetch);
+
             const user = await Auth.getUserProfile(session.webId);
 
             user && await this.startSession({ user, loginUrl });

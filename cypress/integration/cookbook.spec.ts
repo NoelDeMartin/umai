@@ -1,6 +1,7 @@
 describe('Cookbook', () => {
 
     beforeEach(() => {
+        cy.task('resetSolidPOD');
         cy.visit('/');
         cy.startApp();
     });

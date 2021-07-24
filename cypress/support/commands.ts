@@ -1,40 +1,13 @@
-let prompts: Record<string, string>;
+import authCommands from './commands/auth';
+import lifecycleCommands from './commands/lifecycle';
+import storageCommands from './commands/storage';
+import uiCommands from './commands/ui';
 
 const commands = {
-
-    login(): void {
-        // TODO use shortcut instead of logging in with the UI
-        cy.intercept('https://alice.example.com', { statusCode: 404 });
-        cy.intercept('https://alice.example.com/profile/card', { fixture: 'profile.ttl' });
-        cy.prepareAnswer('Login url?', 'https://alice.example.com');
-        cy.contains('Connect storage').click();
-        cy.waitForReload();
-    },
-
-    prepareAnswer(question: string, answer: string): void {
-        prompts[question] = answer;
-    },
-
-    resetPrompts(): void {
-        prompts = {};
-    },
-
-    resetStorage(): void {
-        indexedDB.deleteDatabase('soukai');
-        indexedDB.deleteDatabase('soukai-meta');
-    },
-
-    startApp(): void {
-        cy.window().then((window: Window) => {
-            window.prompt = (question, defaultAnswer) => prompts[question ?? ''] ?? defaultAnswer ?? null;
-            window.testing?.start();
-        });
-    },
-
-    waitForReload(): void {
-        cy.get('#app.loading').then(() => cy.startApp());
-    },
-
+    ...authCommands,
+    ...lifecycleCommands,
+    ...storageCommands,
+    ...uiCommands,
 };
 
 type CustomCommands = typeof commands;
@@ -50,7 +23,6 @@ declare global {
 
 export default function installCustomCommands(): void {
     beforeEach(() => {
-        cy.task('resetSolidPOD');
         cy.resetStorage();
         cy.resetPrompts();
     });

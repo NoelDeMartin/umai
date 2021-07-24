@@ -5,4 +5,4 @@
 <#me>
     a foaf:Person;
     pim:storage <http://localhost:4000/>;
-    solid:privateTypeIndex <http://localhost:4000/settings/privateTypeIndex.ttl>.
+    solid:privateTypeIndex <http://localhost:4000/settings/privateTypeIndex>.

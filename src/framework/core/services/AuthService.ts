@@ -1,6 +1,6 @@
-import { tap, urlRoot } from '@noeldemartin/utils';
-import { fetchLoginUserProfile } from '@noeldemartin/solid-utils';
-import type { SolidUserProfile } from '@noeldemartin/solid-utils';
+import { createPrivateTypeIndex, fetchLoginUserProfile } from '@noeldemartin/solid-utils';
+import { fail, tap, urlRoot } from '@noeldemartin/utils';
+import type { Fetch , SolidUserProfile } from '@noeldemartin/solid-utils';
 
 import { getAuthenticator } from '@/framework/auth';
 import AuthenticationCancelledError from '@/framework/auth/errors/AuthenticationCancelledError';
@@ -30,8 +30,9 @@ interface ComputedState {
 declare module '@/framework/core/services/EventsService' {
 
     export interface EventsPayload {
-        login: AuthSession;
-        logout: void;
+        'authenticated-fetch-ready': Fetch;
+        'login': AuthSession;
+        'logout': void;
     }
 
 }
@@ -42,6 +43,15 @@ export default class AuthService extends Service<State, ComputedState> {
 
     public isLoggedIn(): this is { user: SolidUserProfile; authenticator: Authenticator } {
         return this.loggedIn;
+    }
+
+    public requireUser(): SolidUserProfile {
+        return this.user ?? fail('Could not get user profile');
+    }
+
+    public async getUserProfile(url: string): Promise<SolidUserProfile | null> {
+        return this.profiles[url]
+            ?? tap(await fetchLoginUserProfile(url), profile => profile && this.rememberProfile(profile));
     }
 
     public async login(loginUrl: string, authenticatorName: AuthenticatorName = 'default'): Promise<void> {
@@ -97,9 +107,18 @@ export default class AuthService extends Service<State, ComputedState> {
         await this.authenticator.logout();
     }
 
-    public async getUserProfile(url: string): Promise<SolidUserProfile | null> {
-        return this.profiles[url]
-            ?? tap(await fetchLoginUserProfile(url), profile => profile && this.rememberProfile(profile));
+    public async createPrivateTypeIndex(): Promise<string> {
+        if (!this.isLoggedIn())
+            throw new Error('Can\'t create a type index because the user is not logged in');
+
+        const user = this.user;
+        const typeIndexUrl = await createPrivateTypeIndex(user, this.authenticator.requireAuthenticatedFetch());
+
+        return tap(typeIndexUrl, () => {
+            user.privateTypeIndexUrl = typeIndexUrl;
+
+            this.rememberProfile(user);
+        });
     }
 
     protected async boot(): Promise<void> {
@@ -138,6 +157,7 @@ export default class AuthService extends Service<State, ComputedState> {
 
                 await Events.emit('logout');
             },
+            onAuthenticatedFetchReady: fetch => Events.emit('authenticated-fetch-ready', fetch),
         });
 
         await authenticator.boot();

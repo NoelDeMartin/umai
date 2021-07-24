@@ -11,7 +11,7 @@ const tasks: Cypress.Tasks = {
             await cookbook?.delete();
         });
 
-        await fetch('http://localhost:4000/settings/privateTypeIndex.ttl', {
+        await fetch('http://localhost:4000/settings/privateTypeIndex', {
             method: 'PUT',
             headers: { 'Content-Type': 'text/turtle' },
             body: `
