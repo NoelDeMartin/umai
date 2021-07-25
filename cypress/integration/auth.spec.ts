@@ -17,7 +17,7 @@ describe('Authentication', () => {
         cy.contains('you\'re connected to http://localhost:4000/').should('be.visible');
     });
 
-    it('logs in using the Inrupt authenticator', () => {
+    it('signs up using the Inrupt authenticator', () => {
         // Arrange
         cy.intercept('POST', 'http://localhost:4000/alice/').as('createCookbook');
         cy.intercept('PUT', 'http://localhost:4000/alice/settings/privateTypeIndex').as('createTypeIndex');
@@ -27,9 +27,9 @@ describe('Authentication', () => {
         cy.visit('/?authenticator=inrupt');
         cy.startApp();
 
-        // Act - Log in
+        // Act - Sign up
         cy.contains('Connect storage').click();
-        cy.cssAuthorize({ resetPOD: true });
+        cy.cssAuthorize({ reset: true });
         cy.waitForReload({ resetProfiles: true });
 
         // Act - Create recipe
@@ -46,6 +46,40 @@ describe('Authentication', () => {
         cy.get('@createTypeIndex').its('request.headers.authorization').should('match', /DPoP .*/);
         cy.get('@registerCookbook').its('request.headers.authorization').should('match', /DPoP .*/);
         cy.get('@patchRamen').its('request.headers.authorization').should('match', /DPoP .*/);
+        cy.get('@patchRamen').its('request.headers.if-none-match').should('equal', '*');
+    });
+
+    it('logs in using the Inrupt authenticator', () => {
+        // Arrange
+        cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/pisto').as('patchPisto');
+        cy.prepareAnswer('Login url?', 'http://localhost:4000/alice/');
+        cy.visit('/?authenticator=inrupt');
+        cy.startApp();
+
+        // Act - Log in
+        cy.contains('Connect storage').click();
+        cy.cssAuthorize({
+            reset: {
+                typeIndex: true,
+                cookbook: true,
+                recipe: 'pisto',
+            },
+        });
+        cy.waitForReload({ resetProfiles: true });
+
+        // Act - Update recipe
+        cy.contains('Pisto').click();
+        cy.contains('edit').click();
+        cy.get('#name').type('!');
+        cy.contains('Save').click();
+        cy.get('[aria-label="Sync"]').click();
+        cy.get('.animate-spin').should('not.exist');
+
+        // Assert
+        cy.contains('Pisto!').should('be.visible');
+
+        cy.get('@patchPisto').its('request.headers.authorization').should('match', /DPoP .*/);
+        cy.get('@patchPisto').its('request.headers.if-none-match').should('not.exist');
     });
 
 });

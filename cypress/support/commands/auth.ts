@@ -1,9 +1,16 @@
-import { arr } from '@noeldemartin/utils';
+import { arr, stringToSlug } from '@noeldemartin/utils';
 
-interface CSSAuthorizeOptions {
-    resetPOD: boolean;
+interface ResetOptions {
+    typeIndex: boolean;
+    cookbook: boolean;
+    recipe: string;
 }
 
+interface CSSAuthorizeOptions {
+    reset: boolean | Partial<ResetOptions>;
+}
+
+const cssPodUrl = 'http://localhost:4000';
 const queuedRequests = arr<{ url: string; options: RequestInit }>();
 
 function cssLogin() {
@@ -22,21 +29,28 @@ function cssRegister() {
     cy.contains('log in').click();
 }
 
-function cssResetPOD() {
-    cy.queueAuthenticatedRequest('http://localhost:4000/alice/profile/card', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/sparql-update' },
-        body: `
-            DELETE DATA {
-                <http://localhost:4000/alice/profile/card#me>
-                    <http://www.w3.org/ns/solid/terms#privateTypeIndex>
-                    <http://localhost:4000/alice/settings/privateTypeIndex> .
-            }
-        `,
-    });
-    cy.queueAuthenticatedRequest('http://localhost:4000/alice/settings/privateTypeIndex', { method: 'DELETE' });
-    cy.queueAuthenticatedRequest('http://localhost:4000/alice/cookbook/ramen', { method: 'DELETE' });
-    cy.queueAuthenticatedRequest('http://localhost:4000/alice/cookbook/', { method: 'DELETE' });
+function cssResetPOD(options: Partial<ResetOptions> = {}) {
+    // Delete previous data
+    cy.queueUpdatingSolidDocument('/alice/profile/card', 'remove-type-index.sparql');
+    cy.queueDeletingSolidDocument('/alice/settings/privateTypeIndex');
+    cy.queueDeletingSolidDocument('/alice/cookbook/ramen');
+    cy.queueDeletingSolidDocument('/alice/cookbook/pisto');
+    cy.queueDeletingSolidDocument('/alice/cookbook/');
+
+    // Create new data
+    if (options.typeIndex) {
+        cy.queueCreatingSolidDocument('/alice/settings/privateTypeIndex', 'type-index.ttl');
+        cy.queueUpdatingSolidDocument('/alice/profile/card', 'add-type-index.sparql');
+    }
+
+    if (options.typeIndex && options.cookbook) {
+        cy.queueCreatingSolidContainer('/alice/', 'Cookbook');
+        cy.queueUpdatingSolidDocument('/alice/settings/privateTypeIndex', 'register-cookbook.sparql');
+    }
+
+    if (options.typeIndex && options.cookbook && options.recipe) {
+        cy.queueCreatingSolidDocument(`/alice/cookbook/${options.recipe}`, `${options.recipe}.ttl`);
+    }
 }
 
 export function queueAuthenticatedRequests(window: Window): void {
@@ -60,8 +74,8 @@ export default {
             cssLogin();
         });
 
-        if (options.resetPOD)
-            cssResetPOD();
+        if (options.reset)
+            cssResetPOD(typeof options.reset === 'object' ? options.reset : {});
     },
 
     login(): void {
@@ -75,6 +89,42 @@ export default {
 
     queueAuthenticatedRequest(url: string, options: RequestInit): void {
         queuedRequests.push({ url, options });
+    },
+
+    queueCreatingSolidContainer(parentUrl: string, name: string): void {
+        cy.queueAuthenticatedRequest(cssPodUrl + parentUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/turtle',
+                'Link': '<http://www.w3.org/ns/ldp#BasicContainer>; rel="type"',
+                'Slug': stringToSlug(name),
+            },
+            body: `<> <http://www.w3.org/2000/01/rdf-schema#label> "${name}" .`,
+        });
+    },
+
+    queueCreatingSolidDocument(url: string, fixture: string): void {
+        cy.fixture(fixture).then(body => {
+            cy.queueAuthenticatedRequest(cssPodUrl + url, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'text/turtle' },
+                body,
+            });
+        });
+    },
+
+    queueDeletingSolidDocument(url: string): void {
+        cy.queueAuthenticatedRequest(cssPodUrl + url, { method: 'DELETE' });
+    },
+
+    queueUpdatingSolidDocument(url: string, fixture: string): void {
+        cy.fixture(fixture).then(body => {
+            cy.queueAuthenticatedRequest(cssPodUrl + url, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/sparql-update' },
+                body,
+            });
+        });
     },
 
 };

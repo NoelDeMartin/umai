@@ -22,7 +22,7 @@
     "@noeldemartin/solid-utils": "0.0.0-next.ed09dba2be2f93bfec54aec8b0d57a86eff39358",
     "@noeldemartin/utils": "0.1.0-next.668c4c51444730154042b5b92f098b5fa62f46d7",
     "soukai": "^0.4.1-next.71f0ece01885ed0d16d51f074de9106ad12a1c29",
-    "soukai-solid": "^0.4.1-next.afa4c96df0f8c10e7c99f905cfc85ad2da33d0c9",
+    "soukai-solid": "^0.4.1-next.02c9ef0bda473621645b38c18133693458b951df",
     "tailwindcss": "^2.0.3",
     "vue": "^3.0.11",
     "vue-router": "^4.0.5",

@@ -37,9 +37,10 @@ export default class CookbookService extends Service<State> {
         await this.loadRecipes();
 
         Events.on('login', async () => {
+            // TODO this should be refactored, because technically the cookbook is already loaded (it's just the local
+            // one, not the remote, that's why this works now). Instead we should migrate both the local cookbook and
+            // the recipes to match the remote declarations.
             await this.loadCookbook();
-
-            // TODO upon logging in, local recipes must be updated with a remote url and uploaded to the cookbook
         });
 
         Events.on('logout', () => {
@@ -98,7 +99,7 @@ export default class CookbookService extends Service<State> {
         const user = Auth.requireUser();
 
         return user.privateTypeIndexUrl
-            ? SolidContainerModel.fromTypeIndex(user.privateTypeIndexUrl, Recipe)
+            ? await SolidContainerModel.fromTypeIndex(user.privateTypeIndexUrl, Recipe)
             : null;
     }
 

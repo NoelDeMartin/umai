@@ -25,6 +25,7 @@
                 type="button"
                 class="text-gray-500 hover:text-red-500"
                 title="Log out"
+                aria-label="Log out"
                 @click="$auth.logout()"
             >
                 <i-heroicons-solid-logout />

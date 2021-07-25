@@ -1,0 +1,14 @@
+@prefix schema: <https://schema.org/> .
+@prefix soukai: <https://soukai.noeldemartin.com/vocab/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<#it>
+    a schema:Recipe ;
+    schema:name "Pisto" ;
+    schema:recipeIngredient "Eggplant", "Zucchini", "Onion", "Tomatoes" .
+
+<#it-metadata>
+    a soukai:Metadata ;
+    soukai:resource <#it> ;
+    soukai:createdAt "2021-07-24T00:00:00.000Z"^^xsd:dateTime ;
+    soukai:updatedAt "2021-07-24T00:00:00.000Z"^^xsd:dateTime .

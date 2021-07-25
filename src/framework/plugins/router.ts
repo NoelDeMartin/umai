@@ -5,7 +5,6 @@ import type { Component, ComponentOptions , Plugin } from 'vue';
 import type { RouteLocationRaw , RouteRecordRaw } from 'vue-router';
 import type { SolidModel } from 'soukai-solid';
 
-import Events from '@/framework/core/facades/Events';
 import Router from '@/framework/core/facades/Router';
 import UI from '@/framework/core/facades/UI';
 
@@ -82,10 +81,6 @@ export default function(routes: RouteRecordRaw[]): Plugin {
     router.beforeEach(once(handleGithubPagesRedirect));
 
     Router.setInstance(router);
-    Events.on('application-ready', () => {
-        Events.on('login', () => Router.replace({ name: 'home' }));
-        Events.on('logout', () => Router.replace({ name: 'login' }));
-    });
 
     return router;
 }

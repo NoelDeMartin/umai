@@ -63,6 +63,7 @@ export default class CloudService extends Service<State, ComputedState> {
         Auth.authenticator && this.initializeEngine(Auth.authenticator);
 
         Events.on('login', ({ authenticator }) => this.initializeEngine(authenticator));
+        Events.on('application-ready', () => this.sync());
     }
 
     protected getInitialState(): State {
