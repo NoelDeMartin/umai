@@ -12,4 +12,9 @@ export default SolidModel.schema({
         rdfProperty: 'schema:recipeIngredient',
         items: FieldType.String,
     },
+    instructionSteps: {
+        type: FieldType.Array,
+        rdfProperty: 'schema:recipeInstructions',
+        items: FieldType.Key,
+    },
 });

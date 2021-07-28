@@ -21,8 +21,8 @@
   "dependencies": {
     "@noeldemartin/solid-utils": "0.0.0-next.ed09dba2be2f93bfec54aec8b0d57a86eff39358",
     "@noeldemartin/utils": "0.1.0-next.668c4c51444730154042b5b92f098b5fa62f46d7",
-    "soukai": "^0.4.1-next.71f0ece01885ed0d16d51f074de9106ad12a1c29",
-    "soukai-solid": "^0.4.1-next.02c9ef0bda473621645b38c18133693458b951df",
+    "soukai": "^0.4.1-next.d0901309bea24807517abc86c5532872dccff665",
+    "soukai-solid": "^0.4.1-next.0f9c86ea46fa7a3337659b8237fe6f601ab8865f",
     "tailwindcss": "^2.0.3",
     "vue": "^3.0.11",
     "vue-router": "^4.0.5",

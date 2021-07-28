@@ -21,6 +21,11 @@
                     {{ ingredient }}
                 </li>
             </ul>
+            <ol v-if="instructions.length > 0" class="mt-2">
+                <li v-for="(instructionStep, index) of instructions" :key="index" class="text-xs">
+                    {{ instructionStep.position }}. {{ instructionStep.text }}
+                </li>
+            </ol>
         </div>
     </div>
 </template>
@@ -30,6 +35,11 @@ import { defineComponent } from 'vue';
 import type { PropType } from 'vue';
 
 import type Recipe from '@/models/Recipe';
+import type RecipeInstructionsStep from '@/models/RecipeInstructionsStep';
+
+interface Data {
+    instructions: RecipeInstructionsStep[];
+}
 
 export default defineComponent({
     props: {
@@ -37,6 +47,18 @@ export default defineComponent({
             type: Object as PropType<Recipe>,
             required: true,
         },
+    },
+    data(): Data {
+        return { instructions: [] };
+    },
+    async created() {
+        await this.recipe.loadRelationIfUnloaded('instructions');
+
+        const instructions = this.recipe.instructions?.slice(0) ?? [];
+
+        instructions.sort((a, b) => a.position - b.position);
+
+        this.instructions = instructions;
     },
 });
 </script>
