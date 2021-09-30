@@ -18,7 +18,8 @@ INSERT DATA {
     <#it>
         schema:name "Ramen!" ;
         schema:description "is life" ;
-	    schema:recipeIngredient "Toppings" .
+	    schema:recipeIngredient "Toppings" ;
+        schema:recipeInstructions <#[[instruction-step-1][.*]]>, <#[[instruction-step-2][.*]]> .
 
     <#it-metadata>
         soukai:updatedAt "[[.*]]"^^xsd:dateTime .
@@ -58,4 +59,34 @@ INSERT DATA {
         soukai:date "[[.*]]"^^xsd:dateTime ;
         soukai:property schema:recipeIngredient ;
         soukai:value "Toppings" .
+
+    <#it-operation-[[.*]]>
+        a soukai:Operation ;
+        soukai:resource <#it> ;
+        soukai:date "[[.*]]"^^xsd:dateTime ;
+        soukai:type soukai:AddOperation ;
+        soukai:property schema:recipeInstructions ;
+        soukai:value <#[[instruction-step-1][.*]]>, <#[[instruction-step-2][.*]]> .
+
+    <#[[instruction-step-1][.*]]>
+        a schema:HowToStep ;
+        schema:text "Boil the noodles" ;
+        schema:position 1 .
+
+    <#[[instruction-step-1][.*]]-metadata>
+        a soukai:Metadata ;
+        soukai:resource <#[[instruction-step-1][.*]]> ;
+        soukai:createdAt "[[.*]]"^^xsd:dateTime ;
+        soukai:updatedAt "[[.*]]"^^xsd:dateTime .
+
+    <#[[instruction-step-2][.*]]>
+        a schema:HowToStep ;
+        schema:text "Dip them into the broth" ;
+        schema:position 2 .
+
+    <#[[instruction-step-2][.*]]-metadata>
+        a soukai:Metadata ;
+        soukai:resource <#[[instruction-step-2][.*]]> ;
+        soukai:createdAt "[[.*]]"^^xsd:dateTime ;
+        soukai:updatedAt "[[.*]]"^^xsd:dateTime .
 }

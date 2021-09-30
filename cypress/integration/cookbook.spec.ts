@@ -1,3 +1,7 @@
+// TODO configure .jsonld loader
+import firstRamenJsonLD from '@cy/fixtures/ramen-1.json';
+import secondRamenJsonLD from '@cy/fixtures/ramen-2.json';
+
 describe('Cookbook', () => {
 
     beforeEach(() => {
@@ -8,7 +12,6 @@ describe('Cookbook', () => {
 
     it('creates and edits recipes', () => {
         // Arrange
-        cy.prepareAnswer('What\'s the new text?', 'Dip them into the broth!');
         cy.contains('No recipes yet!').should('be.visible');
 
         // Act - create
@@ -31,9 +34,10 @@ describe('Cookbook', () => {
         cy.get('#name').type('!');
         cy.get('#new-ingredient').type('Toppings');
         cy.get('[aria-label="Add ingredient"]').click();
-        cy.get('#new-instruction-step').type('Add toppings');
+        cy.get('#new-instruction-step').type('Add Toppings');
         cy.get('[aria-label="Add instruction step"]').click();
         cy.contains('2. Dip them into the broth').within(() => {
+            cy.prepareAnswer('What\'s the new text?', 'Dip them into the broth!');
             cy.get('[aria-label="Change instruction step text"]').click();
         });
         cy.contains('Save').click();
@@ -49,7 +53,9 @@ describe('Cookbook', () => {
         cy.contains('Toppings').should('be.visible');
         cy.contains('1. Boil the noodles').should('be.visible');
         cy.contains('2. Dip them into the broth!').should('be.visible');
-        cy.contains('3. Add toppings').should('be.visible');
+        cy.contains('3. Add Toppings').should('be.visible');
+
+        cy.assertLocalDocumentEquals('solid://recipes/ramen', firstRamenJsonLD);
     });
 
     it('sends model updates to the cloud', () => {
@@ -75,6 +81,10 @@ describe('Cookbook', () => {
         cy.get('#description').type('is life');
         cy.get('#new-ingredient').type('Toppings');
         cy.get('[aria-label="Add ingredient"]').click();
+        cy.get('#new-instruction-step').type('Boil the noodles');
+        cy.get('[aria-label="Add instruction step"]').click();
+        cy.get('#new-instruction-step').type('Dip them into the broth');
+        cy.get('[aria-label="Add instruction step"]').click();
         cy.contains('Save').click();
         cy.get('[aria-label="Sync"]').click();
         cy.get('.animate-spin').should('not.exist');
@@ -88,6 +98,12 @@ describe('Cookbook', () => {
         cy.get('[aria-label="Add ingredient"]').click();
         cy.get('#new-ingredient').type('Nori');
         cy.get('[aria-label="Add ingredient"]').click();
+        cy.get('#new-instruction-step').type('Add Toppings');
+        cy.contains('2. Dip them into the broth').within(() => {
+            cy.prepareAnswer('What\'s the new text?', 'Dip them into the broth!');
+            cy.get('[aria-label="Change instruction step text"]').click();
+        });
+        cy.get('[aria-label="Add instruction step"]').click();
         cy.contains('Save').click();
         cy.get('[aria-label="Sync"]').click();
         cy.get('.animate-spin').should('not.exist');
@@ -104,6 +120,8 @@ describe('Cookbook', () => {
 
             cy.get('@patchRamen.all').should('have.length', fixtures.length);
         });
+
+        cy.assertLocalDocumentEquals('http://localhost:4000/cookbook/ramen', secondRamenJsonLD);
     });
 
 });

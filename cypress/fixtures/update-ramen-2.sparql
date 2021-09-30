@@ -9,6 +9,11 @@ DELETE DATA {
         schema:recipeIngredient "Toppings" .
 
     <#it-metadata> soukai:updatedAt "[[.*]]"^^xsd:dateTime .
+
+    <#[[instruction-step-2][.*]]> schema:text "Dip them into the broth" .
+
+    <#[[instruction-step-2][.*]]-metadata> soukai:updatedAt "[[.*]]"^^xsd:dateTime .
+
 } ;
 
 INSERT DATA {
@@ -19,7 +24,8 @@ INSERT DATA {
     <#it>
         schema:name "Jun's Ramen" ;
         schema:description "Instructions: https://www.youtube.com/watch?v=9WXIrnWsaCo" ;
-        schema:recipeIngredient "Shiitake", "Nori" .
+        schema:recipeIngredient "Shiitake", "Nori" ;
+        schema:recipeInstructions <#[[instruction-step-3][.*]]> .
 
     <#it-metadata> soukai:updatedAt "[[.*]]"^^xsd:dateTime .
 
@@ -52,4 +58,49 @@ INSERT DATA {
         soukai:date "[[.*]]"^^xsd:dateTime ;
         soukai:property schema:recipeIngredient ;
         soukai:value "Toppings" .
+
+    <#it-operation-[[.*]]>
+        a soukai:Operation ;
+        soukai:resource <#it> ;
+        soukai:type soukai:AddOperation ;
+        soukai:date "[[.*]]"^^xsd:dateTime ;
+        soukai:property schema:recipeInstructions ;
+        soukai:value <#[[instruction-step-3][.*]]> .
+
+    <#[[instruction-step-2][.*]]> schema:text "Dip them into the broth!" .
+
+    <#[[instruction-step-2][.*]]-metadata> soukai:updatedAt "[[.*]]"^^xsd:dateTime .
+
+    <#[[instruction-step-2][.*]]-operation-[[.*]]>
+        a soukai:Operation ;
+        soukai:resource <#[[instruction-step-2][.*]]> ;
+        soukai:date "[[.*]]"^^xsd:dateTime ;
+        soukai:property schema:text ;
+        soukai:value "Dip them into the broth" .
+
+    <#[[instruction-step-2][.*]]-operation-[[.*]]>
+        a soukai:Operation ;
+        soukai:resource <#[[instruction-step-2][.*]]> ;
+        soukai:date "[[.*]]"^^xsd:dateTime ;
+        soukai:property schema:position ;
+        soukai:value 2 .
+
+    <#[[instruction-step-2][.*]]-operation-[[.*]]>
+        a soukai:Operation ;
+        soukai:resource <#[[instruction-step-2][.*]]> ;
+        soukai:date "[[.*]]"^^xsd:dateTime ;
+        soukai:property schema:text ;
+        soukai:value "Dip them into the broth!" .
+
+    <#[[instruction-step-3][.*]]>
+        a schema:HowToStep ;
+        schema:text "Add Toppings" ;
+        schema:position 3 .
+
+    <#[[instruction-step-3][.*]]-metadata>
+        a soukai:Metadata ;
+        soukai:resource <#[[instruction-step-3][.*]]> ;
+        soukai:createdAt "[[.*]]"^^xsd:dateTime ;
+        soukai:updatedAt "[[.*]]"^^xsd:dateTime .
+
 }

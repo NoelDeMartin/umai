@@ -1,6 +1,6 @@
 <template>
     <form
-        class="flex flex-col flex-grow max-w-2xl p-6 space-y-4 bg-white rounded shadow"
+        class="flex flex-col flex-grow p-6 space-y-4 max-w-2xl bg-white rounded shadow"
         @submit.prevent="submit"
     >
         <div>
@@ -11,7 +11,7 @@
                     ref="nameInput"
                     v-model="name"
                     type="text"
-                    class="relative block w-full px-3 py-2 text-gray-900 placeholder-gray-500 border border-transparent border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                    class="block relative px-3 py-2 w-full placeholder-gray-500 text-gray-900 rounded-md border border-transparent border-gray-300 appearance-none focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                     placeholder="Something tasty..."
                 >
             </div>
@@ -22,7 +22,7 @@
                 <textarea
                     id="description"
                     v-model="description"
-                    class="relative block w-full px-3 py-2 text-gray-900 placeholder-gray-500 border border-transparent border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                    class="block relative px-3 py-2 w-full placeholder-gray-500 text-gray-900 rounded-md border border-transparent border-gray-300 appearance-none focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                     placeholder="Step 1: Prepare ingredients&#10;Step 2: ???&#10;Step 3: Profit!"
                     rows="3"
                 />
@@ -32,8 +32,8 @@
             <h2 class="block mb-2 text-sm font-medium text-gray-700">
                 Ingredients
             </h2>
-            <ul v-if="ingredients.length > 0" class="border border-b-0 border-gray-200 divide-y divide-gray-200 rounded-t-md">
-                <li v-for="(ingredient, index) in ingredients" :key="index" class="flex items-center justify-between px-3 py-2">
+            <ul v-if="ingredients.length > 0" class="rounded-t-md border border-b-0 border-gray-200 divide-y divide-gray-200">
+                <li v-for="(ingredient, index) in ingredients" :key="index" class="flex justify-between items-center px-3 py-2">
                     {{ ingredient }}
                     <button
                         type="button"
@@ -51,16 +51,16 @@
                     id="new-ingredient"
                     v-model="newIngredient"
                     type="text"
-                    class="block w-full py-2 pl-3 pr-12 border border-gray-300 rounded-b-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    class="block py-2 pr-12 pl-3 w-full rounded-b-md border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                     :class="{ 'rounded-t-md': ingredients.length === 0 }"
                     placeholder="Ingredient"
                     @keydown.enter.prevent="addIngredient()"
                 >
-                <div class="absolute inset-y-0 right-0 flex items-center">
+                <div class="flex absolute inset-y-0 right-0 items-center">
                     <button
                         aria-label="Add ingredient"
                         type="button"
-                        class="inline-flex px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-br-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                        class="inline-flex px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-br-md border border-transparent hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                         :class="{ 'rounded-tr-md': ingredients.length === 0 }"
                         @click="addIngredient()"
                     >
@@ -73,8 +73,8 @@
             <h2 class="block mb-2 text-sm font-medium text-gray-700">
                 Instructions
             </h2>
-            <ul v-if="instructions.length > 0" class="border border-b-0 border-gray-200 divide-y divide-gray-200 rounded-t-md">
-                <li v-for="(instructionStep, index) in instructions" :key="instructionStep.url" class="flex items-center justify-between px-3 py-2">
+            <ul v-if="instructions.length > 0" class="rounded-t-md border border-b-0 border-gray-200 divide-y divide-gray-200">
+                <li v-for="(instructionStep, index) in instructions" :key="instructionStep.url" class="flex justify-between items-center px-3 py-2">
                     {{ instructionStep.position }}. {{ instructionStep.text }}
                     <div>
                         <button
@@ -118,16 +118,16 @@
                     id="new-instruction-step"
                     v-model="newInstructionStep"
                     type="text"
-                    class="block w-full py-2 pl-3 pr-12 border border-gray-300 rounded-b-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    class="block py-2 pr-12 pl-3 w-full rounded-b-md border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                     :class="{ 'rounded-t-md': instructions.length === 0 }"
                     placeholder="Instruction step"
                     @keydown.enter.prevent="addInstructionStep()"
                 >
-                <div class="absolute inset-y-0 right-0 flex items-center">
+                <div class="flex absolute inset-y-0 right-0 items-center">
                     <button
                         aria-label="Add instruction step"
                         type="button"
-                        class="inline-flex px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-br-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                        class="inline-flex px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-br-md border border-transparent hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                         :class="{ 'rounded-tr-md': instructions.length === 0 }"
                         @click="addInstructionStep()"
                     >
@@ -139,13 +139,13 @@
         <div class="flex flex-row-reverse self-end space-x-2 space-x-reverse">
             <button
                 type="submit"
-                class="inline-flex px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                class="inline-flex px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md border border-transparent hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
                 {{ recipe ? 'Save' : 'Create' }}
             </button>
             <button
                 type="button"
-                class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
+                class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-md border border-gray-300 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
                 @click="$emit('cancel')"
             >
                 Cancel
@@ -156,10 +156,11 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
+import type { Attributes } from 'soukai';
 import type { PropType } from 'vue';
 
 import Recipe from '@/models/Recipe';
-import RecipeInstructionsStep from '@/models/RecipeInstructionsStep';
+import type RecipeInstructionsStep from '@/models/RecipeInstructionsStep';
 
 export default defineComponent({
     props: {
@@ -175,7 +176,7 @@ export default defineComponent({
         const newIngredient = ref('');
         const newInstructionStep = ref('');
         const ingredients = ref<string[]>(props.recipe?.ingredients.slice(0) ?? []);
-        const instructions = ref<RecipeInstructionsStep[]>([]);
+        const instructions = ref<Attributes[]>([]);
         const nameInput = ref<HTMLInputElement>();
         const focus = () => nameInput.value?.focus();
         const addIngredient = () => {
@@ -184,10 +185,10 @@ export default defineComponent({
             newIngredient.value = '';
         };
         const addInstructionStep = () => {
-            const instructionStep = new RecipeInstructionsStep({
+            const instructionStep = {
                 text: newInstructionStep.value,
-                position: instructions.value.length + 1,
-            });
+                position: Number(instructions.value.length + 1),
+            };
 
             newInstructionStep.value = '';
             instructions.value.push(instructionStep);
@@ -196,7 +197,7 @@ export default defineComponent({
             const instructionStep = instructions.value[index];
             const text = prompt('What\'s the new text?', instructionStep.text);
 
-            instructionStep.update({ text });
+            instructionStep.text = text;
             instructions.value = instructions.value.slice(0);
         };
         const removeIngredient = (index: number) => ingredients.value.splice(index, 1);
@@ -212,26 +213,35 @@ export default defineComponent({
             if (!name.value)
                 return;
 
-            for (const step of instructions.value) {
-                await step.save();
-            }
-
             const attributes = {
                 name: name.value,
                 description: description.value || null,
                 ingredients: ingredients.value,
-                instructionSteps: instructions.value.map(step => step.url),
             };
 
-            const recipe = props.recipe
-                ? await props.recipe.update(attributes)
-                : await Recipe.create(attributes);
+            const recipe = props.recipe ?? new Recipe(attributes);
+
+            recipe.setAttributes(attributes);
+
+            for (const instructionAttributes of instructions.value) {
+                if (instructionAttributes.url) {
+                    recipe.instructions
+                        ?.find(model => model.url === instructionAttributes.url)
+                        ?.setAttributes(instructionAttributes);
+                } else {
+                    recipe.relatedInstructions.attach(instructionAttributes);
+                }
+
+                // TODO delete removed instruction steps
+            }
+
+            await recipe.save();
 
             emit('done', recipe);
         };
 
         props.recipe?.loadRelation<RecipeInstructionsStep[]>('instructions').then(recipeInstructions => {
-            instructions.value = recipeInstructions.slice(0);
+            instructions.value = recipeInstructions.map(step => step.getAttributes());
             instructions.value.sort((a, b) => a.position - b.position);
         });
 

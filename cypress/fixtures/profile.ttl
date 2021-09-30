@@ -2,6 +2,8 @@
 @prefix solid: <http://www.w3.org/ns/solid/terms#>.
 @prefix pim: <http://www.w3.org/ns/pim/space#>.
 
+<> a foaf:PersonalProfileDocument .
+
 <#me>
     a foaf:Person;
     pim:storage <http://localhost:4000/>;

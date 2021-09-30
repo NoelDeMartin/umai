@@ -4,7 +4,13 @@
         "target": "es2019",
         "types": [
             "cypress"
-        ]
+        ],
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["../src/*"],
+            "@cy/*": ["./*"],
+            "@webpack/*": ["../webpack/dist/*"]
+        }
     },
     "include": [
         "./**/*.ts",

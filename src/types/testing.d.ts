@@ -6,6 +6,7 @@ interface TestingStartOptions {
 
 interface TestingRuntime {
     start(options?: Partial<TestingStartOptions>): Promise<void>;
+    stop(): Promise<void>;
     queueAuthenticatedRequest(url: string, options: RequestInit): void;
 }
 

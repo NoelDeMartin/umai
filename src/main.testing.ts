@@ -1,3 +1,4 @@
+import { closeEngineConnections } from 'soukai';
 import { Storage, arr } from '@noeldemartin/utils';
 
 import boot from '@/boot';
@@ -25,6 +26,10 @@ window.testing = {
         });
 
         await boot();
+    },
+
+    async stop() {
+        await closeEngineConnections();
     },
 
     queueAuthenticatedRequest(url, options) {

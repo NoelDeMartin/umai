@@ -5,6 +5,7 @@ import type { FluentArray } from '@noeldemartin/utils';
 import Auth from '@/framework/core/facades/Auth';
 import Events from '@/framework/core/facades/Events';
 import Service from '@/framework/core/Service';
+import { setRemoteCollection } from '@/framework/cloud/remote_helpers';
 import type { IService } from '@/framework/core/Service';
 
 import Recipe from '@/models/Recipe';
@@ -82,7 +83,7 @@ export default class CookbookService extends Service<State> {
             return SolidContainerModel.withEngine(engine, async () => tap(
                 await this.findCookbook() ?? await this.createCookbook(),
                 cookbook => {
-                    Recipe.collection = cookbook.url;
+                    setRemoteCollection(Recipe, cookbook.url);
 
                     if (cookbook.url !== this.remoteCookbookUrl)
                         this.setState({ remoteCookbookUrl: cookbook.url });
@@ -106,7 +107,7 @@ export default class CookbookService extends Service<State> {
     private async createCookbook(): Promise<SolidContainerModel> {
         const user = Auth.requireUser();
         const name = prompt('We need to create a new Cookbook, how do you want to call it?', 'Cookbook') ?? fail();
-        const storageUrl = prompt('Where would you like to store it?', user.storageUrls[0] ?? '') || fail();
+        const storageUrl = prompt('Where would you like to store it?', user.storageUrls[0] ?? '') || fail<string>();
 
         return tap(new SolidContainerModel({ name }), async container => {
             await container.save(storageUrl);

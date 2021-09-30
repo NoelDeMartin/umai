@@ -1,5 +1,5 @@
 <template>
-    <footer class="flex items-center justify-center p-4 space-x-2">
+    <footer class="flex justify-center items-center p-4 space-x-2">
         <template v-if="$auth.isLoggedIn()">
             <button
                 type="button"
@@ -9,11 +9,11 @@
                 @click="sync()"
             >
                 <i-zondicons-cloud class="absolute inset-0 w-full h-full text-gray-500 group-hover:text-indigo-500" />
-                <div class="absolute inset-0 flex items-center justify-center w-full h-full text-gray-200">
+                <div class="flex absolute inset-0 justify-center items-center w-full h-full text-gray-200">
                     <i-zondicons-refresh v-if="syncing" class="w-3 h-3 animate-spin" />
                     <template v-else>
                         <i-zondicons-refresh class="hidden w-3 h-3 group-hover:block" />
-                        <span v-if="$cloud.dirty" class="text-xs group-hover:hidden">{{ $cloud.dirtyOperations.length }}</span>
+                        <span v-if="$cloud.dirty" class="text-xs group-hover:hidden">{{ $cloud.pendingUpdates.length }}</span>
                         <i-zondicons-checkmark v-else class="w-2 h-3 group-hover:hidden" />
                     </template>
                 </div>
