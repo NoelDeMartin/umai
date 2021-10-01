@@ -1,4 +1,6 @@
 import { PromisedValue, arr, fail } from '@noeldemartin/utils';
+import { SolidEngine } from 'soukai-solid';
+import type { Engine } from 'soukai';
 import type { Fetch } from 'soukai-solid';
 import type { FluentArray } from '@noeldemartin/utils';
 import type { SolidUserProfile } from '@noeldemartin/solid-utils';
@@ -31,6 +33,10 @@ export default abstract class Authenticator {
 
     public requireAuthenticatedFetch(): Fetch {
         return this.authenticatedFetch ?? fail('Authenticated fetch is not ready');
+    }
+
+    public newEngine(): Engine {
+        return new SolidEngine(this.requireAuthenticatedFetch());
     }
 
     public addListener(listener: AuthenticatorListener): () => void {

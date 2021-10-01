@@ -1,7 +1,8 @@
-import { Semaphore, map } from '@noeldemartin/utils';
-import { SolidEngine, SolidModel } from 'soukai-solid';
+import { Semaphore, map, tap } from '@noeldemartin/utils';
+import { SolidModel, SolidModelMetadata , SolidModelOperation } from 'soukai-solid';
+import type { Engine } from 'soukai';
 import type { ObjectsMap } from '@noeldemartin/utils';
-import type { SolidModelConstructor, SolidModelOperation } from 'soukai-solid';
+import type { SolidModelConstructor } from 'soukai-solid';
 
 import Auth from '@/framework/core/facades/Auth';
 import Service from '@/framework/core/Service';
@@ -12,7 +13,7 @@ import type { ComputedStateDefinitions, IService } from '@/framework/core/Servic
 
 interface State {
     dirtyRemoteModels: ObjectsMap<SolidModel>;
-    remoteModelHistoryHashes: Record<string, string | null>;
+    remoteOperationUrls: Record<string, string[]>;
 }
 
 interface ComputedState {
@@ -30,7 +31,7 @@ export default class CloudService extends Service<State, ComputedState> {
 
     protected handlers: CloudHandler[] = [];
     protected asyncLock: Semaphore = new Semaphore();
-    protected engine: SolidEngine | null = null;
+    protected engine: Engine | null = null;
 
     public async sync(): Promise<void> {
         if (!Auth.isLoggedIn())
@@ -67,7 +68,7 @@ export default class CloudService extends Service<State, ComputedState> {
     protected getInitialState(): State {
         return {
             dirtyRemoteModels: map([], 'url'),
-            remoteModelHistoryHashes: {},
+            remoteOperationUrls: {},
         };
     }
 
@@ -90,6 +91,12 @@ export default class CloudService extends Service<State, ComputedState> {
                 return Object.entries(pendingUpdates).reduce((pendingUpdates, [url, operations]) => {
                     const operationsMap: Record<string, SolidModelOperation[]> = {};
 
+                    if (operations.length === 0) {
+                        pendingUpdates.push([dirtyRemoteModels.get(url) as SolidModel, []]);
+
+                        return pendingUpdates;
+                    }
+
                     for (const operation of operations) {
                         const date = operation.date.toISOString();
 
@@ -111,7 +118,7 @@ export default class CloudService extends Service<State, ComputedState> {
     }
 
     protected initializeEngine(authenticator: Authenticator): void {
-        this.engine = new SolidEngine(authenticator.requireAuthenticatedFetch());
+        this.engine = authenticator.newEngine();
 
         for (const handler of this.handlers) {
             getRemoteClass(handler.modelClass).setEngine(this.engine);
@@ -127,11 +134,15 @@ export default class CloudService extends Service<State, ComputedState> {
 
         this.setState({
             dirtyRemoteModels: map(remoteModels.getItems().filter(model => model.isDirty()), 'url'),
-            remoteModelHistoryHashes: remoteModels.getItems().reduce((hashes, model) => {
-                hashes[model.url] = model.getHistoryHash();
+            remoteOperationUrls: remoteModels.getItems().reduce((urls, model) => {
+                urls[model.url] = model
+                    .getRelatedModels()
+                    .map(related => related.operations ?? [])
+                    .flat()
+                    .map(operation => operation.url);
 
-                return hashes;
-            }, {} as Record<string, string | null>),
+                return urls;
+            }, {} as Record<string, string[]>),
         });
     }
 
@@ -142,11 +153,16 @@ export default class CloudService extends Service<State, ComputedState> {
 
         this.setState({
             dirtyRemoteModels: map([], 'url'),
-            remoteModelHistoryHashes: remoteModels.reduce((hashes, model) => {
-                hashes[model.url] = model.getHistoryHash();
+            remoteOperationUrls: remoteModels.reduce((urls, model) => {
+                urls[model.url] = model
+                    .getRelatedModels()
+                    .map(related => related.operations ?? [])
+                    .flat()
+                    .map(operation => operation.url);
 
-                return hashes;
-            }, this.remoteModelHistoryHashes),
+
+                return urls;
+            }, this.remoteOperationUrls),
         });
     }
 
@@ -215,7 +231,9 @@ export default class CloudService extends Service<State, ComputedState> {
         const localClass = localModel.static();
         const remoteClass = getRemoteClass(localModel.static());
 
-        return localModel.clone({ constructors: [[localClass, remoteClass]] });
+        return tap(localModel.clone({ constructors: [[localClass, remoteClass]] }), model => {
+            this.cleanRemoteModel(model);
+        });
     }
 
     protected cloneRemoteModel(remoteModel: SolidModel): SolidModel {
@@ -227,7 +245,11 @@ export default class CloudService extends Service<State, ComputedState> {
 
     protected async fetchRemoteModels(): Promise<SolidModel[]> {
         const models = await Promise.all(
-            this.handlers.map(handler => getRemoteClass(handler.modelClass).all()),
+            this.handlers.map(handler => {
+                const remoteClass = getRemoteClass(handler.modelClass);
+
+                return remoteClass.all();
+            }),
         );
 
         return models.flat();
@@ -244,6 +266,39 @@ export default class CloudService extends Service<State, ComputedState> {
             throw new Error(`Missing Cloud handler for '${localModel.static('modelName')}' model`);
 
         handler.addLocalModel(localModel);
+    }
+
+    protected cleanRemoteModel(remoteModel: SolidModel): void {
+        if (!(remoteModel.url in this.remoteOperationUrls))
+            return;
+
+        const remoteOperationUrls = this.remoteOperationUrls[remoteModel.url];
+        const relatedModels = remoteModel
+            .getRelatedModels()
+            .filter(
+                model =>
+                    !(model instanceof SolidModelMetadata) &&
+                    !(model instanceof SolidModelOperation),
+            );
+
+        for (const relatedModel of relatedModels) {
+            const operations = relatedModel.operations ?? [];
+
+            relatedModel.setRelationModels('operations', operations.filter(operation => {
+                if (!remoteOperationUrls.includes(operation.url))
+                    return false;
+
+                operation.cleanDirty(true);
+
+                return true;
+            }));
+            relatedModel.rebuildAttributesFromHistory();
+            relatedModel.cleanDirty(true);
+            relatedModel.metadata.cleanDirty(true);
+
+            relatedModel.setRelationModels('operations', operations);
+            relatedModel.rebuildAttributesFromHistory();
+        }
     }
 
 }

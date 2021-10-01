@@ -1,5 +1,5 @@
 import { PromisedValue, arr, fail, tap } from '@noeldemartin/utils';
-import { SolidContainerModel, SolidEngine } from 'soukai-solid';
+import { SolidContainerModel } from 'soukai-solid';
 import type { FluentArray } from '@noeldemartin/utils';
 
 import Auth from '@/framework/core/facades/Auth';
@@ -78,7 +78,7 @@ export default class CookbookService extends Service<State> {
 
     private async resolveCookbook(): Promise<SolidContainerModel> {
         if (Auth.isLoggedIn()) {
-            const engine = new SolidEngine(Auth.authenticator.requireAuthenticatedFetch());
+            const engine = Auth.authenticator.newEngine();
 
             return SolidContainerModel.withEngine(engine, async () => tap(
                 await this.findCookbook() ?? await this.createCookbook(),

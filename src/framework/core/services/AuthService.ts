@@ -81,7 +81,7 @@ export default class AuthService extends Service<State, ComputedState> {
 
             console.error(error);
 
-            alert('Could not log in');
+            alert('Could not log in (look at the console for more info)');
         }
     }
 

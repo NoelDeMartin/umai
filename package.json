@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@noeldemartin/solid-utils": "^0.1.1-next.7b4ae3cff8eddb646fb583cde8416341461a0f08",
-    "@noeldemartin/utils": "^0.2.1-next.27d75b3e784e78180faba9e360bcbd065904893f",
+    "@noeldemartin/utils": "^0.2.1-next.ffa82d5f0fb7fb186c336859d474d688f9a0af8c",
     "soukai": "^0.4.1-next.739bbe7caa1dc7b6bd01e7482bff3fa11732a48c",
     "soukai-solid": "^0.4.1-next.56d70cd2516ccdec76abcaec99569fb2e0d955b6",
     "tailwindcss": "^2.0.3",
