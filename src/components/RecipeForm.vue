@@ -220,6 +220,7 @@ export default defineComponent({
             };
 
             const recipe = props.recipe ?? new Recipe(attributes);
+            const instructionUrls = instructions.value.map(({ url }) => url);
 
             recipe.setAttributes(attributes);
 
@@ -231,8 +232,13 @@ export default defineComponent({
                 } else {
                     recipe.relatedInstructions.attach(instructionAttributes);
                 }
+            }
 
-                // TODO delete removed instruction steps
+            for (const instruction of recipe.instructions ?? []) {
+                if (instructionUrls.includes(instruction.url))
+                    continue;
+
+                recipe.relatedInstructions.detach(instruction);
             }
 
             await recipe.save();
