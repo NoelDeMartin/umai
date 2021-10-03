@@ -1,5 +1,5 @@
 import { createPrivateTypeIndex, fetchLoginUserProfile } from '@noeldemartin/solid-utils';
-import { fail, tap, urlRoot } from '@noeldemartin/utils';
+import { fail, objectWithout, tap, urlRoot } from '@noeldemartin/utils';
 import type { Fetch, SolidUserProfile } from '@noeldemartin/solid-utils';
 
 import { getAuthenticator } from '@/framework/auth';
@@ -41,7 +41,7 @@ export default class AuthService extends Service<State, ComputedState> {
 
     public static persist: Array<keyof State> = ['previousSession', 'profiles'];
 
-    public isLoggedIn(): this is { user: SolidUserProfile; authenticator: Authenticator } {
+    public isLoggedIn(): this is { session: AuthSession; user: SolidUserProfile; authenticator: Authenticator } {
         return this.loggedIn;
     }
 
@@ -52,6 +52,25 @@ export default class AuthService extends Service<State, ComputedState> {
     public async getUserProfile(url: string): Promise<SolidUserProfile | null> {
         return this.profiles[url]
             ?? tap(await fetchLoginUserProfile(url), profile => profile && this.rememberProfile(profile));
+    }
+
+    public async refreshUserProfile(): Promise<void> {
+        if (!this.isLoggedIn())
+            return;
+
+        this.setState({ profiles: objectWithout(this.profiles, [this.user.webId]) });
+
+        const user = await this.getUserProfile(this.user.webId);
+
+        if (!user)
+            throw new Error('User profile went missing');
+
+        this.setState({
+            session: {
+                ...this.session,
+                user,
+            },
+        });
     }
 
     public async login(loginUrl: string, authenticatorName: AuthenticatorName = 'default'): Promise<void> {

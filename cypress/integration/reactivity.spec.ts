@@ -8,7 +8,7 @@ describe('Reactivity', () => {
         cy.startApp();
     });
 
-    it('Reacts to new local recipes', () => {
+    it('reacts to new local recipes', () => {
         // Act
         cy.createRecipe('Ramen');
 
@@ -16,7 +16,7 @@ describe('Reactivity', () => {
         cy.contains('Ramen').should('be.visible');
     });
 
-    it('Reacts to new remote recipes', () => {
+    it('reacts to new remote recipes', () => {
         // Arrange
         cy.login();
         cy.fixture('ramen.ttl').then(body => cy.request({
@@ -34,7 +34,7 @@ describe('Reactivity', () => {
         cy.contains('Ramen').should('be.visible');
     });
 
-    it('Reacts to local recipe updates', () => {
+    it('reacts to local recipe updates', () => {
         // Arrange
         let ramen: Recipe;
 

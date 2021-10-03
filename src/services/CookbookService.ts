@@ -98,12 +98,23 @@ export default class CookbookService extends Service<State> {
         return new SolidContainerModel({ url: Recipe.collection, name: 'cookbook' });
     }
 
-    private async findCookbook(): Promise<SolidContainerModel | null> {
+    private async findCookbook(refreshStaleProfile: boolean = true): Promise<SolidContainerModel | null> {
         const user = Auth.requireUser();
 
-        return user.privateTypeIndexUrl
-            ? await SolidContainerModel.fromTypeIndex(user.privateTypeIndexUrl, Recipe)
-            : null;
+        try {
+            return user.privateTypeIndexUrl
+                ? await SolidContainerModel.fromTypeIndex(user.privateTypeIndexUrl, Recipe)
+                : null;
+        } catch (error) {
+            // TODO check that error was NetworkRequestError
+            if (!refreshStaleProfile)
+                throw error;
+
+            await Auth.refreshUserProfile();
+            await Auth.createPrivateTypeIndex();
+
+            return this.findCookbook(false);
+        }
     }
 
     private async createCookbook(): Promise<SolidContainerModel> {

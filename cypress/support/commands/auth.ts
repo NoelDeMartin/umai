@@ -29,30 +29,6 @@ function cssRegister() {
     cy.contains('log in').click();
 }
 
-function cssResetPOD(options: Partial<ResetOptions> = {}) {
-    // Delete previous data
-    cy.queueUpdatingSolidDocument('/alice/profile/card', 'remove-type-index.sparql');
-    cy.queueDeletingSolidDocument('/alice/settings/privateTypeIndex');
-    cy.queueDeletingSolidDocument('/alice/cookbook/ramen');
-    cy.queueDeletingSolidDocument('/alice/cookbook/pisto');
-    cy.queueDeletingSolidDocument('/alice/cookbook/');
-
-    // Create new data
-    if (options.typeIndex) {
-        cy.queueCreatingSolidDocument('/alice/settings/privateTypeIndex', 'type-index.ttl');
-        cy.queueUpdatingSolidDocument('/alice/profile/card', 'add-type-index.sparql');
-    }
-
-    if (options.typeIndex && options.cookbook) {
-        cy.queueCreatingSolidContainer('/alice/', 'Cookbook');
-        cy.queueUpdatingSolidDocument('/alice/settings/privateTypeIndex', 'register-cookbook.sparql');
-    }
-
-    if (options.typeIndex && options.cookbook && options.recipe) {
-        cy.queueCreatingSolidDocument(`/alice/cookbook/${options.recipe}`, `${options.recipe}.ttl`);
-    }
-}
-
 export function queueAuthenticatedRequests(window: Window): void {
     queuedRequests.map(({ url, options }) => window.testing?.queueAuthenticatedRequest(url, options));
     queuedRequests.clear();
@@ -75,7 +51,31 @@ export default {
         });
 
         if (options.reset)
-            cssResetPOD(typeof options.reset === 'object' ? options.reset : {});
+            cy.cssReset(typeof options.reset === 'object' ? options.reset : {});
+    },
+
+    cssReset(options: Partial<ResetOptions> = {}): void {
+        // Delete previous data
+        cy.queueUpdatingSolidDocument('/alice/profile/card', 'remove-type-index.sparql');
+        cy.queueDeletingSolidDocument('/alice/settings/privateTypeIndex');
+        cy.queueDeletingSolidDocument('/alice/cookbook/ramen');
+        cy.queueDeletingSolidDocument('/alice/cookbook/pisto');
+        cy.queueDeletingSolidDocument('/alice/cookbook/');
+
+        // Create new data
+        if (options.typeIndex) {
+            cy.queueCreatingSolidDocument('/alice/settings/privateTypeIndex', 'type-index.ttl');
+            cy.queueUpdatingSolidDocument('/alice/profile/card', 'add-type-index.sparql');
+        }
+
+        if (options.typeIndex && options.cookbook) {
+            cy.queueCreatingSolidContainer('/alice/', 'Cookbook');
+            cy.queueUpdatingSolidDocument('/alice/settings/privateTypeIndex', 'register-cookbook.sparql');
+        }
+
+        if (options.typeIndex && options.cookbook && options.recipe) {
+            cy.queueCreatingSolidDocument(`/alice/cookbook/${options.recipe}`, `${options.recipe}.ttl`);
+        }
     },
 
     login(): void {

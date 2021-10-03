@@ -82,4 +82,25 @@ describe('Authentication', () => {
         cy.get('@patchPisto').its('request.headers.if-none-match').should('not.exist');
     });
 
+    it('refreshes stale cached profiles', () => {
+        // Arrange
+        cy.prepareAnswer('Login url?', 'http://localhost:4000/alice/');
+        cy.visit('/?authenticator=inrupt');
+        cy.startApp();
+        cy.contains('Connect storage').click();
+        cy.cssAuthorize({ reset: true });
+        cy.waitForReload({ resetProfiles: true });
+        cy.contains('you\'re connected').should('be.visible');
+        cy.reload();
+
+        // Act
+        cy.contains('Reconnect').click();
+        cy.contains('Continue').click();
+        cy.cssReset();
+        cy.waitForReload();
+
+        // Assert
+        cy.contains('you\'re connected').should('be.visible');
+    });
+
 });
