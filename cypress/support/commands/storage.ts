@@ -4,28 +4,39 @@ import { deleteDB, openDB } from 'idb';
 import type Bluebird from 'cypress/types/bluebird';
 import type { JsonLD } from '@noeldemartin/solid-utils';
 
-async function getIndexedDBObject<T = object>(database: string, store: string, id: string): Promise<T> {
-    const db = await openDB(database);
-    const result = await db.get(store, id);
+async function getIndexedDBObject<T = object>(database: string, store: string, id: string): Promise<T | null> {
+    try {
+        const db = await openDB(database);
+        const result = await db.get(store, id);
 
-    db.close();
+        db.close();
 
-    return result;
+        return result ?? null;
+    } catch (error) {
+        return null;
+    }
 }
 
 export default {
+
+    assertLocalDocumentDoesNotExist(documentId: string): void {
+        cy.getIndexedDBObject<JsonLD>('soukai', requireUrlParentDirectory(documentId), documentId)
+            .then(document => expect(document).to.be.null);
+    },
 
     assertLocalDocumentEquals(documentId: string, expected: JsonLD): void {
         cy
             .getIndexedDBObject<JsonLD>('soukai', requireUrlParentDirectory(documentId), documentId)
             .then(actual => {
+                expect(actual).not.to.be.null;
+
                 Cypress.log({
                     name: 'assert',
                     message: 'comparing database documents',
                     consoleProps: () => ({ expected, actual }),
                 });
 
-                return actual;
+                return actual as JsonLD;
             })
             .then(actual => {
                 const promisedQuadArrays = [expected, actual].map(doc => jsonldToQuads(doc));
@@ -34,6 +45,11 @@ export default {
                     .then(quadArrays => quadArrays.map(quads => quadsToTurtle(quads)))
                     .then(([expectedTurtle, actualTurtle]) => expect(actualTurtle).to.be.turtle(expectedTurtle));
             });
+    },
+
+    assertLocalDocumentExists(documentId: string): void {
+        cy.getIndexedDBObject<JsonLD>('soukai', requireUrlParentDirectory(documentId), documentId)
+            .then(document => expect(document).not.to.be.null);
     },
 
     resetStorage(): void {
@@ -45,7 +61,7 @@ export default {
             ]));
     },
 
-    getIndexedDBObject<T = object>(database: string, store: string, id: string): Bluebird<T> {
+    getIndexedDBObject<T = object>(database: string, store: string, id: string): Bluebird<T | null> {
         return Cypress.Promise.cast(getIndexedDBObject<T>(database, store, id));
     },
 

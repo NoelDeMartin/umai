@@ -1,3 +1,5 @@
+import ramenJsonLD from '@cy/fixtures/ramen-3.json';
+
 describe('Authentication', () => {
 
     it('logs in using the localStorage authenticator', () => {
@@ -124,6 +126,83 @@ describe('Authentication', () => {
 
         // Assert
         cy.contains('No recipes yet!').should('be.visible');
+    });
+
+    it('migrates local data to cloud after logging in', () => {
+        // Arrange
+        cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/ramen').as('patchRamen');
+        cy.visit('/');
+        cy.startApp();
+
+        // Act - Create
+        cy.contains('New Recipe').click();
+        cy.get('#name').type('Ramen');
+        cy.get('#new-ingredient').type('Broth');
+        cy.get('[aria-label="Add ingredient"]').click();
+        cy.get('#new-ingredient').type('Noodles');
+        cy.get('[aria-label="Add ingredient"]').click();
+        cy.contains('Create').click();
+        cy.url().should('contain', 'ramen');
+        cy.url().should('not.contain', 'edit');
+
+        // Act - First edit
+        cy.contains('edit').click();
+        cy.get('#name').type('!');
+        cy.get('#description').type('is life');
+        cy.get('#new-ingredient').type('Toppings');
+        cy.get('[aria-label="Add ingredient"]').click();
+        cy.get('#new-instruction-step').type('Boil the noodles');
+        cy.get('[aria-label="Add instruction step"]').click();
+        cy.get('#new-instruction-step').type('Dip them into the broth');
+        cy.get('[aria-label="Add instruction step"]').click();
+        cy.contains('Save').click();
+        cy.url().should('contain', 'ramen');
+        cy.url().should('not.contain', 'edit');
+
+        // Act - Second edit
+        cy.contains('edit').click();
+        cy.get('#name').clear().type('Jun\'s Ramen');
+        cy.get('#description').clear().type('Instructions: https://www.youtube.com/watch?v=9WXIrnWsaCo');
+        cy.get('[aria-label="Remove \'Toppings\' ingredient"]').click();
+        cy.get('#new-ingredient').type('Shiitake');
+        cy.get('[aria-label="Add ingredient"]').click();
+        cy.get('#new-ingredient').type('Nori');
+        cy.get('[aria-label="Add ingredient"]').click();
+        cy.get('#new-instruction-step').type('Add Toppings');
+        cy.contains('2. Dip them into the broth').within(() => {
+            cy.prepareAnswer('What\'s the new text?', 'Dip them into the broth!');
+            cy.get('[aria-label="Change instruction step text"]').click();
+        });
+        cy.get('[aria-label="Add instruction step"]').click();
+        cy.contains('Save').click();
+        cy.url().should('contain', 'ramen');
+        cy.url().should('not.contain', 'edit');
+
+        // Act - Third edit
+        cy.contains('edit').click();
+        cy.contains('2. Dip them into the broth!').within(() => {
+            cy.get('[aria-label="Move instruction step up"]').click();
+        });
+        cy.contains('3. Add Toppings').within(() => {
+            cy.get('[aria-label="Remove instruction step"]').click();
+        });
+        cy.contains('Save').click();
+        cy.url().should('contain', 'ramen');
+        cy.url().should('not.contain', 'edit');
+
+        // Act
+        cy.visit('/?authenticator=inrupt');
+        cy.startApp();
+        cy.prepareAnswer('Login url?', 'http://localhost:4000/alice/');
+        cy.contains('Connect storage').click();
+        cy.cssAuthorize({ reset: true });
+        cy.waitForReload({ resetProfiles: true });
+
+        // Assert
+        cy.wait('@patchRamen');
+        cy.get('@patchRamen.all').should('have.length', 1);
+        cy.assertLocalDocumentEquals('http://localhost:4000/alice/cookbook/ramen', ramenJsonLD);
+        cy.assertLocalDocumentDoesNotExist('solid://recipes/ramen');
     });
 
 });

@@ -1,6 +1,6 @@
-import { PromisedValue, arr, fail, tap } from '@noeldemartin/utils';
+import { PromisedValue, arr, fail, isObject, tap } from '@noeldemartin/utils';
 import { SolidContainerModel } from 'soukai-solid';
-import type { FluentArray } from '@noeldemartin/utils';
+import type { FluentArray, Obj } from '@noeldemartin/utils';
 
 import Auth from '@/framework/core/facades/Auth';
 import Events from '@/framework/core/facades/Events';
@@ -86,7 +86,9 @@ export default class CookbookService extends Service<State> {
 
             return SolidContainerModel.withEngine(engine, async () => tap(
                 await this.findCookbook() ?? await this.createCookbook(),
-                cookbook => {
+                async cookbook => {
+                    await this.migrateLocalRecipes(cookbook.url);
+
                     setRemoteCollection(Recipe, cookbook.url);
 
                     if (cookbook.url !== this.remoteCookbookUrl)
@@ -131,6 +133,32 @@ export default class CookbookService extends Service<State> {
 
             await container.register(typeIndexUrl, Recipe);
         });
+    }
+
+    private async migrateLocalRecipes(remoteCollection: string): Promise<void> {
+        const recipes = await Recipe.all();
+        const engine = Recipe.requireEngine();
+        const migrateLocalUrls = (document: Obj) => {
+            for (const [field, value] of Object.entries(document)) {
+                if (field === '@id' && typeof value === 'string' && value.startsWith(Recipe.collection))
+                    document[field] = value.replace(Recipe.collection, remoteCollection);
+                else if (isObject(value))
+                    migrateLocalUrls(value);
+            }
+        };
+
+        for (const recipe of recipes) {
+            if (recipe.url.startsWith(remoteCollection))
+                continue;
+
+            const documentUrl = recipe.requireDocumentUrl();
+            const document = await engine.readOne(Recipe.collection, documentUrl);
+
+            migrateLocalUrls(document);
+
+            await engine.create(remoteCollection, document, documentUrl.replace(Recipe.collection, remoteCollection));
+            await engine.delete(Recipe.collection, documentUrl);
+        }
     }
 
 }
