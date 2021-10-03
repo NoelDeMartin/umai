@@ -115,6 +115,15 @@ export default class AuthService extends Service<State, ComputedState> {
         if (!this.previousSession)
             return;
 
+        if (
+            // TODO show a different message if there are pending local modifications
+            !confirm(
+                'Logging out will remove all your local recipes, are you sure? ' +
+                '(You still have them in your Solid POD!)',
+            )
+        )
+            return;
+
         this.setState({ previousSession: null });
 
         if (!this.isLoggedIn()) {

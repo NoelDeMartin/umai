@@ -103,4 +103,27 @@ describe('Authentication', () => {
         cy.contains('you\'re connected').should('be.visible');
     });
 
+    it('wipes local data on log out', () => {
+        // Arrange
+        cy.prepareAnswer('Login url?', 'http://localhost:4000/alice/');
+        cy.visit('/?authenticator=inrupt');
+        cy.startApp();
+        cy.contains('Connect storage').click();
+        cy.cssAuthorize({
+            reset: {
+                typeIndex: true,
+                cookbook: true,
+                recipe: 'pisto',
+            },
+        });
+        cy.waitForReload({ resetProfiles: true });
+        cy.contains('Pisto').should('be.visible');
+
+        // Act
+        cy.get('[aria-label="Log out"]').click();
+
+        // Assert
+        cy.contains('No recipes yet!').should('be.visible');
+    });
+
 });

@@ -44,13 +44,15 @@ export default class CookbookService extends Service<State> {
             await this.loadCookbook();
         });
 
-        Events.on('logout', () => {
-            // TODO upon logging out, local recipes must be updated with a local url (or maybe deleted!)
+        Events.on('logout', async () => {
             Recipe.collection = this.localCookbookUrl;
+
+            await Promise.all(this.recipes.map(recipe => recipe.delete()));
 
             this.setState({
                 remoteCookbookUrl: null,
                 cookbook: new PromisedValue,
+                recipes: arr(),
             });
         });
 
