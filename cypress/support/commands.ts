@@ -1,10 +1,12 @@
 import authCommands from './commands/auth';
+import factoryCommands from './commands/factory';
 import lifecycleCommands from './commands/lifecycle';
 import storageCommands from './commands/storage';
 import uiCommands from './commands/ui';
 
 const commands = {
     ...authCommands,
+    ...factoryCommands,
     ...lifecycleCommands,
     ...storageCommands,
     ...uiCommands,

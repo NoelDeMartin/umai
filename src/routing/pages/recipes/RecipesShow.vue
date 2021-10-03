@@ -1,6 +1,6 @@
 <template>
-    <div v-if="recipe" class="flex flex-col items-center justify-center flex-grow p-8 space-y-4">
-        <div class="w-full max-w-2xl p-6 bg-white rounded shadow">
+    <div v-if="recipe" class="flex flex-col flex-grow justify-center items-center p-8 space-y-4">
+        <div class="p-6 w-full max-w-2xl bg-white rounded shadow">
             <div class="flex justify-between">
                 <h1 class="text-2xl text-gray-900">
                     {{ recipe.name }}
@@ -37,10 +37,6 @@ import type { PropType } from 'vue';
 import type Recipe from '@/models/Recipe';
 import type RecipeInstructionsStep from '@/models/RecipeInstructionsStep';
 
-interface Data {
-    instructions: RecipeInstructionsStep[];
-}
-
 export default defineComponent({
     props: {
         recipe: {
@@ -48,17 +44,14 @@ export default defineComponent({
             required: true,
         },
     },
-    data(): Data {
-        return { instructions: [] };
-    },
-    async created() {
-        await this.recipe.loadRelationIfUnloaded('instructions');
+    computed: {
+        instructions(): RecipeInstructionsStep[] {
+            const instructions = this.recipe.instructions?.slice(0) ?? [];
 
-        const instructions = this.recipe.instructions?.slice(0) ?? [];
+            instructions.sort((a, b) => a.position - b.position);
 
-        instructions.sort((a, b) => a.position - b.position);
-
-        this.instructions = instructions;
+            return instructions;
+        },
     },
 });
 </script>

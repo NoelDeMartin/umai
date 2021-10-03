@@ -85,6 +85,7 @@ export default {
         cy.prepareAnswer('Login url?', 'https://alice.example.com');
         cy.contains('Connect storage').click();
         cy.waitForReload();
+        cy.contains('you\'re connected').should('be.visible');
     },
 
     queueAuthenticatedRequest(url: string, options: RequestInit): void {

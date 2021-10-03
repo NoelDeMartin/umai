@@ -3,6 +3,7 @@ import { Storage, arr } from '@noeldemartin/utils';
 
 import boot from '@/boot';
 import Events from '@/framework/core/facades/Events';
+import Recipe from '@/models/Recipe';
 
 const authenticatedRequests = arr<{ url: string; options: RequestInit }>();
 
@@ -35,4 +36,6 @@ window.testing = {
     queueAuthenticatedRequest(url, options) {
         authenticatedRequests.push({ url, options });
     },
+
+    createRecipe: name => Recipe.create({ name }),
 };

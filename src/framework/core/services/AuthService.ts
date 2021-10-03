@@ -1,6 +1,6 @@
 import { createPrivateTypeIndex, fetchLoginUserProfile } from '@noeldemartin/solid-utils';
 import { fail, tap, urlRoot } from '@noeldemartin/utils';
-import type { Fetch , SolidUserProfile } from '@noeldemartin/solid-utils';
+import type { Fetch, SolidUserProfile } from '@noeldemartin/solid-utils';
 
 import { getAuthenticator } from '@/framework/auth';
 import AuthenticationCancelledError from '@/framework/auth/errors/AuthenticationCancelledError';
@@ -10,7 +10,7 @@ import Events from '@/framework/core/facades/Events';
 import type Authenticator from '@/framework/auth/Authenticator';
 import type { AuthenticatorName } from '@/framework/auth';
 import type { AuthSession } from '@/framework/auth/Authenticator';
-import type { ComputedStateDefinitions , IService } from '@/framework/core/Service';
+import type { ComputedStateDefinitions, IService } from '@/framework/core/Service';
 
 interface State {
     session: AuthSession | null;

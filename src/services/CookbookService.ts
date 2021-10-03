@@ -53,6 +53,8 @@ export default class CookbookService extends Service<State> {
                 cookbook: new PromisedValue,
             });
         });
+
+        Recipe.on('created', recipe => this.addRecipe(recipe));
     }
 
     protected getInitialState(): State {

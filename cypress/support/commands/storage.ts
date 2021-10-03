@@ -38,8 +38,8 @@ export default {
 
     resetStorage(): void {
         cy.window()
-            .then((window: Window) => Cypress.Promise.all([window.testing?.stop()]))
-            .then(() => Cypress.Promise.all([
+            .then(window => window.testing && Cypress.Promise.cast(window.testing.stop()))
+            .then(success => success && Cypress.Promise.all([
                 deleteDB('soukai'),
                 deleteDB('soukai-meta'),
             ]));

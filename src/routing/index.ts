@@ -3,6 +3,7 @@ import type { RouteRecordRaw } from 'vue-router';
 import Router from '@/framework/core/facades/Router';
 
 import Cookbook from '@/services/facades/Cookbook';
+import Recipe from '@/models/Recipe';
 
 import Home from './pages/home/Home.vue';
 import RecipesCreate from './pages/recipes/RecipesCreate.vue';
@@ -18,7 +19,10 @@ const routes: RouteRecordRaw[] = [
 ];
 
 export function registerRouterBindings(): void {
-    Router.registerModelBinding('recipe', uuid => Cookbook.recipes?.find(recipe => recipe.uuid === uuid));
+    Router.registerModelBinding('recipe', {
+        find: uuid => Cookbook.recipes?.find(recipe => recipe.uuid === uuid) || null,
+        subscribe: listener => Recipe.on('updated', listener),
+    });
 }
 
 export default routes;

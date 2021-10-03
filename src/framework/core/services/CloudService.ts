@@ -1,5 +1,5 @@
 import { Semaphore, map, tap } from '@noeldemartin/utils';
-import { SolidModel, SolidModelMetadata , SolidModelOperation } from 'soukai-solid';
+import { SolidModel, SolidModelMetadata, SolidModelOperation } from 'soukai-solid';
 import type { Engine } from 'soukai';
 import type { ObjectsMap } from '@noeldemartin/utils';
 import type { SolidModelConstructor } from 'soukai-solid';
@@ -24,7 +24,6 @@ interface ComputedState {
 export interface CloudHandler<T extends SolidModel = SolidModel> {
     modelClass: SolidModelConstructor<T>;
     getLocalModels(): T[];
-    addLocalModel(model: T): void;
 }
 
 export default class CloudService extends Service<State, ComputedState> {
@@ -52,8 +51,8 @@ export default class CloudService extends Service<State, ComputedState> {
 
         this.handlers.push({ modelClass, ...handler });
 
-        modelClass.on('created', model => this.createRemoteModel(model));
-        modelClass.on('updated', model => this.updateRemoteModel(model));
+        modelClass.on('created', model => Auth.isLoggedIn() && this.createRemoteModel(model));
+        modelClass.on('updated', model => Auth.isLoggedIn() && this.updateRemoteModel(model));
     }
 
     protected async boot(): Promise<void> {
@@ -178,10 +177,8 @@ export default class CloudService extends Service<State, ComputedState> {
             await SolidModel.synchronize(localModel, remoteModel);
             await localModel.save();
 
-            synchronizedModelUrls.add(localModel.url);
-
-            localModels.hasKey(localModel.url) || this.addLocalModel(localModel);
             localModels.add(localModel);
+            synchronizedModelUrls.add(localModel.url);
         }
 
         for (const [url, localModel] of localModels) {
@@ -257,15 +254,6 @@ export default class CloudService extends Service<State, ComputedState> {
 
     protected getLocalModels(): Iterable<SolidModel> {
         return this.handlers.map(handler => handler.getLocalModels()).flat();
-    }
-
-    protected addLocalModel(localModel: SolidModel): void {
-        const handler = this.handlers.find(handler => localModel instanceof handler.modelClass);
-
-        if (!handler)
-            throw new Error(`Missing Cloud handler for '${localModel.static('modelName')}' model`);
-
-        handler.addLocalModel(localModel);
     }
 
     protected cleanRemoteModel(remoteModel: SolidModel): void {
