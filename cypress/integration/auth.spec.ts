@@ -8,7 +8,7 @@ describe('Authentication', () => {
         cy.intercept('https://alice.example.com/profile/card', { fixture: 'profile.ttl' });
         cy.prepareAnswer('Login url?', 'https://alice.example.com');
         cy.task('resetSolidPOD');
-        cy.visit('/');
+        cy.visit('/?authenticator=localStorage');
         cy.startApp();
 
         // Act

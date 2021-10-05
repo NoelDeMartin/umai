@@ -56,7 +56,7 @@ export async function bootstrapApplication(
         .entries(authenticators)
         .forEach(([name, authenticator]) => registerAuthenticator(name as AuthenticatorName, authenticator));
 
-    setDefaultAuthenticator(getAuthenticator(options.defaultAuthenticator ?? 'localStorage'));
+    setDefaultAuthenticator(getAuthenticator(options.defaultAuthenticator ?? 'inrupt'));
 
     await options.beforeLaunch?.call(null);
     await Promise.all(Object.entries(services).map(([name, service]) => service.launch(name.slice(1))));

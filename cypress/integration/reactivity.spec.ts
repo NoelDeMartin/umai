@@ -4,7 +4,7 @@ describe('Reactivity', () => {
 
     beforeEach(() => {
         cy.task('resetSolidPOD');
-        cy.visit('/');
+        cy.visit('/?authenticator=localStorage');
         cy.startApp();
     });
 
