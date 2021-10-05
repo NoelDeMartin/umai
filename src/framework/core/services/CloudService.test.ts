@@ -36,6 +36,7 @@ describe('Cloud Service', () => {
 
         cloud.registerHandler(Recipe, {
             getLocalModels: () => localModels,
+            isReady: () => true,
         });
 
         await cloud.launch();
