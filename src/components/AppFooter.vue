@@ -6,11 +6,11 @@
                 title="Sync"
                 aria-label="Sync"
                 class="relative w-6 h-6 group"
-                @click="sync()"
+                @click="$cloud.sync()"
             >
                 <i-zondicons-cloud class="absolute inset-0 w-full h-full text-gray-500 group-hover:text-indigo-500" />
                 <div class="flex absolute inset-0 justify-center items-center w-full h-full text-gray-200">
-                    <i-zondicons-refresh v-if="syncing" class="w-3 h-3 animate-spin" />
+                    <i-zondicons-refresh v-if="!$cloud.idle" class="w-3 h-3 animate-spin" />
                     <template v-else>
                         <i-zondicons-refresh class="hidden w-3 h-3 group-hover:block" />
                         <span v-if="$cloud.dirty" class="text-xs group-hover:hidden">{{ $cloud.pendingUpdates.length }}</span>
@@ -60,24 +60,13 @@
 </template>
 
 <script lang="ts">
-import { after } from '@noeldemartin/utils';
-import { defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue';
 
 import Auth from '@/framework/core/facades/Auth';
-import Cloud from '@/framework/core/facades/Cloud';
 import type { AuthenticatorName } from '@/framework/auth';
 
 export default defineComponent({
     setup() {
-        const syncing = ref(false);
-        const sync = async () => {
-            const start = Date.now();
-
-            syncing.value = true;
-            await Cloud.sync();
-            await after({ milliseconds: Math.max(0, 1000 - (Date.now() - start)) });
-            syncing.value = false;
-        };
         const login = () => {
             const loginUrl = prompt('Login url?', 'https://');
             const authenticator =
@@ -86,7 +75,7 @@ export default defineComponent({
             loginUrl && Auth.login(loginUrl, authenticator);
         };
 
-        return { login, syncing, sync };
+        return { login };
     },
 });
 </script>

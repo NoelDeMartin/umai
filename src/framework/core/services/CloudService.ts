@@ -1,4 +1,4 @@
-import { Semaphore, map, tap } from '@noeldemartin/utils';
+import { Semaphore, after, map, tap } from '@noeldemartin/utils';
 import { SolidModel, SolidModelMetadata, SolidModelOperation } from 'soukai-solid';
 import type { Engine } from 'soukai';
 import type { ObjectsMap } from '@noeldemartin/utils';
@@ -12,6 +12,7 @@ import type Authenticator from '@/framework/auth/Authenticator';
 import type { ComputedStateDefinitions, IService } from '@/framework/core/Service';
 
 interface State {
+    idle: boolean;
     dirtyRemoteModels: ObjectsMap<SolidModel>;
     remoteOperationUrls: Record<string, string[]>;
 }
@@ -37,9 +38,16 @@ export default class CloudService extends Service<State, ComputedState> {
             return;
 
         await this.asyncLock.run(async () => {
+            const start = Date.now();
+
+            this.idle = false;
+
             // TODO subscribe to server events instead of pulling remote on every sync
             await this.pullChanges();
             await this.pushChanges();
+
+            await after({ milliseconds: Math.max(0, 1000 - (Date.now() - start)) });
+            this.idle = true;
         });
     }
 
@@ -62,10 +70,14 @@ export default class CloudService extends Service<State, ComputedState> {
 
         Events.on('login', ({ authenticator }) => this.initializeEngine(authenticator));
         Events.on('application-ready', () => this.sync());
+
+        // TODO remove polling
+        setInterval(() => this.sync(), 5000);
     }
 
     protected getInitialState(): State {
         return {
+            idle: true,
             dirtyRemoteModels: map([], 'url'),
             remoteOperationUrls: {},
         };
