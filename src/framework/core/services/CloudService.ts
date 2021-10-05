@@ -24,6 +24,7 @@ interface ComputedState {
 
 export interface CloudHandler<T extends SolidModel = SolidModel> {
     modelClass: SolidModelConstructor<T>;
+    isReady(): boolean;
     getLocalModels(): T[];
 }
 
@@ -59,8 +60,8 @@ export default class CloudService extends Service<State, ComputedState> {
 
         this.handlers.push({ modelClass, ...handler });
 
-        modelClass.on('created', model => Auth.isLoggedIn() && this.createRemoteModel(model));
-        modelClass.on('updated', model => Auth.isLoggedIn() && this.updateRemoteModel(model));
+        modelClass.on('created', model => Auth.isLoggedIn() && handler.isReady() && this.createRemoteModel(model));
+        modelClass.on('updated', model => Auth.isLoggedIn() && handler.isReady() && this.updateRemoteModel(model));
     }
 
     protected async boot(): Promise<void> {
@@ -255,6 +256,9 @@ export default class CloudService extends Service<State, ComputedState> {
     protected async fetchRemoteModels(): Promise<SolidModel[]> {
         const models = await Promise.all(
             this.handlers.map(handler => {
+                if (!handler.isReady())
+                    return [];
+
                 const remoteClass = getRemoteClass(handler.modelClass);
 
                 return remoteClass.all();
@@ -265,7 +269,7 @@ export default class CloudService extends Service<State, ComputedState> {
     }
 
     protected getLocalModels(): Iterable<SolidModel> {
-        return this.handlers.map(handler => handler.getLocalModels()).flat();
+        return this.handlers.map(handler => handler.isReady() ? handler.getLocalModels() : []).flat();
     }
 
     protected cleanRemoteModel(remoteModel: SolidModel): void {

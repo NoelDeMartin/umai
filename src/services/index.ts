@@ -16,6 +16,7 @@ declare module '@/framework/core' {
 
 export function registerCloudHandlers(): void {
     Cloud.registerHandler(Recipe, {
+        isReady: () => !!Cookbook.cookbook.value,
         getLocalModels: () => Cookbook.recipes.toArray(),
     });
 }
