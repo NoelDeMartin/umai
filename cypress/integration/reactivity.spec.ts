@@ -34,7 +34,22 @@ describe('Reactivity', () => {
         cy.contains('Ramen').should('be.visible');
     });
 
-    it('reacts to local recipe updates', () => {
+    it('reacts to local recipe updates in recipes list', () => {
+        // Arrange
+        let ramen: Recipe;
+
+        cy.createRecipe('Ramen').then(_ramen => ramen = _ramen);
+
+        // Act
+        cy.contains('Ramen').should('be.visible').then(() => {
+            return Cypress.Promise.cast(ramen.update({ name: 'Ramen!' }));
+        });
+
+        // Assert
+        cy.contains('Ramen!').should('be.visible');
+    });
+
+    it('reacts to local recipe updates in recipe details', () => {
         // Arrange
         let ramen: Recipe;
 

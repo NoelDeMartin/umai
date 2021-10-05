@@ -57,6 +57,9 @@ export default class CookbookService extends Service<State> {
         });
 
         Recipe.on('created', recipe => this.addRecipe(recipe));
+
+        // TODO investigate a different way to work around reactivity issues
+        Recipe.on('updated', () => this.setState({ recipes: this.recipes.slice(0) }));
     }
 
     protected getInitialState(): State {
