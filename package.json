@@ -6,10 +6,10 @@
     "build": "vite build",
     "serve": "vite preview",
     "deploy": "noeldemartin-deploy-app noeldemartin/umai umai.noeldemartin.com",
-    "lint": "npm run lint:js && npm run lint:ts && npm run lint:vue",
-    "lint:js": "eslint src && eslint cypress",
+    "lint": "npm run lint:eslint",
+    "lint:eslint": "eslint src && eslint cypress",
     "lint:ts": "tsc --noEmit",
-    "lint:vue": "vti diagnostics",
+    "lint:vue": "vue-tsc --noEmit",
     "test": "jest --verbose",
     "test:serve-app": "NODE_ENV=testing vite",
     "test:serve-pod": "community-solid-server -p 4000 -l warn",
@@ -57,7 +57,7 @@
     "unplugin-icons": "^0.12.15",
     "unplugin-vue-components": "^0.15.6",
     "vite": "^2.6.3",
-    "vti": "^0.1.1"
+    "vue-tsc": "^0.28.6"
   },
   "engines": {
     "node": ">=14.15.0 <15"
