@@ -1,18 +1,21 @@
-import { defineConfig } from 'vite';
-import { resolve } from 'path';
-import SVG from 'vite-plugin-vue-svg';
-import ViteComponents from 'vite-plugin-components';
-import ViteIcons, { ViteIconsResolver } from 'vite-plugin-icons';
+import Components from 'unplugin-vue-components/vite';
+import Icons from 'unplugin-icons/vite';
+import IconsResolver from 'unplugin-icons/resolver';
 import Vue from '@vitejs/plugin-vue';
+import { defineConfig } from 'vite';
+import { FileSystemIconLoader } from 'unplugin-icons/loaders';
+import { resolve } from 'path';
 
 export default defineConfig({
     plugins: [
         Vue(),
-        SVG(),
-        ViteComponents({
-            extensions: ['vue', 'svg'],
-            importPathTransform: path => path.endsWith('.svg') ? `${path}?component` : undefined,
-            customComponentResolvers: ViteIconsResolver(),
+        Icons({
+            customCollections: {
+                umai: FileSystemIconLoader('./src/assets/icons'),
+            },
+        }),
+        Components({
+            resolvers: IconsResolver({ customCollections: ['umai'] }),
             dirs: [
                 'src/assets/icons',
                 'src/components',
@@ -20,7 +23,6 @@ export default defineConfig({
             ],
             deep: true,
         }),
-        ViteIcons(),
     ],
     resolve: {
         alias: {

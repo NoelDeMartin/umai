@@ -11,14 +11,25 @@ import { getLocalClass, getRemoteClass } from '@/framework/cloud/remote_helpers'
 import type Authenticator from '@/framework/auth/Authenticator';
 import type { ComputedStateDefinitions, IService } from '@/framework/core/Service';
 
+export enum CloudStatus {
+    Offline = 'offline',
+    Online = 'online',
+    Disconnected = 'disconnected',
+    Syncing = 'syncing',
+}
+
 interface State {
-    idle: boolean;
+    status: CloudStatus;
     dirtyRemoteModels: ObjectsMap<SolidModel>;
     remoteOperationUrls: Record<string, string[]>;
 }
 
 interface ComputedState {
     dirty: boolean;
+    online: boolean;
+    offline: boolean;
+    syncing: boolean;
+    disconnected: boolean;
     pendingUpdates: [SolidModel, SolidModelOperation[]][];
 }
 
@@ -41,14 +52,14 @@ export default class CloudService extends Service<State, ComputedState> {
         await this.asyncLock.run(async () => {
             const start = Date.now();
 
-            this.idle = false;
+            this.status = CloudStatus.Syncing;
 
             // TODO subscribe to server events instead of pulling remote on every sync
             await this.pullChanges();
             await this.pushChanges();
 
             await after({ milliseconds: Math.max(0, 1000 - (Date.now() - start)) });
-            this.idle = true;
+            this.status = CloudStatus.Online;
         });
     }
 
@@ -74,11 +85,15 @@ export default class CloudService extends Service<State, ComputedState> {
 
         // TODO remove polling
         setInterval(() => this.sync(), 5000);
+
+        // TODO listen to auth status in order to update status
+        // TODO listen to network to detect offline status
+        this.status = Auth.loggedIn ? CloudStatus.Online : CloudStatus.Disconnected;
     }
 
     protected getInitialState(): State {
         return {
-            idle: true,
+            status: CloudStatus.Disconnected,
             dirtyRemoteModels: map([], 'url'),
             remoteOperationUrls: {},
         };
@@ -87,6 +102,10 @@ export default class CloudService extends Service<State, ComputedState> {
     protected getComputedStateDefinitions(): ComputedStateDefinitions<State, ComputedState> {
         return {
             dirty: ({ dirtyRemoteModels }) => dirtyRemoteModels.size > 0,
+            online: ({ status }) => status === CloudStatus.Online,
+            offline: ({ status }) => status === CloudStatus.Offline,
+            syncing: ({ status }) => status === CloudStatus.Syncing,
+            disconnected: ({ status }) => status === CloudStatus.Disconnected,
             pendingUpdates: ({ dirtyRemoteModels }) => {
                 const pendingUpdates: Record<string, SolidModelOperation[]> = {};
 

@@ -10,7 +10,7 @@
             >
                 <i-zondicons-cloud class="absolute inset-0 w-full h-full text-gray-500 group-hover:text-indigo-500" />
                 <div class="flex absolute inset-0 justify-center items-center w-full h-full text-gray-200">
-                    <i-zondicons-refresh v-if="!$cloud.idle" class="w-3 h-3 animate-spin" />
+                    <i-zondicons-refresh v-if="$cloud.syncing" class="w-3 h-3 animate-spin" />
                     <template v-else>
                         <i-zondicons-refresh class="hidden w-3 h-3 group-hover:block" />
                         <span v-if="$cloud.dirty" class="text-xs group-hover:hidden">{{ $cloud.pendingUpdates.length }}</span>
@@ -59,23 +59,15 @@
     </footer>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
+<script setup lang="ts">
 import Auth from '@/framework/core/facades/Auth';
 import type { AuthenticatorName } from '@/framework/auth';
 
-export default defineComponent({
-    setup() {
-        const login = () => {
-            const loginUrl = prompt('Login url?', 'https://');
-            const authenticator =
-                new URL(location.href).searchParams.get('authenticator') as AuthenticatorName ?? 'default';
+const login = () => {
+    const loginUrl = prompt('Login url?', 'https://');
+    const authenticator = new URL(location.href)
+        .searchParams.get('authenticator') as AuthenticatorName ?? 'default';
 
-            loginUrl && Auth.login(loginUrl, authenticator);
-        };
-
-        return { login };
-    },
-});
+    loginUrl && Auth.login(loginUrl, authenticator);
+};
 </script>
