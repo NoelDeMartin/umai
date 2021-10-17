@@ -2,9 +2,9 @@ import { map, range } from '@noeldemartin/utils';
 
 import { CloudStatus as CloudStatusEnum } from '@/framework/core/services/CloudService';
 import { fakeRemoteModel } from '@/framework/testing/model-helpers';
-import { meta, story, template } from '@/framework/testing/storybook-helpers';
+import { meta, story, template } from '@sb/support/helpers';
 
-import CloudStatus from './CloudStatus.vue';
+import CloudStatus from '@/components/CloudStatus.vue';
 
 interface Args {
     status: CloudStatusEnum;

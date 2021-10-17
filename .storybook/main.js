@@ -6,16 +6,18 @@ const { loadConfigFromFile, mergeConfig } = require('vite');
 
 module.exports = {
     stories: [
-        '../src/**/*.stories.ts',
+        './stories/**/*.ts',
     ],
     addons: [
         '@storybook/addon-essentials',
     ],
     core: {
-        builder: 'storybook-builder-vite'
+        builder: 'storybook-builder-vite',
     },
     async viteFinal(defaultConfig) {
         const { config: projectConfig } = await loadConfigFromFile(resolve(__dirname, '../vite.config.ts'));
+
+        projectConfig.resolve.alias['@sb'] = resolve(__dirname, './');
 
         return mergeConfig(defaultConfig, {
             ...projectConfig,

@@ -5,4 +5,8 @@ declare global {
 
     const Storybook: MockServices<Services>;
 
+    interface Window {
+        Storybook: MockServices<Services>;
+    }
+
 }
