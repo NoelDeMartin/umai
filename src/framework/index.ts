@@ -10,7 +10,7 @@ import {
 } from '@/framework/auth';
 import { services as baseServices } from '@/framework/core';
 import App from '@/framework/core/facades/App';
-import basePlugins from '@/framework/plugins';
+import getBasePlugins from '@/framework/plugins';
 import baseRoutes from '@/framework/routing';
 import Events from '@/framework/core/facades/Events';
 import type { AuthenticatorName } from '@/framework/auth';
@@ -43,7 +43,8 @@ export async function bootstrapApplication(
 ): Promise<void> {
     const app = createApp(rootComponent);
     const routes = [...options.routes ?? [], ...baseRoutes];
-    const plugins = [...basePlugins(routes), ...(options.plugins ?? [])];
+    const basePlugins = await getBasePlugins(routes);
+    const plugins = [...basePlugins, ...(options.plugins ?? [])];
     const services = { ...baseServices, ...(options.services ?? {}) };
     const authenticators = { ...baseAuthenticators, ...(options.authenticators ?? {}) };
 

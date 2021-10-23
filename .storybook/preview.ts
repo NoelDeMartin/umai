@@ -2,6 +2,7 @@ import { app } from '@storybook/vue3';
 import { bootSolidModels } from 'soukai-solid';
 import { createStore } from 'vuex';
 
+import i18n from '@/framework/plugins/i18n';
 import Store from '@/framework/core/facades/Store';
 import { mockService } from '@/framework/testing/service-helpers';
 import { services } from '@/framework/core';
@@ -18,5 +19,6 @@ for (const [name, facade] of Object.entries(services)) {
     facade.setInstance(mockService(name.slice(1), facade.instance?.static() as any) as any);
 }
 
+app.use(await i18n());
 app.config.globalProperties = services;
 window.Storybook = services as unknown as MockServices<Services>;

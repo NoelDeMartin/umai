@@ -1,0 +1,6 @@
+cloud:
+  statuses:
+    offline: offline
+    online: online
+    disconnected: disconnected
+    syncing: syncing

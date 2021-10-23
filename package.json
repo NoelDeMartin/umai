@@ -27,12 +27,14 @@
     "soukai-solid": "^0.4.1-next.56d70cd2516ccdec76abcaec99569fb2e0d955b6",
     "tailwindcss": "^2.0.3",
     "vue": "^3.2.20",
+    "vue-i18n": "^9.2.0-beta.14",
     "vue-router": "^4.0.5",
     "vuex": "^4.0.0"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.13.10",
     "@iconify/json": "^1.1.313",
+    "@intlify/vite-plugin-vue-i18n": "^2.4.0",
     "@noeldemartin/eslint-config-vue": "0.0.0-next.9814af6f5eb0b490ad6123462e5f070dec0648b9",
     "@noeldemartin/scripts": "0.0.0-next.fc10faa540c836a703b087e3bfe615dd68424745",
     "@solid/community-server": "^1.0.0",

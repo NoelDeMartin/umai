@@ -1,4 +1,5 @@
 import Components from 'unplugin-vue-components/vite';
+import I18n from '@intlify/vite-plugin-vue-i18n';
 import Icons from 'unplugin-icons/vite';
 import IconsResolver from 'unplugin-icons/resolver';
 import Vue from '@vitejs/plugin-vue';
@@ -9,6 +10,7 @@ import { resolve } from 'path';
 export default defineConfig({
     plugins: [
         Vue(),
+        I18n({ include: resolve(__dirname, './src/lang/**') }),
         Icons({
             customCollections: {
                 umai: FileSystemIconLoader('./src/assets/icons'),
