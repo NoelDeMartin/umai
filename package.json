@@ -20,6 +20,7 @@
     "storybook": "start-storybook -p 6006 --no-manager-cache"
   },
   "dependencies": {
+    "@headlessui/vue": "^1.4.1",
     "@noeldemartin/solid-utils": "^0.1.1-next.51e371bcc6b640f405a570470052808dd2a0970b",
     "@noeldemartin/utils": "^0.2.1-next.1aba291913ffcb294cd352af9e5791fc68555b0c",
     "buffer": "^6.0.3",

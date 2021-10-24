@@ -4,3 +4,8 @@ cloud:
     online: online
     disconnected: disconnected
     syncing: syncing
+menu:
+  open: Open user menu
+  settings: Settings
+  log_in: Log in
+  log_out: Log out

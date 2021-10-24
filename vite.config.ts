@@ -5,6 +5,7 @@ import IconsResolver from 'unplugin-icons/resolver';
 import Vue from '@vitejs/plugin-vue';
 import { defineConfig } from 'vite';
 import { FileSystemIconLoader } from 'unplugin-icons/loaders';
+import { HeadlessUiResolver } from 'unplugin-vue-components/resolvers';
 import { resolve } from 'path';
 
 export default defineConfig({
@@ -17,7 +18,10 @@ export default defineConfig({
             },
         }),
         Components({
-            resolvers: IconsResolver({ customCollections: ['umai'] }),
+            resolvers: [
+                HeadlessUiResolver(),
+                IconsResolver({ customCollections: ['umai'] }),
+            ],
             dirs: [
                 'src/assets/icons',
                 'src/components',

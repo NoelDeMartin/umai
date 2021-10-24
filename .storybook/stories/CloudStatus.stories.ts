@@ -36,7 +36,7 @@ export default meta<Args>({
     argTypes: {
         status: {
             control: { type: 'select' },
-            options: Object.values(CloudStatusEnum),
+            options: CloudStatusEnum,
         },
         dirtyRemoteModels: {
             control: { type: 'number' },

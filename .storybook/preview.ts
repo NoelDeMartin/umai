@@ -20,5 +20,5 @@ for (const [name, facade] of Object.entries(services)) {
 }
 
 app.use(await i18n());
-app.config.globalProperties = services;
+Object.assign(app.config.globalProperties, services);
 window.Storybook = services as unknown as MockServices<Services>;

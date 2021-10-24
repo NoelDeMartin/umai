@@ -2,6 +2,7 @@ const Icons = require('unplugin-icons/vite');
 const IconsResolver = require('unplugin-icons/resolver');
 const Components = require('unplugin-vue-components/vite');
 const { default: I18n } = require('@intlify/vite-plugin-vue-i18n');
+const { HeadlessUiResolver } = require('unplugin-vue-components/resolvers');
 const { loadConfigFromFile, mergeConfig } = require('vite');
 const { resolve } = require('path');
 
@@ -23,7 +24,12 @@ module.exports = {
         return mergeConfig(defaultConfig, {
             ...projectConfig,
             plugins: [
-                Components({ resolvers: IconsResolver() }),
+                Components({
+                    resolvers: [
+                        HeadlessUiResolver(),
+                        IconsResolver(),
+                    ],
+                }),
                 I18n({ include: resolve(__dirname, '../src/lang/**') }),
                 Icons(),
             ],
