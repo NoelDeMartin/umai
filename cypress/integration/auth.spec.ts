@@ -35,6 +35,7 @@ describe('Authentication', () => {
         cy.waitForReload({ resetProfiles: true });
 
         // Act - Create recipe
+        cy.contains('Cookbook').click();
         cy.contains('New Recipe').click();
         cy.get('#name').type('Ramen');
         cy.contains('Create').click();
@@ -70,6 +71,7 @@ describe('Authentication', () => {
         cy.waitForReload({ resetProfiles: true });
 
         // Act - Update recipe
+        cy.contains('Cookbook').click();
         cy.contains('Pisto').click();
         cy.contains('edit').click();
         cy.get('#name').type('!');
@@ -119,13 +121,14 @@ describe('Authentication', () => {
             },
         });
         cy.waitForReload({ resetProfiles: true });
+        cy.contains('Cookbook').click();
         cy.contains('Pisto').should('be.visible');
 
         // Act
         cy.get('[aria-label="Log out"]').click();
 
         // Assert
-        cy.contains('No recipes yet!').should('be.visible');
+        cy.contains('You don\'t have any recipes in your cookbook!').should('be.visible');
     });
 
     it('migrates local data to cloud after logging in', () => {
@@ -135,6 +138,7 @@ describe('Authentication', () => {
         cy.startApp();
 
         // Act - Create
+        cy.contains('Cookbook').click();
         cy.contains('New Recipe').click();
         cy.get('#name').type('Ramen');
         cy.get('#new-ingredient').type('Broth');

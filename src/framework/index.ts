@@ -1,5 +1,5 @@
 import { createApp } from 'vue';
-import type { Component , Plugin } from 'vue';
+import type { Component, Directive, Plugin } from 'vue';
 import type { RouteRecordRaw } from 'vue-router';
 
 import {
@@ -11,6 +11,7 @@ import {
 import { services as baseServices } from '@/framework/core';
 import App from '@/framework/core/facades/App';
 import getBasePlugins from '@/framework/plugins';
+import baseDirectives from '@/framework/directives';
 import baseRoutes from '@/framework/routing';
 import Events from '@/framework/core/facades/Events';
 import type { AuthenticatorName } from '@/framework/auth';
@@ -29,6 +30,7 @@ export type BootstrapApplicationOptions = Partial<{
     name: string;
     selector: string;
     plugins: Plugin[];
+    directives: Record<string, Directive>;
     routes: RouteRecordRaw[];
     services: Record<string, Service>;
     authenticators: Record<string, Authenticator>;
@@ -45,6 +47,7 @@ export async function bootstrapApplication(
     const routes = [...options.routes ?? [], ...baseRoutes];
     const basePlugins = await getBasePlugins(routes);
     const plugins = [...basePlugins, ...(options.plugins ?? [])];
+    const directives = { ...baseDirectives, ...(options.directives ?? {}) };
     const services = { ...baseServices, ...(options.services ?? {}) };
     const authenticators = { ...baseAuthenticators, ...(options.authenticators ?? {}) };
 
@@ -53,6 +56,9 @@ export async function bootstrapApplication(
     plugins.forEach(plugin => app.use(plugin));
 
     Object.assign(app.config.globalProperties, services);
+    Object
+        .entries(directives)
+        .forEach(([name, directive]) => app.directive(name, directive));
     Object
         .entries(authenticators)
         .forEach(([name, authenticator]) => registerAuthenticator(name as AuthenticatorName, authenticator));

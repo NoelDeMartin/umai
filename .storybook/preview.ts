@@ -10,9 +10,11 @@ import type { MockServices } from '@/framework/testing/service-helpers';
 import type { Services } from '@/framework/core';
 
 import './styles.css';
+import router from '@/framework/plugins/router';
+import directives from '@/framework/directives';
 
 bootSolidModels();
-Store.setInstance(createStore({}));
+Store.setInstance(createStore({ strict: true }));
 
 for (const [name, facade] of Object.entries(services)) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -20,5 +22,9 @@ for (const [name, facade] of Object.entries(services)) {
 }
 
 app.use(await i18n());
+app.use(router([
+    { name: 'recipes.show', path: '/recipes/:recipe', component: {} },
+]));
+Object.entries(directives).forEach(([name, directive]) => app.directive(name, directive));
 Object.assign(app.config.globalProperties, services);
 window.Storybook = services as unknown as MockServices<Services>;

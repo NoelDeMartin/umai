@@ -7,6 +7,10 @@ export default SolidModel.schema({
         required: true,
     },
     description: FieldType.String,
+    imageUrl: {
+        type: FieldType.String,
+        rdfProperty: 'schema:image',
+    },
     ingredients: {
         type: FieldType.Array,
         rdfProperty: 'schema:recipeIngredient',

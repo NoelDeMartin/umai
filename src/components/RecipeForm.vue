@@ -17,6 +17,18 @@
             </div>
         </div>
         <div>
+            <label for="image-url" class="block text-sm font-medium text-gray-700">Image URL</label>
+            <div class="mt-1">
+                <input
+                    id="image-url"
+                    v-model="imageUrl"
+                    type="text"
+                    class="block relative px-3 py-2 w-full placeholder-gray-500 text-gray-900 rounded-md border border-transparent border-gray-300 appearance-none focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                    placeholder="Does it look tasty?"
+                >
+            </div>
+        </div>
+        <div>
             <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
             <div class="mt-1">
                 <textarea
@@ -172,6 +184,7 @@ export default defineComponent({
     emits: ['done', 'cancel'],
     setup(props, { emit }) {
         const name = ref(props.recipe?.name ?? '');
+        const imageUrl = ref(props.recipe?.imageUrl ?? '');
         const description = ref(props.recipe?.description ?? '');
         const newIngredient = ref('');
         const newInstructionStep = ref('');
@@ -215,6 +228,7 @@ export default defineComponent({
 
             const attributes = {
                 name: name.value,
+                imageUrl: imageUrl.value || null,
                 description: description.value || null,
                 ingredients: ingredients.value,
             };
@@ -253,6 +267,7 @@ export default defineComponent({
 
         return {
             name,
+            imageUrl,
             description,
             newIngredient,
             newInstructionStep,

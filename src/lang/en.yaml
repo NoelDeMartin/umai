@@ -9,3 +9,8 @@ menu:
   settings: Settings
   log_in: Log in
   log_out: Log out
+recipes:
+  add: New Recipe
+  empty: You don't have any recipes in your cookbook!
+  index:
+    title: Cookbook

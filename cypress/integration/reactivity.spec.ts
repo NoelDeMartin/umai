@@ -4,7 +4,7 @@ describe('Reactivity', () => {
 
     beforeEach(() => {
         cy.task('resetSolidPOD');
-        cy.visit('/?authenticator=localStorage');
+        cy.visit('/recipes?authenticator=localStorage');
         cy.startApp();
     });
 
@@ -34,7 +34,7 @@ describe('Reactivity', () => {
         cy.contains('Ramen').should('be.visible');
     });
 
-    it('reacts to local recipe updates in recipes list', () => {
+    it.skip('reacts to local recipe updates in recipes list', () => {
         // Arrange
         let ramen: Recipe;
 

@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html, body {
+    height: 100%;
+}
+
+#root {
+    @apply flex flex-col justify-center items-center h-full lg:flex-row lg:space-x-4;
+}

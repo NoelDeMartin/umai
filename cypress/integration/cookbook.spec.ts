@@ -6,13 +6,13 @@ describe('Cookbook', () => {
 
     beforeEach(() => {
         cy.task('resetSolidPOD');
-        cy.visit('/?authenticator=localStorage');
+        cy.visit('/recipes?authenticator=localStorage');
         cy.startApp();
     });
 
     it('creates and edits recipes', () => {
         // Arrange
-        cy.contains('No recipes yet!').should('be.visible');
+        cy.contains('You don\'t have any recipes in your cookbook!').should('be.visible');
 
         // Act - Create
         cy.contains('New Recipe').click();
