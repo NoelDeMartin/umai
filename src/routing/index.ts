@@ -1,6 +1,7 @@
-import type { RouteRecordRaw } from 'vue-router';
+import type { NavigationGuard, RouteRecordName, RouteRecordRaw } from 'vue-router';
 
 import Router from '@/framework/core/facades/Router';
+import UI from '@/framework/core/facades/UI';
 
 import Cookbook from '@/services/facades/Cookbook';
 import Recipe from '@/models/Recipe';
@@ -18,6 +19,12 @@ const routes: RouteRecordRaw[] = [
     { name: 'recipes.show', path: '/recipes/:recipe', component: RecipesShow },
     { name: 'recipes.edit', path: '/recipes/:recipe/edit', component: RecipesEdit },
 ];
+
+const fullBleedRoutes: RouteRecordName[] = ['recipes.show'];
+
+export const beforeEach: NavigationGuard = nextRoute => {
+    UI.setFullBleedHeader(!!nextRoute.name && fullBleedRoutes.includes(nextRoute.name));
+};
 
 export function registerRouterBindings(): void {
     Router.registerModelBinding('recipe', {

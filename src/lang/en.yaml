@@ -11,6 +11,11 @@ menu:
   log_out: Log out
 recipes:
   add: New Recipe
+  edit: Edit
+  delete: Delete
   empty: You don't have any recipes in your cookbook!
   index:
     title: Cookbook
+  show:
+    ingredients: Ingredients
+    instructions: Instructions

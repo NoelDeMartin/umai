@@ -2,7 +2,7 @@ import { bootstrapApplication } from '@/framework';
 
 import App from './App.vue';
 import plugins from './plugins';
-import routes, { registerRouterBindings } from './routing';
+import routes, { beforeEach, registerRouterBindings } from './routing';
 import services, { registerCloudHandlers } from './services';
 
 export default async function boot(): Promise<void> {
@@ -11,6 +11,7 @@ export default async function boot(): Promise<void> {
         plugins,
         services,
         routes,
+        routerGuards: { beforeEach },
         beforeLaunch: () => registerCloudHandlers(),
         beforeMount: () => registerRouterBindings(),
     });

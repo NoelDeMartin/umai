@@ -19,10 +19,12 @@ module.exports = {
             },
             maxWidth: {
                 content: '900px',
+                readable: '640px',
             },
         },
     },
     plugins: [
         require('@tailwindcss/aspect-ratio'),
+        require('@tailwindcss/typography'),
     ],
 };

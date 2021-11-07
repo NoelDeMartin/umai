@@ -73,7 +73,7 @@ describe('Authentication', () => {
         // Act - Update recipe
         cy.contains('Cookbook').click();
         cy.contains('Pisto').click();
-        cy.contains('edit').click();
+        cy.contains('Edit').click();
         cy.get('#name').type('!');
         cy.contains('Save').click();
         cy.get('[aria-label="Sync"]').click();
@@ -147,10 +147,10 @@ describe('Authentication', () => {
         cy.get('[aria-label="Add ingredient"]').click();
         cy.contains('Create').click();
         cy.url().should('contain', 'ramen');
-        cy.url().should('not.contain', 'edit');
+        cy.url().should('not.contain', 'Edit');
 
         // Act - First edit
-        cy.contains('edit').click();
+        cy.contains('Edit').click();
         cy.get('#name').type('!');
         cy.get('#description').type('is life');
         cy.get('#new-ingredient').type('Toppings');
@@ -161,10 +161,10 @@ describe('Authentication', () => {
         cy.get('[aria-label="Add instruction step"]').click();
         cy.contains('Save').click();
         cy.url().should('contain', 'ramen');
-        cy.url().should('not.contain', 'edit');
+        cy.url().should('not.contain', 'Edit');
 
         // Act - Second edit
-        cy.contains('edit').click();
+        cy.contains('Edit').click();
         cy.get('#name').clear().type('Jun\'s Ramen');
         cy.get('#description').clear().type('Instructions: https://www.youtube.com/watch?v=9WXIrnWsaCo');
         cy.get('[aria-label="Remove \'Toppings\' ingredient"]').click();
@@ -180,10 +180,10 @@ describe('Authentication', () => {
         cy.get('[aria-label="Add instruction step"]').click();
         cy.contains('Save').click();
         cy.url().should('contain', 'ramen');
-        cy.url().should('not.contain', 'edit');
+        cy.url().should('not.contain', 'Edit');
 
         // Act - Third edit
-        cy.contains('edit').click();
+        cy.contains('Edit').click();
         cy.contains('2. Dip them into the broth!').within(() => {
             cy.get('[aria-label="Move instruction step up"]').click();
         });
@@ -192,7 +192,7 @@ describe('Authentication', () => {
         });
         cy.contains('Save').click();
         cy.url().should('contain', 'ramen');
-        cy.url().should('not.contain', 'edit');
+        cy.url().should('not.contain', 'Edit');
 
         // Act
         cy.visit('/?authenticator=inrupt');

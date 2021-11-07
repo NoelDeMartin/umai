@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { defineComponent, h } from 'vue';
 import { Storage, fail, once } from '@noeldemartin/utils';
 import type { Component, ComponentOptions, Plugin } from 'vue';
-import type { RouteLocationRaw, RouteRecordRaw } from 'vue-router';
+import type { NavigationGuard, RouteLocationRaw, RouteRecordRaw } from 'vue-router';
 import type { SolidModel } from 'soukai-solid';
 
 import Router from '@/framework/core/facades/Router';
@@ -105,7 +105,11 @@ function handleGithubPagesRedirect(): void {
     route && Router.replace(route);
 }
 
-export default function(routes: RouteRecordRaw[]): Plugin {
+export interface RouterGuards {
+    beforeEach?: NavigationGuard;
+}
+
+export default function(routes: RouteRecordRaw[], guards: Partial<RouterGuards> = {}): Plugin {
     const router = createRouter({
         history: createWebHistory(),
         routes: routes.map(route => enhanceRoute(route)),
@@ -114,6 +118,8 @@ export default function(routes: RouteRecordRaw[]): Plugin {
     router.modelBindings = {};
     router.registerModelBinding = (model, resolver) => router.modelBindings[model] = resolver;
     router.beforeEach(once(handleGithubPagesRedirect));
+
+    guards.beforeEach && router.beforeEach(guards.beforeEach);
 
     Router.setInstance(router);
 

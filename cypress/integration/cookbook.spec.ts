@@ -30,7 +30,7 @@ describe('Cookbook', () => {
         cy.reload();
 
         // Act - First edit
-        cy.contains('edit').click();
+        cy.contains('Edit').click();
         cy.get('#name').type('!');
         cy.get('#new-ingredient').type('Toppings');
         cy.get('[aria-label="Add ingredient"]').click();
@@ -42,11 +42,11 @@ describe('Cookbook', () => {
         });
         cy.contains('Save').click();
         cy.url().should('contain', 'ramen');
-        cy.url().should('not.contain', 'edit');
+        cy.url().should('not.contain', 'Edit');
         cy.reload();
 
         // Act - Second edit
-        cy.contains('edit').click();
+        cy.contains('Edit').click();
         cy.contains('2. Dip them into the broth!').within(() => {
             cy.get('[aria-label="Move instruction step up"]').click();
         });
@@ -55,7 +55,7 @@ describe('Cookbook', () => {
         });
         cy.contains('Save').click();
         cy.url().should('contain', 'ramen');
-        cy.url().should('not.contain', 'edit');
+        cy.url().should('not.contain', 'Edit');
         cy.reload();
 
         // Assert
@@ -64,8 +64,8 @@ describe('Cookbook', () => {
         cy.contains('Broth').should('be.visible');
         cy.contains('Noodles').should('be.visible');
         cy.contains('Toppings').should('be.visible');
-        cy.contains('1. Dip them into the broth!').should('be.visible');
-        cy.contains('2. Boil the noodles').should('be.visible');
+        cy.contains('Dip them into the broth!').scrollIntoView().should('be.visible');
+        cy.contains('Boil the noodles').scrollIntoView().should('be.visible');
         cy.contains('Add Toppings').should('not.exist');
 
         cy.assertLocalDocumentEquals('solid://recipes/ramen', firstRamenJsonLD);
@@ -89,7 +89,7 @@ describe('Cookbook', () => {
         cy.get('.animate-spin').should('not.exist');
 
         // Act - First update
-        cy.contains('edit').click();
+        cy.contains('Edit').click();
         cy.get('#name').type('!');
         cy.get('#description').type('is life');
         cy.get('#new-ingredient').type('Toppings');
@@ -103,7 +103,7 @@ describe('Cookbook', () => {
         cy.get('.animate-spin').should('not.exist');
 
         // Act - Second update
-        cy.contains('edit').click();
+        cy.contains('Edit').click();
         cy.get('#name').clear().type('Jun\'s Ramen');
         cy.get('#description').clear().type('Instructions: https://www.youtube.com/watch?v=9WXIrnWsaCo');
         cy.get('[aria-label="Remove \'Toppings\' ingredient"]').click();
@@ -122,7 +122,7 @@ describe('Cookbook', () => {
         cy.get('.animate-spin').should('not.exist');
 
         // Act - Third update
-        cy.contains('edit').click();
+        cy.contains('Edit').click();
         cy.contains('2. Dip them into the broth!').within(() => {
             cy.get('[aria-label="Move instruction step up"]').click();
         });
@@ -140,8 +140,8 @@ describe('Cookbook', () => {
         cy.contains('Noodles').should('be.visible');
         cy.contains('Shiitake').should('be.visible');
         cy.contains('Nori').should('be.visible');
-        cy.contains('1. Dip them into the broth!').should('be.visible');
-        cy.contains('2. Boil the noodles').should('be.visible');
+        cy.contains('Dip them into the broth!').scrollIntoView().should('be.visible');
+        cy.contains('Boil the noodles').scrollIntoView().should('be.visible');
         cy.contains('Toppings').should('not.exist');
 
         const fixtures: string[] = [];

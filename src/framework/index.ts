@@ -2,6 +2,11 @@ import { createApp } from 'vue';
 import type { Component, Directive, Plugin } from 'vue';
 import type { RouteRecordRaw } from 'vue-router';
 
+import App from '@/framework/core/facades/App';
+import getBasePlugins from '@/framework/plugins';
+import baseDirectives from '@/framework/directives';
+import baseRoutes from '@/framework/routing';
+import Events from '@/framework/core/facades/Events';
 import {
     authenticators as baseAuthenticators,
     getAuthenticator,
@@ -9,14 +14,10 @@ import {
     setDefaultAuthenticator,
 } from '@/framework/auth';
 import { services as baseServices } from '@/framework/core';
-import App from '@/framework/core/facades/App';
-import getBasePlugins from '@/framework/plugins';
-import baseDirectives from '@/framework/directives';
-import baseRoutes from '@/framework/routing';
-import Events from '@/framework/core/facades/Events';
-import type { AuthenticatorName } from '@/framework/auth';
 import type Authenticator from '@/framework/auth/Authenticator';
 import type Service from '@/framework/core/Service';
+import type { AuthenticatorName } from '@/framework/auth';
+import type { RouterGuards } from '@/framework/plugins/router';
 
 declare module '@/framework/core/services/EventsService' {
 
@@ -32,6 +33,7 @@ export type BootstrapApplicationOptions = Partial<{
     plugins: Plugin[];
     directives: Record<string, Directive>;
     routes: RouteRecordRaw[];
+    routerGuards: RouterGuards;
     services: Record<string, Service>;
     authenticators: Record<string, Authenticator>;
     defaultAuthenticator: AuthenticatorName;
@@ -45,7 +47,7 @@ export async function bootstrapApplication(
 ): Promise<void> {
     const app = createApp(rootComponent);
     const routes = [...options.routes ?? [], ...baseRoutes];
-    const basePlugins = await getBasePlugins(routes);
+    const basePlugins = await getBasePlugins(routes, options.routerGuards);
     const plugins = [...basePlugins, ...(options.plugins ?? [])];
     const directives = { ...baseDirectives, ...(options.directives ?? {}) };
     const services = { ...baseServices, ...(options.services ?? {}) };
