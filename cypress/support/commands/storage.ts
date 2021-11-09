@@ -17,6 +17,10 @@ async function getIndexedDBObject<T = object>(database: string, store: string, i
     }
 }
 
+async function deleteIndexedDBDatabase(database: string): Promise<void> {
+    return new Promise(resolve => deleteDB(database, { blocked: resolve }).then(resolve));
+}
+
 export default {
 
     assertLocalDocumentDoesNotExist(documentId: string): void {
@@ -56,8 +60,8 @@ export default {
         cy.window()
             .then(window => window.testing && Cypress.Promise.cast(window.testing.stop()))
             .then(success => success && Cypress.Promise.all([
-                deleteDB('soukai'),
-                deleteDB('soukai-meta'),
+                deleteIndexedDBDatabase('soukai'),
+                deleteIndexedDBDatabase('soukai-meta'),
             ]));
     },
 
