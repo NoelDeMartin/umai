@@ -11,6 +11,12 @@ export default SolidModel.schema({
         type: FieldType.String,
         rdfProperty: 'schema:image',
     },
+    servings: {
+        type: FieldType.String,
+        rdfProperty: 'schema:recipeYield',
+    },
+    prepTime: FieldType.String,
+    cookTime: FieldType.String,
     ingredients: {
         type: FieldType.Array,
         rdfProperty: 'schema:recipeIngredient',

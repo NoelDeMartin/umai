@@ -1,5 +1,5 @@
 <template>
-    <ul class="grid grid-cols-1 gap-3 my-3 sm:grid-cols-2 md:grid-cols-3">
+    <ul class="grid grid-cols-1 gap-3 my-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         <RecipeCard
             v-for="recipe in recipes"
             :key="recipe.url"

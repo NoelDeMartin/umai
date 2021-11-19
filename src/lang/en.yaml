@@ -1,21 +1,25 @@
 cloud:
   statuses:
+    disconnected: disconnected
     offline: offline
     online: online
-    disconnected: disconnected
     syncing: syncing
 menu:
-  open: Open user menu
-  settings: Settings
   log_in: Log in
   log_out: Log out
+  open: Open user menu
+  settings: Settings
 recipes:
-  add: New Recipe
-  edit: Edit
   delete: Delete
-  empty: You don't have any recipes in your cookbook!
+  edit: Edit
+
+  cookTime: Cooking time
+  ingredients: Ingredients
+  instructions: Instructions
+  prepTime: Preparation time
+  servings: Servings
+
   index:
-    title: Cookbook
-  show:
-    ingredients: Ingredients
-    instructions: Instructions
+    add: add recipe
+    empty: You don't have any recipes in your cookbook!
+    title: Your cookbook

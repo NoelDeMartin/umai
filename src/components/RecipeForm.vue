@@ -40,6 +40,35 @@
                 />
             </div>
         </div>
+        <div class="flex space-x-2">
+            <div class="flex flex-col min-w-0">
+                <label for="servings" class="block mb-2 text-sm font-medium text-gray-700">Servings</label>
+                <input
+                    id="servings"
+                    v-model="servings"
+                    type="text"
+                    class="block relative px-3 py-2 min-w-0 placeholder-gray-500 text-gray-900 rounded-md border border-transparent border-gray-300 appearance-none focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                >
+            </div>
+            <div class="flex flex-col min-w-0">
+                <label for="preparation-time" class="block mb-2 text-sm font-medium text-gray-700">Preparation time</label>
+                <input
+                    id="preparation-time"
+                    v-model="prepTime"
+                    type="text"
+                    class="block relative px-3 py-2 min-w-0 placeholder-gray-500 text-gray-900 rounded-md border border-transparent border-gray-300 appearance-none focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                >
+            </div>
+            <div class="flex flex-col min-w-0">
+                <label for="cooking-time" class="block mb-2 text-sm font-medium text-gray-700">Cooking time</label>
+                <input
+                    id="cooking-time"
+                    v-model="cookTime"
+                    type="text"
+                    class="block relative px-3 py-2 min-w-0 placeholder-gray-500 text-gray-900 rounded-md border border-transparent border-gray-300 appearance-none focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                >
+            </div>
+        </div>
         <div>
             <h2 class="block mb-2 text-sm font-medium text-gray-700">
                 Ingredients
@@ -166,123 +195,109 @@
     </form>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from 'vue';
+<script setup lang="ts">
+import { defineEmits, defineExpose, defineProps, ref } from 'vue';
 import type { Attributes } from 'soukai';
 import type { PropType } from 'vue';
 
 import Recipe from '@/models/Recipe';
 import type RecipeInstructionsStep from '@/models/RecipeInstructionsStep';
 
-export default defineComponent({
-    props: {
-        recipe: {
-            type: Object as PropType<Recipe>,
-            default: null,
-        },
+const emit = defineEmits(['done', 'cancel']);
+const props = defineProps({
+    recipe: {
+        type: Object as PropType<Recipe>,
+        default: null,
     },
-    emits: ['done', 'cancel'],
-    setup(props, { emit }) {
-        const name = ref(props.recipe?.name ?? '');
-        const imageUrl = ref(props.recipe?.imageUrl ?? '');
-        const description = ref(props.recipe?.description ?? '');
-        const newIngredient = ref('');
-        const newInstructionStep = ref('');
-        const ingredients = ref<string[]>(props.recipe?.ingredients.slice(0) ?? []);
-        const instructions = ref<Attributes[]>([]);
-        const nameInput = ref<HTMLInputElement>();
-        const focus = () => nameInput.value?.focus();
-        const addIngredient = () => {
-            ingredients.value.push(newIngredient.value);
+});
 
-            newIngredient.value = '';
-        };
-        const addInstructionStep = () => {
-            const instructionStep = {
-                text: newInstructionStep.value,
-                position: Number(instructions.value.length + 1),
-            };
+const name = ref(props.recipe?.name ?? '');
+const imageUrl = ref(props.recipe?.imageUrl ?? '');
+const description = ref(props.recipe?.description ?? '');
+const servings = ref(props.recipe?.servings ?? '');
+const prepTime = ref(props.recipe?.prepTime ?? '');
+const cookTime = ref(props.recipe?.cookTime ?? '');
+const newIngredient = ref('');
+const newInstructionStep = ref('');
+const ingredients = ref<string[]>(props.recipe?.ingredients.slice(0) ?? []);
+const instructions = ref<Attributes[]>([]);
+const nameInput = ref<HTMLInputElement>();
+const focus = () => nameInput.value?.focus();
+const addIngredient = () => {
+    ingredients.value.push(newIngredient.value);
 
-            newInstructionStep.value = '';
-            instructions.value.push(instructionStep);
-        };
-        const changeInstructionStepText = (index: number) => {
-            const instructionStep = instructions.value[index];
-            const text = prompt('What\'s the new text?', instructionStep.text);
+    newIngredient.value = '';
+};
+const addInstructionStep = () => {
+    const instructionStep = {
+        text: newInstructionStep.value,
+        position: Number(instructions.value.length + 1),
+    };
 
-            instructionStep.text = text;
-            instructions.value = instructions.value.slice(0);
-        };
-        const removeIngredient = (index: number) => ingredients.value.splice(index, 1);
-        const removeInstructionStep = (index: number) => instructions.value.splice(index, 1);
-        const moveInstructionStep = (index: number, delta: number) => {
-            const newIndex = (index + delta + instructions.value.length) % instructions.value.length;
+    newInstructionStep.value = '';
+    instructions.value.push(instructionStep);
+};
+const changeInstructionStepText = (index: number) => {
+    const instructionStep = instructions.value[index];
+    const text = prompt('What\'s the new text?', instructionStep.text);
 
-            instructions.value[index].position = newIndex + 1;
-            instructions.value[newIndex].position = index + 1;
-            instructions.value.sort((a, b) => a.position - b.position);
-        };
-        const submit = async () => {
-            if (!name.value)
-                return;
+    instructionStep.text = text;
+    instructions.value = instructions.value.slice(0);
+};
+const removeIngredient = (index: number) => ingredients.value.splice(index, 1);
+const removeInstructionStep = (index: number) => instructions.value.splice(index, 1);
+const moveInstructionStep = (index: number, delta: number) => {
+    const newIndex = (index + delta + instructions.value.length) % instructions.value.length;
 
-            const attributes = {
-                name: name.value,
-                imageUrl: imageUrl.value || null,
-                description: description.value || null,
-                ingredients: ingredients.value,
-            };
+    instructions.value[index].position = newIndex + 1;
+    instructions.value[newIndex].position = index + 1;
+    instructions.value.sort((a, b) => a.position - b.position);
+};
+const submit = async () => {
+    if (!name.value)
+        return;
 
-            const recipe = props.recipe ?? new Recipe(attributes);
-            const instructionUrls = instructions.value.map(({ url }) => url);
+    const attributes = {
+        name: name.value,
+        imageUrl: imageUrl.value || null,
+        description: description.value || null,
+        servings: servings.value || null,
+        prepTime: prepTime.value || null,
+        cookTime: cookTime.value || null,
+        ingredients: ingredients.value,
+    };
 
-            recipe.setAttributes(attributes);
+    const recipe = props.recipe ?? new Recipe(attributes);
+    const instructionUrls = instructions.value.map(({ url }) => url);
 
-            for (const instructionAttributes of instructions.value) {
-                if (instructionAttributes.url) {
-                    recipe.instructions
-                        ?.find(model => model.url === instructionAttributes.url)
-                        ?.setAttributes(instructionAttributes);
-                } else {
-                    recipe.relatedInstructions.attach(instructionAttributes);
-                }
-            }
+    recipe.setAttributes(attributes);
 
-            for (const instruction of recipe.instructions ?? []) {
-                if (instructionUrls.includes(instruction.url))
-                    continue;
+    for (const instructionAttributes of instructions.value) {
+        if (instructionAttributes.url) {
+            recipe.instructions
+                ?.find(model => model.url === instructionAttributes.url)
+                ?.setAttributes(instructionAttributes);
+        } else {
+            recipe.relatedInstructions.attach(instructionAttributes);
+        }
+    }
 
-                recipe.relatedInstructions.detach(instruction);
-            }
+    for (const instruction of recipe.instructions ?? []) {
+        if (instructionUrls.includes(instruction.url))
+            continue;
 
-            await recipe.save();
+        recipe.relatedInstructions.detach(instruction);
+    }
 
-            emit('done', recipe);
-        };
+    await recipe.save();
 
-        props.recipe?.loadRelation<RecipeInstructionsStep[]>('instructions').then(recipeInstructions => {
-            instructions.value = recipeInstructions.map(step => step.getAttributes());
-            instructions.value.sort((a, b) => a.position - b.position);
-        });
+    emit('done', recipe);
+};
 
-        return {
-            name,
-            imageUrl,
-            description,
-            newIngredient,
-            newInstructionStep,
-            ingredients,
-            instructions,
-            nameInput,
-            focus,
-            addIngredient,
-            addInstructionStep,
-            changeInstructionStepText,
-            removeIngredient,
-            removeInstructionStep,
-            moveInstructionStep,
-            submit,
-        };
-    },
+defineExpose({ focus });
+
+props.recipe?.loadRelation<RecipeInstructionsStep[]>('instructions').then(recipeInstructions => {
+    instructions.value = recipeInstructions.map(step => step.getAttributes());
+    instructions.value.sort((a, b) => a.position - b.position);
 });
 </script>

@@ -17,9 +17,11 @@ module.exports = {
                 'primary': colors.indigo,
                 'dark-overlay': 'rgba(0,0,0,.5)',
             },
+            margin: theme => ({
+                edge: theme('spacing.8'),
+            }),
             maxWidth: {
-                content: '900px',
-                readable: '640px',
+                content: '1280px',
             },
         },
     },

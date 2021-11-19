@@ -15,7 +15,7 @@ describe('Cookbook', () => {
         cy.contains('You don\'t have any recipes in your cookbook!').should('be.visible');
 
         // Act - Create
-        cy.contains('New Recipe').click();
+        cy.contains('add recipe').click();
         cy.get('#name').type('Ramen');
         cy.get('#new-ingredient').type('Broth');
         cy.get('[aria-label="Add ingredient"]').click();
@@ -60,7 +60,6 @@ describe('Cookbook', () => {
 
         // Assert
         cy.contains('Ramen!').should('be.visible');
-        cy.contains('No description').should('be.visible');
         cy.contains('Broth').should('be.visible');
         cy.contains('Noodles').should('be.visible');
         cy.contains('Toppings').should('be.visible');
@@ -78,7 +77,7 @@ describe('Cookbook', () => {
         cy.intercept('PATCH', 'http://localhost:4000/cookbook/ramen').as('patchRamen');
 
         // Act - Create
-        cy.contains('New Recipe').click();
+        cy.contains('add recipe').click();
         cy.get('#name').type('Ramen');
         cy.get('#new-ingredient').type('Broth');
         cy.get('[aria-label="Add ingredient"]').click();

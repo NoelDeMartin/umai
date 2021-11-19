@@ -3,7 +3,12 @@
     <component
         :is="buttonComponent"
         v-bind="buttonProps"
-        class="inline-flex justify-center items-center px-4 py-2 text-base font-medium text-white whitespace-nowrap bg-origin-border bg-gradient-to-r from-purple-600 to-indigo-600 rounded-md border border-transparent shadow-sm hover:from-purple-700 hover:to-indigo-700"
+        :class="[
+            'inline-flex justify-center items-center px-4 py-2 rounded-md border shadow-sm',
+            'text-base font-medium whitespace-nowrap',
+            isPrimary && 'text-white bg-primary-600 border-transparent hover:bg-primary-700',
+            isSecondary && 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50',
+        ]"
     >
         <slot />
     </component>
@@ -22,8 +27,14 @@ const props = defineProps({
         type: Object as PropType<Object | null>,
         default: null,
     },
+    secondary: {
+        type: Boolean,
+        default: false,
+    },
 });
 
+const isPrimary = computed(() => !props.secondary);
+const isSecondary = computed(() => props.secondary);
 const buttonComponent = computed(() => props.route ? 'router-link' : 'button');
 const buttonProps = computed(() => {
     if (buttonComponent.value === 'button') {

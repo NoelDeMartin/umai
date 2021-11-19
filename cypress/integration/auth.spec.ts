@@ -36,7 +36,7 @@ describe('Authentication', () => {
 
         // Act - Create recipe
         cy.contains('Cookbook').click();
-        cy.contains('New Recipe').click();
+        cy.contains('add recipe').click();
         cy.get('#name').type('Ramen');
         cy.contains('Create').click();
         cy.get('[aria-label="Sync"]').click();
@@ -139,7 +139,7 @@ describe('Authentication', () => {
 
         // Act - Create
         cy.contains('Cookbook').click();
-        cy.contains('New Recipe').click();
+        cy.contains('add recipe').click();
         cy.get('#name').type('Ramen');
         cy.get('#new-ingredient').type('Broth');
         cy.get('[aria-label="Add ingredient"]').click();
