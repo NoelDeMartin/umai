@@ -15,6 +15,7 @@ import type { ComputedStateDefinitions, IService } from '@/framework/core/Servic
 interface State {
     session: AuthSession | null;
     profiles: Record<string, SolidUserProfile>;
+    preferredAuthenticator: AuthenticatorName | null;
     previousSession: {
         authenticator: AuthenticatorName;
         loginUrl: string;
@@ -73,7 +74,9 @@ export default class AuthService extends Service<State, ComputedState> {
         });
     }
 
-    public async login(loginUrl: string, authenticatorName: AuthenticatorName = 'default'): Promise<void> {
+    public async login(loginUrl: string, authenticatorName?: AuthenticatorName): Promise<void> {
+        authenticatorName = authenticatorName ?? this.preferredAuthenticator ?? 'default';
+
         if (this.loggedIn)
             return;
 
@@ -152,6 +155,11 @@ export default class AuthService extends Service<State, ComputedState> {
     protected async boot(): Promise<void> {
         await super.boot();
 
+        const url = new URL(location.href);
+
+        if (url.searchParams.has('authenticator'))
+            this.setState({ preferredAuthenticator: url.searchParams.get('authenticator') as AuthenticatorName });
+
         this.previousSession && await this.bootAuthenticator(this.previousSession.authenticator);
     }
 
@@ -159,6 +167,7 @@ export default class AuthService extends Service<State, ComputedState> {
         return {
             session: null,
             previousSession: null,
+            preferredAuthenticator: null,
             profiles: {},
         };
     }

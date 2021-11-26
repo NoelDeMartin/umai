@@ -9,6 +9,9 @@ const config = {
         edge: '2rem',
         content: '1280px',
     },
+    fontSizes: {
+        '4xl': '2.5rem',
+    },
 };
 
 const memoizedPixels: Record<string, number> = {};

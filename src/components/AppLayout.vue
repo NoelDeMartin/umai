@@ -5,5 +5,6 @@
             <slot />
         </div>
         <AppFooter />
+        <div id="element-transitions-container" />
     </div>
 </template>

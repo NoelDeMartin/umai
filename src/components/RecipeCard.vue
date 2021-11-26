@@ -4,8 +4,10 @@
             name: 'recipe-card',
             id: recipe.url,
             transitions: {
+                'enter': enterTransition,
+                'recipe-card': transitionToCard,
                 'recipe-details': transitionToDetails,
-                leave: leaveTransition,
+                'leave': $elementTransitions.fadeOut,
             }
         }"
         :data-recipe-url="recipe.url"
@@ -37,10 +39,12 @@ import { after } from '@noeldemartin/utils';
 import { defineProps, ref } from 'vue';
 import type { PropType } from 'vue';
 
-import UI from '@/framework/core/facades/UI';
+import Router from '@/framework/core/facades/Router';
 import TailwindCSS from '@/framework/utils/tailwindcss';
-import { defineElementTransition, defineLeaveTransition } from '@/framework/core/services/ElementTransitionsService';
+import UI from '@/framework/core/facades/UI';
 import { afterElementsUpdated, updateElement } from '@/framework/utils/dom';
+import { defineElementTransition, defineEnterTransition } from '@/framework/core/services/ElementTransitionsService';
+import { fadeIn } from '@/framework/utils/transitions';
 
 import type Recipe from '@/models/Recipe';
 
@@ -56,6 +60,24 @@ const visibleFocus = ref(false);
 function setVisibleFocus(value: boolean) {
     visibleFocus.value = value;
 }
+
+const enterTransition = defineEnterTransition(async (card, existed) => {
+    if (existed || Router.previousRouteWas('recipes.show')) return;
+
+    await fadeIn(card);
+});
+
+const transitionToCard = defineElementTransition(async (wrapper, _, next) => {
+    const duration = 700;
+    const nextBoundingRect = next.getBoundingClientRect();
+
+    updateElement(wrapper, {
+        transition: duration,
+        boundingRect: nextBoundingRect,
+    });
+
+    await after({ milliseconds: duration });
+});
 
 const transitionToDetails = defineElementTransition(async (wrapper, card, details) => {
     const duration = 600;
@@ -73,6 +95,9 @@ const transitionToDetails = defineElementTransition(async (wrapper, card, detail
         addClasses: 'w-full h-full',
         removeClasses: 'aspect-w-5 aspect-h-2 hover:opacity-75',
         prepend: cardOverlay,
+    });
+    updateElement(cardTitleWrapper, {
+        styles: { height: `${cardTitleWrapper.clientHeight}px` },
     });
     updateElement(cardTitleText, { addClasses: 'text-shadow-transparent' });
     updateElement(cardOverlay, {
@@ -101,6 +126,7 @@ const transitionToDetails = defineElementTransition(async (wrapper, card, detail
         transition: duration,
         removeClasses: 'p-2',
         styles: {
+            height: (TailwindCSS.pixels('fontSizes.4xl') + 2 * TailwindCSS.pixels('spacing.4')) + 'px',
             padding: [
                 TailwindCSS.css('spacing.4'),
                 TailwindCSS.css('spacing.4'),
@@ -121,18 +147,6 @@ const transitionToDetails = defineElementTransition(async (wrapper, card, detail
         transition: duration,
         styles: { opacity: '0' },
     });
-
-    await after({ milliseconds: duration });
-});
-
-const leaveTransition = defineLeaveTransition(async wrapper => {
-    const duration = 500;
-
-    updateElement(wrapper, { addClasses: 'opacity-100' });
-
-    await afterElementsUpdated();
-
-    updateElement(wrapper, { transition: duration, addClasses: 'opacity-0' });
 
     await after({ milliseconds: duration });
 });

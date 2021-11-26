@@ -1,35 +1,41 @@
 <template>
     <main
-        v-element-transitions="{ leave: leaveTransition }"
+        v-element-transitions="{
+            enter: {
+                'recipes.show': null,
+                '*': $elementTransitions.fadeIn,
+            },
+            leave: {
+                'recipes.show': $elementTransitions.waitChildrenTransitions,
+                '*': $elementTransitions.fadeOut,
+            },
+        }"
         aria-labelledby="#cookbook-title"
         class="w-full mx-edge max-w-content"
     >
         <div class="flex justify-between">
-            <h1 id="cookbook-title" class="text-2xl font-semibold">
+            <BaseHeading id="cookbook-title">
                 {{ $t('recipes.index.title') }}
-            </h1>
+            </BaseHeading>
             <BaseButton secondary route="recipes.create">
                 <i-zondicons-add-solid class="mr-2 w-4 h-4" /> {{ $t('recipes.index.add') }}
             </BaseButton>
         </div>
-        <p v-if="!$cookbook.recipes">
-            <i-umai-loading-dots class="w-16 h-12 text-indigo-500" />
-        </p>
-        <p v-else-if="$cookbook.recipes.isEmpty()">
-            {{ $t('recipes.index.empty') }}
-        </p>
-        <RecipesGrid v-else :recipes="$cookbook.recipes" class="w-full" />
+        <RecipesGrid :recipes="$cookbook.recipes" class="w-full" />
     </main>
 </template>
 
-<script setup lang="ts">
-import ElementTransitions from '@/framework/core/facades/ElementTransitions';
-import { defineLeaveTransition } from '@/framework/core/services/ElementTransitionsService';
-import { updateElement } from '@/framework/utils/dom';
+<script lang="ts">
+import { defineComponent } from 'vue';
 
-const leaveTransition = defineLeaveTransition(async (_, el) => {
-    updateElement(el, { removeClasses: 'mx-edge' });
+import Cookbook from '@/services/facades/Cookbook';
 
-    await ElementTransitions.afterChildrenTransitions(el);
+export default defineComponent({
+    beforeRouteEnter() {
+        if (!Cookbook.recipes.isEmpty())
+            return;
+
+        return { name: 'home', replace: true };
+    },
 });
 </script>

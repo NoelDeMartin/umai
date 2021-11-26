@@ -61,13 +61,10 @@
 
 <script setup lang="ts">
 import Auth from '@/framework/core/facades/Auth';
-import type { AuthenticatorName } from '@/framework/auth';
 
 const login = () => {
     const loginUrl = prompt('Login url?', 'https://');
-    const authenticator = new URL(location.href)
-        .searchParams.get('authenticator') as AuthenticatorName ?? 'default';
 
-    loginUrl && Auth.login(loginUrl, authenticator);
+    loginUrl && Auth.login(loginUrl);
 };
 </script>

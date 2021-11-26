@@ -1,10 +1,42 @@
 <template>
-    <!-- TODO rework into welcome screen -->
-    <div class="flex flex-col flex-grow justify-center items-center p-8 m-auto max-w-2xl">
-        <BaseButton route="recipes.index">
-            Cookbook
-        </BaseButton>
-    </div>
+    <main
+        v-element-transitions="{
+            enter: {
+                'recipes.show': fadeInCookbookLink,
+                '*': $elementTransitions.fadeIn,
+            },
+            leave: {
+                'recipes.show': fadeOutCookbookLink,
+                '*': $elementTransitions.fadeOut,
+            },
+        }"
+        class="flex flex-col w-full max-w-content mx-edge"
+        aria-labelledby="#home-title"
+    >
+        <HomeOnboarding v-if="$cookbook.recipes.isEmpty()" />
+        <HomeLanding v-else />
+    </main>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { defineEnterTransition, defineLeaveTransition } from '@/framework/core/services/ElementTransitionsService';
+import { fadeIn, fadeOut } from '@/framework/utils/transitions';
+
+const fadeInCookbookLink = defineEnterTransition(async home => {
+    const cookbookLink = home.querySelector('#home--cookbook-link');
+
+    if (!cookbookLink)
+        return;
+
+    await fadeIn(cookbookLink as HTMLElement);
+});
+
+const fadeOutCookbookLink = defineLeaveTransition(async wrapper => {
+    const cookbookLink = wrapper.querySelector('#home--cookbook-link');
+
+    if (!cookbookLink)
+        return;
+
+    await fadeOut(cookbookLink as HTMLElement);
+});
+</script>

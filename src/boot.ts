@@ -1,5 +1,6 @@
 import { bootstrapApplication } from '@/framework';
 
+import './main.css';
 import App from './App.vue';
 import plugins from './plugins';
 import routes, { beforeEach, registerRouterBindings } from './routing';

@@ -35,8 +35,7 @@ describe('Authentication', () => {
         cy.waitForReload({ resetProfiles: true });
 
         // Act - Create recipe
-        cy.contains('Cookbook').click();
-        cy.contains('add recipe').click();
+        cy.contains('Add your first recipe').click();
         cy.get('#name').type('Ramen');
         cy.contains('Create').click();
         cy.get('[aria-label="Sync"]').click();
@@ -71,7 +70,6 @@ describe('Authentication', () => {
         cy.waitForReload({ resetProfiles: true });
 
         // Act - Update recipe
-        cy.contains('Cookbook').click();
         cy.contains('Pisto').click();
         cy.contains('Edit').click();
         cy.get('#name').type('!');
@@ -121,14 +119,13 @@ describe('Authentication', () => {
             },
         });
         cy.waitForReload({ resetProfiles: true });
-        cy.contains('Cookbook').click();
         cy.contains('Pisto').should('be.visible');
 
         // Act
         cy.get('[aria-label="Log out"]').click();
 
         // Assert
-        cy.contains('You don\'t have any recipes in your cookbook!').should('be.visible');
+        cy.contains('Are you ready to start cooking?').should('be.visible');
     });
 
     it('migrates local data to cloud after logging in', () => {
@@ -138,8 +135,7 @@ describe('Authentication', () => {
         cy.startApp();
 
         // Act - Create
-        cy.contains('Cookbook').click();
-        cy.contains('add recipe').click();
+        cy.contains('Add your first recipe').click();
         cy.get('#name').type('Ramen');
         cy.get('#new-ingredient').type('Broth');
         cy.get('[aria-label="Add ingredient"]').click();
@@ -147,7 +143,7 @@ describe('Authentication', () => {
         cy.get('[aria-label="Add ingredient"]').click();
         cy.contains('Create').click();
         cy.url().should('contain', 'ramen');
-        cy.url().should('not.contain', 'Edit');
+        cy.url().should('not.contain', 'edit');
 
         // Act - First edit
         cy.contains('Edit').click();
@@ -161,7 +157,7 @@ describe('Authentication', () => {
         cy.get('[aria-label="Add instruction step"]').click();
         cy.contains('Save').click();
         cy.url().should('contain', 'ramen');
-        cy.url().should('not.contain', 'Edit');
+        cy.url().should('not.contain', 'edit');
 
         // Act - Second edit
         cy.contains('Edit').click();
@@ -180,7 +176,7 @@ describe('Authentication', () => {
         cy.get('[aria-label="Add instruction step"]').click();
         cy.contains('Save').click();
         cy.url().should('contain', 'ramen');
-        cy.url().should('not.contain', 'Edit');
+        cy.url().should('not.contain', 'edit');
 
         // Act - Third edit
         cy.contains('Edit').click();
@@ -192,7 +188,7 @@ describe('Authentication', () => {
         });
         cy.contains('Save').click();
         cy.url().should('contain', 'ramen');
-        cy.url().should('not.contain', 'Edit');
+        cy.url().should('not.contain', 'edit');
 
         // Act
         cy.visit('/?authenticator=inrupt');

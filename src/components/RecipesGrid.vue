@@ -1,5 +1,5 @@
 <template>
-    <ul class="grid grid-cols-1 gap-3 my-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+    <ul ref="root" class="grid grid-cols-1 gap-3 my-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         <RecipeCard
             v-for="recipe in recipes"
             :key="recipe.url"
@@ -9,11 +9,15 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue';
+import { defineProps, onBeforeUnmount, ref } from 'vue';
 import type { FluentArray } from '@noeldemartin/utils';
 import type { PropType } from 'vue';
 
+import { updateElement } from '@/framework/utils/dom';
+
 import type Recipe from '@/models/Recipe';
+
+const root = ref<HTMLElement>(null as unknown as HTMLElement);
 
 defineProps({
     recipes: {
@@ -21,4 +25,6 @@ defineProps({
         required: true,
     },
 });
+
+onBeforeUnmount(() => updateElement(root.value, { boundingDimensions: root.value.getBoundingClientRect() }));
 </script>

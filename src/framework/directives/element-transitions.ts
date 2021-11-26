@@ -3,10 +3,15 @@ import { defineDirective } from '@/framework/utils/vue';
 
 export default defineDirective({
     beforeMount(el, { value }) {
-        ElementTransitions.beforeElementMounted(
-            el,
-            'transitions' in value ? value : { transitions: value },
-        );
+        const config = 'transitions' in value ? value : { transitions: value };
+
+        if (typeof config.transitions.leave === 'function')
+            config.transitions.leave = { '*': config.transitions.leave };
+
+        if (typeof config.transitions.enter === 'function')
+            config.transitions.enter = { '*': config.transitions.enter };
+
+        ElementTransitions.beforeElementMounted(el, config);
     },
     mounted(el) {
         ElementTransitions.elementMounted(el);

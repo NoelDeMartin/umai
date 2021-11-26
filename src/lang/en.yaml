@@ -1,25 +1,39 @@
 cloud:
   statuses:
-    disconnected: disconnected
-    offline: offline
     online: online
+    online_description: You are online
+    offline: offline
+    offline_description: You are not online.
+    disconnected: disconnected
+    disconnected_description: You are disconnected
     syncing: syncing
+    syncing_description: Syncing in progress...
 menu:
+  open: Open user menu
   log_in: Log in
   log_out: Log out
-  open: Open user menu
   settings: Settings
-recipes:
-  delete: Delete
-  edit: Edit
+home:
+  title: What will you cook today?
+  cookbook_link: Check out more recipes
+  back: back home
 
+  onboarding:
+    title: Welcome!
+    message: Are you ready to start cooking?
+    add_recipe: Add your first recipe
+
+recipes:
   cookTime: Cooking time
   ingredients: Ingredients
   instructions: Instructions
   prepTime: Preparation time
   servings: Servings
 
+  edit: Edit
+  delete: Delete
+
   index:
-    add: add recipe
-    empty: You don't have any recipes in your cookbook!
     title: Your cookbook
+    add: add recipe
+    back: back to cookbook

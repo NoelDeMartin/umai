@@ -246,7 +246,7 @@ const enterTransition = defineEnterTransition(async details => {
 
     // Clean up
     updateElement(detailsHeader, { removeClasses: 'z-10' });
-    updateElement(detailsBody, { removeClasses: 'transform translate-y-0' });
+    updateElement(detailsBody, { resetStyles: true, removeClasses: 'transform translate-y-0' });
 });
 
 const transitionToCard = defineElementTransition(async (wrapper, details, card) => {

@@ -12,10 +12,10 @@ describe('Cookbook', () => {
 
     it('creates and edits recipes', () => {
         // Arrange
-        cy.contains('You don\'t have any recipes in your cookbook!').should('be.visible');
+        cy.contains('Are you ready to start cooking?').should('be.visible');
 
         // Act - Create
-        cy.contains('add recipe').click();
+        cy.contains('Add your first recipe').click();
         cy.get('#name').type('Ramen');
         cy.get('#new-ingredient').type('Broth');
         cy.get('[aria-label="Add ingredient"]').click();
@@ -42,7 +42,7 @@ describe('Cookbook', () => {
         });
         cy.contains('Save').click();
         cy.url().should('contain', 'ramen');
-        cy.url().should('not.contain', 'Edit');
+        cy.url().should('not.contain', 'edit');
         cy.reload();
 
         // Act - Second edit
@@ -55,7 +55,7 @@ describe('Cookbook', () => {
         });
         cy.contains('Save').click();
         cy.url().should('contain', 'ramen');
-        cy.url().should('not.contain', 'Edit');
+        cy.url().should('not.contain', 'edit');
         cy.reload();
 
         // Assert
@@ -77,7 +77,7 @@ describe('Cookbook', () => {
         cy.intercept('PATCH', 'http://localhost:4000/cookbook/ramen').as('patchRamen');
 
         // Act - Create
-        cy.contains('add recipe').click();
+        cy.contains('Add your first recipe').click();
         cy.get('#name').type('Ramen');
         cy.get('#new-ingredient').type('Broth');
         cy.get('[aria-label="Add ingredient"]').click();

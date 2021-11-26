@@ -101,7 +101,11 @@ export default class Service<
             get: (target, property, receiver) =>
                 isReservedProperty(target, property)
                     ? Reflect.get(target, property, receiver)
-                    : (target.getState()[property] ?? target.getComputedState(property)),
+                    : (
+                        target.getState()[property] ??
+                        target.getComputedState(property) ??
+                        target.__get(property)
+                    ),
             set(target, property, value, receiver) {
                 if (isReservedProperty(target, property))
                     return Reflect.set(target, property, value, receiver);
@@ -145,6 +149,11 @@ export default class Service<
 
     protected getComputedStateDefinitions(): ComputedStateDefinitions<State, ComputedState> {
         return {} as ComputedStateDefinitions<State, ComputedState>;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected __get(property: string | number | symbol): unknown {
+        return undefined;
     }
 
     protected async boot(): Promise<void> {
