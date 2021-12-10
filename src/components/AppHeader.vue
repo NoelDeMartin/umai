@@ -1,8 +1,8 @@
 <template>
     <header
         ref="header"
-        class="flex relative z-40 flex-col flex-shrink-0 items-center self-stretch p-8 h-24 transition-colors duration-700"
-        :class="{ 'text-white': $ui.fullBleedHeader }"
+        class="flex relative z-40 flex-col items-center self-stretch p-8 h-24 transition-colors duration-700 shrink-0"
+        :class="{ 'text-white': $route.meta.fullBleedHeader }"
     >
         <div class="flex relative z-10 justify-between items-center w-full max-w-content">
             <div class="relative flex-grow h-full">
@@ -14,7 +14,7 @@
                     leave-from-class="opacity-100"
                     :leave-to-class="leaveToClasses"
                 >
-                    <div v-if="$route.name !== 'recipes.show'" class="flex absolute left-0 top-1/2 w-full text-gray-900 transform -translate-y-1/2">
+                    <div v-if="!$route.meta.fullBleedHeader" class="flex absolute left-0 top-1/2 w-full text-gray-900 -translate-y-1/2">
                         <router-link
                             :to="{ name: 'home' }"
                             title="Umai"
@@ -28,7 +28,7 @@
                     <button
                         v-else
                         type="button"
-                        class="flex absolute left-0 top-1/2 items-center w-full text-white transform -translate-y-1/2"
+                        class="flex absolute left-0 top-1/2 items-center w-full text-white -translate-y-1/2"
                         @click="$router.previousRoute ? $router.back() : $router.push({ name: 'home' })"
                     >
                         <span aria-hidden="true" class="mr-2">&larr; </span>
@@ -52,10 +52,13 @@ import Router from '@/framework/core/facades/Router';
 import UI from '@/framework/core/facades/UI';
 
 function updateHeaderSize() {
+    if (!header.value)
+        return;
+
     UI.updateHeaderHeight(header.value.clientHeight);
 }
 
-const header = ref<HTMLElement>(null as unknown as HTMLElement);
+const header = ref<HTMLElement>();
 const resizeObserver = new ResizeObserver(() => updateHeaderSize());
 const enterFromClasses = computed(() => [
     'opacity-0',
@@ -67,6 +70,9 @@ const leaveToClasses = computed(() => [
 ].join(' '));
 
 onMounted(() => {
+    if (!header.value)
+        return;
+
     updateHeaderSize();
     resizeObserver.observe(header.value);
 });

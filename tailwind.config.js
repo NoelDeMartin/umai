@@ -1,9 +1,7 @@
 const colors = require('tailwindcss/colors');
 
 module.exports = {
-    mode: 'jit',
-    darkMode: false,
-    purge: [
+    content: [
         './index.html',
         './src/**/*.{vue,ts}',
 
@@ -20,13 +18,18 @@ module.exports = {
             margin: theme => ({
                 edge: theme('spacing.8'),
             }),
+            width: {
+                clickable: '42px',
+            },
+            height: {
+                clickable: '42px',
+            },
             maxWidth: {
                 content: '1280px',
             },
         },
     },
     plugins: [
-        require('@tailwindcss/aspect-ratio'),
         require('@tailwindcss/typography'),
     ],
 };

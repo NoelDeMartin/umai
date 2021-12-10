@@ -25,13 +25,34 @@ home:
 
 recipes:
   cookTime: Cooking time
-  ingredients: Ingredients
-  instructions: Instructions
   prepTime: Preparation time
   servings: Servings
 
   edit: Edit
-  delete: Delete
+  delete: Delete recipe
+  drag: Hold and drag to move!
+  drag_a11y: Use ctrl + up/down to change ingredient positions
+
+  create_a11y_title: Create new recipe
+  edit_a11y_title: Edit "{recipe}" recipe
+
+  name_placeholder: Recipe name
+  description_placeholder: Recipe description
+  servings_placeholder: "?? persons"
+  prepTime_placeholder: "?? mins"
+  cookTime_placeholder: "?? mins"
+
+  ingredients: Ingredients
+  ingredient_add: Add ingredient
+  ingredient_placeholder: e.g. 100g Cheese
+  ingredient_remove: Remove ingredient
+  ingredient_remove_a11y: Remove "{ingredient}" ingredient
+
+  instructions: Instructions
+  instructionStep_add: Add step
+  instructionStep_placeholder: e.g. Rinse and repeat
+  instructionStep_remove: Remove step
+  instructionStep_remove_a11y: Remove step number {position}
 
   index:
     title: Your cookbook

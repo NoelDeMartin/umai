@@ -1,4 +1,4 @@
-import { afterAnimationFrame } from '@noeldemartin/utils';
+import { afterAnimationFrame, tap } from '@noeldemartin/utils';
 
 interface TransitionElementOptions {
     transition: number;
@@ -30,6 +30,17 @@ export function hasAncestor(element: HTMLElement | null, selector: string): bool
     }
 
     return false;
+}
+
+export function measureHTMLDimensions(html: string): { width: number; height: number } {
+    const ruler = document.createElement('div');
+    ruler.style.position = 'fixed';
+    ruler.style.opacity = '0';
+    ruler.innerHTML = html;
+
+    document.body.append(ruler);
+
+    return tap({ width: ruler.clientWidth, height: ruler.clientHeight }, () => ruler.remove());
 }
 
 export function updateElement(element: HTMLElement, options: Partial<TransitionElementOptions>): void {

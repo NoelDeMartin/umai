@@ -9,6 +9,7 @@ import { services } from '@/framework/core';
 import type { MockServices } from '@/framework/testing/service-helpers';
 import type { Services } from '@/framework/core';
 
+import '@/main.css';
 import './styles.css';
 import router from '@/framework/plugins/router';
 import directives from '@/framework/directives';

@@ -15,13 +15,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineProps } from 'vue';
+import { computed } from 'vue';
 import type { PropType } from 'vue';
 
 const props = defineProps({
     route: {
         type: String,
         default: null,
+    },
+    type: {
+        type: String,
+        default: 'button',
     },
     routeParams: {
         type: Object as PropType<Object | null>,
@@ -38,7 +42,7 @@ const isSecondary = computed(() => props.secondary);
 const buttonComponent = computed(() => props.route ? 'router-link' : 'button');
 const buttonProps = computed(() => {
     if (buttonComponent.value === 'button') {
-        return { type: 'button' };
+        return { type: props.type };
     }
 
     const routeData: { name: string; params?: Object } = { name: props.route };

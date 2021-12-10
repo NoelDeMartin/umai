@@ -12,9 +12,9 @@
         }"
         :data-recipe-url="recipe.url"
         :class="[
-            'flex overflow-hidden relative flex-col justify-end rounded-lg shadow aspect-w-5 aspect-h-2',
+            'flex overflow-hidden relative flex-col justify-end rounded-lg shadow aspect-[5/2]',
             'hover:opacity-75',
-            visibleFocus && 'ring-2 ring-offset-2 ring-primary-500'
+            visibleFocus && 'ring-2 ring-offset-2 ring-primary-500',
         ]"
     >
         <RecipeImage :recipe="recipe" class="absolute inset-0" />
@@ -36,7 +36,7 @@
 
 <script setup lang="ts">
 import { after } from '@noeldemartin/utils';
-import { defineProps, ref } from 'vue';
+import { ref } from 'vue';
 import type { PropType } from 'vue';
 
 import Router from '@/framework/core/facades/Router';
@@ -93,7 +93,7 @@ const transitionToDetails = defineElementTransition(async (wrapper, card, detail
     updateElement(wrapper, { addClasses: 'z-10' });
     updateElement(card, {
         addClasses: 'w-full h-full',
-        removeClasses: 'aspect-w-5 aspect-h-2 hover:opacity-75',
+        removeClasses: 'aspect-[5/2] hover:opacity-75',
         prepend: cardOverlay,
     });
     updateElement(cardTitleWrapper, {

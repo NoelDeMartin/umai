@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, onBeforeUnmount, ref } from 'vue';
+import { onBeforeUnmount, ref } from 'vue';
 import type { FluentArray } from '@noeldemartin/utils';
 import type { PropType } from 'vue';
 
@@ -17,7 +17,7 @@ import { updateElement } from '@/framework/utils/dom';
 
 import type Recipe from '@/models/Recipe';
 
-const root = ref<HTMLElement>(null as unknown as HTMLElement);
+const root = ref<HTMLElement>();
 
 defineProps({
     recipes: {
@@ -26,5 +26,10 @@ defineProps({
     },
 });
 
-onBeforeUnmount(() => updateElement(root.value, { boundingDimensions: root.value.getBoundingClientRect() }));
+onBeforeUnmount(() => {
+    if (!root.value)
+        return;
+
+    updateElement(root.value, { boundingDimensions: root.value.getBoundingClientRect() });
+});
 </script>

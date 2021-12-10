@@ -17,7 +17,6 @@ import { services as baseServices } from '@/framework/core';
 import type Authenticator from '@/framework/auth/Authenticator';
 import type Service from '@/framework/core/Service';
 import type { AuthenticatorName } from '@/framework/auth';
-import type { RouterGuards } from '@/framework/plugins/router';
 
 declare module '@/framework/core/services/EventsService' {
 
@@ -33,7 +32,6 @@ export type BootstrapApplicationOptions = Partial<{
     plugins: Plugin[];
     directives: Record<string, Directive>;
     routes: RouteRecordRaw[];
-    routerGuards: RouterGuards;
     services: Record<string, Service>;
     authenticators: Record<string, Authenticator>;
     defaultAuthenticator: AuthenticatorName;
@@ -47,7 +45,7 @@ export async function bootstrapApplication(
 ): Promise<void> {
     const app = createApp(rootComponent);
     const routes = [...options.routes ?? [], ...baseRoutes];
-    const basePlugins = await getBasePlugins(routes, options.routerGuards);
+    const basePlugins = await getBasePlugins(routes);
     const plugins = [...basePlugins, ...(options.plugins ?? [])];
     const directives = { ...baseDirectives, ...(options.directives ?? {}) };
     const services = { ...baseServices, ...(options.services ?? {}) };

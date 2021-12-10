@@ -1,37 +1,22 @@
 <template>
-    <div class="flex items-center self-center justify-center flex-grow">
+    <main class="w-full" :style="`margin-top: -${$ui.headerHeight}px`" aria-labelledby="#recipe-form-title">
         <RecipeForm
-            ref="form"
             :recipe="recipe"
             @done="$router.push({ name: 'recipes.show', params: { recipe: $event.uuid } })"
             @cancel="$router.back()"
         />
-    </div>
+    </main>
 </template>
 
-<script lang="ts">
-import { defineComponent, nextTick, onMounted, ref } from 'vue';
+<script setup lang="ts">
 import type { PropType } from 'vue';
 
 import type Recipe from '@/models/Recipe';
 
-export default defineComponent({
-    props: {
-        recipe: {
-            type: Object as PropType<Recipe>,
-            required: true,
-        },
-    },
-    setup() {
-        const form = ref<{ focus(): void }>();
-
-        onMounted(async () => {
-            await nextTick();
-
-            form.value?.focus();
-        });
-
-        return { form };
+defineProps({
+    recipe: {
+        type: Object as PropType<Recipe>,
+        required: true,
     },
 });
 </script>

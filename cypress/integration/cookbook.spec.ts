@@ -16,30 +16,27 @@ describe('Cookbook', () => {
 
         // Act - Create
         cy.contains('Add your first recipe').click();
-        cy.get('#name').type('Ramen');
-        cy.get('#new-ingredient').type('Broth');
-        cy.get('[aria-label="Add ingredient"]').click();
-        cy.get('#new-ingredient').type('Noodles');
-        cy.get('[aria-label="Add ingredient"]').click();
-        cy.get('#new-instruction-step').type('Boil the noodles');
-        cy.get('[aria-label="Add instruction step"]').click();
-        cy.get('#new-instruction-step').type('Dip them into the broth');
-        cy.get('[aria-label="Add instruction step"]').click();
-        cy.contains('Create').click();
+        cy.get('[name="name"]').type('Ramen');
+        cy.contains('Add ingredient').click();
+        cy.get(':focused').type('Broth{enter}');
+        cy.get(':focused').type('Noodles');
+        cy.contains('Add step').click();
+        cy.get(':focused').type('Boil the noodles{enter}');
+        cy.get(':focused').type('Dip them into the broth');
+        cy.contains('button', 'Create').click();
         cy.url().should('contain', 'ramen');
         cy.reload();
 
         // Act - First edit
         cy.contains('Edit').click();
-        cy.get('#name').type('!');
-        cy.get('#new-ingredient').type('Toppings');
-        cy.get('[aria-label="Add ingredient"]').click();
-        cy.get('#new-instruction-step').type('Add Toppings');
-        cy.get('[aria-label="Add instruction step"]').click();
-        cy.contains('2. Dip them into the broth').within(() => {
-            cy.prepareAnswer('What\'s the new text?', 'Dip them into the broth!');
-            cy.get('[aria-label="Change instruction step text"]').click();
-        });
+        cy.get('[name="name"]').type('!');
+        cy.contains('button', 'Add ingredient').click();
+        cy.get(':focus').type('Toppings');
+        cy.get('[name^="instruction-step-"]').first().click();
+        cy.get(':focus').type('{enter}');
+        cy.get(':focus').type('Prepare toppings');
+        cy.get('[name^="instruction-step-"]').last().click();
+        cy.get(':focus').clear().type('Dip the noodles into the broth');
         cy.contains('Save').click();
         cy.url().should('contain', 'ramen');
         cy.url().should('not.contain', 'edit');
@@ -47,12 +44,12 @@ describe('Cookbook', () => {
 
         // Act - Second edit
         cy.contains('Edit').click();
-        cy.contains('2. Dip them into the broth!').within(() => {
-            cy.get('[aria-label="Move instruction step up"]').click();
-        });
-        cy.contains('3. Add Toppings').within(() => {
-            cy.get('[aria-label="Remove instruction step"]').click();
-        });
+        cy.get('[name^="instruction-step-"]').eq(1).click();
+        cy.get(':focus').tab();
+        cy.get(':focus').click();
+        cy.get('[name^=instruction-step-]').should('have.length', 2);
+        cy.contains('Add step').click();
+        cy.get(':focus').type('Add toppings');
         cy.contains('Save').click();
         cy.url().should('contain', 'ramen');
         cy.url().should('not.contain', 'edit');
@@ -63,8 +60,8 @@ describe('Cookbook', () => {
         cy.contains('Broth').should('be.visible');
         cy.contains('Noodles').should('be.visible');
         cy.contains('Toppings').should('be.visible');
-        cy.contains('Dip them into the broth!').scrollIntoView().should('be.visible');
         cy.contains('Boil the noodles').scrollIntoView().should('be.visible');
+        cy.contains('Dip the noodles into the broth').scrollIntoView().should('be.visible');
         cy.contains('Add Toppings').should('not.exist');
 
         cy.assertLocalDocumentEquals('solid://recipes/ramen', firstRamenJsonLD);
@@ -78,56 +75,47 @@ describe('Cookbook', () => {
 
         // Act - Create
         cy.contains('Add your first recipe').click();
-        cy.get('#name').type('Ramen');
-        cy.get('#new-ingredient').type('Broth');
-        cy.get('[aria-label="Add ingredient"]').click();
-        cy.get('#new-ingredient').type('Noodles');
-        cy.get('[aria-label="Add ingredient"]').click();
-        cy.contains('Create').click();
+        cy.get('[name="name"]').type('Ramen');
+        cy.contains('button', 'Add ingredient').click();
+        cy.get(':focus').type('Broth{enter}');
+        cy.get(':focus').type('Noodles');
+        cy.contains('button', 'Create').click();
         cy.get('[aria-label="Sync"]').click();
         cy.get('.animate-spin').should('not.exist');
 
         // Act - First update
         cy.contains('Edit').click();
-        cy.get('#name').type('!');
-        cy.get('#description').type('is life');
-        cy.get('#new-ingredient').type('Toppings');
-        cy.get('[aria-label="Add ingredient"]').click();
-        cy.get('#new-instruction-step').type('Boil the noodles');
-        cy.get('[aria-label="Add instruction step"]').click();
-        cy.get('#new-instruction-step').type('Dip them into the broth');
-        cy.get('[aria-label="Add instruction step"]').click();
+        cy.get('[name="name"]').type('!');
+        cy.get('[name="description"]').type('is life');
+        cy.contains('button', 'Add ingredient').click();
+        cy.get(':focus').type('Toppings');
+        cy.contains('Add step').click();
+        cy.get(':focus').type('Boil the noodles{enter}');
+        cy.get(':focus').type('Dip them into the broth');
         cy.contains('Save').click();
         cy.get('[aria-label="Sync"]').click();
         cy.get('.animate-spin').should('not.exist');
 
         // Act - Second update
         cy.contains('Edit').click();
-        cy.get('#name').clear().type('Jun\'s Ramen');
-        cy.get('#description').clear().type('Instructions: https://www.youtube.com/watch?v=9WXIrnWsaCo');
-        cy.get('[aria-label="Remove \'Toppings\' ingredient"]').click();
-        cy.get('#new-ingredient').type('Shiitake');
-        cy.get('[aria-label="Add ingredient"]').click();
-        cy.get('#new-ingredient').type('Nori');
-        cy.get('[aria-label="Add ingredient"]').click();
-        cy.get('#new-instruction-step').type('Add Toppings');
-        cy.contains('2. Dip them into the broth').within(() => {
-            cy.prepareAnswer('What\'s the new text?', 'Dip them into the broth!');
-            cy.get('[aria-label="Change instruction step text"]').click();
-        });
-        cy.get('[aria-label="Add instruction step"]').click();
+        cy.get('[name="name"]').clear().type('Jun\'s Ramen');
+        cy.get('[name="description"]').clear().type('Instructions: https://www.youtube.com/watch?v=9WXIrnWsaCo');
+        cy.get('[name^="ingredient-"]').last().click();
+        cy.get(':focus').clear().type('Shiitake{enter}');
+        cy.get(':focus').type('Nori');
+        cy.get('[name^="instruction-step-"]').last().click();
+        cy.get(':focus').type('!{enter}');
+        cy.get(':focus').type('Add Toppings');
         cy.contains('Save').click();
         cy.get('[aria-label="Sync"]').click();
         cy.get('.animate-spin').should('not.exist');
 
         // Act - Third update
         cy.contains('Edit').click();
-        cy.contains('2. Dip them into the broth!').within(() => {
-            cy.get('[aria-label="Move instruction step up"]').click();
-        });
-        cy.contains('3. Add Toppings').within(() => {
-            cy.get('[aria-label="Remove instruction step"]').click();
-        });
+        cy.get('[name^="instruction-step-"]').last().click();
+        cy.get(':focus').tab();
+        cy.get(':focus').click();
+        cy.get('[name^=instruction-step-]').should('have.length', 2);
         cy.contains('Save').click();
         cy.get('[aria-label="Sync"]').click();
         cy.get('.animate-spin').should('not.exist');

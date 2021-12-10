@@ -101,6 +101,7 @@ export default class AuthService extends Service<State, ComputedState> {
             if (error instanceof AuthenticationCancelledError)
                 return;
 
+            // eslint-disable-next-line no-console
             console.error(error);
 
             alert('Could not log in (look at the console for more info)');
