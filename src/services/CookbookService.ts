@@ -52,7 +52,7 @@ export default class CookbookService extends Service<State> {
             this.setState({
                 remoteCookbookUrl: null,
                 cookbook: new PromisedValue,
-                recipes: arr(),
+                recipes: arr<Recipe>(),
             });
         });
 

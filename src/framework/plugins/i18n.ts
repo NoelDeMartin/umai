@@ -7,6 +7,7 @@ export default async function(): Promise<Plugin> {
     return createI18n({
         locale: 'en',
         fallbackLocale: 'en',
+        globalInjection: true,
         messages: { en: messages },
     });
 }
