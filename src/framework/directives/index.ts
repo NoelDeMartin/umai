@@ -1,3 +1,4 @@
+import { tap } from '@noeldemartin/utils';
 import type { Directive } from 'vue';
 
 export default Object
@@ -6,11 +7,12 @@ export default Object
         (directives, [fileName, { default: directive }]) => {
             const name = fileName.match(/\.\/(.+)\.ts/)?.[1];
 
-            if (name) {
-                directives[name] = directive;
-            }
+            return tap(directives, () => {
+                if (!name)
+                    return;
 
-            return directives;
+                directives[name] = directive;
+            });
         },
         {} as Record<string, Directive>,
     );

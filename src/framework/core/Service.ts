@@ -126,6 +126,10 @@ export default class Service<
     protected setState(state: Partial<State>): void {
         Store.commit(`${this._namespace}/setState`, state);
 
+        this.onStateUpdated(state);
+    }
+
+    protected onStateUpdated(state: Partial<State>): void {
         const persisted = objectOnly(state, this.static('persist'));
 
         if (isEmpty(persisted))

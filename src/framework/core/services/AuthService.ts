@@ -15,6 +15,7 @@ import type { ComputedStateDefinitions, IService } from '@/framework/core/Servic
 interface State {
     session: AuthSession | null;
     profiles: Record<string, SolidUserProfile>;
+    dismissed: boolean;
     preferredAuthenticator: AuthenticatorName | null;
     previousSession: {
         authenticator: AuthenticatorName;
@@ -40,7 +41,7 @@ declare module '@/framework/core/services/EventsService' {
 
 export default class AuthService extends Service<State, ComputedState> {
 
-    public static persist: Array<keyof State> = ['previousSession', 'profiles'];
+    public static persist: Array<keyof State> = ['dismissed', 'previousSession', 'profiles'];
 
     public isLoggedIn(): this is { session: AuthSession; user: SolidUserProfile; authenticator: Authenticator } {
         return this.loggedIn;
@@ -74,37 +75,44 @@ export default class AuthService extends Service<State, ComputedState> {
         });
     }
 
-    public async login(loginUrl: string, authenticatorName?: AuthenticatorName): Promise<void> {
+    public async login(loginUrl: string, authenticatorName?: AuthenticatorName): Promise<boolean> {
         authenticatorName = authenticatorName ?? this.preferredAuthenticator ?? 'default';
 
         if (this.loggedIn)
-            return;
+            return true;
 
         try {
             const profile = await this.getUserProfile(loginUrl);
             const oidcIssuerUrl = profile?.oidcIssuerUrl ?? urlRoot(profile?.webId ?? loginUrl);
             const authenticator = await this.bootAuthenticator(authenticatorName);
 
-            this.setState({ previousSession: { loginUrl, authenticator: authenticatorName } });
+            this.setState({
+                dismissed: false,
+                previousSession: { loginUrl, authenticator: authenticatorName },
+            });
 
             // TODO show "logging in..." alert
             await authenticator.login(oidcIssuerUrl);
+
+            return true;
         } catch (error) {
             if (error instanceof AuthenticationTimeoutError) {
                 alert('This is taking too long...');
 
-                return;
+                return false;
             }
 
             this.setState({ previousSession: null });
 
             if (error instanceof AuthenticationCancelledError)
-                return;
+                return false;
 
             // eslint-disable-next-line no-console
             console.error(error);
 
             alert('Could not log in (look at the console for more info)');
+
+            return false;
         }
     }
 
@@ -130,13 +138,14 @@ export default class AuthService extends Service<State, ComputedState> {
 
         this.setState({ previousSession: null });
 
-        if (!this.isLoggedIn()) {
-            Events.emit('logout');
+        if (this.isLoggedIn())
+            await this.authenticator.logout();
 
-            return;
-        }
+        Events.emit('logout');
+    }
 
-        await this.authenticator.logout();
+    public dismiss(): void {
+        this.setState({ dismissed: true });
     }
 
     public async createPrivateTypeIndex(): Promise<string> {
@@ -167,6 +176,7 @@ export default class AuthService extends Service<State, ComputedState> {
     protected getInitialState(): State {
         return {
             session: null,
+            dismissed: false,
             previousSession: null,
             preferredAuthenticator: null,
             profiles: {},

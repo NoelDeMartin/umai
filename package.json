@@ -1,6 +1,8 @@
 {
   "name": "umai",
   "version": "0.0.0",
+  "private": true,
+  "repository": "github:noeldemartin/umai",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -22,6 +24,7 @@
     "@noeldemartin/utils": "^0.2.1-next.79e75835cf2fd1936233e4e3b60c5a9e1e949a23",
     "@tailwindcss/typography": "^0.5.0",
     "buffer": "^6.0.3",
+    "dompurify": "^2.3.4",
     "soukai": "^0.4.1-next.04bfd96a57781b9b4a045260d2786cd2e4f2a2cf",
     "soukai-solid": "^0.4.1-next.56d70cd2516ccdec76abcaec99569fb2e0d955b6",
     "tailwindcss": "^3.0.0",
@@ -39,6 +42,7 @@
     "@solid/community-server": "^1.0.0",
     "@storybook/addon-essentials": "^6.3.12",
     "@storybook/vue3": "^6.3.12",
+    "@types/dompurify": "^2.3.2",
     "@types/jest": "^26.0.20",
     "@types/node-fetch": "^2.5.10",
     "@vitejs/plugin-vue": "^1.1.5",

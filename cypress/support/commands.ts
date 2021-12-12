@@ -1,15 +1,15 @@
+import a11yCommands from './commands/a11y';
 import authCommands from './commands/auth';
 import factoryCommands from './commands/factory';
 import lifecycleCommands from './commands/lifecycle';
 import storageCommands from './commands/storage';
-import uiCommands from './commands/ui';
 
 const commands = {
+    ...a11yCommands,
     ...authCommands,
     ...factoryCommands,
     ...lifecycleCommands,
     ...storageCommands,
-    ...uiCommands,
 };
 
 type CustomCommands = typeof commands;
@@ -26,7 +26,6 @@ declare global {
 export default function installCustomCommands(): void {
     beforeEach(() => {
         cy.resetStorage();
-        cy.resetPrompts();
     });
 
     for (const [name, implementation] of Object.entries(commands)) {

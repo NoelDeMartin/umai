@@ -6,17 +6,18 @@ describe('Authentication', () => {
         // Arrange
         cy.intercept('https://alice.example.com', { statusCode: 404 });
         cy.intercept('https://alice.example.com/profile/card', { fixture: 'profile.ttl' });
-        cy.prepareAnswer('Login url?', 'https://alice.example.com');
         cy.task('resetSolidPOD');
         cy.visit('/?authenticator=localStorage');
         cy.startApp();
 
         // Act
-        cy.contains('Connect storage').click();
+        cy.contains('disconnected').click();
+        cy.ariaInput('Login url').type('https://alice.example.com{enter}');
         cy.waitForReload();
 
         // Assert
-        cy.contains('you\'re connected to http://localhost:4000/').should('be.visible');
+        cy.contains('online').click();
+        cy.contains('You are logged in as John Doe').should('be.visible');
     });
 
     it('signs up using the Inrupt authenticator', () => {
@@ -25,12 +26,12 @@ describe('Authentication', () => {
         cy.intercept('PUT', 'http://localhost:4000/alice/settings/privateTypeIndex').as('createTypeIndex');
         cy.intercept('PATCH', 'http://localhost:4000/alice/settings/privateTypeIndex').as('registerCookbook');
         cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/ramen').as('patchRamen');
-        cy.prepareAnswer('Login url?', 'http://localhost:4000/alice/');
         cy.visit('/?authenticator=inrupt');
         cy.startApp();
 
         // Act - Sign up
-        cy.contains('Connect storage').click();
+        cy.contains('disconnected').click();
+        cy.ariaInput('Login url').type('http://localhost:4000/alice/{enter}');
         cy.cssAuthorize({ reset: true });
         cy.waitForReload({ resetProfiles: true });
 
@@ -38,11 +39,12 @@ describe('Authentication', () => {
         cy.contains('Add your first recipe').click();
         cy.get('[name="name"]').type('Ramen');
         cy.contains('button', 'Create').click();
-        cy.get('[aria-label="Sync"]').click();
-        cy.get('.animate-spin').should('not.exist');
+        cy.contains('There is one pending update');
+        cy.contains('Syncing is up to date');
 
         // Assert
-        cy.contains('you\'re connected to http://localhost:4000/', { timeout: 10000 }).should('be.visible');
+        cy.contains('online').click();
+        cy.contains('You are logged in as http://localhost:4000/alice/profile/card#me').should('be.visible');
 
         cy.get('@createCookbook').its('request.headers.authorization').should('match', /DPoP .*/);
         cy.get('@createTypeIndex').its('request.headers.authorization').should('match', /DPoP .*/);
@@ -54,12 +56,12 @@ describe('Authentication', () => {
     it('logs in using the Inrupt authenticator', () => {
         // Arrange
         cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/pisto').as('patchPisto');
-        cy.prepareAnswer('Login url?', 'http://localhost:4000/alice/');
         cy.visit('/?authenticator=inrupt');
         cy.startApp();
 
         // Act - Log in
-        cy.contains('Connect storage').click();
+        cy.contains('disconnected').click();
+        cy.ariaInput('Login url').type('http://localhost:4000/alice/{enter}');
         cy.cssAuthorize({
             reset: {
                 typeIndex: true,
@@ -74,8 +76,8 @@ describe('Authentication', () => {
         cy.contains('Edit').click();
         cy.get('[name="name"]').type('!');
         cy.contains('Save').click();
-        cy.get('[aria-label="Sync"]').click();
-        cy.get('.animate-spin').should('not.exist');
+        cy.contains('There are 2 pending updates');
+        cy.contains('Syncing is up to date');
 
         // Assert
         cy.contains('Pisto!').should('be.visible');
@@ -86,31 +88,34 @@ describe('Authentication', () => {
 
     it('refreshes stale cached profiles', () => {
         // Arrange
-        cy.prepareAnswer('Login url?', 'http://localhost:4000/alice/');
         cy.visit('/?authenticator=inrupt');
         cy.startApp();
-        cy.contains('Connect storage').click();
+        cy.contains('disconnected').click();
+        cy.ariaInput('Login url').type('http://localhost:4000/alice/{enter}');
         cy.cssAuthorize({ reset: true });
         cy.waitForReload({ resetProfiles: true });
-        cy.contains('you\'re connected').should('be.visible');
+        cy.contains('online').click();
+        cy.contains('You are logged in').should('be.visible');
         cy.reload();
 
         // Act
+        cy.contains('disconnected').click();
         cy.contains('Reconnect').click();
         cy.contains('Continue').click();
         cy.cssReset();
         cy.waitForReload();
 
         // Assert
-        cy.contains('you\'re connected').should('be.visible');
+        cy.contains('online').click();
+        cy.contains('You are logged in').should('be.visible');
     });
 
     it('wipes local data on log out', () => {
         // Arrange
-        cy.prepareAnswer('Login url?', 'http://localhost:4000/alice/');
         cy.visit('/?authenticator=inrupt');
         cy.startApp();
-        cy.contains('Connect storage').click();
+        cy.contains('disconnected').click();
+        cy.ariaInput('Login url').type('http://localhost:4000/alice/{enter}');
         cy.cssAuthorize({
             reset: {
                 typeIndex: true,
@@ -122,10 +127,12 @@ describe('Authentication', () => {
         cy.contains('Pisto').should('be.visible');
 
         // Act
-        cy.get('[aria-label="Log out"]').click();
+        cy.contains('online').click();
+        cy.contains('Log out').click();
 
         // Assert
         cy.contains('Are you ready to start cooking?').should('be.visible');
+        cy.contains('disconnected').should('be.visible');
     });
 
     it('migrates local data to cloud after logging in', () => {
@@ -184,8 +191,8 @@ describe('Authentication', () => {
         // Act
         cy.visit('/?authenticator=inrupt');
         cy.startApp();
-        cy.prepareAnswer('Login url?', 'http://localhost:4000/alice/');
-        cy.contains('Connect storage').click();
+        cy.contains('disconnected').click();
+        cy.ariaInput('Login url').type('http://localhost:4000/alice/{enter}');
         cy.cssAuthorize({ reset: true });
         cy.waitForReload({ resetProfiles: true });
 

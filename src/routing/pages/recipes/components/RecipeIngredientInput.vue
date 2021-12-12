@@ -60,9 +60,9 @@ import { ref } from 'vue';
 import { shrink } from '@/framework/utils/transitions';
 import { updateElement } from '@/framework/utils/dom';
 
-import type { IBaseFluidInput } from '@/components/base/BaseFluidInput';
+import type IBaseFluidInput from '@/components/base/BaseFluidInput';
 
-import type { IRecipeIngredientInput } from './RecipeIngredientInput';
+import type IRecipeIngredientInput from './RecipeIngredientInput';
 
 defineProps({
     modelValue: {

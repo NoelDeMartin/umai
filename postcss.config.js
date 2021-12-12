@@ -6,7 +6,7 @@ module.exports = {
         // TODO only for storybook
         'postcss-pseudo-classes': {
             blacklist: [],
-            restrictTo: ['hover', 'focus-visible'],
+            restrictTo: ['hover', 'focus-visible', 'focus'],
             allCombinations: true,
             preserveBeforeAfter: false,
         },

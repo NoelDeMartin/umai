@@ -1,18 +1,38 @@
 cloud:
   statuses:
     online: online
-    online_description: You are online
+    online_description: You are logged in as <a href="{url}" target="blank">{name}</a>
     offline: offline
     offline_description: You are not online.
     disconnected: disconnected
-    disconnected_description: You are disconnected
     syncing: syncing
     syncing_description: Syncing in progress...
+
+  no_pending_updates_a11y: Syncing is up to date
+  some_pending_updates_a11y: "_ | There is one pending update | There are {n} pending updates"
+  many_pending_updates_a11y: There are many pending updates
+
+  login:
+    title: Connect to cloud
+    info: You can keep your data safe across devices using a Solid account, use the form below to log in.
+    info_learnMore: learn more
+    info_reconnect: You need to reconnect to <a href="{url}" target="_blank">{url}</a>.
+    loginUrl: Login url
+    reconnect: Reconnect
+    dismiss: No thanks, I want to keep my data offline
+    submit: Log in with Solid
+
+  logout: Log out
+
 menu:
   open: Open user menu
   log_in: Log in
   log_out: Log out
   settings: Settings
+
+footer:
+  source: source
+
 home:
   title: What will you cook today?
   cookbook_link: Check out more recipes
@@ -39,8 +59,8 @@ recipes:
   name_placeholder: Recipe name
   description_placeholder: Recipe description
   servings_placeholder: "?? persons"
-  prepTime_placeholder: "?? mins"
-  cookTime_placeholder: "?? mins"
+  prepTime_placeholder: "?? minutes"
+  cookTime_placeholder: "?? minutes"
 
   ingredients: Ingredients
   ingredient_add: Add ingredient
@@ -58,3 +78,6 @@ recipes:
     title: Your cookbook
     add: add recipe
     back: back to cookbook
+
+validation:
+  required: This is required

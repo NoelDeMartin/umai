@@ -1,7 +1,10 @@
 import type { TestingRuntime, TestingStartOptions } from '@/types/testing';
 
-import { patchWindow } from './ui';
 import { queueAuthenticatedRequests } from './auth';
+
+function patchWindow(window: Window): void {
+    window.prompt = (_, defaultAnswer) => defaultAnswer ?? null;
+}
 
 export default {
 

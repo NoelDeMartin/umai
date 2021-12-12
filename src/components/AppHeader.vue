@@ -38,7 +38,7 @@
                 </transition>
             </div>
             <div class="flex space-x-2">
-                <CloudStatus />
+                <CloudStatus v-if="!$auth.dismissed" />
                 <UserMenu />
             </div>
         </div>

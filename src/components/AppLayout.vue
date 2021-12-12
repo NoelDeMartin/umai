@@ -5,6 +5,9 @@
             <slot />
         </div>
         <AppFooter />
+        <AppModals />
         <div id="element-transitions-container" />
     </div>
 </template>
+
+<script setup lang="ts"></script>

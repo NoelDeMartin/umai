@@ -16,11 +16,12 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import { objectWithoutEmpty } from '@noeldemartin/utils';
 import type { PropType } from 'vue';
 
 const props = defineProps({
     route: {
-        type: String,
+        type: String as PropType<string | null>,
         default: null,
     },
     type: {
@@ -40,16 +41,14 @@ const props = defineProps({
 const isPrimary = computed(() => !props.secondary);
 const isSecondary = computed(() => props.secondary);
 const buttonComponent = computed(() => props.route ? 'router-link' : 'button');
-const buttonProps = computed(() => {
-    if (buttonComponent.value === 'button') {
-        return { type: props.type };
-    }
-
-    const routeData: { name: string; params?: Object } = { name: props.route };
-
-    if (props.routeParams)
-        routeData.params = props.routeParams;
-
-    return { to: routeData };
-});
+const buttonProps = computed(
+    () => buttonComponent.value === 'button'
+        ? { type: props.type }
+        : {
+            to: objectWithoutEmpty({
+                name: props.route,
+                params: props.routeParams,
+            }),
+        },
+);
 </script>

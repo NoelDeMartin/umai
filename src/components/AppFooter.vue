@@ -1,70 +1,15 @@
 <template>
-    <footer class="flex justify-center items-center p-4 space-x-2">
-        <template v-if="$auth.isLoggedIn()">
-            <button
-                type="button"
-                title="Sync"
-                aria-label="Sync"
-                class="relative w-6 h-6 group"
-                @click="$cloud.sync()"
-            >
-                <i-zondicons-cloud class="absolute inset-0 w-full h-full text-gray-500 group-hover:text-indigo-500" />
-                <div class="flex absolute inset-0 justify-center items-center w-full h-full text-gray-200">
-                    <i-zondicons-refresh v-if="$cloud.syncing" class="w-3 h-3 animate-spin" />
-                    <template v-else>
-                        <i-zondicons-refresh class="hidden w-3 h-3 group-hover:block" />
-                        <span v-if="$cloud.dirty" class="text-xs group-hover:hidden">{{ $cloud.pendingUpdates.length }}</span>
-                        <i-zondicons-checkmark v-else class="w-2 h-3 group-hover:hidden" />
-                    </template>
-                </div>
-            </button>
-            <span class="text-sm text-gray-500">
-                you're connected to <a :href="$auth.user.storageUrls[0]" class="underline hover:text-gray-700" target="_blank">{{ $auth.user.storageUrls[0] }}</a>
-            </span>
-            <button
-                type="button"
-                class="text-gray-500 hover:text-red-500"
-                title="Log out"
-                aria-label="Log out"
-                @click="$auth.logout()"
-            >
-                <i-heroicons-solid-logout />
-            </button>
-        </template>
-        <template v-else-if="$auth.previousSession?.loginUrl">
-            <button
-                type="button"
-                class="text-sm text-indigo-500 underline hover:text-indigo-700"
-                @click="$auth.reconnect()"
-            >
-                Reconnect to {{ $auth.previousSession?.loginUrl }}
-            </button>
-            <button
-                type="button"
-                class="text-gray-500 hover:text-red-500"
-                title="Log out"
-                @click="$auth.logout()"
-            >
-                <i-heroicons-solid-logout />
-            </button>
-        </template>
-        <button
-            v-else
-            type="button"
-            class="text-sm text-indigo-500 underline hover:text-indigo-700"
-            @click="login()"
+    <footer class="flex justify-end items-center p-4 space-x-1 text-sm opacity-75 text-primary-700">
+        <BaseLink
+            title="View application source code"
+            :url="$app.sourceUrl"
+            class="mx-1"
         >
-            Connect storage
-        </button>
+            {{ $t('footer.source') }}
+        </BaseLink>
+        <span>|</span>
+        <span>{{ $app.versionName }}</span>
     </footer>
 </template>
 
-<script setup lang="ts">
-import Auth from '@/framework/core/facades/Auth';
-
-const login = () => {
-    const loginUrl = prompt('Login url?', 'https://');
-
-    loginUrl && Auth.login(loginUrl);
-};
-</script>
+<script setup lang="ts"></script>

@@ -37,9 +37,9 @@ import { ref } from 'vue';
 
 import { shrink } from '@/framework/utils/transitions';
 
-import type { IBaseFluidTextArea } from '@/components/base/BaseFluidTextArea';
+import type IBaseFluidTextArea from '@/components/base/BaseFluidTextArea';
 
-import type { IRecipeInstructionStepInput } from './RecipeInstructionStepInput';
+import type IRecipeInstructionStepInput from './RecipeInstructionStepInput';
 
 defineProps({
     modelValue: {

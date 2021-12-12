@@ -81,6 +81,7 @@ export default class CloudService extends Service<State, ComputedState> {
         Auth.authenticator && this.initializeEngine(Auth.authenticator);
 
         Events.on('login', ({ authenticator }) => this.initializeEngine(authenticator));
+        Events.on('logout', () => this.setState({ status: CloudStatus.Disconnected }));
         Events.on('application-ready', () => this.sync());
 
         // TODO remove polling

@@ -80,8 +80,8 @@ describe('Cookbook', () => {
         cy.get(':focus').type('Broth{enter}');
         cy.get(':focus').type('Noodles');
         cy.contains('button', 'Create').click();
-        cy.get('[aria-label="Sync"]').click();
-        cy.get('.animate-spin').should('not.exist');
+        cy.contains('There is one pending update');
+        cy.contains('Syncing is up to date');
 
         // Act - First update
         cy.contains('Edit').click();
@@ -93,8 +93,8 @@ describe('Cookbook', () => {
         cy.get(':focus').type('Boil the noodles{enter}');
         cy.get(':focus').type('Dip them into the broth');
         cy.contains('Save').click();
-        cy.get('[aria-label="Sync"]').click();
-        cy.get('.animate-spin').should('not.exist');
+        cy.contains('There are 2 pending updates');
+        cy.contains('Syncing is up to date');
 
         // Act - Second update
         cy.contains('Edit').click();
@@ -107,8 +107,8 @@ describe('Cookbook', () => {
         cy.get(':focus').type('!{enter}');
         cy.get(':focus').type('Add Toppings');
         cy.contains('Save').click();
-        cy.get('[aria-label="Sync"]').click();
-        cy.get('.animate-spin').should('not.exist');
+        cy.contains('There are 3 pending updates');
+        cy.contains('Syncing is up to date');
 
         // Act - Third update
         cy.contains('Edit').click();
@@ -117,8 +117,8 @@ describe('Cookbook', () => {
         cy.get(':focus').click();
         cy.get('[name^=instruction-step-]').should('have.length', 2);
         cy.contains('Save').click();
-        cy.get('[aria-label="Sync"]').click();
-        cy.get('.animate-spin').should('not.exist');
+        cy.contains('There is one pending update');
+        cy.contains('Syncing is up to date');
 
         // Assert
         cy.contains('Jun\'s Ramen').should('be.visible');

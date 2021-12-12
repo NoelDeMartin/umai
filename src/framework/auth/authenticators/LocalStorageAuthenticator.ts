@@ -17,6 +17,7 @@ export default class LocalStorageAuthenticator extends Authenticator {
 
     public async login(loginUrl: string, user?: SolidUserProfile): Promise<AuthSession> {
         user = user ?? {
+            webId: prompt('What is your webId?', loginUrl) ?? fail(AuthenticationCancelledError),
             name: prompt('What is your name?', 'John Doe') ?? fail(AuthenticationCancelledError),
             storageUrls: [
                 prompt('Where is your storage?', 'http://localhost:4000/') ?? fail(AuthenticationCancelledError),
@@ -25,7 +26,7 @@ export default class LocalStorageAuthenticator extends Authenticator {
                 prompt('Where is the type index?', 'http://localhost:4000/settings/privateTypeIndex') ??
                 fail(AuthenticationCancelledError),
             oidcIssuerUrl: loginUrl,
-        } as SolidUserProfile;
+        };
 
         Storage.set<StorageData>(STORAGE_KEY, { loginUrl, user });
 

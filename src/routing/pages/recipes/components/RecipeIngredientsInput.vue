@@ -29,7 +29,8 @@ import { computed, nextTick, onBeforeUpdate, ref } from 'vue';
 import { arraySwap, arrayWithItemAt, arrayWithoutIndex, uuid } from '@noeldemartin/utils';
 import type { PropType } from 'vue';
 
-import type { IRecipeIngredientInput, RecipeIngredientInputData } from './RecipeIngredientInput';
+import type IRecipeIngredientInput from './RecipeIngredientInput';
+import type { RecipeIngredientInputData } from './RecipeIngredientInput';
 
 const emit = defineEmits(['update:modelValue']);
 const props = defineProps({

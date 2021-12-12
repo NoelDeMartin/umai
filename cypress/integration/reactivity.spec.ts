@@ -27,8 +27,7 @@ describe('Reactivity', () => {
         }));
 
         // Act
-        cy.get('[aria-label="Sync"]').click();
-        cy.get('.animate-spin').should('not.exist');
+        cy.contains('Syncing is up to date');
 
         // Assert
         cy.contains('Ramen').should('be.visible');

@@ -17,7 +17,7 @@
 <script lang="ts">
 import { computed, defineComponent, nextTick, ref, useAttrs, watch } from 'vue';
 
-import type { IBaseFluidTextArea } from './BaseFluidTextArea';
+import type IBaseFluidTextArea from './BaseFluidTextArea';
 
 export default defineComponent({ inheritAttrs: false });
 </script>

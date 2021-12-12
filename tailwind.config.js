@@ -12,8 +12,12 @@ module.exports = {
         extend: {
             colors: {
                 // TODO branding
-                'primary': colors.indigo,
+                'primary': colors.lime,
                 'dark-overlay': 'rgba(0,0,0,.5)',
+                'brand-solid': {
+                    500: '#7c4dff',
+                    700: '#653add',
+                },
             },
             margin: theme => ({
                 edge: theme('spacing.8'),

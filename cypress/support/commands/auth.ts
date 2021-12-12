@@ -82,10 +82,10 @@ export default {
         // TODO use shortcut instead of logging in with the UI
         cy.intercept('https://alice.example.com', { statusCode: 404 });
         cy.intercept('https://alice.example.com/profile/card', { fixture: 'profile.ttl' });
-        cy.prepareAnswer('Login url?', 'https://alice.example.com');
-        cy.contains('Connect storage').click();
+        cy.contains('disconnected').click();
+        cy.ariaInput('Login url').type('https://alice.example.com{enter}');
         cy.waitForReload();
-        cy.contains('you\'re connected').should('be.visible');
+        cy.contains('online').should('be.visible');
     },
 
     queueAuthenticatedRequest(url: string, options: RequestInit): void {

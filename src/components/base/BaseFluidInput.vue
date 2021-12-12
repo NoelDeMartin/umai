@@ -19,7 +19,7 @@ import { computed, defineComponent, ref, useAttrs } from 'vue';
 
 import { measureHTMLDimensions } from '@/framework/utils/dom';
 
-import type { IBaseFluidInput } from './BaseFluidInput';
+import type IBaseFluidInput from './BaseFluidInput';
 
 export default defineComponent({ inheritAttrs: false });
 </script>

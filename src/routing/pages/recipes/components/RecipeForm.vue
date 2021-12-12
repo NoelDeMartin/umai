@@ -79,13 +79,15 @@
         </RecipePageLayout>
 
         <!-- TODO refactor UX & translate -->
-        <div class="flex fixed inset-x-0 bottom-0 justify-end p-4 space-x-4 bg-gray-300">
-            <BaseButton secondary @click="$emit('cancel')">
-                Cancel
-            </BaseButton>
-            <BaseButton type="submit">
-                {{ recipe ? 'Save' : 'Create' }}
-            </BaseButton>
+        <div class="fixed inset-x-0 bottom-0 z-10 bg-gray-300">
+            <div class="flex justify-end py-4 mx-auto space-x-4 max-w-content">
+                <BaseButton secondary @click="$emit('cancel')">
+                    Cancel
+                </BaseButton>
+                <BaseButton type="submit">
+                    {{ recipe ? 'Save' : 'Create' }}
+                </BaseButton>
+            </div>
         </div>
     </form>
 </template>
