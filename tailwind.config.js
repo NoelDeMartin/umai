@@ -9,6 +9,12 @@ module.exports = {
         './.storybook/stories/**/*.ts',
     ],
     theme: {
+        fontFamily: {
+            livvic: [
+                '"Livvic"',
+                'sans-serif',
+            ],
+        },
         extend: {
             colors: {
                 // TODO branding
