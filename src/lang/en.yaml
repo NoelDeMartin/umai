@@ -56,11 +56,18 @@ recipes:
   create_a11y_title: Create new recipe
   edit_a11y_title: Edit "{recipe}" recipe
 
+  image_edit: Change image
   name_placeholder: Recipe name
   description_placeholder: Recipe description
   servings_placeholder: "?? persons"
   prepTime_placeholder: "?? minutes"
   cookTime_placeholder: "?? minutes"
+
+  image_edit_placeholder: Write image url...
+  image_edit_title: Change recipe image
+  image_edit_clear: Clear image
+  image_edit_submit: Update image
+  image_edit_discard: Discard
 
   ingredients: Ingredients
   ingredient_add: Add ingredient

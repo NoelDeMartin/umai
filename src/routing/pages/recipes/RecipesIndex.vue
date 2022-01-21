@@ -31,7 +31,9 @@ import { defineComponent } from 'vue';
 import Cookbook from '@/services/facades/Cookbook';
 
 export default defineComponent({
-    beforeRouteEnter() {
+    async beforeRouteEnter() {
+        await Cookbook.ready;
+
         if (!Cookbook.recipes.isEmpty())
             return;
 

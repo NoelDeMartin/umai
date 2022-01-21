@@ -52,11 +52,13 @@ const Template = template<Args>(({ status, dirtyRemoteModels, webId, loginUrl })
         setup() {
             const modalId = ref<string | null>(null);
             async function open() {
-                modalId.value = await Storybook.$ui.openModal(CloudStatusModal);
+                const modal = await Storybook.$ui.openModal(CloudStatusModal);
+
+                modalId.value = modal.id;
             }
 
             onMounted(open);
-            onUnmounted(() => modalId.value && Storybook.$ui.closeModal(modalId.value, true));
+            onUnmounted(() => modalId.value && Storybook.$ui.closeModal(modalId.value, null, false));
 
             return { open };
         },

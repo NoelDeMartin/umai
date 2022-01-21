@@ -5,6 +5,7 @@
             v-for="modal of $ui.modals"
             :key="modal.id"
             :modal="modal"
+            v-bind="modal.props"
         />
     </aside>
 </template>

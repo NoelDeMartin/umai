@@ -6,7 +6,19 @@
         </h1>
         <RecipePageLayout>
             <template #image>
-                <RecipeImage class="absolute inset-0" />
+                <div class="absolute inset-0 group">
+                    <RecipeImage :url="imageUrl" class="w-full h-full" />
+                    <button
+                        type="button"
+                        class="flex absolute inset-0 justify-center items-center w-full text-xl text-white bg-black bg-opacity-10 opacity-0 group-hover:opacity-100 focus:opacity-100"
+                        @click="editImage"
+                    >
+                        <div class="flex items-center self-center px-4 py-2 bg-black bg-opacity-50 rounded-md hover:bg-opacity-100">
+                            <i-zondicons-edit-pencil aria-hidden="true" class="mr-3 w-4 h-4" />
+                            {{ $t('recipes.image_edit') }}
+                        </div>
+                    </button>
+                </div>
             </template>
 
             <template #title>
@@ -99,8 +111,12 @@ import { useI18n } from 'vue-i18n';
 import type { Attributes } from 'soukai';
 import type { PropType } from 'vue';
 
+import UI from '@/framework/core/facades/UI';
+
 import Recipe from '@/models/Recipe';
 
+import RecipeImageModal from './modals/RecipeImageFormModal.vue';
+import type { IRecipeImageFormModal } from './modals/RecipeImageFormModal';
 import type { RecipeIngredientInputData } from './RecipeIngredientInput';
 import type { RecipeInstructionStepInputData } from './RecipeInstructionStepInput';
 
@@ -116,6 +132,7 @@ const { t } = useI18n();
 const form = ref(null as unknown as HTMLElement);
 const name = ref(props.recipe?.name ?? '');
 const description = ref(props.recipe?.description ?? '');
+const imageUrl = ref(props.recipe?.imageUrl ?? null);
 const servings = ref(props.recipe?.servings ?? '');
 const prepTime = ref(props.recipe?.prepTime ?? '');
 const cookTime = ref(props.recipe?.cookTime ?? '');
@@ -136,10 +153,20 @@ const a11yTitle = computed(
         : t('recipes.create_a11y_title'),
 );
 
+async function editImage() {
+    const modal = await UI.openModal<IRecipeImageFormModal>(RecipeImageModal, { imageUrl: imageUrl.value });
+    const result = await modal.beforeClose;
+
+    document.querySelector<HTMLElement>(':focus')?.blur();
+
+    if (result !== undefined)
+        imageUrl.value = result;
+}
+
 async function submit() {
     const attributes = {
         name: name.value,
-        // TODO imageUrl: imageUrl.value || null,
+        imageUrl: imageUrl.value || null,
         description: description.value || null,
         servings: servings.value || null,
         prepTime: prepTime.value || null,

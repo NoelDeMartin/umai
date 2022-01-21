@@ -29,6 +29,10 @@ describe('Cookbook', () => {
 
         // Act - First edit
         cy.contains('Edit').click();
+        cy.contains('Change image').click();
+        cy.get('[name="image_url"]').type('https://media.example.com/ramen.jpg');
+        cy.get('button[aria-label="Clear image"]');
+        cy.contains('Update image').click();
         cy.get('[name="name"]').type('!');
         cy.contains('button', 'Add ingredient').click();
         cy.get(':focus').type('Toppings');

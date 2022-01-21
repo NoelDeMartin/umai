@@ -28,12 +28,15 @@
                 leave-from="opacity-100 scale-100"
                 leave-to="opacity-0 scale-90"
             >
-                <div class="overflow-hidden relative p-4 bg-white shadow-xl transition-all m-edge">
+                <div
+                    class="overflow-hidden relative p-4 bg-white shadow-xl transition-all m-edge"
+                    v-bind="$attrs"
+                >
                     <DialogTitle v-if="title" as="h2" class="text-lg font-medium leading-6 text-gray-900">
                         {{ title }}
                     </DialogTitle>
                     <div class="mt-2">
-                        <slot :close="() => $ui.closeModal(modal.id)" />
+                        <slot :close="(result?: unknown) => $ui.closeModal(modal.id, result)" />
                     </div>
                 </div>
             </TransitionChild>

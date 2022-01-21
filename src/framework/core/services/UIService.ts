@@ -12,11 +12,31 @@ interface State {
     modals: Modal[];
 }
 
-export interface Modal {
+type ModalProps<MC> = MC extends ModalComponent<infer P, unknown> ? P : never;
+type ModalResult<MC> = MC extends ModalComponent<Record<string, unknown>, infer R> ? R : never;
+
+interface ModalCallbacks<T=unknown> {
+    willClose(result: T | undefined): void;
+    closed(result: T | undefined): void;
+}
+
+export interface Modal<T = unknown> {
     id: string;
+    props: Record<string, unknown>;
     component: Component;
     open: boolean;
+    beforeClose: Promise<T | undefined>;
+    afterClose: Promise<T | undefined>;
 }
+
+export interface ModalComponent<
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    Props extends Record<string, unknown> = Record<string, unknown>,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    Result = unknown
+> {}
+
+export type ModalCloseCallback<Result = unknown> = (result: Result) => void;
 
 export const enum ApplicationComponents {
     NotFound = 'not-found',
@@ -24,13 +44,24 @@ export const enum ApplicationComponents {
 
 export default class UIService extends Service {
 
-    public async openModal(component: Component): Promise<string> {
+    private modalCallbacks: Record<string, Partial<ModalCallbacks>> = {};
+
+    public async openModal<MC extends ModalComponent>(
+        component: MC,
+        props?: ModalProps<MC>,
+    ): Promise<Modal<ModalResult<MC>>> {
         const id = uuid();
-        const modal: Modal = {
+        const callbacks: Partial<ModalCallbacks<ModalResult<MC>>> = {};
+        const modal: Modal<ModalResult<MC>> = {
             id,
+            props: props ?? {},
             open: false,
             component: markRaw(component),
+            beforeClose: new Promise(resolve => callbacks.willClose = resolve),
+            afterClose: new Promise(resolve => callbacks.closed = resolve),
         };
+
+        this.modalCallbacks[id] = callbacks;
 
         this.setState({ modals: this.modals.concat([modal]) });
 
@@ -46,20 +77,24 @@ export default class UIService extends Service {
 
         this.setState({ modals });
 
-        return id;
+        return modal;
     }
 
-    public async closeModal(id: string, force: boolean = false): Promise<void> {
+    public async closeModal(id: string, result?: unknown, animate: boolean = true): Promise<void> {
         const modal = arrayFirst(this.modals, modal => modal.id === id);
 
         if (!modal)
             return;
 
         const modals = this.modals.slice(0);
+        const callbacks = this.modalCallbacks[id];
 
-        if (!force) {
+        delete this.modalCallbacks[id];
+
+        callbacks?.willClose && callbacks.willClose(result);
+
+        if (animate) {
             const modalProxy = modals.find(m => m.id === modal.id);
-
 
             arrayReplace(modals, modalProxy, {
                 ...modal,
@@ -72,6 +107,8 @@ export default class UIService extends Service {
         }
 
         this.setState({ modals: modals.filter(m => m.id !== modal.id) });
+
+        callbacks?.closed && callbacks.closed(result);
     }
 
     public registerComponent(name: ApplicationComponents, component: Component): void {
