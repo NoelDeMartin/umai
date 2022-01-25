@@ -34,6 +34,9 @@ module.exports = {
             height: {
                 clickable: '42px',
             },
+            minWidth: {
+                clickable: '42px',
+            },
             maxWidth: {
                 content: '1280px',
             },

@@ -17,16 +17,25 @@
             <BaseHeading id="cookbook-title">
                 {{ $t('recipes.index.title') }}
             </BaseHeading>
-            <BaseButton secondary route="recipes.create">
-                <i-zondicons-add-solid class="mr-2 w-4 h-4" /> {{ $t('recipes.index.add') }}
-            </BaseButton>
+            <BaseSearchInput
+                v-model="search"
+                :label="$t('recipes.index.search_label')"
+                :placeholder="$t('recipes.index.search_placeholder')"
+            />
         </div>
-        <RecipesGrid :recipes="$cookbook.recipes" class="w-full" />
+        <RecipesGrid :recipes="filteredRecipes" class="w-full" />
+        <div class="fixed right-5 bottom-5 z-40">
+            <BaseFloatingActionButton
+                :label="$t('recipes.index.add')"
+                @click="$router.push({ name: 'recipes.create' })"
+            />
+        </div>
     </main>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
+import { stringToSlug } from '@noeldemartin/utils';
 
 import Cookbook from '@/services/facades/Cookbook';
 
@@ -39,5 +48,21 @@ export default defineComponent({
 
         return { name: 'home', replace: true };
     },
+});
+</script>
+
+<script setup lang="ts">
+const search = ref('');
+const searchIndex = computed(() => Cookbook.recipes.map(recipe => ({
+    recipe,
+    searchableText: stringToSlug(recipe.name).replaceAll('-', ''),
+})));
+const filteredRecipes = computed(() => {
+    const searchQuery = search.value.trim();
+    const filteredSearchIndex = searchQuery.length
+        ? searchIndex.value.filter(({ searchableText }) => searchableText.includes(searchQuery))
+        : searchIndex.value;
+
+    return filteredSearchIndex.map(({ recipe }) => recipe);
 });
 </script>

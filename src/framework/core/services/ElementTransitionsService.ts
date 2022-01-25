@@ -42,6 +42,7 @@ export default class ElementTransitionsService extends Service {
     private elementsConfig: WeakMap<HTMLElement, TransitionalElementConfig> = new WeakMap;
     private elementsSourceTransitions: WeakMap<HTMLElement, Promise<void>> = new WeakMap;
     private elementsTargetTransitions: WeakMap<HTMLElement, Promise<void>> = new WeakMap;
+    private elementsFreezingInPlace: WeakMap<HTMLElement, void> = new WeakMap;
     private transitions: Record<string, ElementTransition | EnterTransition | LeaveTransition> = {};
 
     public defineGlobalEnterTransition(name: string, transition: EnterTransition): void {
@@ -54,6 +55,10 @@ export default class ElementTransitionsService extends Service {
 
     public defineGlobalElementTransition(name: string, transition: ElementTransition): void {
         this.transitions[name] = transition;
+    }
+
+    public freezeInPlace(element: HTMLElement): void {
+        this.elementsFreezingInPlace.set(element);
     }
 
     public beforeElementMounted(element: HTMLElement, config: TransitionalElementConfig): void {
@@ -126,6 +131,9 @@ export default class ElementTransitionsService extends Service {
         arrayRemove(this.activeElements, element);
 
         const wrapper = await this.freezeElement(element);
+
+        if (!wrapper) return;
+
         const target = this.findElementTarget(config);
         const transitionPromise = target
             ? this.runElementTransition(wrapper, element, target)
@@ -158,11 +166,22 @@ export default class ElementTransitionsService extends Service {
         };
     }
 
-    private async freezeElement(element: HTMLElement): Promise<HTMLElement> {
+    private async freezeElement(element: HTMLElement): Promise<HTMLElement | void> {
         const boundingRect = element.getBoundingClientRect();
-        const wrapper = document.createElement('div');
 
         await afterAnimationFrame();
+
+        return this.elementsFreezingInPlace.has(element)
+            ? this.freezeElementInPlace(element, boundingRect)
+            : this.freezeElementInWrapper(element, boundingRect);
+    }
+
+    private freezeElementInPlace(element: HTMLElement, boundingRect: DOMRect): void {
+        updateElement(element, { boundingDimensions: boundingRect });
+    }
+
+    private freezeElementInWrapper(element: HTMLElement, boundingRect: DOMRect): HTMLElement {
+        const wrapper = document.createElement('div');
 
         updateElement(wrapper, {
             boundingRect,

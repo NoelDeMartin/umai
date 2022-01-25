@@ -46,7 +46,9 @@ const minWidth = computed(() => {
 });
 
 defineExpose<IBaseFluidInput>({
-    get root() { return root.value;},
+    get root() { return root.value; },
+    get minWidth() { return minWidth.value; },
+    blur: () => input.value?.blur(),
     focus: () => input.value?.focus(),
     isFocused: () => !!input.value?.matches(':focus'),
 });

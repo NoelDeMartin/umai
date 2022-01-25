@@ -35,7 +35,8 @@ footer:
 
 home:
   title: What will you cook today?
-  cookbook_link: Check out more recipes
+  cookbook_link: View all recipes
+  shuffle: Shuffle
   back: back home
 
   onboarding:
@@ -85,6 +86,8 @@ recipes:
     title: Your cookbook
     add: add recipe
     back: back to cookbook
+    search_label: Filter recipes
+    search_placeholder: Search...
 
 validation:
   required: This is required

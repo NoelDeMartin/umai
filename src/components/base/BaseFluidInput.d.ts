@@ -1,5 +1,7 @@
 export default interface IBaseFluidInput {
-    root?: HTMLElement;
+    root?: HTMLInputElement;
+    minWidth?: number;
+    blur(): void;
     focus(): void;
     isFocused(): boolean;
 }

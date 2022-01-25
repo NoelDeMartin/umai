@@ -1,17 +1,28 @@
 <template>
-    <BaseHeading id="home-title">
-        {{ $t('home.title') }}
-    </BaseHeading>
-    <RecipesGrid :recipes="recipes" />
+    <div class="flex justify-between">
+        <BaseHeading id="home-title">
+            {{ $t('home.title') }}
+        </BaseHeading>
+        <BaseButton clear @click="shuffleShowcase">
+            <i-zondicons-reload class="mr-2 w-4 h-4" />
+            {{ $t('home.shuffle') }}
+        </BaseButton>
+    </div>
+    <RecipesGrid :recipes="showcasedRecipes" />
     <BaseLink id="home--cookbook-link" class="self-end" route="recipes.index">
         {{ $t('home.cookbook_link') }}<span aria-hidden="true"> &rarr;</span>
     </BaseLink>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 import Cookbook from '@/services/facades/Cookbook';
 
-const recipes = computed(() => Cookbook.recipes.slice(0, 8));
+const shuffle = ref({ count: 8 });
+const showcasedRecipes = computed(() => Cookbook.recipes.randomItems(shuffle.value.count));
+
+function shuffleShowcase() {
+    shuffle.value = { count: 8 };
+}
 </script>

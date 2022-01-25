@@ -10,7 +10,7 @@
         }"
     >
         <template #image>
-            <RecipeImage :recipe="recipe" class="absolute inset-0" />
+            <RecipeImage :url="recipe.imageUrl" class="absolute inset-0" />
         </template>
 
         <template #title>
