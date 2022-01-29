@@ -2,7 +2,7 @@
     <TransitionRoot as="template" :show="modal.open">
         <Dialog
             as="div"
-            class="flex overflow-y-auto fixed inset-0 z-10 justify-center items-center"
+            class="flex overflow-y-auto fixed inset-0 z-40 justify-center items-center"
             @close="$ui.closeModal(modal.id)"
         >
             <TransitionChild
@@ -29,13 +29,16 @@
                 leave-to="opacity-0 scale-90"
             >
                 <div
-                    class="overflow-hidden relative p-4 bg-white shadow-xl transition-all m-edge"
+                    :class="[
+                        'flex flex-col overflow-hidden relative max-h-[90vh] bg-white shadow-xl transition-all m-edge',
+                        noPadding || 'p-4',
+                    ]"
                     v-bind="$attrs"
                 >
                     <DialogTitle v-if="title" as="h2" class="text-lg font-medium leading-6 text-gray-900">
                         {{ title }}
                     </DialogTitle>
-                    <div class="mt-2">
+                    <div class="flex overflow-hidden flex-col mt-2 max-h-full">
                         <slot :close="(result?: unknown) => $ui.closeModal(modal.id, result)" />
                     </div>
                 </div>
@@ -57,6 +60,10 @@ defineProps({
     title: {
         type: String as PropType<string | null>,
         default: null,
+    },
+    noPadding: {
+        type: Boolean,
+        default: false,
     },
 });
 </script>

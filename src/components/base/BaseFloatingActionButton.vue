@@ -1,12 +1,14 @@
 <template>
     <!-- TODO a11y -->
     <button
+        ref="button"
         type="button"
         class="flex justify-center items-center px-3 text-white rounded-full shadow-lg bg-primary-600 min-w-clickable h-clickable hover:bg-primary-700"
         @focus="focused = true"
         @blur="focused = false"
         @mouseenter="hover = true"
         @mouseleave="hover = false"
+        @click="button?.blur()"
     >
         <i-mdi-plus class="w-5 h-5" />
         <span
@@ -32,6 +34,7 @@ defineProps({
 });
 
 const text = ref<HTMLElement>();
+const button = ref<HTMLButtonElement>();
 const hover = ref(false);
 const focused = ref(false);
 const textWidth = ref(0);

@@ -1,4 +1,4 @@
-import { after, arrayFirst, arrayReplace, uuid } from '@noeldemartin/utils';
+import { after, arrayFirst, arrayReplace, arrayWithoutIndex, uuid } from '@noeldemartin/utils';
 import { markRaw, nextTick } from 'vue';
 import type { Component } from 'vue';
 
@@ -10,6 +10,7 @@ interface State {
     components: Record<ApplicationComponents, Component>;
     headerHeight: number;
     modals: Modal[];
+    snackbars: Snackbar[];
 }
 
 type ModalProps<MC> = MC extends ModalComponent<infer P, unknown> ? P : never;
@@ -27,6 +28,17 @@ export interface Modal<T = unknown> {
     open: boolean;
     beforeClose: Promise<T | undefined>;
     afterClose: Promise<T | undefined>;
+}
+
+export interface Snackbar {
+    id: string;
+    message: string;
+    actions: SnackbarAction[];
+}
+
+export interface SnackbarAction {
+    text: string;
+    handler(): void;
 }
 
 export interface ModalComponent<
@@ -111,6 +123,34 @@ export default class UIService extends Service {
         callbacks?.closed && callbacks.closed(result);
     }
 
+    public showSnackbar(message: string, actions: SnackbarAction[] = []): string {
+        const snackbar: Snackbar = {
+            id: uuid(),
+            message,
+            actions,
+        };
+
+        this.setState({
+            snackbars: [
+                ...this.snackbars,
+                snackbar,
+            ],
+        });
+
+        setTimeout(() => this.hideSnackbar(snackbar.id), 5000);
+
+        return snackbar.id;
+    }
+
+    public hideSnackbar(id: string): void {
+        const index = this.snackbars.findIndex(snackbar => snackbar.id === id);
+
+        if (index === -1)
+            return;
+
+        this.setState({ snackbars: arrayWithoutIndex(this.snackbars, index) });
+    }
+
     public registerComponent(name: ApplicationComponents, component: Component): void {
         this.components[name] = component;
     }
@@ -126,6 +166,7 @@ export default class UIService extends Service {
             },
             headerHeight: 0,
             modals: [],
+            snackbars: [],
         };
     }
 

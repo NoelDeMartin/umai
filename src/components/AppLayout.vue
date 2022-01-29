@@ -5,7 +5,8 @@
             <slot />
         </div>
         <AppFooter />
-        <AppModals />
+        <AppOverlays />
+
         <div id="element-transitions-container" />
     </div>
 </template>

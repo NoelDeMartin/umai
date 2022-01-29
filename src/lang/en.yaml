@@ -91,3 +91,18 @@ recipes:
 
 validation:
   required: This is required
+
+errors:
+  notice: Something went wrong, but it's not your fault. Try again!
+  viewDetails: View details
+  unknown: Unknown error
+  inspectInConsole: Inspect in console
+  addedToConsole: You can now use the **error** variable in the console
+  copyToClipboard: Copy to clipboard
+  copiedToClipboard: Debug information copied to clipboard
+  reportToGithub: Report in Github
+  githubIssueBody: |
+    [Please, explain here what you were trying to do when this error appeared]
+
+    Stack trace:
+    ```{stackTrace}```

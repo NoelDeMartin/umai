@@ -20,8 +20,7 @@
         </template>
 
         <template v-if="recipe.description" #description>
-            <!-- TODO support markdown -->
-            <p>{{ recipe.description }}</p>
+            <BaseMarkdown :text="recipe.description" />
         </template>
 
         <template v-if="recipe.ingredients.length > 0" #ingredients>
@@ -46,7 +45,7 @@
         <template v-if="instructions.length > 0" #instructions>
             <ol>
                 <li v-for="instructionStep of instructions" :key="instructionStep.position">
-                    {{ instructionStep.text }}
+                    <BaseMarkdown :text="instructionStep.text" />
                 </li>
             </ol>
         </template>

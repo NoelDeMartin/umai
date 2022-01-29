@@ -1,4 +1,5 @@
 import { createApp } from 'vue';
+import { tap } from '@noeldemartin/utils';
 import type { Component, Directive, Plugin } from 'vue';
 import type { RouteRecordRaw } from 'vue-router';
 
@@ -6,6 +7,7 @@ import App from '@/framework/core/facades/App';
 import getBasePlugins from '@/framework/plugins';
 import baseDirectives from '@/framework/directives';
 import baseRoutes from '@/framework/routing';
+import Errors from '@/framework/core/facades/Errors';
 import Events from '@/framework/core/facades/Events';
 import {
     authenticators as baseAuthenticators,
@@ -17,6 +19,22 @@ import { services as baseServices } from '@/framework/core';
 import type Authenticator from '@/framework/auth/Authenticator';
 import type Service from '@/framework/core/Service';
 import type { AuthenticatorName } from '@/framework/auth';
+import type { ErrorReason } from '@/framework/core/services/ErrorsService';
+
+type ErrorHandler = (error: ErrorReason) => boolean;
+
+const frameworkHandler: ErrorHandler = error => {
+    Errors.report(error);
+
+    return true;
+};
+
+function setUpErrorHandler(baseHandler: ErrorHandler = (() => false)): ErrorHandler {
+    return tap(error => baseHandler(error) || frameworkHandler(error), errorHandler => {
+        window.onerror = errorHandler;
+        window.onunhandledrejection = event => errorHandler(event.reason);
+    });
+}
 
 declare module '@/framework/core/services/EventsService' {
 
@@ -35,6 +53,7 @@ export type BootstrapApplicationOptions = Partial<{
     services: Record<string, Service>;
     authenticators: Record<string, Authenticator>;
     defaultAuthenticator: AuthenticatorName;
+    handleError(error: ErrorReason): boolean;
     beforeLaunch(): Promise<unknown> | unknown;
     beforeMount(): Promise<unknown> | unknown;
 }>;
@@ -43,6 +62,7 @@ export async function bootstrapApplication(
     rootComponent: Component,
     options: BootstrapApplicationOptions = {},
 ): Promise<void> {
+    const errorHandler = setUpErrorHandler(options.handleError);
     const app = createApp(rootComponent);
     const routes = [...options.routes ?? [], ...baseRoutes];
     const basePlugins = await getBasePlugins(routes);
@@ -52,6 +72,7 @@ export async function bootstrapApplication(
     const authenticators = { ...baseAuthenticators, ...(options.authenticators ?? {}) };
 
     App.name = options.name ?? App.name;
+    app.config.errorHandler = errorHandler;
 
     plugins.forEach(plugin => app.use(plugin));
 
