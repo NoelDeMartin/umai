@@ -33,8 +33,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-
 import { shrink } from '@/framework/utils/transitions';
 
 import type IBaseFluidTextArea from '@/components/base/BaseFluidTextArea';
@@ -57,13 +55,13 @@ defineProps({
 });
 const emit = defineEmits(['add', 'remove', 'update:modelValue']);
 
-const root = ref<HTMLElement>();
-const textArea = ref<IBaseFluidTextArea>();
-const removeButton = ref<HTMLButtonElement>();
-const focused = ref(false);
+let focused = $ref(false);
+const root = $ref<HTMLElement>();
+const textArea = $ref<IBaseFluidTextArea>();
+const removeButton = $ref<HTMLButtonElement>();
 
 function updateFocus() {
-    focused.value = !!(textArea.value?.isFocused() || removeButton.value?.matches(':focus'));
+    focused = !!(textArea?.isFocused() || removeButton?.matches(':focus'));
 }
 
 function onEnterKeydown(event: KeyboardEvent) {
@@ -76,12 +74,12 @@ function onEnterKeydown(event: KeyboardEvent) {
 }
 
 defineExpose<IRecipeInstructionStepInput>({
-    focus: () => textArea.value?.focus(),
+    focus: () => textArea?.focus(),
     async playLeaveAnimation() {
-        if (!root.value)
+        if (!root)
             return;
 
-        await shrink(root.value);
+        await shrink(root);
     },
 });
 </script>

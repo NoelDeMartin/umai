@@ -28,7 +28,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import Cloud from '@/framework/core/facades/Cloud';
@@ -37,7 +36,7 @@ import UI from '@/framework/core/facades/UI';
 import CloudStatusModal from '@/components/modals/CloudStatusModal.vue';
 
 const { t } = useI18n();
-const pendingUpdates = computed(() => {
+const pendingUpdates = $computed(() => {
     if (!Cloud.dirty)
         return { badge: null, a11y: t('cloud.no_pending_updates_a11y') };
 

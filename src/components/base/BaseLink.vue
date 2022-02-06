@@ -10,11 +10,11 @@
 </template>
 
 <script setup lang="ts">
+import { objectWithoutEmpty } from '@noeldemartin/utils';
 import { computed } from 'vue';
 import type { PropType } from 'vue';
-import { objectWithoutEmpty } from '@noeldemartin/utils';
 
-const props = defineProps({
+const { route, routeParams, url } = defineProps({
     route: {
         type: String as PropType<string | null>,
         default: null,
@@ -29,10 +29,10 @@ const props = defineProps({
     },
 });
 
-const linkComponent = computed(() => props.route ? 'router-link' : (props.url ? 'a' : 'button'));
+const linkComponent = computed(() => route ? 'router-link' : (url ? 'a' : 'button'));
 const linkProps = computed(() => ({
     'a': {
-        href: props.url,
+        href: url,
         target: '_blank',
     },
     'button': {
@@ -40,8 +40,8 @@ const linkProps = computed(() => ({
     },
     'router-link': {
         to: objectWithoutEmpty({
-            name: props.route,
-            params: props.routeParams,
+            name: route,
+            params: routeParams,
         }),
     },
 }));

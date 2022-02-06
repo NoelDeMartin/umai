@@ -34,7 +34,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue';
 import { stringToSlug } from '@noeldemartin/utils';
 
 import Cookbook from '@/services/facades/Cookbook';
@@ -52,16 +52,16 @@ export default defineComponent({
 </script>
 
 <script setup lang="ts">
-const search = ref('');
-const searchIndex = computed(() => Cookbook.recipes.map(recipe => ({
+const search = $ref('');
+const searchIndex = $computed(() => Cookbook.recipes.map(recipe => ({
     recipe,
     searchableText: stringToSlug(recipe.name).replaceAll('-', ''),
 })));
-const filteredRecipes = computed(() => {
-    const searchQuery = search.value.trim();
+const filteredRecipes = $computed(() => {
+    const searchQuery = search.trim();
     const filteredSearchIndex = searchQuery.length
-        ? searchIndex.value.filter(({ searchableText }) => searchableText.includes(searchQuery))
-        : searchIndex.value;
+        ? searchIndex.filter(({ searchableText }) => searchableText.includes(searchQuery))
+        : searchIndex;
 
     return filteredSearchIndex.map(({ recipe }) => recipe);
 });

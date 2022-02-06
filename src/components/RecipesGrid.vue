@@ -18,14 +18,14 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, ref } from 'vue';
+import { onBeforeUnmount } from 'vue';
 import type { PropType } from 'vue';
 
 import { updateElement } from '@/framework/utils/dom';
 
 import type Recipe from '@/models/Recipe';
 
-const root = ref<HTMLElement>();
+const root = $ref<HTMLElement>();
 
 defineProps({
     recipes: {
@@ -35,9 +35,9 @@ defineProps({
 });
 
 onBeforeUnmount(() => {
-    if (!root.value)
+    if (!root)
         return;
 
-    updateElement(root.value, { boundingDimensions: root.value.getBoundingClientRect() });
+    updateElement(root, { boundingDimensions: root.getBoundingClientRect() });
 });
 </script>

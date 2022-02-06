@@ -46,35 +46,35 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { onMounted, onUnmounted } from 'vue';
 
 import Router from '@/framework/core/facades/Router';
 import UI from '@/framework/core/facades/UI';
 
 function updateHeaderSize() {
-    if (!header.value)
+    if (!header)
         return;
 
-    UI.updateHeaderHeight(header.value.clientHeight);
+    UI.updateHeaderHeight(header.clientHeight);
 }
 
-const header = ref<HTMLElement>();
+const header = $ref<HTMLElement>();
 const resizeObserver = new ResizeObserver(() => updateHeaderSize());
-const enterFromClasses = computed(() => [
+const enterFromClasses = $computed(() => [
     'opacity-0',
     Router.currentRouteIs('recipes.show') ? 'translate-x-full' : '-translate-x-full',
 ].join(' '));
-const leaveToClasses = computed(() => [
+const leaveToClasses = $computed(() => [
     'opacity-0',
     Router.currentRouteIs('recipes.show') ? '-translate-x-full' : 'translate-x-full',
 ].join(' '));
 
 onMounted(() => {
-    if (!header.value)
+    if (!header)
         return;
 
     updateHeaderSize();
-    resizeObserver.observe(header.value);
+    resizeObserver.observe(header);
 });
 onUnmounted(() => resizeObserver.disconnect());
 </script>

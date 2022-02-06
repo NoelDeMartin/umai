@@ -16,22 +16,21 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
 import { objectWithoutEmpty } from '@noeldemartin/utils';
 import type { PropType } from 'vue';
 
-const props = defineProps({
+const { route, routeParams, type, secondary, clear } = defineProps({
     route: {
         type: String as PropType<string | null>,
+        default: null,
+    },
+    routeParams: {
+        type: Object as PropType<Object | null>,
         default: null,
     },
     type: {
         type: String,
         default: 'button',
-    },
-    routeParams: {
-        type: Object as PropType<Object | null>,
-        default: null,
     },
     secondary: {
         type: Boolean,
@@ -43,17 +42,17 @@ const props = defineProps({
     },
 });
 
-const isSecondary = computed(() => props.secondary);
-const isClear = computed(() => props.clear);
-const isPrimary = computed(() => !props.secondary && !props.clear);
-const buttonComponent = computed(() => props.route ? 'router-link' : 'button');
-const buttonProps = computed(
-    () => buttonComponent.value === 'button'
-        ? { type: props.type }
+const isSecondary = $computed(() => secondary);
+const isClear = $computed(() => clear);
+const isPrimary = $computed(() => !secondary && !clear);
+const buttonComponent = $computed(() => route ? 'router-link' : 'button');
+const buttonProps = $computed(
+    () => buttonComponent === 'button'
+        ? { type }
         : {
             to: objectWithoutEmpty({
-                name: props.route,
-                params: props.routeParams,
+                name: route,
+                params: routeParams,
             }),
         },
 );

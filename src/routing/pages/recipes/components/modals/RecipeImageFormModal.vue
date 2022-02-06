@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted } from 'vue';
 
 import { nextTicks } from '@/framework/utils/vue';
 import type { ModalCloseCallback } from '@/framework/core/services/UIService';
@@ -42,23 +42,23 @@ import type IBaseFluidInput from '@/components/base/BaseFluidInput';
 
 import type { RecipeImageFormModalProps, RecipeImageFormModalResult } from './RecipeImageFormModal';
 
-const props: RecipeImageFormModalProps = defineProps({
+const { imageUrl }: RecipeImageFormModalProps = defineProps({
     imageUrl: {
         type: String,
         default: null,
     },
 });
-const input = ref<IBaseFluidInput>();
-const url = ref(props.imageUrl ?? '');
+const input = $ref<IBaseFluidInput>();
+const url = $ref(imageUrl ?? '');
 
 onMounted(async () => {
     await nextTicks(2);
 
-    input.value?.focus();
+    input?.focus();
 });
 
 function submit(close: ModalCloseCallback<RecipeImageFormModalResult>) {
-    const cleanUrl = url.value.trim();
+    const cleanUrl = url.trim();
 
     close(cleanUrl.length > 0 ? cleanUrl : null);
 }

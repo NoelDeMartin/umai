@@ -18,7 +18,7 @@ const sourceUrl = packageJson.repository.replace('github:', 'https://github.com/
 
 export default defineConfig({
     plugins: [
-        Vue(),
+        Vue({ reactivityTransform: true }),
         I18n({ include: resolve(__dirname, './src/lang/**') }),
         Icons({
             customCollections: {

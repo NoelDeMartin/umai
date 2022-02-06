@@ -23,7 +23,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
 import { uuid } from '@noeldemartin/utils';
 import type { PropType } from 'vue';
 
@@ -31,7 +30,7 @@ import type Form from '@/framework/forms/Form';
 
 import type IBaseInput from './BaseInput';
 
-const props = defineProps({
+const { modelValue, name, form } = defineProps({
     modelValue: {
         type: String,
         default: '',
@@ -56,20 +55,20 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue']);
 
 const id = uuid();
-const input = ref<HTMLInputElement>();
-const formInput = computed(() => props.form?.input<string>(props.name ?? '') ?? null);
-const inputValue = computed(() => formInput.value?.value ?? props.modelValue);
-const error = computed(() => formInput.value?.error);
+const input = $ref<HTMLInputElement>();
+const formInput = $computed(() => form?.input<string>(name ?? '') ?? null);
+const inputValue = $computed(() => formInput?.value ?? modelValue);
+const error = $computed(() => formInput?.error);
 
 function onInput() {
-    const value = input.value?.value;
+    const value = input?.value;
 
-    formInput.value?.update(value);
+    formInput?.update(value);
 
     emit('update:modelValue', value);
 }
 
 defineExpose<IBaseInput>({
-    focus: () => input.value?.focus(),
+    focus: () => input?.focus(),
 });
 </script>

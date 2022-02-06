@@ -36,7 +36,6 @@
 
 <script setup lang="ts">
 import { after } from '@noeldemartin/utils';
-import { ref } from 'vue';
 import type { PropType } from 'vue';
 
 import Router from '@/framework/core/facades/Router';
@@ -55,10 +54,10 @@ defineProps({
     },
 });
 
-const visibleFocus = ref(false);
+let visibleFocus = $ref(false);
 
 function setVisibleFocus(value: boolean) {
-    visibleFocus.value = value;
+    visibleFocus = value;
 }
 
 const enterTransition = defineEnterTransition(async (card, existed) => {

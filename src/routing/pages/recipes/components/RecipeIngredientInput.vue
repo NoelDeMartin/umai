@@ -55,8 +55,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-
 import { shrink } from '@/framework/utils/transitions';
 import { updateElement } from '@/framework/utils/dom';
 
@@ -85,13 +83,13 @@ const emit = defineEmits([
     'update:modelValue',
 ]);
 
-const root = ref<HTMLElement>();
-const input = ref<IBaseFluidInput>();
-const removeButton = ref<HTMLButtonElement>();
-const focused = ref(false);
+let focused = $ref(false);
+const root = $ref<HTMLElement>();
+const input = $ref<IBaseFluidInput>();
+const removeButton = $ref<HTMLButtonElement>();
 
 function updateFocus() {
-    focused.value = !!(input.value?.isFocused() || removeButton.value?.matches(':focus'));
+    focused = !!(input?.isFocused() || removeButton?.matches(':focus'));
 }
 
 function startDragging(event: MouseEvent | TouchEvent) {
@@ -122,18 +120,18 @@ function startDragging(event: MouseEvent | TouchEvent) {
 }
 
 defineExpose<IRecipeIngredientInput>({
-    focus: () => input.value?.focus(),
+    focus: () => input?.focus(),
     async playLeaveAnimation() {
-        if (!root.value || !input.value?.root)
+        if (!root || !input?.root)
             return;
 
-        const initialHeight = root.value.getBoundingClientRect().height;
+        const initialHeight = root.getBoundingClientRect().height;
 
-        updateElement(input.value.root, {
+        updateElement(input.root, {
             styles: { height: `${initialHeight}px` },
         });
 
-        await shrink(root.value);
+        await shrink(root);
     },
 });
 </script>

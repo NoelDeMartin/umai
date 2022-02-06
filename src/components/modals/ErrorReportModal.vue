@@ -43,7 +43,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
 import type { PropType } from 'vue';
 
 import App from '@/framework/core/facades/App';
@@ -51,35 +50,35 @@ import I18n from '@/framework/core/facades/I18n';
 import UI from '@/framework/core/facades/UI';
 import type { ErrorReport } from '@/framework/core/services/ErrorsService';
 
-const props = defineProps({
+const { report } = defineProps({
     report: {
         type: Object as PropType<ErrorReport>,
         required: true,
     },
 });
 
-const title = computed(() => props.report.error?.name ?? props.report.title);
-const description = computed(() => props.report.error ? props.report.error.message : null);
-const summary = computed(() => description.value ? `${title.value}: ${description.value}` : title.value);
-const details = computed(() => props.report.error?.stack || null);
-const githubReportUrl = computed(() => {
-    const issueTitle = encodeURIComponent(summary.value);
+const title = $computed(() => report.error?.name ?? report.title);
+const description = $computed(() => report.error ? report.error.message : null);
+const summary = $computed(() => description ? `${title}: ${description}` : title);
+const details = $computed(() => report.error?.stack || null);
+const githubReportUrl = $computed(() => {
+    const issueTitle = encodeURIComponent(summary);
     const issueBody = encodeURIComponent(
         I18n
-            .translate('errors.githubIssueBody', { stackTrace: details.value }),
+            .translate('errors.githubIssueBody', { stackTrace: details }),
     );
 
     return `${App.sourceUrl}/issues/new?title=${issueTitle}&body=${issueBody}`;
 });
 
 function inspectInConsole() {
-    (window as { error?: Error }).error = props.report.error;
+    (window as { error?: Error }).error = report.error;
 
     UI.showSnackbar(I18n.translate('errors.addedToConsole'));
 }
 
 async function copyToClipboard() {
-    await navigator.clipboard.writeText(`${summary.value}\n\n${details.value}`);
+    await navigator.clipboard.writeText(`${summary}\n\n${details}`);
 
     UI.showSnackbar(I18n.translate('errors.copiedToClipboard'));
 }

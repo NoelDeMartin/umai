@@ -15,14 +15,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-
 import Cookbook from '@/services/facades/Cookbook';
 
-const shuffle = ref({ count: 8 });
-const showcasedRecipes = computed(() => Cookbook.recipes.randomItems(shuffle.value.count));
+let shuffle = $ref({ count: 8 });
+const showcasedRecipes = $computed(() => Cookbook.recipes.randomItems(shuffle.count));
 
 function shuffleShowcase() {
-    shuffle.value = { count: 8 };
+    shuffle = { count: 8 };
 }
 </script>

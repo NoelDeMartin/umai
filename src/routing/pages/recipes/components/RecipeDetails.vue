@@ -91,7 +91,6 @@
 
 <script setup lang="ts">
 import { after, arraySorted } from '@noeldemartin/utils';
-import { computed } from 'vue';
 import type { PropType } from 'vue';
 
 import TailwindCSS from '@/framework/utils/tailwindcss';
@@ -100,7 +99,7 @@ import { afterElementsUpdated, updateElement } from '@/framework/utils/dom';
 
 import type Recipe from '@/models/Recipe';
 
-const props = defineProps({
+const { recipe } = defineProps({
     recipe: {
         type: Object as PropType<Recipe>,
         required: true,
@@ -108,7 +107,7 @@ const props = defineProps({
 });
 
 // TODO sort in model
-const instructions = computed(() => arraySorted(props.recipe.instructions ?? [], 'position'));
+const instructions = $computed(() => arraySorted(recipe.instructions ?? [], 'position'));
 
 async function hideBody(wrapper: HTMLElement, details: HTMLElement): Promise<void> {
     const duration = 300;

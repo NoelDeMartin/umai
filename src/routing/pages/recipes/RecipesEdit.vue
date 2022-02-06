@@ -16,7 +16,7 @@ import Router from '@/framework/core/facades/Router';
 
 import type Recipe from '@/models/Recipe';
 
-const props = defineProps({
+const { recipe } = defineProps({
     recipe: {
         type: Object as PropType<Recipe>,
         required: true,
@@ -27,7 +27,7 @@ function onUpdated() {
     Cloud.sync();
     Router.push({
         name: 'recipes.show',
-        params: { recipe: props.recipe.uuid as string },
+        params: { recipe: recipe.uuid as string },
     });
 }
 </script>

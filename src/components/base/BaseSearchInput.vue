@@ -41,7 +41,7 @@
 
 <script setup lang="ts">
 import { after } from '@noeldemartin/utils';
-import { nextTick, ref } from 'vue';
+import { nextTick } from 'vue';
 
 import type IBaseFluidInput from '@/components/base/BaseFluidInput';
 
@@ -61,15 +61,15 @@ defineProps({
 });
 const emit = defineEmits(['update:modelValue']);
 
-const active = ref(false);
-const input = ref<IBaseFluidInput>();
+let active = $ref(false);
+const input = $ref<IBaseFluidInput>();
 
 async function activate() {
-    active.value = true;
+    active = true;
 
     await nextTick();
 
-    input.value?.focus();
+    input?.focus();
 }
 
 async function clear() {
@@ -77,7 +77,7 @@ async function clear() {
 
     await nextTick();
 
-    input.value?.blur();
+    input?.blur();
 }
 
 async function showInput(element: Element) {
@@ -85,7 +85,7 @@ async function showInput(element: Element) {
 
     await nextTick();
 
-    const minWidth = input.value?.minWidth;
+    const minWidth = input?.minWidth;
 
     element.animate(
         [

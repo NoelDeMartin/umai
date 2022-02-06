@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, nextTick, ref, useAttrs, watch } from 'vue';
+import { defineComponent, nextTick, useAttrs, watch } from 'vue';
 
 import type IBaseFluidTextArea from './BaseFluidTextArea';
 
@@ -23,7 +23,7 @@ export default defineComponent({ inheritAttrs: false });
 </script>
 
 <script setup lang="ts">
-const props = defineProps({
+const { modelValue } = defineProps({
     modelValue: {
         type: String,
         required: true,
@@ -31,31 +31,31 @@ const props = defineProps({
 });
 defineEmits(['update:modelValue']);
 
+let rows = $ref(1);
 const attrs = useAttrs();
-const rows = ref(1);
-const textArea = ref<HTMLTextAreaElement>();
-const filler = ref<HTMLElement>();
-const fillerContent = computed(() => props.modelValue.endsWith('\n') ? props.modelValue + '\n' : props.modelValue);
-const fillerClasses = computed(() => 'invisible absolute w-full whitespace-pre-wrap ' + (attrs.class ?? ''));
-const lineHeight = computed(() => {
-    if (!filler.value)
+const textArea = $ref<HTMLTextAreaElement>();
+const filler = $ref<HTMLElement>();
+const fillerContent = $computed(() => modelValue.endsWith('\n') ? modelValue + '\n' : modelValue);
+const fillerClasses = $computed(() => 'invisible absolute w-full whitespace-pre-wrap ' + (attrs.class ?? ''));
+const lineHeight = $computed(() => {
+    if (!filler)
         return 0;
 
-    const lineHeight = document.defaultView?.getComputedStyle(filler.value, null).lineHeight;
+    const lineHeight = document.defaultView?.getComputedStyle(filler, null).lineHeight;
 
     return lineHeight ? parseInt(lineHeight) : 0;
 });
 
-watch(() => [props.modelValue, lineHeight.value], async () => {
+watch(() => [modelValue, lineHeight], async () => {
     await nextTick();
 
-    rows.value = filler.value
-        ? Math.max(1, Math.round(filler.value.offsetHeight / lineHeight.value))
+    rows = filler
+        ? Math.max(1, Math.round(filler.offsetHeight / lineHeight))
         : 1;
 });
 
 defineExpose<IBaseFluidTextArea>({
-    focus: () => textArea.value?.focus(),
-    isFocused: () => !!textArea.value?.matches(':focus'),
+    focus: () => textArea?.focus(),
+    isFocused: () => !!textArea?.matches(':focus'),
 });
 </script>

@@ -106,7 +106,6 @@
 
 <script setup lang="ts">
 import { arraySorted, objectWithoutEmpty, uuid } from '@noeldemartin/utils';
-import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { Attributes } from 'soukai';
 import type { PropType } from 'vue';
@@ -120,7 +119,7 @@ import type { IRecipeImageFormModal } from './modals/RecipeImageFormModal';
 import type { RecipeIngredientInputData } from './RecipeIngredientInput';
 import type { RecipeInstructionStepInputData } from './RecipeInstructionStepInput';
 
-const props = defineProps({
+const { recipe } = defineProps({
     recipe: {
         type: Object as PropType<Recipe>,
         default: null,
@@ -128,84 +127,84 @@ const props = defineProps({
 });
 const emit = defineEmits(['done', 'cancel']);
 
+let imageUrl = $ref(recipe?.imageUrl ?? null);
 const { t } = useI18n();
-const form = ref(null as unknown as HTMLElement);
-const name = ref(props.recipe?.name ?? '');
-const description = ref(props.recipe?.description ?? '');
-const imageUrl = ref(props.recipe?.imageUrl ?? null);
-const servings = ref(props.recipe?.servings ?? '');
-const prepTime = ref(props.recipe?.prepTime ?? '');
-const cookTime = ref(props.recipe?.cookTime ?? '');
-const ingredients = ref<RecipeIngredientInputData[]>((props.recipe?.ingredients ?? []).map(name => ({
+const form = $ref(null as unknown as HTMLElement);
+const name = $ref(recipe?.name ?? '');
+const description = $ref(recipe?.description ?? '');
+const servings = $ref(recipe?.servings ?? '');
+const prepTime = $ref(recipe?.prepTime ?? '');
+const cookTime = $ref(recipe?.cookTime ?? '');
+const ingredients = $ref<RecipeIngredientInputData[]>((recipe?.ingredients ?? []).map(name => ({
     name, id: uuid(),
 })));
-const instructions = ref<RecipeInstructionStepInputData[]>(
+const instructions = $ref<RecipeInstructionStepInputData[]>(
     // TODO sort in model
-    arraySorted(props.recipe?.instructions ?? [], 'position').map(instruction => ({
+    arraySorted(recipe?.instructions ?? [], 'position').map(instruction => ({
         id: uuid(),
         url: instruction.url,
         description: instruction.text,
     })),
 );
-const a11yTitle = computed(
-    () => props.recipe
-        ? t('recipes.edit_a11y_title', { recipe: props.recipe.name })
+const a11yTitle = $computed(
+    () => recipe
+        ? t('recipes.edit_a11y_title', { recipe: recipe.name })
         : t('recipes.create_a11y_title'),
 );
 
 async function editImage() {
-    const modal = await UI.openModal<IRecipeImageFormModal>(RecipeImageModal, { imageUrl: imageUrl.value });
+    const modal = await UI.openModal<IRecipeImageFormModal>(RecipeImageModal, { imageUrl: imageUrl });
     const result = await modal.beforeClose;
 
     document.querySelector<HTMLElement>(':focus')?.blur();
 
     if (result !== undefined)
-        imageUrl.value = result;
+        imageUrl = result;
 }
 
 async function submit() {
     const attributes = {
-        name: name.value,
-        imageUrl: imageUrl.value || null,
-        description: description.value || null,
-        servings: servings.value || null,
-        prepTime: prepTime.value || null,
-        cookTime: cookTime.value || null,
-        ingredients: ingredients.value.filter(({ name }) => !!name).map(({ name }) => name),
+        name: name,
+        imageUrl: imageUrl || null,
+        description: description || null,
+        servings: servings || null,
+        prepTime: prepTime || null,
+        cookTime: cookTime || null,
+        ingredients: ingredients.filter(({ name }) => !!name).map(({ name }) => name),
     };
 
-    const recipe = props.recipe ?? new Recipe(attributes);
-    const instructionUrls = instructions.value.map(({ url }) => url);
-    const instructionStepsAttributes = instructions.value
+    const updatedRecipe = recipe ?? new Recipe(attributes);
+    const instructionUrls = instructions.map(({ url }) => url);
+    const instructionStepsAttributes = instructions
         .filter(({ description }) => !!description)
         .map(instruction => objectWithoutEmpty({
             url: instruction.url,
             text: instruction.description,
         } as Attributes));
 
-    recipe.setAttributes(attributes);
+    updatedRecipe.setAttributes(attributes);
 
     let position = 1;
     for (const instructionStepAttributes of instructionStepsAttributes) {
         const instructionStep = instructionStepAttributes.url
-            && recipe.instructions?.find(model => model.url === instructionStepAttributes.url);
+            && updatedRecipe.instructions?.find(model => model.url === instructionStepAttributes.url);
 
         instructionStepAttributes.position = position++;
 
         instructionStep
             ? instructionStep.setAttributes(instructionStepAttributes)
-            : recipe.relatedInstructions.attach(instructionStepAttributes);
+            : updatedRecipe.relatedInstructions.attach(instructionStepAttributes);
     }
 
-    for (const instruction of recipe.instructions ?? []) {
+    for (const instruction of updatedRecipe.instructions ?? []) {
         if (instructionUrls.includes(instruction.url))
             continue;
 
-        recipe.relatedInstructions.detach(instruction);
+        updatedRecipe.relatedInstructions.detach(instruction);
     }
 
-    await recipe.save();
+    await updatedRecipe.save();
 
-    emit('done', recipe);
+    emit('done', updatedRecipe);
 }
 </script>

@@ -24,7 +24,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import Cloud from '@/framework/core/facades/Cloud';
@@ -35,6 +34,6 @@ function stringCapitalize(text: string): string {
 }
 
 const { t } = useI18n();
-const title = computed(() => stringCapitalize(t(`cloud.statuses.${Cloud.status}`)));
-const body = computed(() => stringCapitalize(t(`cloud.statuses.${Cloud.status}_description`)));
+const title = $computed(() => stringCapitalize(t(`cloud.statuses.${Cloud.status}`)));
+const body = $computed(() => stringCapitalize(t(`cloud.statuses.${Cloud.status}_description`)));
 </script>

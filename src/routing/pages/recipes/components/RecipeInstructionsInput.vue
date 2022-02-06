@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, ref } from 'vue';
+import { nextTick } from 'vue';
 import { arrayWithItemAt, arrayWithoutIndex, uuid } from '@noeldemartin/utils';
 import type { PropType } from 'vue';
 
@@ -28,30 +28,30 @@ import type IRecipeInstructionStepInput from './RecipeInstructionStepInput';
 import type { RecipeInstructionStepInputData } from './RecipeInstructionStepInput';
 
 const emit = defineEmits(['update:modelValue']);
-const props = defineProps({
+const { modelValue } = defineProps({
     modelValue: {
         type: Array as PropType<RecipeInstructionStepInputData[]>,
         default: [] as RecipeInstructionStepInputData[],
     },
 });
-const instructionSteps = computed(() => props.modelValue);
-const inputs = ref<IRecipeInstructionStepInput[]>([]);
+const instructionSteps = $computed(() => modelValue);
+const inputs = $ref<IRecipeInstructionStepInput[]>([]);
 
 async function addInstructionStep(index: number) {
     const newInstructionStep: RecipeInstructionStepInputData = { id: uuid(), description: '' };
 
-    emit('update:modelValue', arrayWithItemAt(instructionSteps.value, newInstructionStep, index));
+    emit('update:modelValue', arrayWithItemAt(instructionSteps, newInstructionStep, index));
 
     await nextTick();
 
-    inputs.value[index + 1].focus();
+    inputs[index + 1].focus();
 }
 
 async function removeInstructionStep(index: number) {
-    inputs.value[index === 0 ? 1 : index - 1]?.focus();
+    inputs[index === 0 ? 1 : index - 1]?.focus();
 
-    await inputs.value[index].playLeaveAnimation();
+    await inputs[index].playLeaveAnimation();
 
-    emit('update:modelValue', arrayWithoutIndex(instructionSteps.value, index));
+    emit('update:modelValue', arrayWithoutIndex(instructionSteps, index));
 }
 </script>

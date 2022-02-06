@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { onMounted } from 'vue';
 
 import TailwindCSS from '@/framework/utils/tailwindcss';
 
@@ -33,20 +33,20 @@ defineProps({
     },
 });
 
-const text = ref<HTMLElement>();
-const button = ref<HTMLButtonElement>();
-const hover = ref(false);
-const focused = ref(false);
-const textWidth = ref(0);
+let textWidth = $ref(0);
+const text = $ref<HTMLElement>();
+const button = $ref<HTMLButtonElement>();
+const hover = $ref(false);
+const focused = $ref(false);
 const textPadding = TailwindCSS.pixels('spacing.2');
-const textStyles = computed(() => {
-    if (textWidth.value === 0)
+const textStyles = $computed(() => {
+    if (textWidth === 0)
         return;
 
-    return (hover.value || focused.value) ? `width:${textWidth.value + textPadding}px` : 'width:0';
+    return (hover || focused) ? `width:${textWidth + textPadding}px` : 'width:0';
 });
 
 onMounted(() => {
-    textWidth.value = text.value?.clientWidth ?? 0;
+    textWidth = text?.clientWidth ?? 0;
 });
 </script>

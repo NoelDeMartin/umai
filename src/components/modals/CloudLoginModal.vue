@@ -48,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted } from 'vue';
 
 import Auth from '@/framework/core/facades/Auth';
 import Form from '@/framework/forms/Form';
@@ -56,7 +56,7 @@ import { nextTicks } from '@/framework/utils/vue';
 
 import type IBaseInput from '@/components/base/BaseInput';
 
-const input = ref<IBaseInput>();
+const input = $ref<IBaseInput>();
 const form = new Form({
     loginUrl: 'required',
 });
@@ -66,7 +66,7 @@ onMounted(async () => {
 
     // TODO use initialFocus when available
     // See https://github.com/tailwindlabs/headlessui/issues/542
-    input.value?.focus();
+    input?.focus();
 });
 
 async function submit(close: Function) {

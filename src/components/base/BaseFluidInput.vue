@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, useAttrs } from 'vue';
+import { defineComponent, useAttrs } from 'vue';
 
 import { measureHTMLDimensions } from '@/framework/utils/dom';
 
@@ -25,7 +25,7 @@ export default defineComponent({ inheritAttrs: false });
 </script>
 
 <script setup lang="ts">
-const props = defineProps({
+const { modelValue } = defineProps({
     modelValue: {
         type: String,
         required: true,
@@ -34,22 +34,22 @@ const props = defineProps({
 defineEmits(['update:modelValue']);
 
 const attrs = useAttrs();
-const root = ref<HTMLInputElement>();
-const input = ref<HTMLInputElement>();
-const fillerClasses = computed(() => 'block invisible py-2 whitespace-pre border-b-2 ' + (attrs.class ?? ''));
-const fillerContent = computed(() => props.modelValue || ' ');
-const minWidth = computed(() => {
+const root = $ref<HTMLInputElement>();
+const input = $ref<HTMLInputElement>();
+const fillerClasses = $computed(() => 'block invisible py-2 whitespace-pre border-b-2 ' + (attrs.class ?? ''));
+const fillerContent = $computed(() => modelValue || ' ');
+const minWidth = $computed(() => {
     if (!attrs.placeholder)
         return 60;
 
-    return measureHTMLDimensions(`<span class="${fillerClasses.value}">${attrs.placeholder}</span>`).width;
+    return measureHTMLDimensions(`<span class="${fillerClasses}">${attrs.placeholder}</span>`).width;
 });
 
 defineExpose<IBaseFluidInput>({
-    get root() { return root.value; },
-    get minWidth() { return minWidth.value; },
-    blur: () => input.value?.blur(),
-    focus: () => input.value?.focus(),
-    isFocused: () => !!input.value?.matches(':focus'),
+    get root() { return root; },
+    get minWidth() { return minWidth; },
+    blur: () => input?.blur(),
+    focus: () => input?.focus(),
+    isFocused: () => !!input?.matches(':focus'),
 });
 </script>
