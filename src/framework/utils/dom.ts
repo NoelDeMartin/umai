@@ -1,23 +1,58 @@
-import { afterAnimationFrame, tap } from '@noeldemartin/utils';
+import { objectWithoutEmpty, tap } from '@noeldemartin/utils';
 
-interface TransitionElementOptions {
-    transition: number;
-    addClasses: string;
-    removeClasses: string;
-    boundingRect: DOMRect;
-    boundingPosition: DOMRect;
-    boundingDimensions: DOMRect;
-    styles: Partial<CSSStyleDeclaration>;
-    resetStyles: boolean;
-    append: HTMLElement;
-    prepend: HTMLElement;
+interface AnimateElementConfig {
+    duration: number;
+    fill: FillMode;
+    styles: PropertyIndexedKeyframes;
+    classes: Partial<Record<keyof CSSStyleDeclaration, string[]>>;
+    before: Partial<{
+        addClasses: string;
+        removeClasses: string;
+        append: HTMLElement;
+        prepend: HTMLElement;
+        styles: Partial<CSSStyleDeclaration>;
+    }>;
+    after: Partial<{
+        addClasses: string;
+        removeClasses: string;
+        resetStyles: boolean;
+    }>;
+    boundingRects: DOMRect[];
+    boundingPositions: DOMRect[];
+    boundingDimensions: DOMRect[];
 }
 
-export async function afterElementsUpdated(): Promise<void> {
-    // For some reason, some styles don't transition properly if we don't wait for 2 frames
-    // before updating them again.
-    await afterAnimationFrame();
-    await afterAnimationFrame();
+const computedClassStyles: Record<string, string> = {};
+
+function getComputedClassStyle(property: keyof CSSStyleDeclaration, classes: string[]): string[] {
+    const styleKeys = classes.map(className => `${className}-${property}`);
+
+    if (styleKeys.some(key => !(key in computedClassStyles))) {
+        const div = document.createElement('div');
+        const wrapper = document.createElement('div');
+
+        wrapper.style.opacity = '0';
+        wrapper.append(div);
+        document.body.append(wrapper);
+
+        for (const index in styleKeys) {
+            const styleKey = styleKeys[index];
+            const className = classes[index];
+
+            if (styleKey in computedClassStyles)
+                continue;
+
+            div.classList.add(className);
+
+            computedClassStyles[styleKey] = getComputedStyle(div)[property] as string;
+
+            div.classList.remove(className);
+        }
+
+        wrapper.remove();
+    }
+
+    return styleKeys.map(key => computedClassStyles[key]);
 }
 
 export function hasAncestor(element: HTMLElement | null, selector: string): boolean {
@@ -43,30 +78,43 @@ export function measureHTMLDimensions(html: string): { width: number; height: nu
     return tap({ width: ruler.clientWidth, height: ruler.clientHeight }, () => ruler.remove());
 }
 
-export function updateElement(element: HTMLElement, options: Partial<TransitionElementOptions>): void {
-    options.resetStyles && element.removeAttribute('style');
-    options.transition && (element.style.transition = `all ${options.transition}ms`);
-    options.styles && Object.assign(element.style, options.styles ?? {});
-    options.append && element.append(options.append);
-    options.prepend && element.prepend(options.prepend);
+export async function animateElement(element: HTMLElement, config: Partial<AnimateElementConfig>): Promise<void> {
+    config.before?.addClasses?.split(' ').forEach(addedClass => element.classList.add(addedClass));
+    config.before?.removeClasses?.split(' ').forEach(removedClass => element.classList.remove(removedClass));
+    config.before?.append && element.append(config.before.append);
+    config.before?.prepend && element.prepend(config.before.prepend);
+    config.before?.styles && Object.assign(element.style, config.before.styles);
 
-    options.addClasses?.split(' ').forEach(addedClass => element.classList.add(addedClass));
-    options.removeClasses?.split(' ').forEach(removedClass => element.classList.remove(removedClass));
+    const animation = element.animate(
+        objectWithoutEmpty({
+            top: (config.boundingRects ?? config.boundingPositions)?.map(rect => `${rect.top}px`),
+            left: (config.boundingRects ?? config.boundingPositions)?.map(rect => `${rect.left}px`),
+            width: (config.boundingRects ?? config.boundingDimensions)?.map(rect => `${rect.width}px`),
+            height: (config.boundingRects ?? config.boundingDimensions)?.map(rect => `${rect.height}px`),
+            ...Object.entries(config.classes ?? {})?.reduce((styles, [property, classes]) => {
+                styles[property] = getComputedClassStyle(property as keyof CSSStyleDeclaration, classes as string[]);
 
-    if (options.boundingPosition) {
-        element.style.top = `${options.boundingPosition.top}px`;
-        element.style.left = `${options.boundingPosition.left}px`;
-    }
+                return styles;
+            }, {} as PropertyIndexedKeyframes),
+            ...config.styles,
+        }),
+        { duration: config.duration, fill: config.fill },
+    );
 
-    if (options.boundingDimensions) {
-        element.style.width = `${options.boundingDimensions.width}px`;
-        element.style.height = `${options.boundingDimensions.height}px`;
-    }
+    await animation.finished;
 
-    if (options.boundingRect) {
-        element.style.top = `${options.boundingRect.top}px`;
-        element.style.left = `${options.boundingRect.left}px`;
-        element.style.width = `${options.boundingRect.width}px`;
-        element.style.height = `${options.boundingRect.height}px`;
-    }
+    config.after?.addClasses?.split(' ').forEach(addedClass => element.classList.add(addedClass));
+    config.after?.removeClasses?.split(' ').forEach(removedClass => element.classList.remove(removedClass));
+    config.after?.resetStyles && element.removeAttribute('style');
+}
+
+export async function animateElements(
+    sharedConfig: Partial<AnimateElementConfig>,
+    animations: (Partial<AnimateElementConfig> & { element: HTMLElement })[],
+): Promise<void> {
+    await Promise.all(
+        Object
+            .values(animations)
+            .map(({ element, ...config }) => animateElement(element, { ...sharedConfig, ...config })),
+    );
 }

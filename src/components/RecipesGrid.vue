@@ -21,8 +21,6 @@
 import { onBeforeUnmount } from 'vue';
 import type { PropType } from 'vue';
 
-import { updateElement } from '@/framework/utils/dom';
-
 import type Recipe from '@/models/Recipe';
 
 const root = $ref<HTMLElement>();
@@ -38,6 +36,9 @@ onBeforeUnmount(() => {
     if (!root)
         return;
 
-    updateElement(root, { boundingDimensions: root.getBoundingClientRect() });
+    const boundingRect = root.getBoundingClientRect();
+
+    root.style.width = `${boundingRect.width}px`;
+    root.style.height = `${boundingRect.height}px`;
 });
 </script>

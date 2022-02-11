@@ -3,7 +3,6 @@ import { nextTick } from 'vue';
 
 import Router from '@/framework/core/facades/Router';
 import Service from '@/framework/core/Service';
-import { afterElementsUpdated, updateElement } from '@/framework/utils/dom';
 import { fadeIn, fadeOut } from '@/framework/utils/transitions';
 
 type EnterTransition = (element: HTMLElement, existed: boolean) => Promise<void>;
@@ -12,12 +11,14 @@ type ElementTransition = (wrapper: HTMLElement, source: HTMLElement, target: HTM
 
 interface ElementTransitionTarget {
     element: HTMLElement;
+    config: TransitionalElementConfig;
     transition: ElementTransition;
 }
 
 interface TransitionalElementConfig {
     id?: string;
     name?: string;
+    blocking?: boolean | ((targetConfig: TransitionalElementConfig, target: HTMLElement) => boolean);
     transitions: Partial<Record<string, ElementTransition>> & {
         enter?: Record<string, EnterTransition>;
         leave?: Record<string, LeaveTransition>;
@@ -42,6 +43,7 @@ export default class ElementTransitionsService extends Service {
     private elementsConfig: WeakMap<HTMLElement, TransitionalElementConfig> = new WeakMap;
     private elementsSourceTransitions: WeakMap<HTMLElement, Promise<void>> = new WeakMap;
     private elementsTargetTransitions: WeakMap<HTMLElement, Promise<void>> = new WeakMap;
+    private elementsReady: WeakMap<HTMLElement, Promise<void>> = new WeakMap;
     private elementsFreezingInPlace: WeakMap<HTMLElement, void> = new WeakMap;
     private transitions: Record<string, ElementTransition | EnterTransition | LeaveTransition> = {};
 
@@ -75,18 +77,7 @@ export default class ElementTransitionsService extends Service {
         this.activeElements.push(element);
         this.registerElementHierarchy(element);
 
-        if (!Router.hasNavigated())
-            return;
-
-        updateElement(element, { styles: { opacity: '0' } });
-
-        await afterElementsUpdated();
-        await nextTick();
-        await this.elementsTargetTransitions.get(element);
-
-        updateElement(element, { resetStyles: true });
-
-        await this.runEnterElementTransition(element);
+        await tap(this.addElement(element), enterPromise => this.elementsReady.set(element, enterPromise));
     }
 
     public beforeElementUnmounted(element: HTMLElement): void {
@@ -94,6 +85,14 @@ export default class ElementTransitionsService extends Service {
             return;
 
         this.removeElement(element, this.elementsConfig.get(element) as TransitionalElementConfig);
+    }
+
+    public async waitElementsReady(name: string): Promise<void> {
+        await Promise.all(
+            this.activeElements
+                .filter(el => this.elementsConfig.get(el)?.name === name)
+                .map(el => this.elementsReady.get(el)),
+        );
     }
 
     protected async initialize(): Promise<void> {
@@ -104,10 +103,8 @@ export default class ElementTransitionsService extends Service {
         this.defineGlobalLeaveTransition('waitChildrenTransitions', async (_, element) => {
             const children = this.elementsChildren.get(element) ?? [];
 
-            if (children.length > 0) {
-                await afterElementsUpdated();
+            if (children.length > 0)
                 await nextTick();
-            }
 
             await Promise.all(children.map(element => this.elementsSourceTransitions.get(element)) ?? []);
         });
@@ -127,6 +124,20 @@ export default class ElementTransitionsService extends Service {
         }
     }
 
+    private async addElement(element: HTMLElement): Promise<void> {
+        if (!Router.hasNavigated())
+            return;
+
+        element.style.opacity = '0';
+
+        await nextTick();
+        await this.elementsTargetTransitions.get(element);
+
+        element.removeAttribute('style');
+
+        await this.runEnterElementTransition(element);
+    }
+
     private async removeElement(element: HTMLElement, config: TransitionalElementConfig): Promise<void> {
         arrayRemove(this.activeElements, element);
 
@@ -136,7 +147,7 @@ export default class ElementTransitionsService extends Service {
 
         const target = this.findElementTarget(config);
         const transitionPromise = target
-            ? this.runElementTransition(wrapper, element, target)
+            ? this.runElementTransition(wrapper, element, config, target)
             : this.runLeaveElementTransition(wrapper, element);
 
         this.elementsSourceTransitions.set(element, transitionPromise.then(() => wrapper.remove()));
@@ -162,6 +173,7 @@ export default class ElementTransitionsService extends Service {
 
         return {
             element: targetElement,
+            config: targetConfig,
             transition: config.transitions[targetConfig.name] as ElementTransition,
         };
     }
@@ -177,18 +189,21 @@ export default class ElementTransitionsService extends Service {
     }
 
     private freezeElementInPlace(element: HTMLElement, boundingRect: DOMRect): void {
-        updateElement(element, { boundingDimensions: boundingRect });
+        element.style.width = `${boundingRect.width}px`;
+        element.style.height = `${boundingRect.height}px`;
     }
 
     private freezeElementInWrapper(element: HTMLElement, boundingRect: DOMRect): HTMLElement {
         const wrapper = document.createElement('div');
 
-        updateElement(wrapper, {
-            boundingRect,
-            addClasses: 'element-transitions-wrapper',
-            styles: { position: 'fixed' },
-            append: element,
-        });
+        wrapper.classList.add('element-transitions-wrapper');
+        wrapper.style.position = 'fixed';
+        wrapper.style.top = `${boundingRect.top}px`;
+        wrapper.style.left = `${boundingRect.left}px`;
+        wrapper.style.width = `${boundingRect.width}px`;
+        wrapper.style.height = `${boundingRect.height}px`;
+
+        wrapper.append(element);
 
         (document.getElementById('element-transitions-container') ?? document.body).append(wrapper);
 
@@ -232,10 +247,15 @@ export default class ElementTransitionsService extends Service {
     private runElementTransition(
         wrapper: HTMLElement,
         element: HTMLElement,
+        config: TransitionalElementConfig,
         target: ElementTransitionTarget,
     ): Promise<void> {
+        const blocking = typeof config.blocking === 'function'
+            ? config.blocking(target.config, target.element)
+            : config.blocking ?? false;
+
         return tap(target.transition(wrapper, element, target.element), transitionPromise => {
-            this.elementsTargetTransitions.set(target.element, transitionPromise);
+            blocking && this.elementsTargetTransitions.set(target.element, transitionPromise);
         });
     }
 

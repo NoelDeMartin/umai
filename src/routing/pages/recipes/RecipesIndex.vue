@@ -1,13 +1,16 @@
 <template>
     <main
         v-element-transitions="{
-            enter: {
-                'recipes.show': null,
-                '*': $elementTransitions.fadeIn,
-            },
-            leave: {
-                'recipes.show': $elementTransitions.waitChildrenTransitions,
-                '*': $elementTransitions.fadeOut,
+            blocking: ({ name }: { name: string }) => name !== 'recipe-details',
+            transitions: {
+                enter: {
+                    'recipes.show': null,
+                    '*': $elementTransitions.fadeIn,
+                },
+                leave: {
+                    'recipes.show': $elementTransitions.waitChildrenTransitions,
+                    '*': $elementTransitions.fadeOut,
+                },
             },
         }"
         aria-labelledby="#cookbook-title"
@@ -24,11 +27,8 @@
             />
         </div>
         <RecipesGrid :recipes="filteredRecipes" class="w-full" />
-        <div class="fixed right-5 bottom-5 z-40">
-            <BaseFloatingActionButton
-                :label="$t('recipes.index.add')"
-                @click="$router.push({ name: 'recipes.create' })"
-            />
+        <div class="fixed right-5 bottom-5 z-40 recipes-index--fab">
+            <BaseFloatingActionButton :label="$t('recipes.index.add')" route="recipes.create" />
         </div>
     </main>
 </template>

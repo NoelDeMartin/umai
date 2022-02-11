@@ -3,9 +3,6 @@ import { tap } from '@noeldemartin/utils';
 // TODO import these from tailwind config
 const config = {
     spacing: {
-        1: '.25rem',
-        2: '.5rem',
-        4: '1rem',
         edge: '2rem',
         content: '1280px',
     },
@@ -31,6 +28,9 @@ function measurePixels(css: string): number {
 
 export default {
     css(key: string): string {
+        if (/^spacing\.\d+$/.test(key))
+            return parseInt(key.substring(8)) * .25 + 'rem';
+
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const value = key.split('.').reduce((value, part) => value?.[part], config as any);
 

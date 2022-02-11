@@ -4,7 +4,7 @@
         class="w-full"
         :style="`margin-top: -${$ui.headerHeight}px`"
     >
-        <RecipeDetails v-if="recipe" :recipe="recipe" />
+        <RecipeDetails :recipe="recipe" />
     </main>
 </template>
 

@@ -56,7 +56,6 @@
 
 <script setup lang="ts">
 import { shrink } from '@/framework/utils/transitions';
-import { updateElement } from '@/framework/utils/dom';
 
 import type IBaseFluidInput from '@/components/base/BaseFluidInput';
 
@@ -127,9 +126,7 @@ defineExpose<IRecipeIngredientInput>({
 
         const initialHeight = root.getBoundingClientRect().height;
 
-        updateElement(input.root, {
-            styles: { height: `${initialHeight}px` },
-        });
+        input.root.style.height = `${initialHeight}px`;
 
         await shrink(root);
     },
