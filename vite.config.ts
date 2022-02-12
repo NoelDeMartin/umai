@@ -37,6 +37,10 @@ export default defineConfig({
             ],
             deep: true,
         }),
+        {
+            name: 'jsonld',
+            transform: (code, id) => id.endsWith('.jsonld') ? `export default ${code}` : null,
+        },
     ],
     resolve: {
         alias: {

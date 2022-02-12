@@ -110,11 +110,12 @@ export async function animateElement(element: HTMLElement, config: Partial<Anima
 
 export async function animateElements(
     sharedConfig: Partial<AnimateElementConfig>,
-    animations: (Partial<AnimateElementConfig> & { element: HTMLElement })[],
+    animations: ((Partial<AnimateElementConfig> & { element: HTMLElement }) | null)[],
 ): Promise<void> {
     await Promise.all(
         Object
             .values(animations)
+            .filter((animation): animation is Partial<AnimateElementConfig> & { element: HTMLElement } => !!animation)
             .map(({ element, ...config }) => animateElement(element, { ...sharedConfig, ...config })),
     );
 }

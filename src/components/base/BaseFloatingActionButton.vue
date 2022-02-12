@@ -1,7 +1,7 @@
 <template>
     <!-- TODO a11y -->
     <HeadlessButton
-        class="flex justify-center items-center px-3 text-white rounded-full shadow-lg bg-primary-600 min-w-clickable h-clickable hover:bg-primary-700"
+        class="flex flex-shrink-0 justify-center items-center px-3 text-white rounded-full shadow-lg bg-primary-600 min-w-clickable h-clickable hover:bg-primary-700"
         @focus="focused = true"
         @blur="focused = false"
         @mouseenter="hover = true"

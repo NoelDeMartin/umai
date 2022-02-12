@@ -15,7 +15,7 @@ describe('Cookbook', () => {
         cy.contains('Are you ready to start cooking?').should('be.visible');
 
         // Act - Create
-        cy.contains('Add your first recipe').click();
+        cy.contains('Create from scratch').click();
         cy.get('[name="name"]').type('Ramen');
         cy.contains('Add ingredient').click();
         cy.get(':focused').type('Broth{enter}');
@@ -78,7 +78,7 @@ describe('Cookbook', () => {
         cy.intercept('PATCH', 'http://localhost:4000/cookbook/ramen').as('patchRamen');
 
         // Act - Create
-        cy.contains('Add your first recipe').click();
+        cy.contains('Create from scratch').click();
         cy.get('[name="name"]').type('Ramen');
         cy.contains('button', 'Add ingredient').click();
         cy.get(':focus').type('Broth{enter}');
@@ -149,6 +149,21 @@ describe('Cookbook', () => {
         });
 
         cy.assertLocalDocumentEquals('http://localhost:4000/cookbook/ramen', secondRamenJsonLD);
+    });
+
+    it('Adds recipes from library', () => {
+        // Arrange
+        cy.contains('Are you ready to start cooking?').should('be.visible');
+
+        // Act
+        cy.contains('Pick from library').click();
+        cy.contains('aguachile').click();
+        cy.contains('Aguachile ("chile water" in Spanish) is a Mexican dish').should('be.visible');
+        cy.contains('Add to my cookbook').click();
+
+        // Assert
+        cy.url().should('contain', 'aguachile');
+        cy.contains('200g Shrimps').scrollIntoView().should('be.visible');
     });
 
 });

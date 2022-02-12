@@ -27,8 +27,16 @@
             />
         </div>
         <RecipesGrid :recipes="filteredRecipes" class="w-full" />
-        <div class="fixed right-5 bottom-5 z-40 recipes-index--fab">
-            <BaseFloatingActionButton :label="$t('recipes.index.add')" route="recipes.create" />
+        <div class="flex fixed right-0 bottom-0 z-40 justify-center p-5 w-screen pointer-events-none recipes-index--fab">
+            <div class="flex justify-center w-full">
+                <div class="w-clickable" />
+                <div class="mx-4 w-full max-w-content" />
+                <BaseFloatingActionButton
+                    class="pointer-events-auto"
+                    :label="$t('recipes.index.add')"
+                    @click="$ui.openModal(CreateRecipeModal)"
+                />
+            </div>
         </div>
     </main>
 </template>
@@ -38,6 +46,7 @@ import { defineComponent } from 'vue';
 import { stringToSlug } from '@noeldemartin/utils';
 
 import Cookbook from '@/services/facades/Cookbook';
+import CreateRecipeModal from '@/components/modals/CreateRecipeModal.vue';
 
 export default defineComponent({
     async beforeRouteEnter() {

@@ -98,7 +98,6 @@ export default class UIService extends Service {
         if (!modal)
             return;
 
-        const modals = this.modals.slice(0);
         const callbacks = this.modalCallbacks[id];
 
         delete this.modalCallbacks[id];
@@ -106,6 +105,7 @@ export default class UIService extends Service {
         callbacks?.willClose && callbacks.willClose(result);
 
         if (animate) {
+            const modals = this.modals.slice(0);
             const modalProxy = modals.find(m => m.id === modal.id);
 
             arrayReplace(modals, modalProxy, {
@@ -118,7 +118,7 @@ export default class UIService extends Service {
             await after({ milliseconds: 1000 });
         }
 
-        this.setState({ modals: modals.filter(m => m.id !== modal.id) });
+        this.setState({ modals: this.modals.filter(m => m.id !== modal.id) });
 
         callbacks?.closed && callbacks.closed(result);
     }

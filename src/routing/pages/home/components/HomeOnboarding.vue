@@ -6,9 +6,7 @@
         <p class="mb-4 prose">
             {{ $t('home.onboarding.message') }}
         </p>
-        <BaseButton route="recipes.create">
-            {{ $t('home.onboarding.add_recipe') }}
-        </BaseButton>
+        <RecipeCreateOptions />
     </div>
 </template>
 

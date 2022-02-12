@@ -3,7 +3,7 @@
     <button
         type="button"
         class="rounded px-2 hover:bg-[rgba(0,0,0,.15)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white focus-visible:ring-indigo-600"
-        @click="openModal()"
+        @click="$ui.openModal(CloudStatusModal)"
     >
         <div role="status" class="flex justify-center items-center space-x-2">
             <div class="relative w-8 h-8">
@@ -31,7 +31,6 @@
 import { useI18n } from 'vue-i18n';
 
 import Cloud from '@/framework/core/facades/Cloud';
-import UI from '@/framework/core/facades/UI';
 
 import CloudStatusModal from '@/components/modals/CloudStatusModal.vue';
 
@@ -48,8 +47,4 @@ const pendingUpdates = $computed(() => {
         a11y: t('cloud.some_pending_updates_a11y', Cloud.pendingUpdates.length),
     };
 });
-
-function openModal() {
-    UI.openModal(CloudStatusModal);
-}
 </script>

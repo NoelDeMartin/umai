@@ -1,23 +1,31 @@
 import { PromisedValue, arr, fail, isObject, tap } from '@noeldemartin/utils';
 import { SolidContainerModel } from 'soukai-solid';
 import type { FluentArray, Obj } from '@noeldemartin/utils';
+import type { JsonLD } from '@noeldemartin/solid-utils';
 
 import Auth from '@/framework/core/facades/Auth';
 import Events from '@/framework/core/facades/Events';
 import Service from '@/framework/core/Service';
 import { setRemoteCollection } from '@/framework/cloud/remote_helpers';
-import type { IService } from '@/framework/core/Service';
+import type { ComputedStateDefinitions, IService } from '@/framework/core/Service';
 
 import Recipe from '@/models/Recipe';
+
+type RecipesLibrary = Record<string, () => Promise<{ default: JsonLD }>>;
 
 interface State {
     localCookbookUrl: string;
     remoteCookbookUrl: string | null;
     cookbook: PromisedValue<SolidContainerModel>;
     recipes: FluentArray<Recipe>;
+    library: RecipesLibrary;
 }
 
-export default class CookbookService extends Service<State> {
+interface ComputedState {
+    libraryRecipes: string[];
+}
+
+export default class CookbookService extends Service<State, ComputedState> {
 
     public static persist: Array<keyof State> = ['remoteCookbookUrl'];
 
@@ -31,9 +39,16 @@ export default class CookbookService extends Service<State> {
         await recipe.delete();
     }
 
+    public async loadFromLibrary(name: string): Promise<Recipe> {
+        const { default: json } = await this.library[name]();
+
+        return Recipe.newFromJsonLD(json);
+    }
+
     protected async boot(): Promise<void> {
         await super.boot();
         await Auth.ready;
+        await this.loadLibrary();
         await this.loadCookbook();
         await this.loadRecipes();
 
@@ -68,6 +83,13 @@ export default class CookbookService extends Service<State> {
             remoteCookbookUrl: null,
             cookbook: new PromisedValue,
             recipes: arr<Recipe>([]),
+            library: {},
+        };
+    }
+
+    protected getComputedStateDefinitions(): ComputedStateDefinitions<State, ComputedState> {
+        return {
+            libraryRecipes: ({ library }) => Object.keys(library),
         };
     }
 
@@ -75,6 +97,17 @@ export default class CookbookService extends Service<State> {
         const recipes = await Recipe.all();
 
         this.recipes = arr(recipes);
+    }
+
+    private async loadLibrary(): Promise<void> {
+        const libraryFiles = await import.meta.glob('../assets/recipes/*.jsonld');
+        const library = {} as RecipesLibrary;
+
+        for (const [fileName, loader] of Object.entries(libraryFiles)) {
+            library[fileName.slice(18, -7)] = loader as () => Promise<{ default: JsonLD }>;
+        }
+
+        this.setState({ library });
     }
 
     private async loadCookbook(): Promise<void> {
@@ -166,4 +199,4 @@ export default class CookbookService extends Service<State> {
 
 }
 
-export default interface CookbookService extends IService<State> {}
+export default interface CookbookService extends IService<State, ComputedState> {}

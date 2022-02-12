@@ -160,7 +160,7 @@ const transitionToCard = defineElementTransition(async (_, details, card) => {
     const detailsBodyBoundingRect = detailsBody.getBoundingClientRect();
     const detailsMetadataDecoration = details.querySelector('.recipe-page-layout--metadata-decoration') as HTMLElement;
     const cardBoundingRect = card.getBoundingClientRect();
-    const recipesFAB = document.querySelector('.recipes-index--fab') as HTMLElement;
+    const recipesFAB = document.querySelector('.recipes-index--fab') as HTMLElement | null;
     const footer = document.querySelector('footer') as HTMLElement;
 
     await animateElements({ duration, fill: 'forwards' }, [
@@ -234,7 +234,7 @@ const transitionToCard = defineElementTransition(async (_, details, card) => {
                 ],
             },
         },
-        {
+        recipesFAB && {
             element: recipesFAB,
             before: { styles: { zIndex: '0' } },
             after: { resetStyles: true },

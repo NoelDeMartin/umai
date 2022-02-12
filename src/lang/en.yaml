@@ -41,7 +41,7 @@ home:
 
   onboarding:
     title: Welcome!
-    message: Are you ready to start cooking?
+    message: Are you ready to start cooking? Add your first recipe!
     add_recipe: Add your first recipe
 
 recipes:
@@ -50,7 +50,7 @@ recipes:
   servings: Servings
 
   edit: Edit
-  delete: Delete recipe
+  delete: Delete
   drag: Hold and drag to move!
   drag_a11y: Use ctrl + up/down to change ingredient positions
 
@@ -88,6 +88,18 @@ recipes:
     back: back to cookbook
     search_label: Filter recipes
     search_placeholder: Search...
+
+  new:
+    title: Add a new recipe
+    fromScratch: Create from scratch
+    fromTheWeb: Import from The Web
+    fromLibrary: Pick from library
+
+  library:
+    title: Recipes Library
+    description: This is a humble library, but it may help you get started cooking!
+    recipeWithoutDescription: This recipe does not have a description, sorry about that!
+    import: Add to my cookbook
 
 validation:
   required: This is required

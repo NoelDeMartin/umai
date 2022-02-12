@@ -36,7 +36,7 @@ describe('Authentication', () => {
         cy.waitForReload({ resetProfiles: true });
 
         // Act - Create recipe
-        cy.contains('Add your first recipe').click();
+        cy.contains('Create from scratch').click();
         cy.get('[name="name"]').type('Ramen');
         cy.contains('button', 'Create').click();
         cy.contains('There is one pending update');
@@ -142,7 +142,7 @@ describe('Authentication', () => {
         cy.startApp();
 
         // Act - Create
-        cy.contains('Add your first recipe').click();
+        cy.contains('Create from scratch').click();
         cy.get('[name="name"]').type('Ramen');
         cy.contains('Add ingredient').click();
         cy.get(':focus').type('Broth{enter}');
