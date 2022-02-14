@@ -1,7 +1,18 @@
-import { SolidContainerModel, SolidEngine, bootSolidModels } from 'soukai-solid';
 import fetch from 'node-fetch';
+import { SolidContainerModel, SolidEngine, bootSolidModels } from 'soukai-solid';
+import { rmdir } from 'fs';
 
 const tasks: Cypress.Tasks = {
+    deleteFolder(folderName) {
+        return new Promise(
+            (resolve, reject) => rmdir(
+                folderName,
+                { maxRetries: 10, recursive: true },
+                err => err ? reject(err) : resolve(null),
+            ),
+        );
+    },
+
     async resetSolidPOD() {
         bootSolidModels();
 

@@ -51,6 +51,7 @@ recipes:
 
   edit: Edit
   delete: Delete
+  download: Download
   drag: Hold and drag to move!
   drag_a11y: Use ctrl + up/down to change ingredient positions
 
@@ -94,6 +95,7 @@ recipes:
     fromScratch: Create from scratch
     fromTheWeb: Import from The Web
     fromLibrary: Pick from library
+    fromJsonLD: Upload JsonLD
 
   library:
     title: Recipes Library

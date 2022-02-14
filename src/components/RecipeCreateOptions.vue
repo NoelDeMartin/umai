@@ -15,11 +15,37 @@
         >
             <i-zondicons-book-reference :class="className" />
         </SquareIconButton>
+        <SquareIconButton
+            v-slot="{ className }"
+            :label="$t('recipes.new.fromJsonLD')"
+            @click="importFromJsonLD(), $emit('optionSelected')"
+        >
+            <i-zondicons-upload :class="className" />
+        </SquareIconButton>
     </div>
 </template>
 
 <script setup lang="ts">
+import { uploadFile } from '@noeldemartin/utils';
+
+import Router from '@/framework/core/facades/Router';
+
+import Recipe from '@/models/Recipe';
 import RecipesLibraryModal from '@/components/modals/RecipesLibraryModal.vue';
 
 defineEmits(['optionSelected']);
+
+async function importFromJsonLD() {
+    const jsonld = await uploadFile();
+
+    if (!jsonld)
+        return;
+
+    const recipe = await Recipe.createFromJsonLD(JSON.parse(jsonld));
+
+    Router.push({
+        name: 'recipes.show',
+        params: { recipe: recipe.uuid },
+    });
+}
 </script>

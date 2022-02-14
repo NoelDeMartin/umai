@@ -90,6 +90,9 @@
             <StrokeButton class="mt-2 w-full" @click="deleteRecipe()">
                 <i-zondicons-trash class="mr-2 w-4 h-4" /> {{ $t('recipes.delete') }}
             </StrokeButton>
+            <StrokeButton class="mt-2 w-full" @click="recipe.download()">
+                <i-zondicons-download class="mr-2 w-4 h-4" /> {{ $t('recipes.download') }}
+            </StrokeButton>
         </template>
     </RecipePageLayout>
 </template>

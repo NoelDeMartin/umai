@@ -1,6 +1,6 @@
 <template>
     <AppModal v-slot="{ close }" :title="$t('recipes.new.title')">
-        <RecipeCreateOptions @selected="close()" />
+        <RecipeCreateOptions @option-selected="close()" />
     </AppModal>
 </template>
 

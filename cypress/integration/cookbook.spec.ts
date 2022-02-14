@@ -1,4 +1,6 @@
 // TODO configure .jsonld loader
+import path from 'path';
+
 import firstRamenJsonLD from '@cy/fixtures/ramen-1.json';
 import secondRamenJsonLD from '@cy/fixtures/ramen-2.json';
 
@@ -164,6 +166,39 @@ describe('Cookbook', () => {
         // Assert
         cy.url().should('contain', 'aguachile');
         cy.contains('200g Shrimps').scrollIntoView().should('be.visible');
+    });
+
+    it('Imports recipes from JSON-LD', () => {
+        // Act
+        cy.contains('Are you ready to start cooking?').should('be.visible');
+
+        // Assert
+        cy.contains('Upload JsonLD').click();
+        cy.wait(300);
+        cy.uploadFixture('recipes/aguachile.jsonld');
+
+        // Assert
+        cy.url().should('contain', 'aguachile');
+        cy.contains('200g Shrimps').scrollIntoView().should('be.visible');
+    });
+
+    it('Downloads recipes', () => {
+        // Arrange
+        const downloadsFolder = Cypress.config('downloadsFolder');
+
+        cy.task('deleteFolder', downloadsFolder);
+        cy.createRecipe('Ramen');
+        cy.contains('Ramen').click();
+
+        // Act
+        cy.contains('Download').click();
+
+        // Assert
+        const filename = path.join(downloadsFolder, 'ramen.json');
+
+        cy.readFile(filename).then(recipe => {
+            expect(recipe.name).to.equal('Ramen');
+        });
     });
 
 });

@@ -1,3 +1,7 @@
 cypress/screenshots
 dist/
 node_modules/
+
+# Test generated files
+cypress/screenshots
+cypress/downloads

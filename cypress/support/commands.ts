@@ -1,6 +1,7 @@
 import a11yCommands from './commands/a11y';
 import authCommands from './commands/auth';
 import factoryCommands from './commands/factory';
+import formsCommands from './commands/forms';
 import lifecycleCommands from './commands/lifecycle';
 import storageCommands from './commands/storage';
 
@@ -8,6 +9,7 @@ const commands = {
     ...a11yCommands,
     ...authCommands,
     ...factoryCommands,
+    ...formsCommands,
     ...lifecycleCommands,
     ...storageCommands,
 };
