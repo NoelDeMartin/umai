@@ -26,7 +26,7 @@
     "buffer": "^6.0.3",
     "dompurify": "^2.3.4",
     "marked": "^4.0.12",
-    "soukai": "^0.4.1-next.0b2937fd7a93cbad8fb4e55f6a70659a3bd10772",
+    "soukai": "^0.4.1-next.bb96f4e579061232cfd9b2ff2e82da9462790897",
     "soukai-solid": "^0.4.1-next.98862fbb6ec9d180ccd6a888f48b832e0274c737",
     "tailwindcss": "^3.0.0",
     "vue": "^3.2.29",

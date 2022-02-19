@@ -61,7 +61,7 @@
                             v-model="servings"
                             :placeholder="$t('recipes.servings_placeholder')"
                             name="servings"
-                            class="text-right"
+                            class="text-right bg-transparent"
                         />
                     </li>
                     <li class="flex items-center space-x-1">
@@ -72,7 +72,7 @@
                             v-model="prepTime"
                             :placeholder="$t('recipes.prepTime_placeholder')"
                             name="prep-time"
-                            class="text-right"
+                            class="text-right bg-transparent"
                         />
                     </li>
                     <li class="flex items-center space-x-1">
@@ -83,7 +83,7 @@
                             v-model="cookTime"
                             :placeholder="$t('recipes.cookTime_placeholder')"
                             name="cook-time"
-                            class="text-right"
+                            class="text-right bg-transparent"
                         />
                     </li>
                 </ul>
@@ -135,9 +135,12 @@ const description = $ref(recipe?.description ?? '');
 const servings = $ref(recipe?.servings ?? '');
 const prepTime = $ref(recipe?.prepTime ?? '');
 const cookTime = $ref(recipe?.cookTime ?? '');
-const ingredients = $ref<RecipeIngredientInputData[]>((recipe?.ingredients ?? []).map(name => ({
-    name, id: uuid(),
-})));
+const ingredients = $ref<RecipeIngredientInputData[]>(
+    // TODO sort in model
+    (recipe?.sortedIngredients ?? []).map(name => ({
+        name, id: uuid(),
+    })),
+);
 const instructions = $ref<RecipeInstructionStepInputData[]>(
     // TODO sort in model
     arraySorted(recipe?.instructions ?? [], 'position').map(instruction => ({

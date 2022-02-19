@@ -3,7 +3,7 @@
         <div class="px-4">
             <p>{{ $t('recipes.library.description') }}</p>
         </div>
-        <div class="flex mt-4">
+        <div class="flex overflow-hidden mt-4">
             <ul class="border-t border-gray-300">
                 <li v-for="recipeName of $cookbook.libraryRecipes" :key="recipeName">
                     <button
@@ -26,7 +26,7 @@
                     </h3>
                     <RecipeImage :url="recipe.imageUrl" class="absolute inset-0" />
                 </div>
-                <div class="overflow-auto flex-grow p-4 h-96">
+                <div class="overflow-auto flex-grow flex-shrink p-4 h-96">
                     <BaseMarkdown :text="recipe.description ?? $t('recipes.library.recipeWithoutDescription')" />
                 </div>
                 <BaseButton class="self-center m-4" @click="importRecipe(), close()">

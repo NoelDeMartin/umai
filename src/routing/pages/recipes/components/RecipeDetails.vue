@@ -24,16 +24,16 @@
             <BaseMarkdown :text="recipe.description" />
         </template>
 
-        <template v-if="recipe.ingredients.length > 0" #ingredients>
+        <template v-if="ingredients.length > 0" #ingredients>
             <div class="not-prose">
                 <ul class="text-gray-700">
                     <li
-                        v-for="(ingredient, index) of recipe.ingredients"
+                        v-for="(ingredient, index) of ingredients"
                         :key="index"
-                        class="flex items-center"
+                        class="flex items-center my-2"
                     >
-                        <span aria-hidden="true" class="flex justify-center items-center text-2xl text-gray-300 w-clickable group-hover:hidden">
-                            •
+                        <span class="flex justify-center items-center w-8">
+                            <span class="w-2 h-2 bg-gray-300 rounded-full" />
                         </span>
                         <span class="border-b-2 border-transparent">
                             {{ ingredient }}
@@ -44,9 +44,14 @@
         </template>
 
         <template v-if="instructions.length > 0" #instructions>
-            <ol>
-                <li v-for="instructionStep of instructions" :key="instructionStep.position">
-                    <BaseMarkdown :text="instructionStep.text" />
+            <ol class="pl-0 list-none">
+                <li v-for="(instructionStep, index) of instructions" :key="instructionStep.position">
+                    <div class="flex">
+                        <span class="flex justify-center text-lg font-semibold min-w-clickable text-primary-600" aria-hidden="true">
+                            {{ index + 1 }}.
+                        </span>
+                        <BaseMarkdown :text="instructionStep.text" />
+                    </div>
                 </li>
             </ol>
         </template>
@@ -117,6 +122,7 @@ const { recipe } = defineProps({
 const metadataRows = $computed(() => arrayFilter([recipe.servings, recipe.prepTime, recipe.cookTime]).length);
 
 // TODO sort in model
+const ingredients = $computed(() => recipe.sortedIngredients);
 const instructions = $computed(() => arraySorted(recipe.instructions ?? [], 'position'));
 
 const enterTransition = defineEnterTransition(async details => {

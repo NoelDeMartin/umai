@@ -3,6 +3,7 @@ import type { Relation } from 'soukai';
 import type { SolidBelongsToManyRelation } from 'soukai-solid';
 
 import RecipeInstructionsStep from '@/models/RecipeInstructionsStep';
+import { parseIngredient, sortIngredients } from '@/utils/ingredients';
 
 import Model from './Recipe.schema';
 
@@ -22,6 +23,14 @@ export default class Recipe extends Model {
         return this.url
             ? (this.url.match(/([^/#]+)(#.*)?$/)?.[1] ?? null)
             : null;
+    }
+
+    public get sortedIngredients(): string[] {
+        const ingredients = this.ingredients.map(parseIngredient);
+
+        sortIngredients(ingredients);
+
+        return ingredients.map(({ original }) => original);
     }
 
     public instructionsRelationship(): Relation {

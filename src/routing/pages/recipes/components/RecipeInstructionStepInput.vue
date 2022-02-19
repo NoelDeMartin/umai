@@ -9,6 +9,8 @@
             @focus="updateFocus"
             @blur="updateFocus"
             @keydown.enter="onEnterKeydown($event)"
+            @keydown.ctrl.up.prevent="$emit('swapUp')"
+            @keydown.ctrl.down.prevent="$emit('swapDown')"
         />
         <button
             ref="removeButton"
@@ -53,7 +55,7 @@ defineProps({
         default: 0,
     },
 });
-const emit = defineEmits(['add', 'remove', 'update:modelValue']);
+const emit = defineEmits(['add', 'remove', 'swapUp', 'swapDown', 'update:modelValue']);
 
 let focused = $ref(false);
 const root = $ref<HTMLElement>();

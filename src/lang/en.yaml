@@ -52,8 +52,7 @@ recipes:
   edit: Edit
   delete: Delete
   download: Download
-  drag: Hold and drag to move!
-  drag_a11y: Use ctrl + up/down to change ingredient positions
+  drag_instructions_a11y: Use ctrl + up/down to change instruction positions
 
   create_a11y_title: Create new recipe
   edit_a11y_title: Edit "{recipe}" recipe
@@ -105,6 +104,9 @@ recipes:
 
 validation:
   required: This is required
+
+ui:
+  drag: Hold and drag to move!
 
 errors:
   notice: Something went wrong, but it's not your fault. Try again!
