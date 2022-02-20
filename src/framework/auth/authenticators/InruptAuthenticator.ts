@@ -1,12 +1,12 @@
 import { Storage, after } from '@noeldemartin/utils';
 import type { Fetch } from 'soukai-solid';
-import type { handleIncomingRedirect, login, logout } from '@webpack/inrupt';
+import type { handleIncomingRedirect, login, logout } from '@inrupt/solid-client-authn-browser';
 
 import App from '@/framework/core/facades/App';
+import Auth from '@/framework/core/facades/Auth';
 import AuthenticationTimeoutError from '@/framework/auth/errors/AuthenticationTimeoutError';
 import Authenticator from '@/framework/auth/Authenticator';
 import type { AuthSession } from '@/framework/auth/Authenticator';
-import Auth from '@/framework/core/facades/Auth';
 
 const STORAGE_KEY = 'inrupt-authenticator';
 
@@ -20,7 +20,7 @@ export default class InruptAuthenticator extends Authenticator {
     public async login(loginUrl: string): Promise<AuthSession> {
         Storage.set<string>(STORAGE_KEY, loginUrl);
 
-        await this._login({
+        this._login({
             oidcIssuer: loginUrl,
             redirectUrl: window.location.href,
             clientName: App.name,
@@ -38,7 +38,7 @@ export default class InruptAuthenticator extends Authenticator {
     }
 
     protected async restoreSession(): Promise<void> {
-        const { fetch, handleIncomingRedirect, login, logout } = await import('@webpack/inrupt');
+        const { fetch, handleIncomingRedirect, login, logout } = await import('@inrupt/solid-client-authn-browser');
 
         this._fetch = fetch;
         this._login = login;

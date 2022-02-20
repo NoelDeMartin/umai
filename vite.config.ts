@@ -45,7 +45,6 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': resolve(__dirname, './src'),
-            '@webpack': resolve(__dirname, './webpack/dist'),
             '/src/main.ts': process.env.NODE_ENV === 'testing'
                 ? '/src/main.testing.ts'
                 : '/src/main.ts',

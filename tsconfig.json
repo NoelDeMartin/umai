@@ -15,13 +15,11 @@
         ],
         "baseUrl": ".",
         "paths": {
-            "@/*": ["./src/*"],
-            "@webpack/*": ["./webpack/dist/*"]
+            "@/*": ["./src/*"]
         }
     },
     "include": [
         "src/**/*.ts",
-        "src/**/*.vue",
-        "webpack/dist/**/*.js"
+        "src/**/*.vue"
     ]
 }

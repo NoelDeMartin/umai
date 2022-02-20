@@ -13,8 +13,6 @@ blocks:
           - sem-version node 14
           - cache restore
           - npm ci
-          - npm ci --prefix ./webpack
-          - npm run build --prefix ./webpack
           - cache store
       jobs:
         - name: Linting
