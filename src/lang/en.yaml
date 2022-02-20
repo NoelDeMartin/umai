@@ -8,9 +8,18 @@ cloud:
     syncing: syncing
     syncing_description: Syncing in progress...
 
-  no_pending_updates_a11y: Syncing is up to date
-  some_pending_updates_a11y: "_ | There is one pending update | There are {n} pending updates"
-  many_pending_updates_a11y: There are many pending updates
+  advancedOptions: Advanced options
+
+  sync_now: Synchronize now
+  sync_onStartup: Synchronize on startup
+  sync_onInterval: Synchronize every X minutes
+
+  reconnect_now: Reconnect
+  reconnect_onStartup: Reconnect on startup
+
+  noPendingUpdates_a11y: Syncing is up to date
+  somePendingUpdates_a11y: "_ | There is one pending update | There are {n} pending updates"
+  manyPendingUpdates_a11y: There are many pending updates
 
   login:
     title: Connect to cloud
@@ -18,7 +27,6 @@ cloud:
     info_learnMore: learn more
     info_reconnect: You need to reconnect to <a href="{url}" target="_blank">{url}</a>.
     loginUrl: Login url
-    reconnect: Reconnect
     dismiss: No thanks, I want to keep my data offline
     submit: Log in with Solid
 

@@ -6,7 +6,7 @@
             </div>
             <BaseButton class="mt-4 bg-brand-solid-700 hover:bg-brand-solid-500" @click="$auth.reconnect()">
                 <i-app-solid-emblem aria-hidden="true" class="w-6 h-6" />
-                <span class="ml-2">{{ $t('cloud.login.reconnect') }}</span>
+                <span class="ml-2">{{ $t('cloud.reconnect_now') }}</span>
             </BaseButton>
             <BaseButton secondary class="mt-2" @click="$auth.logout()">
                 <span>{{ $t('cloud.logout') }}</span>

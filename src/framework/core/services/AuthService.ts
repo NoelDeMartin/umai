@@ -13,6 +13,7 @@ import type { AuthSession } from '@/framework/auth/Authenticator';
 import type { ComputedStateDefinitions, IService } from '@/framework/core/Service';
 
 interface State {
+    autoReconnect: boolean;
     session: AuthSession | null;
     profiles: Record<string, SolidUserProfile>;
     dismissed: boolean;
@@ -41,7 +42,7 @@ declare module '@/framework/core/services/EventsService' {
 
 export default class AuthService extends Service<State, ComputedState> {
 
-    public static persist: Array<keyof State> = ['dismissed', 'previousSession', 'profiles'];
+    public static persist: Array<keyof State> = ['autoReconnect', 'dismissed', 'previousSession', 'profiles'];
 
     public isLoggedIn(): this is { session: AuthSession; user: SolidUserProfile; authenticator: Authenticator } {
         return this.loggedIn;
@@ -117,7 +118,7 @@ export default class AuthService extends Service<State, ComputedState> {
     }
 
     public async reconnect(): Promise<void> {
-        if (!this.previousSession)
+        if (!this.previousSession || this.loggedIn)
             return;
 
         await this.login(this.previousSession.loginUrl, this.previousSession.authenticator);
@@ -171,10 +172,12 @@ export default class AuthService extends Service<State, ComputedState> {
             this.setState({ preferredAuthenticator: url.searchParams.get('authenticator') as AuthenticatorName });
 
         this.previousSession && await this.bootAuthenticator(this.previousSession.authenticator);
+        this.autoReconnect && await this.reconnect();
     }
 
     protected getInitialState(): State {
         return {
+            autoReconnect: true,
             session: null,
             dismissed: false,
             previousSession: null,

@@ -96,6 +96,8 @@ describe('Authentication', () => {
         cy.waitForReload({ resetProfiles: true });
         cy.contains('online').click();
         cy.contains('You are logged in').should('be.visible');
+        cy.contains('Advanced options').click();
+        cy.contains('Reconnect on startup').click();
         cy.reload();
 
         // Act

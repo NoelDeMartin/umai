@@ -19,6 +19,8 @@ export enum CloudStatus {
 }
 
 interface State {
+    autoSync: number | false;
+    startupSync: boolean;
     status: CloudStatus;
     dirtyRemoteModels: ObjectsMap<SolidModel>;
     remoteOperationUrls: Record<string, string[]>;
@@ -41,9 +43,12 @@ export interface CloudHandler<T extends SolidModel = SolidModel> {
 
 export default class CloudService extends Service<State, ComputedState> {
 
+    public static persist: Array<keyof State> = ['autoSync', 'startupSync'];
+
     protected handlers: CloudHandler[] = [];
     protected asyncLock: Semaphore = new Semaphore();
     protected engine: Engine | null = null;
+    protected syncInterval: number | null = null;
 
     public async sync(): Promise<void> {
         if (!Auth.isLoggedIn())
@@ -82,19 +87,27 @@ export default class CloudService extends Service<State, ComputedState> {
 
         Events.on('login', ({ authenticator }) => this.initializeEngine(authenticator));
         Events.on('logout', () => this.setState({ status: CloudStatus.Disconnected }));
-        Events.on('application-ready', () => this.sync());
+        Events.on('application-ready', async () => {
+            if (!this.startupSync) {
+                this.status = Auth.isLoggedIn() ? CloudStatus.Online : CloudStatus.Disconnected;
 
-        // TODO remove polling
-        setInterval(() => this.sync(), 5000);
+                return;
+            }
+
+            await this.sync();
+        });
+
+        this.updateSyncInterval(this.autoSync);
 
         // TODO listen to auth status in order to update status
         // TODO listen to network to detect offline status
-        this.status = Auth.loggedIn ? CloudStatus.Online : CloudStatus.Disconnected;
     }
 
     protected getInitialState(): State {
         return {
+            autoSync: 10,
             status: CloudStatus.Disconnected,
+            startupSync: true,
             dirtyRemoteModels: map([], 'url'),
             remoteOperationUrls: {},
         };
@@ -149,12 +162,28 @@ export default class CloudService extends Service<State, ComputedState> {
         };
     }
 
+    protected onStateUpdated(state: Partial<State>): void {
+        super.onStateUpdated(state);
+
+        if ('autoSync' in state)
+            this.updateSyncInterval(state.autoSync as number | false);
+    }
+
     protected initializeEngine(authenticator: Authenticator): void {
         this.engine = authenticator.newEngine();
 
         for (const handler of this.handlers) {
             getRemoteClass(handler.modelClass).setEngine(this.engine);
         }
+    }
+
+    protected updateSyncInterval(autoSync: number | false): void {
+        if (this.syncInterval)
+            clearInterval(this.syncInterval);
+
+        this.syncInterval = autoSync
+            ? window.setInterval(() => this.sync(), autoSync * 60 * 1000)
+            : null;
     }
 
     protected async pullChanges(): Promise<void> {

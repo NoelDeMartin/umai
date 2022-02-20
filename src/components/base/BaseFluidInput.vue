@@ -1,14 +1,21 @@
 <template>
-    <div ref="root" class="relative">
+    <div ref="root" :class="['relative', inline && 'inline']">
         <span :class="fillerClasses" :style="modelValue ? '' : `min-width: ${minWidth}px;`">
             {{ fillerContent }}
         </span>
         <input
             ref="input"
-            class="absolute bottom-0 left-0 py-2 w-full border-b-2 border-transparent caret-primary-500 focus:border-primary-600 hover:border-gray-300 focus:outline-none"
+            :class="[
+                'absolute bottom-0 left-0 w-full border-b-2 border-transparent caret-primary-500',
+                'focus:border-primary-600 hover:border-gray-300 focus:outline-none',
+                inline ? 'py-1' : 'py-2',
+                isNumber && 'show-spinners',
+            ]"
+            :style="inline ? 'margin-bottom:calc(-.25rem + -2px)' : ''"
             type="text"
             v-bind="$attrs"
             :value="modelValue"
+            @change="$emit('change')"
             @input="$emit('update:modelValue', input?.value)"
         >
     </div>
@@ -25,18 +32,30 @@ export default defineComponent({ inheritAttrs: false });
 </script>
 
 <script setup lang="ts">
-const { modelValue } = defineProps({
+const { modelValue, inline } = defineProps({
     modelValue: {
-        type: String,
+        type: [String, Number],
         required: true,
     },
+    inline: {
+        type: Boolean,
+        default: false,
+    },
 });
-defineEmits(['update:modelValue']);
+defineEmits(['update:modelValue', 'change']);
 
 const attrs = useAttrs();
 const root = $ref<HTMLInputElement>();
 const input = $ref<HTMLInputElement>();
-const fillerClasses = $computed(() => 'block invisible py-2 whitespace-pre border-b-2 ' + (attrs.class ?? ''));
+const isNumber = $computed(() => attrs.type === 'number');
+const fillerClasses = $computed(
+    () => [
+        'invisible whitespace-pre border-b-2',
+        (inline ? 'inline py-1' : 'block py-2'),
+        (isNumber ? 'pr-5' : ''),
+        (attrs.class ?? ''),
+    ].join(' '),
+);
 const fillerContent = $computed(() => modelValue || ' ');
 const minWidth = $computed(() => {
     if (!attrs.placeholder)

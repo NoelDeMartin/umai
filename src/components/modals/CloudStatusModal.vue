@@ -1,25 +1,37 @@
 <template>
     <CloudLoginModal v-if="$cloud.disconnected" />
     <AppModal v-else v-slot="{ close }" :title="title">
-        <div v-if="$cloud.online" class="prose">
+        <div v-if="$cloud.online">
             <p
                 v-safe-html="$t('cloud.statuses.online_description', {
                     url: $auth.user?.webId,
                     name: $auth.user?.name ?? $auth.user?.webId,
                 })"
+                class="prose"
             />
+            <CloudConfiguration class="mt-4" />
             <BaseButton
                 secondary
-                class="w-full"
+                class="mt-4 w-full"
+                @click="$cloud.sync(), close()"
+            >
+                <span>{{ $t('cloud.sync_now') }}</span>
+            </BaseButton>
+            <BaseButton
+                secondary
+                class="mt-2 w-full"
                 @click="$auth.logout(), close()"
             >
                 <span>{{ $t('cloud.logout') }}</span>
                 <i-heroicons-solid-logout class="ml-2" aria-hidden="true" />
             </BaseButton>
         </div>
-        <p v-else>
-            {{ body }}
-        </p>
+        <template v-else>
+            <p class="prose">
+                {{ body }}
+            </p>
+            <CloudConfiguration class="mt-4" />
+        </template>
     </AppModal>
 </template>
 

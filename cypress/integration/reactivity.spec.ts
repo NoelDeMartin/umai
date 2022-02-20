@@ -27,6 +27,8 @@ describe('Reactivity', () => {
         }));
 
         // Act
+        cy.contains('online').click();
+        cy.contains('Synchronize now').click();
         cy.contains('Syncing is up to date');
 
         // Assert

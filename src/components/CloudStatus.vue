@@ -37,14 +37,14 @@ import CloudStatusModal from '@/components/modals/CloudStatusModal.vue';
 const { t } = useI18n();
 const pendingUpdates = $computed(() => {
     if (!Cloud.dirty)
-        return { badge: null, a11y: t('cloud.no_pending_updates_a11y') };
+        return { badge: null, a11y: t('cloud.noPendingUpdates_a11y') };
 
     if (Cloud.pendingUpdates.length > 9)
-        return { badge: '9+', a11y: t('cloud.many_pending_updates_a11y') };
+        return { badge: '9+', a11y: t('cloud.manyPendingUpdates_a11y') };
 
     return {
         badge: Cloud.pendingUpdates.length,
-        a11y: t('cloud.some_pending_updates_a11y', Cloud.pendingUpdates.length),
+        a11y: t('cloud.somePendingUpdates_a11y', Cloud.pendingUpdates.length),
     };
 });
 </script>

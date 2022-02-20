@@ -97,20 +97,20 @@ export default class Service<
             property in target ||
             target.static('__classProperties').includes(property);
 
-        this._proxy = new Proxy(this, {
+        const proxy: this = this._proxy = new Proxy(this, {
             get: (target, property, receiver) =>
                 isReservedProperty(target, property)
                     ? Reflect.get(target, property, receiver)
                     : (
-                        target.getState()[property] ??
-                        target.getComputedState(property) ??
-                        target.__get(property)
+                        proxy.getState()[property] ??
+                        proxy.getComputedState(property) ??
+                        proxy.__get(property)
                     ),
             set(target, property, value, receiver) {
                 if (isReservedProperty(target, property))
                     return Reflect.set(target, property, value, receiver);
 
-                target.setState({ [property]: value } as Partial<State>);
+                proxy.setState({ [property]: value } as Partial<State>);
 
                 return true;
             },

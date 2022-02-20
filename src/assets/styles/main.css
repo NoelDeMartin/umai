@@ -18,4 +18,9 @@
         text-shadow: 0 2px 4px rgba(0, 0, 0, 0);
     }
 
+    input[type=number].show-spinners::-webkit-inner-spin-button,
+    input[type=number].show-spinners::-webkit-outer-spin-button {
+        opacity: 1
+    }
+
 }
