@@ -2,6 +2,8 @@
 import path from 'path';
 
 import firstRamenJsonLD from '@cy/fixtures/ramen-1.json';
+import jaimiesHummusJsonLD from '@cy/fixtures/jaimies-hummus.json';
+import junsRamenJsonLD from '@cy/fixtures/juns-ramen.json';
 import secondRamenJsonLD from '@cy/fixtures/ramen-2.json';
 
 describe('Cookbook', () => {
@@ -180,6 +182,71 @@ describe('Cookbook', () => {
         // Assert
         cy.url().should('contain', 'aguachile');
         cy.contains('200g Shrimps').scrollIntoView().should('be.visible');
+    });
+
+    it('Imports recipes from the Web', () => {
+        // Arrange
+        cy.intercept('https://recipes.example.com/hummus', { fixture: 'html/jaimies-hummus.html' });
+
+        cy.see('Are you ready to start cooking?');
+
+        // Act
+        cy.contains('Import from the Web').click();
+        cy.ariaInput('Website URL').type('https://recipes.example.com/hummus');
+        cy.contains('Scan website for recipes').click();
+        cy.see('We\'ve found the recipe!');
+
+        // TODO this shouldn't be necessary! there seems to be something wrong with the modal because it's
+        // re-rendering too much...
+        cy.wait(200);
+
+        cy.see('Simple houmous');
+        cy.see('Chickpeas – the star ingredient in houmous – are incredibly good for you.');
+        cy.contains('Import to my cookbook').click();
+
+        // Assert
+        cy.see('The recipe has been added to your cookbook');
+        cy.url().should('contain', 'simple-houmous');
+        cy.see('Chickpeas – the star ingredient in houmous – are incredibly good for you.');
+        cy.see('1 lemon');
+        cy.see('recipe on recipes.example.com');
+
+        cy.assertLocalDocumentEquals('solid://recipes/simple-houmous', jaimiesHummusJsonLD);
+    });
+
+    it.skip('Imports recipes from the Web using a proxy');
+
+    it('Imports recipes from the Web copy & pasting HTML', () => {
+        // Arrange
+        cy.intercept('https://recipes.example.com/ramen', { statusCode: 404 });
+
+        cy.see('Are you ready to start cooking?');
+
+        // Act
+        cy.contains('Import from the Web').click();
+        cy.ariaInput('Website URL').type('https://recipes.example.com/ramen');
+        cy.contains('Scan website for recipes').click();
+        cy.see('Oops! That didn\'t work');
+
+        // TODO this shouldn't be necessary! there seems to be something wrong with the modal because it's
+        // re-rendering too much...
+        cy.wait(200);
+
+        cy.toggleDetails('Try again');
+        cy.toggleDetails('Copy & paste HTML');
+        cy.fixture('html/juns-ramen.html').then(html => cy.ariaInput('Page source HTML').fill(html));
+        cy.contains('button', 'Scan HTML').click();
+        cy.see('Homemade Ramen');
+        cy.see('Cat Merch!');
+        cy.contains('Import to my cookbook').click();
+
+        // Assert
+        cy.see('The recipe has been added to your cookbook');
+        cy.url().should('contain', 'homemade-ramen');
+        cy.see('Cat Merch!');
+        cy.see('recipe on recipes.example.com');
+
+        cy.assertLocalDocumentEquals('solid://recipes/homemade-ramen', junsRamenJsonLD);
     });
 
     it('Downloads recipes', () => {

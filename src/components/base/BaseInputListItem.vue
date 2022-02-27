@@ -5,7 +5,7 @@
         </span>
         <BaseFluidInput
             ref="input"
-            :placeholder="$t('recipes.ingredient_placeholder')"
+            :placeholder="placeholder"
             :name="name"
             :model-value="modelValue"
             @focus="updateFocus"
@@ -16,8 +16,8 @@
         <button
             ref="removeButton"
             type="button"
-            :aria-label="$t('recipes.ingredient_remove_a11y', { ingredient: modelValue })"
-            :title="$t('recipes.ingredient_remove')"
+            :aria-label="removeA11yLabel.replace(':item', modelValue)"
+            :title="removeLabel"
             :class="[
                 'flex justify-center items-center ml-2 ring-inset text-gray-900 rounded-full w-clickable h-clickable',
                 'focus:outline-none focus:opacity-100 focus-visible:ring-2 focus-visible:ring-primary-600',
@@ -39,7 +39,7 @@ import { shrink } from '@/framework/utils/transitions';
 
 import type IBaseFluidInput from '@/components/base/BaseFluidInput';
 
-import type IRecipeIngredientInput from './RecipeIngredientInput';
+import type IBaseInputListItem from './BaseInputListItem';
 
 defineProps({
     modelValue: {
@@ -49,6 +49,18 @@ defineProps({
     name: {
         type: String,
         default: null,
+    },
+    placeholder: {
+        type: String,
+        default: 'Item...',
+    },
+    removeLabel: {
+        type: String,
+        default: 'Remove',
+    },
+    removeA11yLabel: {
+        type: String,
+        default: 'Remove ":item" item',
     },
 });
 
@@ -63,7 +75,7 @@ function updateFocus() {
     focused = !!(input?.isFocused() || removeButton?.matches(':focus'));
 }
 
-defineExpose<IRecipeIngredientInput>({
+defineExpose<IBaseInputListItem>({
     focus: () => input?.focus(),
     async playLeaveAnimation() {
         if (!root || !input?.root)

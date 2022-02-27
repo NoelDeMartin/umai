@@ -43,7 +43,14 @@
 
             <template #ingredients>
                 <div class="not-prose">
-                    <RecipeIngredientsInput v-model="ingredients" />
+                    <BaseInputList
+                        v-model="ingredients"
+                        item-name-prefix="ingredient"
+                        :add-label="$t('recipes.ingredient_add')"
+                        :item-placeholder="$t('recipes.ingredient_placeholder')"
+                        :item-remove-label="$t('recipes.ingredient_remove')"
+                        :item-remove-a11y-label="$t('recipes.ingredient_remove_a11y', { ingredient: ':item' })"
+                    />
                 </div>
             </template>
 
@@ -88,6 +95,10 @@
                     </li>
                 </ul>
             </template>
+
+            <template #actions>
+                <BaseInputList v-model="externalUrls" />
+            </template>
         </RecipePageLayout>
 
         <!-- TODO refactor UX & translate -->
@@ -105,7 +116,7 @@
 </template>
 
 <script setup lang="ts">
-import { arraySorted, objectWithoutEmpty, uuid } from '@noeldemartin/utils';
+import { arrayFilter, arraySorted, objectWithoutEmpty, uuid } from '@noeldemartin/utils';
 import { useI18n } from 'vue-i18n';
 import type { Attributes } from 'soukai';
 import type { PropType } from 'vue';
@@ -113,10 +124,10 @@ import type { PropType } from 'vue';
 import UI from '@/framework/core/facades/UI';
 
 import Recipe from '@/models/Recipe';
+import type { BaseInputListItemData } from '@/components/base/BaseInputListItem';
 
 import RecipeImageModal from './modals/RecipeImageFormModal.vue';
 import type { IRecipeImageFormModal } from './modals/RecipeImageFormModal';
-import type { RecipeIngredientInputData } from './RecipeIngredientInput';
 import type { RecipeInstructionStepInputData } from './RecipeInstructionStepInput';
 
 const { recipe } = defineProps({
@@ -135,10 +146,18 @@ const description = $ref(recipe?.description ?? '');
 const servings = $ref(recipe?.servings ?? '');
 const prepTime = $ref(recipe?.prepTime ?? '');
 const cookTime = $ref(recipe?.cookTime ?? '');
-const ingredients = $ref<RecipeIngredientInputData[]>(
+const externalUrls = $ref<BaseInputListItemData[]>(
+    // TODO sort in model
+    (recipe?.sortedExternalUrls ?? []).map(url => ({
+        id: uuid(),
+        value: url,
+    })),
+);
+const ingredients = $ref<BaseInputListItemData[]>(
     // TODO sort in model
     (recipe?.sortedIngredients ?? []).map(name => ({
-        name, id: uuid(),
+        id: uuid(),
+        value: name,
     })),
 );
 const instructions = $ref<RecipeInstructionStepInputData[]>(
@@ -173,7 +192,8 @@ async function submit() {
         servings: servings || null,
         prepTime: prepTime || null,
         cookTime: cookTime || null,
-        ingredients: ingredients.filter(({ name }) => !!name).map(({ name }) => name),
+        ingredients: arrayFilter(ingredients.map(({ value }) => value)),
+        externalUrls: arrayFilter(externalUrls.map(({ value }) => value)),
     };
 
     const updatedRecipe = recipe ?? new Recipe(attributes);

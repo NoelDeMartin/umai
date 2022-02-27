@@ -89,6 +89,14 @@
         </template>
 
         <template #actions>
+            <ul v-if="externalUrls.length > 0" class="mb-4">
+                <li v-for="(externalUrl, index) of externalUrls" :key="index">
+                    <BaseLink :url="externalUrl.url" class="flex items-center space-x-1 underline">
+                        <i-zondicons-link class="w-4 h-4" aria-hidden="true" />
+                        <span>{{ $t('recipes.externalUrl', { domain: externalUrl.domain }) }}</span>
+                    </BaseLink>
+                </li>
+            </ul>
             <StrokeButton class="w-full" route="recipes.edit" :route-params="{ recipe: recipe.uuid }">
                 <i-zondicons-edit-pencil class="mr-2 w-4 h-4" /> {{ $t('recipes.edit') }}
             </StrokeButton>
@@ -103,7 +111,7 @@
 </template>
 
 <script setup lang="ts">
-import { arrayFilter, arraySorted } from '@noeldemartin/utils';
+import { arrayFilter, arraySorted, urlParse } from '@noeldemartin/utils';
 import type { PropType } from 'vue';
 
 import TailwindCSS from '@/framework/utils/tailwindcss';
@@ -122,6 +130,12 @@ const { recipe } = defineProps({
 const metadataRows = $computed(() => arrayFilter([recipe.servings, recipe.prepTime, recipe.cookTime]).length);
 
 // TODO sort in model
+const externalUrls = $computed(
+    () => recipe.sortedExternalUrls.map(url => ({
+        url,
+        domain: urlParse(url)?.domain?.replace(/^www\./, ''),
+    })),
+);
 const ingredients = $computed(() => recipe.sortedIngredients);
 const instructions = $computed(() => arraySorted(recipe.instructions ?? [], 'position'));
 

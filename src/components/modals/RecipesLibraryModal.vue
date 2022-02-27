@@ -57,8 +57,7 @@ watchEffect(async () => {
 
 async function importRecipe(): Promise<void> {
     await recipe.save();
-
-    Router.push({
+    await Router.push({
         name: 'recipes.show',
         params: { recipe: recipe.uuid },
     });

@@ -14,6 +14,12 @@ export interface ErrorReport {
 
 export default class ErrorsService extends Service {
 
+    public inspect(error: ErrorReason): void {
+        const report = this.getErrorReport(error);
+
+        UI.openModal(ErrorReportModal, { report });
+    }
+
     public report(error: ErrorReason): void {
         const report = this.getErrorReport(error);
 

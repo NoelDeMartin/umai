@@ -36,7 +36,7 @@
                     <DialogTitle v-if="title" as="h2" class="px-4 pt-4 text-lg font-medium leading-6 text-gray-900">
                         {{ title }}
                     </DialogTitle>
-                    <div ref="content" :class="['flex overflow-hidden flex-col mt-2 max-h-full', noPadding || 'px-4 pb-4']">
+                    <div ref="content" :class="['flex overflow-auto flex-col mt-2 max-h-full', noPadding || 'px-4 pb-4']">
                         <slot :close="(result?: unknown) => $ui.closeModal(modal.id, result)" />
                     </div>
                 </div>

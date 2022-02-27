@@ -27,4 +27,9 @@ export default SolidModel.schema({
         rdfProperty: 'schema:recipeInstructions',
         items: FieldType.Key,
     },
+    externalUrls: {
+        type: FieldType.Array,
+        rdfProperty: 'schema:sameAs',
+        items: FieldType.String,
+    },
 });

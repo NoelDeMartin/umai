@@ -10,6 +10,13 @@
         </SquareIconButton>
         <SquareIconButton
             v-slot="{ className }"
+            :label="$t('recipes.new.fromTheWeb')"
+            @click="$ui.openModal(WebImportModal), $emit('optionSelected')"
+        >
+            <i-zondicons-globe :class="className" />
+        </SquareIconButton>
+        <SquareIconButton
+            v-slot="{ className }"
             :label="$t('recipes.new.fromLibrary')"
             @click="$ui.openModal(RecipesLibraryModal), $emit('optionSelected')"
         >
@@ -32,6 +39,7 @@ import Router from '@/framework/core/facades/Router';
 
 import Recipe from '@/models/Recipe';
 import RecipesLibraryModal from '@/components/modals/RecipesLibraryModal.vue';
+import WebImportModal from '@/components/modals/WebImportModal.vue';
 
 defineEmits(['optionSelected']);
 

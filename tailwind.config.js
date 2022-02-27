@@ -58,6 +58,9 @@ module.exports = {
             minWidth: {
                 clickable: '42px',
             },
+            minHeight: {
+                clickable: '42px',
+            },
             maxWidth: {
                 content: '1280px',
                 readable: '65ch',

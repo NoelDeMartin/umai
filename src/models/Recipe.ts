@@ -1,4 +1,4 @@
-import { downloadFile, stringToSlug, urlResolve } from '@noeldemartin/utils';
+import { arraySorted, compare, downloadFile, stringToSlug, urlParse, urlResolve } from '@noeldemartin/utils';
 import type { Relation } from 'soukai';
 import type { SolidBelongsToManyRelation } from 'soukai-solid';
 
@@ -23,6 +23,15 @@ export default class Recipe extends Model {
         return this.url
             ? (this.url.match(/([^/#]+)(#.*)?$/)?.[1] ?? null)
             : null;
+    }
+
+    public get sortedExternalUrls(): string[] {
+        const externalUrls = this.externalUrls.map(url => ({
+            url,
+            domain: urlParse(url)?.domain?.replace(/^www\./, ''),
+        }));
+
+        return arraySorted(externalUrls, (a, b) => compare(a.domain, b.domain)).map(({ url }) => url);
     }
 
     public get sortedIngredients(): string[] {

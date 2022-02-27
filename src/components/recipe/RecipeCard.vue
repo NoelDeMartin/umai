@@ -21,7 +21,7 @@
         <h2 class="z-10 text-lg font-bold text-white">
             <router-link
                 v-focus-visible="setVisibleFocus"
-                class="focus-visible:outline-none"
+                class="block w-full h-clickable focus-visible:outline-none"
                 :to="{ name: 'recipes.show', params: { recipe: recipe.uuid } }"
             >
                 <span aria-hidden="true" class="absolute inset-0" />
