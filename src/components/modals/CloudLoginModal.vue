@@ -51,14 +51,17 @@
 import { onMounted } from 'vue';
 
 import Auth from '@/framework/core/facades/Auth';
-import Form from '@/framework/forms/Form';
 import { nextTicks } from '@/framework/utils/vue';
+import { FormInputType, reactiveForm } from '@/framework/forms';
 
 import type IBaseInput from '@/components/base/BaseInput';
 
 const input = $ref<IBaseInput>();
-const form = new Form({
-    loginUrl: 'required',
+const form = reactiveForm({
+    loginUrl: {
+        type: FormInputType.String,
+        rules: 'required',
+    },
 });
 
 onMounted(async () => {
@@ -73,10 +76,10 @@ async function submit(close: Function) {
     if (!form.submit())
         return;
 
-    if (!/^https?:\/\//.test(form.data<string>('loginUrl')))
-        form.input('loginUrl')?.update('https://' + form.data<string>('loginUrl'));
+    if (!/^https?:\/\//.test(form.loginUrl))
+        form.loginUrl = 'https://' + form.loginUrl;
 
-    const loggedIn = await Auth.login(form.data<string>('loginUrl'));
+    const loggedIn = await Auth.login(form.loginUrl);
 
     if (loggedIn)
         close();

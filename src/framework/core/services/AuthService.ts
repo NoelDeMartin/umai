@@ -48,6 +48,10 @@ export default class AuthService extends Service<State, ComputedState> {
         return this.loggedIn;
     }
 
+    public requireAuthenticator(): Authenticator {
+        return this.authenticator ?? fail('Could not get authenticator');
+    }
+
     public requireUser(): SolidUserProfile {
         return this.user ?? fail('Could not get user profile');
     }

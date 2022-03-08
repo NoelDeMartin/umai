@@ -89,6 +89,14 @@ home:
     message: Are you ready to start cooking? Add your first recipe!
     add_recipe: Add your first recipe
 
+  createCookbook:
+    title: Create your cookbook
+    message: We need to create a cookbook to store your recipes, where do you want to store it?
+    nameLabel: Cookbook name
+    storageUrlLabel: Storage url
+    info: The container will be created on {url}.
+    submit: Go ahead!
+
 recipes:
   cookTime: Cooking time
   prepTime: Preparation time

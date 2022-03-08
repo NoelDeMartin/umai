@@ -35,6 +35,9 @@ describe('Authentication', () => {
         cy.cssAuthorize({ reset: true });
         cy.waitForReload({ resetProfiles: true });
 
+        // Act - Create cookbook
+        cy.contains('Go ahead').click();
+
         // Act - Create recipe
         cy.contains('Create from scratch').click();
         cy.get('[name="name"]').type('Ramen');
@@ -190,13 +193,14 @@ describe('Authentication', () => {
         cy.url().should('contain', 'ramen');
         cy.url().should('not.contain', 'edit');
 
-        // Act
+        // Act - Connect with cloud
         cy.visit('/?authenticator=inrupt');
         cy.startApp();
         cy.contains('disconnected').click();
         cy.ariaInput('Login url').type('http://localhost:4000/alice/{enter}');
         cy.cssAuthorize({ reset: true });
         cy.waitForReload({ resetProfiles: true });
+        cy.contains('Go ahead').click();
 
         // Assert
         cy.wait('@patchRamen');

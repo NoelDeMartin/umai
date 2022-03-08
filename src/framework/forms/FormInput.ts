@@ -7,10 +7,11 @@ export default class FormInput<Value = unknown> {
 
     public rules: string[];
     public errors: string[] = [];
-    public value: Value | undefined = undefined;
+    public value: Value | undefined;
     private form?: Form;
 
-    constructor(rules: string[] = []) {
+    constructor(value: Value, rules: string[] = []) {
+        this.value = value;
         this.rules = rules;
     }
 

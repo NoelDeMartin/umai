@@ -13,7 +13,8 @@
         class="flex flex-col w-full max-w-content mx-edge"
         aria-labelledby="#home-title"
     >
-        <HomeOnboarding v-if="$cookbook.recipes.isEmpty()" />
+        <HomeCreateCookbook v-if="$auth.loggedIn && !$cookbook.cookbook.isResolved()" />
+        <HomeOnboarding v-else-if="$cookbook.recipes.isEmpty()" />
         <HomeLanding v-else />
     </main>
 </template>

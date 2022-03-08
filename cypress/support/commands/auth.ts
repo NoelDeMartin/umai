@@ -86,6 +86,7 @@ export default {
         cy.ariaInput('Login url').type('https://alice.example.com{enter}');
         cy.waitForReload();
         cy.contains('online').should('be.visible');
+        cy.contains('Go ahead').click();
     },
 
     queueAuthenticatedRequest(url: string, options: RequestInit): void {

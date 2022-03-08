@@ -1,18 +1,39 @@
+import { MagicObject } from '@noeldemartin/utils';
 import { reactive } from 'vue';
+
+import { FormInputType } from './';
+import type { FormInputDefinition, GetFormInputValue } from './';
 
 import FormInput from './FormInput';
 
-export default class Form {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type InferAny = any;
+
+export default class Form extends MagicObject {
+
+    protected static defaultInputValues?: { [K in FormInputType]: GetFormInputValue<K> };
+
+    protected static getDefaultValue(input: FormInputDefinition<InferAny, InferAny>): unknown {
+        this.defaultInputValues = this.defaultInputValues ?? {
+            [FormInputType.String]: '',
+            [FormInputType.Number]: 0,
+        };
+
+        return input.multi ? [] : this.defaultInputValues?.[input.type as FormInputType];
+    }
 
     public submitted: boolean = false;
     private inputs: Record<string, FormInput>;
 
-    constructor(inputs: Record<string, string | FormInput>) {
+    constructor(inputs: Record<string, FormInputDefinition<InferAny, InferAny>>) {
+        super();
+
         this.inputs = reactive(
             Object.entries(inputs).reduce((inputs, [name, input]) => {
-                inputs[name] = typeof input === 'string'
-                    ? new FormInput(input.split('|'))
-                    : input;
+                inputs[name] = new FormInput(
+                    input.default ?? Form.getDefaultValue(input.type),
+                    input.rules?.split('|'),
+                );
 
                 inputs[name].setForm(this);
 
@@ -47,6 +68,14 @@ export default class Form {
             .find(valid => !valid);
 
         return invalidInput === undefined;
+    }
+
+    protected __get(property: string): unknown {
+        return this.inputs[property]?.value;
+    }
+
+    protected __set(property: string, value: unknown): void {
+        this.inputs[property]?.update(value);
     }
 
 }

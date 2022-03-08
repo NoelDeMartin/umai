@@ -1,4 +1,4 @@
-import { PromisedValue, arr, fail, isObject, tap } from '@noeldemartin/utils';
+import { PromisedValue, arr, isObject, tap } from '@noeldemartin/utils';
 import { SolidContainerModel } from 'soukai-solid';
 import type { FluentArray, Obj } from '@noeldemartin/utils';
 import type { JsonLD } from '@noeldemartin/solid-utils';
@@ -43,6 +43,23 @@ export default class CookbookService extends Service<State, ComputedState> {
         const { default: json } = await this.library[name]();
 
         return Recipe.newFromJsonLD(json);
+    }
+
+    public async createRemote(name: string, storageUrl: string): Promise<void> {
+        const user = Auth.requireUser();
+        const engine = Auth.requireAuthenticator().newEngine();
+        const cookbook = await SolidContainerModel.withEngine(engine, async () => tap(
+            new SolidContainerModel({ name }),
+            async cookbook => {
+                const typeIndexUrl = user.privateTypeIndexUrl ?? await Auth.createPrivateTypeIndex();
+
+                await cookbook.save(storageUrl);
+                await cookbook.register(typeIndexUrl, Recipe);
+            },
+        ));
+
+        await this.setRemoteCookbook(cookbook);
+        await this.reloadRecipes();
     }
 
     protected async boot(): Promise<void> {
@@ -99,6 +116,10 @@ export default class CookbookService extends Service<State, ComputedState> {
         this.recipes = arr(recipes);
     }
 
+    protected async reloadRecipes(): Promise<void> {
+        await this.loadRecipes();
+    }
+
     private async loadLibrary(): Promise<void> {
         const libraryFiles = await import.meta.glob('../assets/recipes/*.jsonld');
         const library = {} as RecipesLibrary;
@@ -111,31 +132,32 @@ export default class CookbookService extends Service<State, ComputedState> {
     }
 
     private async loadCookbook(): Promise<void> {
-        const cookbook = await this.resolveCookbook();
-
-        this.cookbook.resolve(cookbook);
-    }
-
-    private async resolveCookbook(): Promise<SolidContainerModel> {
         if (Auth.isLoggedIn()) {
             const engine = Auth.authenticator.newEngine();
-
-            return SolidContainerModel.withEngine(engine, async () => tap(
-                await this.findCookbook() ?? await this.createCookbook(),
-                async cookbook => {
-                    await this.migrateLocalRecipes(cookbook.url);
-
-                    setRemoteCollection(Recipe, cookbook.url);
-
-                    if (cookbook.url !== this.remoteCookbookUrl)
-                        this.setState({ remoteCookbookUrl: cookbook.url });
-                },
+            const cookbook = await SolidContainerModel.withEngine(engine, async () => tap(
+                await this.findCookbook(),
+                cookbook => cookbook && this.setRemoteCookbook(cookbook),
             ));
+
+            cookbook && this.cookbook.resolve(cookbook);
+
+            return;
         }
 
         Recipe.collection = this.remoteCookbookUrl ?? this.localCookbookUrl;
 
-        return new SolidContainerModel({ url: Recipe.collection, name: 'cookbook' });
+        this.cookbook.resolve(new SolidContainerModel({ url: Recipe.collection, name: 'cookbook' }));
+    }
+
+    private async setRemoteCookbook(cookbook: SolidContainerModel): Promise<void> {
+        await this.migrateLocalRecipes(cookbook.url);
+
+        setRemoteCollection(Recipe, cookbook.url);
+
+        if (cookbook.url !== this.remoteCookbookUrl)
+            this.setState({ remoteCookbookUrl: cookbook.url });
+
+        this.cookbook.resolve(cookbook);
     }
 
     private async findCookbook(refreshStaleProfile: boolean = true): Promise<SolidContainerModel | null> {
@@ -155,20 +177,6 @@ export default class CookbookService extends Service<State, ComputedState> {
 
             return this.findCookbook(false);
         }
-    }
-
-    private async createCookbook(): Promise<SolidContainerModel> {
-        const user = Auth.requireUser();
-        const name = prompt('We need to create a new Cookbook, how do you want to call it?', 'Cookbook') ?? fail();
-        const storageUrl = prompt('Where would you like to store it?', user.storageUrls[0] ?? '') || fail<string>();
-
-        return tap(new SolidContainerModel({ name }), async container => {
-            await container.save(storageUrl);
-
-            const typeIndexUrl = user.privateTypeIndexUrl ?? await Auth.createPrivateTypeIndex();
-
-            await container.register(typeIndexUrl, Recipe);
-        });
     }
 
     private async migrateLocalRecipes(remoteCollection: string): Promise<void> {

@@ -20,7 +20,7 @@
                         <BaseCheckbox
                             id="all-recipes"
                             class="w-6 h-6"
-                            :checked="recipesForm.data<number[]>('recipes').length === recipes.length"
+                            :checked="recipesForm.recipes.length === recipes.length"
                             @change="selectAllRecipes($event)"
                         />
                         <label class="ml-4 cursor-pointer" for="all-recipes">{{ $t('webImport.success_allRecipes') }}</label>
@@ -66,7 +66,7 @@
             <BaseButton
                 class="self-end mt-4"
                 type="submit"
-                :disabled="recipes.length > 0 && recipesForm.data<number[]>('recipes').length === 0"
+                :disabled="recipes.length > 0 && recipesForm.recipes.length === 0"
             >
                 {{ recipes.length > 1 ? $t('webImport.success_importMultiple') : $t('webImport.success_importSingle') }}
             </BaseButton>
@@ -74,7 +74,7 @@
 
         <template v-else-if="failure">
             <BaseMarkdown
-                :text="$t('webImport.failure_info', { url: urlForm.data('url') })"
+                :text="$t('webImport.failure_info', { url: urlForm.url })"
                 :actions="{
                     'view-error-details': () => $errors.inspect(failure),
                 }"
@@ -95,7 +95,7 @@
                                 ref="proxyUrlInput"
                                 name="proxyUrl"
                                 :placeholder="$t('webImport.failure_retry_proxyPlaceholder')"
-                                :disabled="!retryForm.data('useProxy')"
+                                :disabled="!retryForm.useProxy"
                                 inline
                                 class="ml-1"
                                 @click="afterAnimationFrame().then(proxyUrlInput?.focus)"
@@ -103,7 +103,7 @@
                         </label>
                     </div>
                     <div class="flex items-center">
-                        <BaseCheckbox id="reuse-proxy" name="reuseProxy" :disabled="!retryForm.data('useProxy')" />
+                        <BaseCheckbox id="reuse-proxy" name="reuseProxy" :disabled="!retryForm.useProxy" />
                         <label for="reuse-proxy" class="ml-2 cursor-pointer">
                             {{ $t('webImport.failure_retry_reuseProxy') }}
                         </label>
@@ -122,7 +122,7 @@
                 <BaseForm class="flex flex-col mt-2 space-y-2" :form="htmlForm" @submit="scanWebsite(submitHtml())">
                     <BaseMarkdown :text="$t('webImport.failure_html_info')" />
                     <div class="relative p-2 bg-gray-200 rounded">
-                        <pre class="flex items-center text-gray-700 whitespace-pre-wrap min-h-clickable align-center">view-source:{{ urlForm.data('url') }}</pre>
+                        <pre class="flex items-center text-gray-700 whitespace-pre-wrap min-h-clickable align-center">view-source:{{ urlForm.url }}</pre>
                         <button
                             type="button"
                             :aria-label="$t('webImport.failure_html_copyToClipboard')"
@@ -161,13 +161,12 @@
 </template>
 
 <script setup lang="ts">
-import { after, afterAnimationFrame, tap } from '@noeldemartin/utils';
+import { after, afterAnimationFrame } from '@noeldemartin/utils';
 
-import Form from '@/framework/forms/Form';
-import FormInput from '@/framework/forms/FormInput';
 import I18n from '@/framework/core/facades/I18n';
 import Router from '@/framework/core/facades/Router';
 import UI from '@/framework/core/facades/UI';
+import { FormInputType, reactiveForm } from '@/framework/forms';
 import type { ModalCloseCallback } from '@/framework/core/services/UIService';
 
 import Recipe from '@/models/Recipe';
@@ -179,10 +178,24 @@ let scanning = $ref(false);
 let failure = $ref<Error | undefined>();
 let recipes = $ref<Recipe[] | undefined>();
 let websiteMetadata = $ref<WebsiteMetadata | undefined>();
-const urlForm = new Form({ url: 'required' });
+const urlForm = reactiveForm({
+    url: {
+        type: FormInputType.String,
+        rules: 'required',
+    },
+});
 const proxyUrlInput = $ref<IBaseFluidInput>();
-const retryForm = new Form({ useProxy: '', proxyUrl: '', reuseProxy: '' });
-const htmlForm = new Form({ html: 'required' });
+const retryForm = reactiveForm({
+    useProxy: { type: FormInputType.String },
+    proxyUrl: { type: FormInputType.String },
+    reuseProxy: { type: FormInputType.String },
+});
+const htmlForm = reactiveForm({
+    html: {
+        type: FormInputType.String,
+        rules: 'required',
+    },
+});
 const title = $computed(() => {
     if (scanning) return;
     if (recipes) return I18n.translate('webImport.success_title');
@@ -191,8 +204,12 @@ const title = $computed(() => {
     return I18n.translate('webImport.title');
 });
 const recipesForm = $computed(
-    () => recipes && new Form({
-        recipes: tap(new FormInput(), recipesInput => recipesInput.value = recipes?.map((_, index) => index)),
+    () => recipes && reactiveForm({
+        recipes: {
+            type: FormInputType.Number,
+            multi: true,
+            default: recipes?.map((_, index) => index),
+        },
     }),
 );
 
@@ -210,7 +227,7 @@ async function scanWebsite(operation: Promise<void>): Promise<void> {
 
 async function submitUrl() {
     try {
-        const url = urlForm.data<string>('url');
+        const url = urlForm.url;
         const response = await fetch(url);
         const text = await response.text();
 
@@ -232,7 +249,7 @@ async function submitRetry() {
 async function submitHtml() {
     failure = undefined;
 
-    await parseWebsite(urlForm.data('url'), htmlForm.data('html'));
+    await parseWebsite(urlForm.url, htmlForm.html);
 }
 
 async function submitRecipes(close: ModalCloseCallback<void>): Promise<void> {
@@ -245,10 +262,10 @@ async function submitRecipes(close: ModalCloseCallback<void>): Promise<void> {
                     name: websiteMetadata?.title,
                     description: websiteMetadata?.description,
                     imageUrl: websiteMetadata?.imageUrl,
-                    externalUrls: [urlForm.data('url')],
+                    externalUrls: [urlForm.url],
                 }),
             ]
-            : recipesForm?.data<number[]>('recipes').map(index => recipes?.[index]) as Recipe[];
+            : recipesForm?.recipes.map(index => recipes?.[index]) as Recipe[];
 
     await Promise.all(selectedRecipes.map(recipe => recipe.save()));
 
@@ -261,7 +278,7 @@ async function submitRecipes(close: ModalCloseCallback<void>): Promise<void> {
 }
 
 async function copySourceUrlToClipboard() {
-    await navigator.clipboard.writeText(`view-source:${urlForm.data('url')}`);
+    await navigator.clipboard.writeText(`view-source:${urlForm.url}`);
 
     UI.showSnackbar(I18n.translate('webImport.failure_html_copiedToClipboard'));
 }
@@ -274,10 +291,11 @@ async function parseWebsite(url: string, html: string): Promise<void> {
 }
 
 function selectAllRecipes({ target }: Event) {
+    if (!recipesForm || !recipes)
+        return;
+
     const checked = (target as HTMLInputElement)?.matches(':checked');
 
-    recipesForm
-        ?.input('recipes')
-        ?.update(checked ? recipes?.map((_, index) => index) : []);
+    recipesForm.recipes = checked ? recipes.map((_, index) => index) : [];
 }
 </script>
