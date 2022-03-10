@@ -147,14 +147,7 @@ recipes:
     title: Add a new recipe
     fromScratch: Create from scratch
     fromTheWeb: Import from the Web
-    fromLibrary: Pick from library
     fromJsonLD: Upload JsonLD
-
-  library:
-    title: Recipes Library
-    description: This is a humble library, but it may help you get started cooking!
-    recipeWithoutDescription: This recipe does not have a description, sorry about that!
-    import: Add to my cookbook
 
 validation:
   required: This is required
