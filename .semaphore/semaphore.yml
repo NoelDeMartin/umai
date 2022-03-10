@@ -27,3 +27,7 @@ blocks:
         - name: Build
           commands:
             - npm run build
+      epilogue:
+        on_fail:
+          commands:
+            - artifact push job cypress/screenshots
