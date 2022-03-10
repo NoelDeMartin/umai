@@ -106,7 +106,7 @@ describe('Authentication', () => {
         // Act
         cy.contains('disconnected').click();
         cy.contains('Reconnect').click();
-        cy.contains('Continue').click();
+        cy.contains('Consent').click();
         cy.cssReset();
         cy.waitForReload();
 
