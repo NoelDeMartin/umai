@@ -1,11 +1,12 @@
 import Recipe from '@/models/Recipe';
-import { bootSolidModels } from 'soukai-solid';
+import { SolidContainerModel, bootSolidModels } from 'soukai-solid';
 import { createStore } from 'vuex';
 import { InMemoryEngine, bootModels, setEngine } from 'soukai';
 import { mock } from '@noeldemartin/utils';
 
 import Auth from '@/framework/core/facades/Auth';
 import Store from '@/framework/core/facades/Store';
+import { setRemoteCollection } from '@/framework/cloud/remote_helpers';
 import type Authenticator from '@/framework/auth/Authenticator';
 import type AuthService from '@/framework/core/services/AuthService';
 
@@ -19,6 +20,10 @@ describe('Cloud Service', () => {
 
     beforeEach(async () => {
         const localModels: Recipe[] = [];
+        const authenticator = mock<Authenticator>({
+            requireAuthenticatedFetch: () => async () => ({ status: 200 }),
+            newEngine: () => remoteEngine,
+        });
 
         cloud = new CloudService;
         localEngine = new InMemoryEngine;
@@ -31,9 +36,9 @@ describe('Cloud Service', () => {
         Store.setInstance(createStore({}));
         Auth.setInstance(mock<AuthService>({
             isLoggedIn: () => true,
-            authenticator: mock<Authenticator>({ newEngine: () => remoteEngine }),
+            requireAuthenticator: () => authenticator,
+            authenticator,
         }));
-
         cloud.registerHandler(Recipe, {
             getLocalModels: () => localModels,
             isReady: () => true,
@@ -44,13 +49,7 @@ describe('Cloud Service', () => {
 
     it('pulls remote models', async () => {
         // Arrange
-        const remoteRamen = await Recipe.withEngine(remoteEngine, async () => {
-            const ramen = await Recipe.create({ name: 'Small Ramen' });
-
-            await ramen.update({ name: 'Medium Ramen' });
-
-            return ramen;
-        });
+        const remoteRamen = await createRemoteRamen(remoteEngine);
 
         // Act
         await cloud.sync();
@@ -65,13 +64,7 @@ describe('Cloud Service', () => {
 
     it('creates remote models with local modifications', async () => {
         // Arrange
-        let remoteRamen = await Recipe.withEngine(remoteEngine, async () => {
-            const ramen = await Recipe.create({ name: 'Small Ramen' });
-
-            await ramen.update({ name: 'Medium Ramen' });
-
-            return ramen;
-        });
+        let remoteRamen = await createRemoteRamen(remoteEngine);
 
         await cloud.sync();
 
@@ -98,3 +91,24 @@ describe('Cloud Service', () => {
     });
 
 });
+
+async function createRemoteRamen(remoteEngine: InMemoryEngine): Promise<Recipe> {
+    Recipe.collection = 'https://example.com/cookbook/';
+
+    const remoteRamen = await Recipe.withEngine(remoteEngine, async () => {
+        const ramen = await Recipe.create({ name: 'Small Ramen' });
+
+        await ramen.update({ name: 'Medium Ramen' });
+
+        return ramen;
+    });
+
+    await SolidContainerModel.withEngine(
+        remoteEngine,
+        () => SolidContainerModel.create({ url: Recipe.collection, resourceUrls: [remoteRamen.getDocumentUrl()] }),
+    );
+
+    setRemoteCollection(Recipe, Recipe.collection);
+
+    return remoteRamen;
+}

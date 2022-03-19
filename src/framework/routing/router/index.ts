@@ -7,6 +7,7 @@ import type { RouteRecordRaw, Router, RouterOptions } from 'vue-router';
 
 import FrameworkRouter from '@/framework/routing/router/FrameworkRouter';
 import UI from '@/framework/core/facades/UI';
+import { ApplicationComponent } from '@/framework/core/services/UIService';
 
 function enhanceRoute(route: RouteRecordRaw): RouteRecordRaw {
     if (route.component)
@@ -97,7 +98,7 @@ function enhanceRouteComponent<P>(pageComponent: Component<P>): Component {
         render() {
             return this.routeParameters
                 ? h(pageComponent as ComponentOptions<P>, this.routeParameters as P)
-                : h(UI.components['not-found']);
+                : h(UI.resolveComponent(ApplicationComponent.NotFound));
         },
     });
 }

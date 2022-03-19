@@ -8,15 +8,15 @@ describe('Reactivity', () => {
         cy.startApp();
     });
 
-    it('reacts to new local recipes', () => {
+    it('Reacts to new local recipes', () => {
         // Act
-        cy.createRecipe('Ramen');
+        cy.createRecipe({ name: 'Ramen' });
 
         // Assert
         cy.contains('Ramen').should('be.visible');
     });
 
-    it('reacts to new remote recipes', () => {
+    it('Reacts to new remote recipes', () => {
         // Arrange
         cy.login();
         cy.fixture('ramen.ttl').then(body => cy.request({
@@ -35,11 +35,11 @@ describe('Reactivity', () => {
         cy.contains('Ramen').should('be.visible');
     });
 
-    it.skip('reacts to local recipe updates in recipes list', () => {
+    it.skip('Reacts to local recipe updates in recipes list', () => {
         // Arrange
         let ramen: Recipe;
 
-        cy.createRecipe('Ramen').then(_ramen => ramen = _ramen);
+        cy.createRecipe({ name: 'Ramen' }).then(_ramen => ramen = _ramen);
 
         // Act
         cy.contains('Ramen').should('be.visible').then(() => {
@@ -50,11 +50,11 @@ describe('Reactivity', () => {
         cy.contains('Ramen!').should('be.visible');
     });
 
-    it('reacts to local recipe updates in recipe details', () => {
+    it('Reacts to local recipe updates in recipe details', () => {
         // Arrange
         let ramen: Recipe;
 
-        cy.createRecipe('Ramen').then(_ramen => ramen = _ramen);
+        cy.createRecipe({ name: 'Ramen' }).then(_ramen => ramen = _ramen);
         cy.contains('Ramen').click();
 
         // Act

@@ -3,13 +3,14 @@ import { SolidContainerModel } from 'soukai-solid';
 import type { FluentArray, Obj } from '@noeldemartin/utils';
 
 import Auth from '@/framework/core/facades/Auth';
+import Cloud from '@/framework/core/facades/Cloud';
 import Events from '@/framework/core/facades/Events';
+import Files from '@/framework/core/facades/Files';
 import Service from '@/framework/core/Service';
 import { setRemoteCollection } from '@/framework/cloud/remote_helpers';
 import type { IService } from '@/framework/core/Service';
 
 import Recipe from '@/models/Recipe';
-
 
 interface State {
     localCookbookUrl: string;
@@ -54,6 +55,7 @@ export default class CookbookService extends Service<State> {
         await Auth.ready;
         await this.loadCookbook();
         await this.loadRecipes();
+        await this.enqueueFileUploads();
 
         Events.on('login', async () => {
             // TODO this should be refactored, because technically the cookbook is already loaded (it's just the local
@@ -65,7 +67,12 @@ export default class CookbookService extends Service<State> {
         Events.on('logout', async () => {
             Recipe.collection = this.localCookbookUrl;
 
-            await Promise.all(this.recipes.map(recipe => recipe.delete()));
+            await Promise.all(this.recipes.map(async recipe => {
+                if (recipe.imageUrl?.startsWith(this.localCookbookUrl))
+                    await Files.delete(recipe.imageUrl);
+
+                await recipe.delete();
+            }));
 
             this.setState({
                 remoteCookbookUrl: null,
@@ -150,13 +157,33 @@ export default class CookbookService extends Service<State> {
     private async migrateLocalRecipes(remoteCollection: string): Promise<void> {
         const recipes = await Recipe.all();
         const engine = Recipe.requireEngine();
-        const migrateLocalUrls = (document: Obj) => {
+        const migrateLocalUrls = (document: Obj): [string, string][] => {
+            const fileRenames: [string, string][] = [];
+
             for (const [field, value] of Object.entries(document)) {
-                if (field === '@id' && typeof value === 'string' && value.startsWith(Recipe.collection))
-                    document[field] = value.replace(Recipe.collection, remoteCollection);
-                else if (isObject(value))
-                    migrateLocalUrls(value);
+                if (isObject(value)) {
+                    fileRenames.push(...migrateLocalUrls(value));
+
+                    continue;
+                }
+
+                if (typeof value !== 'string' || !value.startsWith(Recipe.collection))
+                    continue;
+
+                switch (field) {
+                    case '@id':
+                        document[field] = value.replace(Recipe.collection, remoteCollection);
+
+                        continue;
+                    case 'image':
+                        document[field] = value.replace(Recipe.collection, remoteCollection);
+                        fileRenames.push([value, document[field] as string]);
+
+                        continue;
+                }
             }
+
+            return fileRenames;
         };
 
         for (const recipe of recipes) {
@@ -165,11 +192,29 @@ export default class CookbookService extends Service<State> {
 
             const documentUrl = recipe.requireDocumentUrl();
             const document = await engine.readOne(Recipe.collection, documentUrl);
+            const fileRenames = migrateLocalUrls(document);
 
-            migrateLocalUrls(document);
+            await Promise.all(fileRenames.map(async ([url, newUrl]) => {
+                await Files.rename(url, newUrl);
 
+                Cloud.enqueueFileUpload(newUrl);
+            }));
             await engine.create(remoteCollection, document, documentUrl.replace(Recipe.collection, remoteCollection));
             await engine.delete(Recipe.collection, documentUrl);
+        }
+    }
+
+    private async enqueueFileUploads(): Promise<void> {
+        if (!this.remoteCookbookUrl)
+            return;
+
+        const urls = await Files.getUrls();
+
+        for (const url of urls) {
+            if (!url.startsWith(this.remoteCookbookUrl))
+                continue;
+
+            Cloud.enqueueFileUpload(url);
         }
     }
 

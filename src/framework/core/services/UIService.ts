@@ -3,12 +3,13 @@ import { markRaw, nextTick } from 'vue';
 import type { Component } from 'vue';
 
 import NotFound from '@/framework/components/NotFound.vue';
+import LoadingModal from '@/framework/components/LoadingModal.vue';
 import Service from '@/framework/core/Service';
 import type { IService } from '@/framework/core/Service';
 
 interface State {
-    components: Record<ApplicationComponents, Component>;
     headerHeight: number;
+    loadingModal: Modal | null;
     modals: Modal[];
     snackbars: Snackbar[];
 }
@@ -50,13 +51,18 @@ export interface ModalComponent<
 
 export type ModalCloseCallback<Result = unknown> = (result: Result) => void;
 
-export const enum ApplicationComponents {
+export const enum ApplicationComponent {
     NotFound = 'not-found',
+    LoadingModal = 'loading-modal',
 }
 
-export default class UIService extends Service {
+export default class UIService extends Service<State> {
 
     private modalCallbacks: Record<string, Partial<ModalCallbacks>> = {};
+    private components: Record<ApplicationComponent, Component> = {
+        [ApplicationComponent.NotFound]: markRaw(NotFound),
+        [ApplicationComponent.LoadingModal]: markRaw(LoadingModal),
+    };
 
     public async openModal<MC extends ModalComponent>(
         component: MC,
@@ -75,7 +81,7 @@ export default class UIService extends Service {
 
         this.modalCallbacks[id] = callbacks;
 
-        this.setState({ modals: this.modals.concat([modal]) });
+        this.setState({ modals: this.modals.concat(modal) });
 
         await nextTick();
 
@@ -151,8 +157,33 @@ export default class UIService extends Service {
         this.setState({ snackbars: arrayWithoutIndex(this.snackbars, index) });
     }
 
-    public registerComponent(name: ApplicationComponents, component: Component): void {
-        this.components[name] = component;
+    public async showLoading(text?: string): Promise<void> {
+        if (this.loadingModal) {
+            this.loadingModal.props.text = text;
+
+            return;
+        }
+
+        this.loadingModal = await this.openModal(this.components[ApplicationComponent.LoadingModal], { text });
+    }
+
+    public async hideLoading(): Promise<void> {
+        const loadingModal = this.loadingModal;
+
+        if (!loadingModal)
+            return;
+
+        this.loadingModal = null;
+
+        await this.closeModal(loadingModal.id);
+    }
+
+    public resolveComponent(name: ApplicationComponent): Component {
+        return this.components[name];
+    }
+
+    public registerComponent(name: ApplicationComponent, component: Component): void {
+        this.components[name] = markRaw(component);
     }
 
     public updateHeaderHeight(height: number): void {
@@ -161,10 +192,8 @@ export default class UIService extends Service {
 
     protected getInitialState(): State {
         return {
-            components: {
-                [ApplicationComponents.NotFound]: NotFound,
-            },
             headerHeight: 0,
+            loadingModal: null,
             modals: [],
             snackbars: [],
         };

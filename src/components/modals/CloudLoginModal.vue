@@ -22,14 +22,14 @@
                     </small>
                 </p>
             </div>
-            <form class="flex flex-col" @submit.prevent="submit(close)">
+            <BaseForm class="flex flex-col" :form="form" @submit="submit(close)">
                 <BaseInput
                     ref="input"
-                    :form="form"
                     :label="$t('cloud.login.loginUrl')"
                     name="loginUrl"
                     class="mt-4 focus:!ring-brand-solid-700 focus:!border-brand-solid-500"
                     placeholder="e.g. https://alice.solidcommunity.net/profile/card#me"
+                    @keydown.enter="form.submit() && submit(close)"
                 />
                 <BaseButton type="submit" class="mt-4 w-full bg-brand-solid-700 hover:bg-brand-solid-500">
                     <i-app-solid-emblem aria-hidden="true" class="w-6 h-6" />
@@ -42,7 +42,7 @@
                 >
                     {{ $t('cloud.login.dismiss') }}
                 </BaseLink>
-            </form>
+            </BaseForm>
         </template>
     </AppModal>
 </template>
@@ -73,9 +73,6 @@ onMounted(async () => {
 });
 
 async function submit(close: Function) {
-    if (!form.submit())
-        return;
-
     if (!/^https?:\/\//.test(form.loginUrl))
         form.loginUrl = 'https://' + form.loginUrl;
 

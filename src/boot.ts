@@ -4,7 +4,7 @@ import './assets/styles/main.css';
 import App from './App.vue';
 import plugins from './plugins';
 import routes, { registerRouterBindings } from './routing';
-import services, { registerCloudHandlers } from './services';
+import services, { registerServices } from './services';
 
 export default async function boot(): Promise<void> {
     await bootstrapApplication(App, {
@@ -12,7 +12,7 @@ export default async function boot(): Promise<void> {
         plugins,
         services,
         routes,
-        beforeLaunch: () => registerCloudHandlers(),
+        beforeLaunch: () => registerServices(),
         beforeMount: () => registerRouterBindings(),
     });
 }

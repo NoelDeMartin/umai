@@ -1,9 +1,9 @@
 <template>
-    <aside v-if="$ui.modals.length > 0">
+    <aside v-if="modal">
         <component
             :is="modal.component"
-            v-for="modal of $ui.modals"
-            :key="modal.id"
+            v-if="modal"
+            :child-index="1"
             :modal="modal"
             v-bind="modal.props"
         />
@@ -20,4 +20,8 @@
     </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import UI from '@/framework/core/facades/UI';
+
+const modal = $computed(() => UI.modals[0] ?? null);
+</script>

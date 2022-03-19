@@ -1,6 +1,7 @@
 cypress/screenshots
 dist/
 node_modules/
+pod/
 
 # Test generated files
 cypress/screenshots

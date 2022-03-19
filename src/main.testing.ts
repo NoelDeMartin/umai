@@ -37,5 +37,5 @@ window.testing = {
         authenticatedRequests.push({ url, options });
     },
 
-    createRecipe: name => Recipe.create({ name }),
+    createRecipe: attributes => Recipe.create(attributes),
 };

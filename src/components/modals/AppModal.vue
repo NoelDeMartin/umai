@@ -4,7 +4,7 @@
             as="div"
             class="flex overflow-y-auto fixed inset-0 z-40 justify-center items-center"
             :initial-focus="getInitialFocus()"
-            @close="$ui.closeModal(modal.id)"
+            @close="cancellable && $ui.closeModal(modal.id)"
         >
             <TransitionChild
                 as="template"
@@ -41,6 +41,13 @@
                     </div>
                 </div>
             </TransitionChild>
+            <component
+                :is="childModal.component"
+                v-if="childModal"
+                :child-index="childIndex + 1"
+                :modal="childModal"
+                v-bind="childModal.props"
+            />
         </Dialog>
     </TransitionRoot>
 </template>
@@ -49,9 +56,10 @@
 import { nextTick, watch } from 'vue';
 import type { PropType } from 'vue';
 
+import UI from '@/framework/core/facades/UI';
 import type { Modal } from '@/framework/core/services/UIService';
 
-const { modal } = defineProps({
+const { modal, childIndex } = defineProps({
     modal: {
         type: Object as PropType<Modal>,
         required: true,
@@ -64,10 +72,19 @@ const { modal } = defineProps({
         type: Boolean,
         default: false,
     },
+    childIndex: {
+        type: Number,
+        required: true,
+    },
+    cancellable: {
+        type: Boolean,
+        default: true,
+    },
 });
 
 // Workaround to fix https://github.com/tailwindlabs/headlessui/issues/825
 const content = $ref<HTMLElement>();
+const childModal = $computed(() => UI.modals[childIndex] ?? null);
 const focusableElement = $computed(
     () => content?.querySelector('button, input') as HTMLInputElement | HTMLButtonElement,
 );

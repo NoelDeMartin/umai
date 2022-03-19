@@ -56,7 +56,8 @@ module.exports = {
                 clickable: '42px',
             },
             minWidth: {
-                clickable: '42px',
+                'clickable': '42px',
+                'modal-content': '500px',
             },
             minHeight: {
                 clickable: '42px',

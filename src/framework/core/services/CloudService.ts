@@ -1,12 +1,13 @@
-import { Semaphore, after, map, tap } from '@noeldemartin/utils';
-import { SolidModel, SolidModelMetadata, SolidModelOperation } from 'soukai-solid';
+import { Semaphore, after, arrayChunk, isSuccessfulResponse, map, tap } from '@noeldemartin/utils';
+import { SolidContainerModel, SolidModel, SolidModelMetadata, SolidModelOperation } from 'soukai-solid';
 import type { Engine } from 'soukai';
 import type { ObjectsMap } from '@noeldemartin/utils';
 import type { SolidModelConstructor } from 'soukai-solid';
 
 import Auth from '@/framework/core/facades/Auth';
-import Service from '@/framework/core/Service';
 import Events from '@/framework/core/facades/Events';
+import Files from '@/framework/core/facades/Files';
+import Service from '@/framework/core/Service';
 import { getLocalClass, getRemoteClass } from '@/framework/cloud/remote_helpers';
 import type Authenticator from '@/framework/auth/Authenticator';
 import type { ComputedStateDefinitions, IService } from '@/framework/core/Service';
@@ -18,10 +19,13 @@ export enum CloudStatus {
     Syncing = 'syncing',
 }
 
+const MAX_REQUESTS_CHUNK_SIZE = 10;
+
 interface State {
     autoSync: number | false;
     startupSync: boolean;
     status: CloudStatus;
+    dirtyFileUrls: Set<string>;
     dirtyRemoteModels: ObjectsMap<SolidModel>;
     remoteOperationUrls: Record<string, string[]>;
 }
@@ -32,7 +36,7 @@ interface ComputedState {
     offline: boolean;
     syncing: boolean;
     disconnected: boolean;
-    pendingUpdates: [SolidModel, SolidModelOperation[]][];
+    pendingUpdates: ([SolidModel, SolidModelOperation[]] | string)[];
 }
 
 export interface CloudHandler<T extends SolidModel = SolidModel> {
@@ -62,6 +66,7 @@ export default class CloudService extends Service<State, ComputedState> {
             // TODO subscribe to server events instead of pulling remote on every sync
             await this.pullChanges();
             await this.pushChanges();
+            await this.uploadFiles();
 
             await after({ milliseconds: Math.max(0, 1000 - (Date.now() - start)) });
             this.status = CloudStatus.Online;
@@ -78,6 +83,14 @@ export default class CloudService extends Service<State, ComputedState> {
 
         modelClass.on('created', model => Auth.isLoggedIn() && handler.isReady() && this.createRemoteModel(model));
         modelClass.on('updated', model => Auth.isLoggedIn() && handler.isReady() && this.updateRemoteModel(model));
+    }
+
+    public enqueueFileUpload(url: string): void {
+        this.dirtyFileUrls = tap(new Set(this.dirtyFileUrls), urls => urls.add(url));
+    }
+
+    public removeFileUpload(url: string): void {
+        this.dirtyFileUrls = tap(new Set(this.dirtyFileUrls), urls => urls.delete(url));
     }
 
     protected async boot(): Promise<void> {
@@ -108,6 +121,7 @@ export default class CloudService extends Service<State, ComputedState> {
             autoSync: 10,
             status: CloudStatus.Disconnected,
             startupSync: true,
+            dirtyFileUrls: new Set(),
             dirtyRemoteModels: map([], 'url'),
             remoteOperationUrls: {},
         };
@@ -115,12 +129,12 @@ export default class CloudService extends Service<State, ComputedState> {
 
     protected getComputedStateDefinitions(): ComputedStateDefinitions<State, ComputedState> {
         return {
-            dirty: ({ dirtyRemoteModels }) => dirtyRemoteModels.size > 0,
+            dirty: ({ dirtyFileUrls, dirtyRemoteModels }) => dirtyFileUrls.size + dirtyRemoteModels.size > 0,
             online: ({ status }) => status === CloudStatus.Online,
             offline: ({ status }) => status === CloudStatus.Offline,
             syncing: ({ status }) => status === CloudStatus.Syncing,
             disconnected: ({ status }) => status === CloudStatus.Disconnected,
-            pendingUpdates: ({ dirtyRemoteModels }) => {
+            pendingUpdates: ({ dirtyFileUrls, dirtyRemoteModels }) => {
                 const pendingUpdates: Record<string, SolidModelOperation[]> = {};
 
                 for (const remoteModel of dirtyRemoteModels.items()) {
@@ -133,31 +147,39 @@ export default class CloudService extends Service<State, ComputedState> {
                     }
                 }
 
-                return Object.entries(pendingUpdates).reduce((pendingUpdates, [url, operations]) => {
-                    const operationsMap: Record<string, SolidModelOperation[]> = {};
+                const pendingModelUpdates = Object.entries(pendingUpdates).reduce(
+                    (pendingUpdates, [url, operations]) => {
+                        const operationsMap: Record<string, SolidModelOperation[]> = {};
 
-                    if (operations.length === 0) {
-                        pendingUpdates.push([dirtyRemoteModels.get(url) as SolidModel, []]);
+                        if (operations.length === 0) {
+                            pendingUpdates.push([dirtyRemoteModels.get(url) as SolidModel, []]);
 
-                        return pendingUpdates;
-                    }
+                            return pendingUpdates;
+                        }
 
-                    for (const operation of operations) {
-                        const date = operation.date.toISOString();
+                        for (const operation of operations) {
+                            const date = operation.date.toISOString();
 
-                        operationsMap[date] = operationsMap[date] ?? [];
-                        operationsMap[date].push(operation);
-                    }
+                            operationsMap[date] = operationsMap[date] ?? [];
+                            operationsMap[date].push(operation);
+                        }
 
-                    Object.values(operationsMap).forEach(
-                        dateOperations => pendingUpdates.push([
+                        Object.values(operationsMap).forEach(
+                            dateOperations => pendingUpdates.push([
                             dirtyRemoteModels.get(url) as SolidModel,
                             dateOperations,
-                        ]),
-                    );
+                            ]),
+                        );
 
-                    return pendingUpdates;
-                }, [] as [SolidModel, SolidModelOperation[]][]);
+                        return pendingUpdates;
+                    },
+                    [] as [SolidModel, SolidModelOperation[]][],
+                );
+
+                return [
+                    ...pendingModelUpdates,
+                    ...dirtyFileUrls,
+                ];
             },
         };
     }
@@ -225,6 +247,30 @@ export default class CloudService extends Service<State, ComputedState> {
                 return urls;
             }, this.remoteOperationUrls),
         });
+    }
+
+    protected async uploadFiles(): Promise<void> {
+        const fetch = Auth.requireAuthenticator().requireAuthenticatedFetch();
+        const fileUrls = new Set(this.dirtyFileUrls);
+
+        for (const url of fileUrls) {
+            const file = await Files.get(url);
+
+            if (file) {
+                const response = await fetch(url, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': file.mimeType },
+                    body: file.blob,
+                });
+
+                if (!isSuccessfulResponse(response))
+                    continue;
+
+                await Files.delete(url);
+            }
+
+            this.removeFileUpload(url);
+        }
     }
 
     protected async synchronizeModels(
@@ -304,13 +350,32 @@ export default class CloudService extends Service<State, ComputedState> {
 
     protected async fetchRemoteModels(): Promise<SolidModel[]> {
         const models = await Promise.all(
-            this.handlers.map(handler => {
+            this.handlers.map(async handler => {
                 if (!handler.isReady())
                     return [];
 
                 const remoteClass = getRemoteClass(handler.modelClass);
+                const container = await SolidContainerModel.withEngine(
+                    this.engine as Engine,
+                    () => SolidContainerModel.find(remoteClass.collection),
+                );
 
-                return remoteClass.all();
+                if (!container)
+                    return [];
+
+                const remoteModels = [];
+                const urlChunks = arrayChunk(
+                    container.resourceUrls.filter(url => !/\.(jpe?|pn)g$/.test(url)),
+                    MAX_REQUESTS_CHUNK_SIZE,
+                );
+
+                for (const urls of urlChunks) {
+                    const chunkModels = await remoteClass.all({ $in: urls });
+
+                    remoteModels.push(...chunkModels);
+                }
+
+                return remoteModels;
             }),
         );
 

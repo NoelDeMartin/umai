@@ -31,6 +31,10 @@ export default abstract class Authenticator {
 
     public abstract logout(): Promise<void>;
 
+    public getAuthenticatedFetch(): Fetch | null {
+        return this.authenticatedFetch ?? null;
+    }
+
     public requireAuthenticatedFetch(): Fetch {
         return this.authenticatedFetch ?? fail('Authenticated fetch is not ready');
     }

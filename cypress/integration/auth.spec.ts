@@ -2,7 +2,7 @@ import ramenJsonLD from '@cy/fixtures/ramen-3.json';
 
 describe('Authentication', () => {
 
-    it('logs in using the localStorage authenticator', () => {
+    it('Logs in using the localStorage authenticator', () => {
         // Arrange
         cy.intercept('https://alice.example.com', { statusCode: 404 });
         cy.intercept('https://alice.example.com/profile/card', { fixture: 'profile.ttl' });
@@ -20,7 +20,7 @@ describe('Authentication', () => {
         cy.contains('You are logged in as John Doe').should('be.visible');
     });
 
-    it('signs up using the Inrupt authenticator', () => {
+    it('Signs up using the Inrupt authenticator', () => {
         // Arrange
         cy.intercept('POST', 'http://localhost:4000/alice/').as('createCookbook');
         cy.intercept('PUT', 'http://localhost:4000/alice/settings/privateTypeIndex').as('createTypeIndex');
@@ -56,7 +56,7 @@ describe('Authentication', () => {
         cy.get('@patchRamen').its('request.headers.if-none-match').should('equal', '*');
     });
 
-    it('logs in using the Inrupt authenticator', () => {
+    it('Logs in using the Inrupt authenticator', () => {
         // Arrange
         cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/pisto').as('patchPisto');
         cy.visit('/?authenticator=inrupt');
@@ -89,7 +89,7 @@ describe('Authentication', () => {
         cy.get('@patchPisto').its('request.headers.if-none-match').should('not.exist');
     });
 
-    it('refreshes stale cached profiles', () => {
+    it('Refreshes stale cached profiles', () => {
         // Arrange
         cy.visit('/?authenticator=inrupt');
         cy.startApp();
@@ -115,7 +115,7 @@ describe('Authentication', () => {
         cy.contains('You are logged in').should('be.visible');
     });
 
-    it('wipes local data on log out', () => {
+    it('Wipes local data on log out', () => {
         // Arrange
         cy.visit('/?authenticator=inrupt');
         cy.startApp();
@@ -140,7 +140,7 @@ describe('Authentication', () => {
         cy.contains('disconnected').should('be.visible');
     });
 
-    it('migrates local data to cloud after logging in', () => {
+    it('Migrates local data to cloud after logging in', () => {
         // Arrange
         cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/ramen').as('patchRamen');
         cy.visit('/');

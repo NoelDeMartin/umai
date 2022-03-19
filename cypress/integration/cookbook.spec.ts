@@ -14,7 +14,7 @@ describe('Cookbook', () => {
         cy.startApp();
     });
 
-    it('creates and edits recipes', () => {
+    it('Creates and edits recipes', () => {
         // Arrange
         cy.contains('Are you ready to start cooking?').should('be.visible');
 
@@ -34,9 +34,8 @@ describe('Cookbook', () => {
         // Act - First edit
         cy.contains('Edit').click();
         cy.contains('Change image').click();
-        cy.get('[name="image_url"]').type('https://media.example.com/ramen.jpg');
-        cy.get('button[aria-label="Clear image"]');
-        cy.contains('Update image').click();
+        cy.get('[name="customUrl"]').type('https://media.example.com/ramen.jpg');
+        cy.contains('Update').click();
         cy.get('[name="name"]').type('!');
         cy.contains('button', 'Add ingredient').click();
         cy.get(':focus').type('Toppings');
@@ -75,11 +74,11 @@ describe('Cookbook', () => {
         cy.assertLocalDocumentEquals('solid://recipes/ramen', firstRamenJsonLD);
     });
 
-    it('sends model updates to the cloud', () => {
+    it('Sends model updates to the cloud', () => {
         // Arrange
-        cy.login();
-
         cy.intercept('PATCH', 'http://localhost:4000/cookbook/ramen').as('patchRamen');
+
+        cy.login();
 
         // Act - Create
         cy.contains('Create from scratch').click();
@@ -155,14 +154,109 @@ describe('Cookbook', () => {
         cy.assertLocalDocumentEquals('http://localhost:4000/cookbook/ramen', secondRamenJsonLD);
     });
 
+    it('Stores local images', () => {
+        // Arrange
+        cy.contains('Are you ready to start cooking?').should('be.visible');
+
+        // Act
+        cy.contains('Create from scratch').click();
+        cy.get('[name="name"]').type('Ramen');
+        cy.contains('Change image').click();
+        cy.uploadFixture('Upload an image', 'img/ramen.png');
+        cy.contains('Remove image').should('be.visible');
+        cy.contains('Update').click();
+        cy.contains('button', 'Create').click();
+
+        // Assert
+        cy.assertStoredFileMatches('solid://recipes/ramen.png', {
+            mimeType: 'image/png',
+        });
+    });
+
+    it('Uploads images for new recipes', () => {
+        // Arrange
+        cy.intercept('PUT', 'http://localhost:4000/cookbook/ramen.png').as('putRamenImage');
+
+        cy.contains('Are you ready to start cooking?').should('be.visible');
+
+        // Act
+        cy.contains('Create from scratch').click();
+        cy.get('[name="name"]').type('Ramen');
+        cy.contains('Change image').click();
+        cy.uploadFixture('Upload an image', 'img/ramen.png');
+        cy.contains('Remove image').should('be.visible');
+        cy.contains('Update').click();
+        cy.contains('button', 'Create').click();
+
+        // TODO go back to home instead of reloading
+        cy.visit('/?authenticator=localStorage');
+        cy.startApp();
+        cy.login();
+
+        // Assert
+        cy.wait('@putRamenImage');
+
+        cy.get('@putRamenImage').its('request.headers.content-type').should('eq', 'image/png');
+    });
+
+    it('Uploads images for existing recipes', () => {
+        // Arrange
+        cy.intercept('PUT', 'http://localhost:4000/cookbook/ramen.png').as('putRamenImage');
+
+        cy.createRecipe({ name: 'Ramen' });
+        cy.login();
+
+        // Act
+        cy.contains('Ramen').click();
+        cy.contains('Edit').click();
+        cy.contains('Change image').click();
+        cy.uploadFixture('Upload an image', 'img/ramen.png');
+        cy.contains('Remove image').should('be.visible');
+        cy.contains('Update').click();
+        cy.contains('Save').click();
+
+        // Assert
+        cy.wait('@putRamenImage');
+
+        cy.get('@putRamenImage').its('request.headers.content-type').should('eq', 'image/png');
+    });
+
+    it('Updates images', () => {
+        // Arrange
+        cy.intercept('PUT', 'http://localhost:4000/cookbook/ramen.png').as('putRamenImage');
+
+        cy.createRecipe({
+            name: 'Ramen',
+            imageUrl: 'solid://recipes/ramen.png',
+        });
+        cy.createFile('solid://recipes/ramen.png', 'image/png', 'img/ramen.png');
+        cy.login();
+
+        // Act
+        cy.contains('Ramen').click();
+        cy.contains('Edit').click();
+        cy.contains('Change image').click();
+        cy.contains('Remove image').click();
+        cy.uploadFixture('Upload an image', 'img/ramen.png');
+        cy.contains('Remove image').should('be.visible');
+        cy.contains('Update').click();
+        cy.contains('Save').click();
+        cy.contains('syncing').should('be.visible');
+        cy.contains('online').should('be.visible');
+
+        // Assert
+        cy.get('@putRamenImage.all').should('have.length', 2);
+
+        cy.get('@putRamenImage.0').its('request.headers.content-type').should('eq', 'image/png');
+        cy.get('@putRamenImage.1').its('request.headers.content-type').should('eq', 'image/png');
+    });
+
     it('Imports recipes from JSON-LD', () => {
         // Act
         cy.contains('Are you ready to start cooking?').should('be.visible');
 
         // Assert
-        cy.contains('Upload JsonLD').click();
-        cy.wait(300);
-        cy.uploadFixture('recipes/aguachile.jsonld');
+        cy.uploadFixture('Upload JsonLD', 'recipes/aguachile.jsonld');
 
         // Assert
         cy.url().should('contain', 'aguachile');
@@ -239,7 +333,7 @@ describe('Cookbook', () => {
         const downloadsFolder = Cypress.config('downloadsFolder');
 
         cy.task('deleteFolder', downloadsFolder);
-        cy.createRecipe('Ramen');
+        cy.createRecipe({ name: 'Ramen' });
         cy.contains('Ramen').click();
 
         // Act

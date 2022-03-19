@@ -1,5 +1,10 @@
 import Cloud from '@/framework/core/facades/Cloud';
+import UI from '@/framework/core/facades/UI';
+import { ApplicationComponent } from '@/framework/core/services/UIService';
+
+import AppLoadingModal from '@/components/modals/AppLoadingModal.vue';
 import Recipe from '@/models/Recipe';
+
 import Cookbook from './facades/Cookbook';
 
 const services = {
@@ -14,11 +19,13 @@ declare module '@/framework/core' {
 
 }
 
-export function registerCloudHandlers(): void {
+export function registerServices(): void {
     Cloud.registerHandler(Recipe, {
         isReady: () => !!Cookbook.cookbook.value,
         getLocalModels: () => Cookbook.recipes.toArray(),
     });
+
+    UI.registerComponent(ApplicationComponent.LoadingModal, AppLoadingModal);
 }
 
 export default services;

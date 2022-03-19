@@ -120,9 +120,15 @@ recipes:
 
   image_edit_placeholder: Write image url...
   image_edit_title: Change recipe image
-  image_edit_clear: Clear image
-  image_edit_submit: Update image
-  image_edit_discard: Discard
+  image_edit_upload: Upload an image
+  image_edit_drop: or drop it here
+  image_edit_mimeTypes: PNG, JPG, or GIF
+  image_edit_customUrl: or set a custom url
+  image_edit_uploading: Uploading image
+  image_edit_uploadPending: This image has not been uploaded to the cloud yet
+  image_edit_remove: Remove image
+  image_edit_submit: Update
+  image_edit_discard: Discard changes
 
   ingredients: Ingredients
   ingredient_add: Add ingredient
@@ -169,3 +175,5 @@ errors:
 
     Stack trace:
     ```{stackTrace}```
+
+  fileUpload: There was an error reading the file

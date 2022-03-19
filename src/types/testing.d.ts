@@ -1,3 +1,5 @@
+import type { Attributes } from 'soukai';
+
 import type Recipe from '@/models/Recipe';
 
 interface TestingStartOptions {
@@ -8,7 +10,7 @@ interface TestingRuntime {
     start(options?: Partial<TestingStartOptions>): Promise<void>;
     stop(): Promise<void>;
     queueAuthenticatedRequest(url: string, options: RequestInit): void;
-    createRecipe(name: string): Promise<Recipe>;
+    createRecipe(attributes: Attributes): Promise<Recipe>;
 }
 
 declare global {

@@ -2,21 +2,35 @@ import fetch from 'node-fetch';
 import { SolidContainerModel, SolidEngine, bootSolidModels } from 'soukai-solid';
 import { existsSync, rmdir } from 'fs';
 
-const tasks: Cypress.Tasks = {
-    deleteFolder(folderName) {
-        return new Promise((resolve, reject) => {
-            if (!existsSync(folderName)) {
-                resolve(null);
+async function removeDir(path: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => rmdir(
+        path,
+        { maxRetries: 10, recursive: true },
+        err => err ? reject(err) : resolve(),
+    ));
+}
 
-                return;
-            }
+function defineTasks(tasks: Cypress.Tasks): Cypress.Tasks {
+    return Object.entries(tasks).reduce((tasks, [name, task]) => {
+        tasks[name] = (...args) => {
+            const result = task(...args);
 
-            rmdir(
-                folderName,
-                { maxRetries: 10, recursive: true },
-                err => err ? reject(err) : resolve(null),
-            );
-        });
+            return result instanceof Promise
+                ? result.then(asyncResult => asyncResult ?? null)
+                : result ?? null;
+        };
+
+        return tasks;
+    }, {} as Cypress.Tasks);
+}
+
+export default defineTasks({
+
+    async deleteFolder(folderName) {
+        if (!existsSync(folderName))
+            return;
+
+        await removeDir(folderName);
     },
 
     async resetSolidPOD() {
@@ -25,7 +39,16 @@ const tasks: Cypress.Tasks = {
         await SolidContainerModel.withEngine(new SolidEngine(fetch), async () => {
             const cookbook = await SolidContainerModel.find('http://localhost:4000/cookbook/');
 
-            await cookbook?.delete();
+            if (!cookbook)
+                return;
+
+            await Promise.all(
+                cookbook
+                    .resourceUrls
+                    .filter(url => /\.(jpe?|pn)g$/.test(url))
+                    .map(url => fetch(url, { method: 'DELETE' })),
+            );
+            await cookbook.delete();
         });
 
         await fetch('http://localhost:4000/settings/privateTypeIndex', {
@@ -37,9 +60,6 @@ const tasks: Cypress.Tasks = {
                     <http://www.w3.org/ns/solid/terms#UnlistedDocument> .
             `,
         });
-
-        return null;
     },
-};
 
-export default tasks;
+});

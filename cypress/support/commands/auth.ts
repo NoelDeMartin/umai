@@ -44,15 +44,12 @@ export default {
         };
 
         cy.request(requestOptions).then(({ isOkStatusCode }) => {
-            if (!isOkStatusCode) {
-                cssRegister();
-            }
+            isOkStatusCode || cssRegister();
 
             cssLogin();
         });
 
-        if (options.reset)
-            cy.cssReset(typeof options.reset === 'object' ? options.reset : {});
+        options.reset && cy.cssReset(typeof options.reset === 'object' ? options.reset : {});
     },
 
     cssReset(options: Partial<ResetOptions> = {}): void {

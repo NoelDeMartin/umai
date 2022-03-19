@@ -121,8 +121,11 @@ import { useI18n } from 'vue-i18n';
 import type { Attributes } from 'soukai';
 import type { PropType } from 'vue';
 
+import Cloud from '@/framework/core/facades/Cloud';
+import Files from '@/framework/core/facades/Files';
 import UI from '@/framework/core/facades/UI';
 
+import Cookbook from '@/services/facades/Cookbook';
 import Recipe from '@/models/Recipe';
 import type { BaseInputListItemData } from '@/components/base/BaseInputListItem';
 
@@ -132,7 +135,7 @@ import type { RecipeInstructionStepInputData } from './RecipeInstructionStepInpu
 
 const { recipe } = defineProps({
     recipe: {
-        type: Object as PropType<Recipe>,
+        type: Object as PropType<Recipe | null>,
         default: null,
     },
 });
@@ -175,7 +178,7 @@ const a11yTitle = $computed(
 );
 
 async function editImage() {
-    const modal = await UI.openModal<IRecipeImageFormModal>(RecipeImageModal, { imageUrl: imageUrl });
+    const modal = await UI.openModal<IRecipeImageFormModal>(RecipeImageModal, { imageUrl });
     const result = await modal.beforeClose;
 
     document.querySelector<HTMLElement>(':focus')?.blur();
@@ -224,6 +227,19 @@ async function submit() {
             continue;
 
         updatedRecipe.relatedInstructions.detach(instruction);
+    }
+
+    if (updatedRecipe.imageUrl?.startsWith('tmp://')) {
+        updatedRecipe.exists() || updatedRecipe.mintUrl();
+
+        const persistentImageUrl = `${updatedRecipe.getDocumentUrl()}.png`;
+
+        await Files.rename(updatedRecipe.imageUrl, persistentImageUrl);
+
+        if (Cookbook.remoteCookbookUrl && persistentImageUrl.startsWith(Cookbook.remoteCookbookUrl))
+            Cloud.enqueueFileUpload(persistentImageUrl);
+
+        updatedRecipe.imageUrl = persistentImageUrl;
     }
 
     await updatedRecipe.save();
