@@ -4,7 +4,7 @@
         <h1 id="recipe-form-title" class="sr-only">
             {{ a11yTitle }}
         </h1>
-        <RecipePageLayout>
+        <RecipePage>
             <template #image>
                 <div class="absolute inset-0 group">
                     <RecipeImage :url="imageUrl" class="w-full h-full" />
@@ -96,10 +96,10 @@
                 </ul>
             </template>
 
-            <template #actions>
+            <template #urls>
                 <BaseInputList v-model="externalUrls" />
             </template>
-        </RecipePageLayout>
+        </RecipePage>
 
         <!-- TODO refactor UX & translate -->
         <div class="fixed inset-x-0 bottom-0 z-10 bg-gray-300">

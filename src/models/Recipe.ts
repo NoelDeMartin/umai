@@ -42,6 +42,11 @@ export default class Recipe extends Model {
         return ingredients.map(({ original }) => original);
     }
 
+    public is(other: Recipe): boolean {
+        return this.url === other.url
+            || this.externalUrls.some(url => url === other.url);
+    }
+
     public instructionsRelationship(): Relation {
         return this
             .belongsToMany(RecipeInstructionsStep, 'instructionSteps')

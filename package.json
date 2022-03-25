@@ -23,7 +23,7 @@
     "@headlessui/vue": "^1.4.3",
     "@inrupt/solid-client-authn-browser": "^1.11.6",
     "@noeldemartin/solid-utils": "^0.1.1-next.1f0cf6ccc237588ae655211348e94eba9ba16c8d",
-    "@noeldemartin/utils": "^0.2.1-next.2abe1903f979488fd74831f4a26310fdffd15c1a",
+    "@noeldemartin/utils": "^0.2.1-next.02a514e521c58b5e150503e514f7da4db322d5d2",
     "@tailwindcss/forms": "^0.4.0",
     "@tailwindcss/typography": "^0.5.0",
     "buffer": "^6.0.3",
@@ -70,7 +70,7 @@
     "typescript": "^4.1.5",
     "unplugin-icons": "^0.12.15",
     "unplugin-vue-components": "^0.15.6",
-    "vite": "^2.7.12",
+    "vite": "^2.9.0-beta.8",
     "vue-tsc": "^0.28.6"
   },
   "engines": {

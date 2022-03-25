@@ -9,7 +9,7 @@ export default {
     },
 
     see(text: string): void {
-        cy.contains(text).should('be.visible');
+        cy.contains(text).scrollIntoView();
     },
 
     toggleDetails(text: string): void {

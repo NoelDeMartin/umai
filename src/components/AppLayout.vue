@@ -1,6 +1,6 @@
 <template>
     <div class="flex overflow-y-auto flex-col w-screen h-screen">
-        <AppHeader />
+        <AppHeader v-if="$route.meta.header ?? true" />
         <div class="flex flex-grow justify-center self-stretch mb-edge">
             <slot />
         </div>

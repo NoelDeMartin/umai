@@ -1,5 +1,5 @@
 <template>
-    <RecipePageLayout
+    <RecipePage
         v-element-transitions="{
             name: 'recipe-details',
             id: recipe.url,
@@ -8,95 +8,15 @@
                 'recipe-card': transitionToCard,
             },
         }"
-        :metadata-rows="metadataRows"
+        :recipe="recipe"
     >
-        <template #image>
-            <RecipeImage :url="recipe.imageUrl" class="absolute inset-0" />
-        </template>
-
         <template #title>
             <h1 id="recipe-details-title" class="text-4xl font-semibold text-white recipe-details--header-title text-shadow">
                 <span class="recipe-details--header-title-text">{{ recipe.name }}</span>
             </h1>
         </template>
 
-        <template v-if="recipe.description" #description>
-            <BaseMarkdown :text="recipe.description" />
-        </template>
-
-        <template v-if="ingredients.length > 0" #ingredients>
-            <div class="not-prose">
-                <ul class="text-gray-700">
-                    <li
-                        v-for="(ingredient, index) of ingredients"
-                        :key="index"
-                        class="flex items-center my-2"
-                    >
-                        <span class="flex justify-center items-center w-8">
-                            <span class="w-2 h-2 bg-gray-300 rounded-full" />
-                        </span>
-                        <span class="border-b-2 border-transparent">
-                            {{ ingredient }}
-                        </span>
-                    </li>
-                </ul>
-            </div>
-        </template>
-
-        <template v-if="instructions.length > 0" #instructions>
-            <ol class="pl-0 list-none">
-                <li v-for="(instructionStep, index) of instructions" :key="instructionStep.position">
-                    <div class="flex">
-                        <span class="flex justify-center text-lg font-semibold min-w-clickable text-primary-600" aria-hidden="true">
-                            {{ index + 1 }}.
-                        </span>
-                        <BaseMarkdown :text="instructionStep.text" />
-                    </div>
-                </li>
-            </ol>
-        </template>
-
-        <template #metadata>
-            <table v-if="recipe.servings || recipe.prepTime || recipe.cookTime" class="w-full">
-                <tr v-if="recipe.servings" class="h-10">
-                    <th>
-                        <div class="flex items-center space-x-2">
-                            <i-zondicons-location-food class="w-3 h-3" />
-                            <span>{{ $t('recipes.servings') }}</span>
-                        </div>
-                    </th>
-                    <td>{{ recipe.servings }}</td>
-                </tr>
-                <tr v-if="recipe.prepTime" class="h-10">
-                    <th>
-                        <div class="flex items-center space-x-2">
-                            <i-zondicons-hour-glass class="w-3 h-3" />
-                            <span>{{ $t('recipes.prepTime') }}</span>
-                        </div>
-                    </th>
-                    <td>{{ recipe.prepTime }}</td>
-                </tr>
-                <tr v-if="recipe.cookTime" class="h-10">
-                    <th>
-                        <div class="flex items-center space-x-2">
-                            <i-zondicons-time class="w-3 h-3" />
-                            <span>{{ $t('recipes.cookTime') }}</span>
-                        </div>
-                    </th>
-                    <td>{{ recipe.cookTime }}</td>
-                </tr>
-            </table>
-        </template>
-
         <template #actions>
-            <ul v-if="externalUrls.length > 0" class="mb-4">
-                <li v-for="(externalUrl, index) of externalUrls" :key="index">
-                    <BaseLink :url="externalUrl.url" class="flex items-center space-x-1 underline">
-                        <i-zondicons-link class="w-4 h-4" aria-hidden="true" />
-                        <span>{{ $t('recipes.externalUrl', { domain: externalUrl.domain }) }}</span>
-                    </BaseLink>
-                </li>
-            </ul>
             <StrokeButton class="w-full" route="recipes.edit" :route-params="{ recipe: recipe.uuid }">
                 <i-zondicons-edit-pencil class="mr-2 w-4 h-4" /> {{ $t('recipes.edit') }}
             </StrokeButton>
@@ -107,11 +27,10 @@
                 <i-zondicons-download class="mr-2 w-4 h-4" /> {{ $t('recipes.download') }}
             </StrokeButton>
         </template>
-    </RecipePageLayout>
+    </RecipePage>
 </template>
 
 <script setup lang="ts">
-import { arrayFilter, arraySorted, urlParse } from '@noeldemartin/utils';
 import type { PropType } from 'vue';
 
 import TailwindCSS from '@/framework/utils/tailwindcss';
@@ -126,18 +45,6 @@ const { recipe } = defineProps({
         required: true,
     },
 });
-
-const metadataRows = $computed(() => arrayFilter([recipe.servings, recipe.prepTime, recipe.cookTime]).length);
-
-// TODO sort in model
-const externalUrls = $computed(
-    () => recipe.sortedExternalUrls.map(url => ({
-        url,
-        domain: urlParse(url)?.domain?.replace(/^www\./, ''),
-    })),
-);
-const ingredients = $computed(() => recipe.sortedIngredients);
-const instructions = $computed(() => arraySorted(recipe.instructions ?? [], 'position'));
 
 const enterTransition = defineEnterTransition(async details => {
     const duration = 500;

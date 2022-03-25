@@ -10,6 +10,7 @@ import RecipesCreate from './pages/recipes/RecipesCreate.vue';
 import RecipesEdit from './pages/recipes/RecipesEdit.vue';
 import RecipesIndex from './pages/recipes/RecipesIndex.vue';
 import RecipesShow from './pages/recipes/RecipesShow.vue';
+import Viewer from './pages/viewer/Viewer.vue';
 
 const routes: RouteRecordRaw[] = [
     { name: 'home', path: '/', component: Home },
@@ -17,6 +18,7 @@ const routes: RouteRecordRaw[] = [
     { name: 'recipes.create', path: '/recipes/create', component: RecipesCreate, meta: { fullBleedHeader: true } },
     { name: 'recipes.show', path: '/recipes/:recipe', component: RecipesShow, meta: { fullBleedHeader: true } },
     { name: 'recipes.edit', path: '/recipes/:recipe/edit', component: RecipesEdit, meta: { fullBleedHeader: true } },
+    { name: 'viewer', path: '/viewer', component: Viewer, meta: { header: false } },
 ];
 
 export function registerRouterBindings(): void {
