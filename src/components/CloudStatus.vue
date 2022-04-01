@@ -22,7 +22,8 @@
                 </div>
             </div>
             <span class="sr-only sm:not-sr-only">{{ $t(`cloud.statuses.${$cloud.status}`) }}</span>
-            <span class="sr-only">{{ pendingUpdates.a11y }}</span>
+            <span v-if="$cloud.syncing" class="sr-only">{{ $t('cloud.statuses.syncing_description') }}</span>
+            <span v-else class="sr-only">{{ pendingUpdates.a11y }}</span>
         </div>
     </button>
 </template>

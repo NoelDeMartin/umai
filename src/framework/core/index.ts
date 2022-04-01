@@ -6,6 +6,7 @@ import ElementTransitions from './facades/ElementTransitions';
 import Errors from './facades/Errors';
 import Events from './facades/Events';
 import Files from './facades/Files';
+import Network from './facades/Network';
 import UI from './facades/UI';
 
 export const services = {
@@ -17,6 +18,7 @@ export const services = {
     $errors: Errors,
     $events: Events,
     $files: Files,
+    $network: Network,
     $ui: UI,
 };
 

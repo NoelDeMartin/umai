@@ -1,4 +1,5 @@
 import { arraySorted, compare, downloadFile, stringToSlug, urlParse, urlResolve } from '@noeldemartin/utils';
+import type { JsonLD } from '@noeldemartin/solid-utils';
 import type { Relation } from 'soukai';
 import type { SolidBelongsToManyRelation } from 'soukai-solid';
 
@@ -54,13 +55,17 @@ export default class Recipe extends Model {
             .usingSameDocument(true);
     }
 
-    public download(): void {
-        const name = this.uuid ?? 'recipe';
-        const jsonld = this.toJsonLD({
+    public toExternalJsonLD(): JsonLD {
+        return this.toJsonLD({
             ids: this.url?.startsWith('http'),
             timestamps: false,
             history: false,
         });
+    }
+
+    public download(): void {
+        const name = this.uuid ?? 'recipe';
+        const jsonld = this.toExternalJsonLD();
 
         downloadFile(`${name}.json`, JSON.stringify(jsonld), 'application/json');
     }

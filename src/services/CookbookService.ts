@@ -8,7 +8,7 @@ import Events from '@/framework/core/facades/Events';
 import Files from '@/framework/core/facades/Files';
 import Service from '@/framework/core/Service';
 import { setRemoteCollection } from '@/framework/cloud/remote_helpers';
-import type { IService } from '@/framework/core/Service';
+import type { ComputedStateDefinitions, IService } from '@/framework/core/Service';
 
 import Recipe from '@/models/Recipe';
 
@@ -19,7 +19,12 @@ interface State {
     recipes: FluentArray<Recipe>;
 }
 
-export default class CookbookService extends Service<State> {
+interface ComputedState {
+    isLocal: boolean;
+    isRemote: boolean;
+}
+
+export default class CookbookService extends Service<State, ComputedState> {
 
     public static persist: Array<keyof State> = ['remoteCookbookUrl'];
 
@@ -93,6 +98,13 @@ export default class CookbookService extends Service<State> {
             remoteCookbookUrl: null,
             cookbook: new PromisedValue,
             recipes: arr<Recipe>([]),
+        };
+    }
+
+    protected getComputedStateDefinitions(): ComputedStateDefinitions<State, ComputedState> {
+        return {
+            isLocal: ({ remoteCookbookUrl }) => !remoteCookbookUrl,
+            isRemote: ({ remoteCookbookUrl }) => !!remoteCookbookUrl,
         };
     }
 
@@ -220,4 +232,4 @@ export default class CookbookService extends Service<State> {
 
 }
 
-export default interface CookbookService extends IService<State> {}
+export default interface CookbookService extends IService<State, ComputedState> {}

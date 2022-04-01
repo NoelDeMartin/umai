@@ -106,6 +106,7 @@ recipes:
   edit: Edit
   delete: Delete
   download: Download
+  share: Share
   drag_instructions_a11y: Use ctrl + up/down to change instruction positions
 
   create_a11y_title: Create new recipe
@@ -142,6 +143,11 @@ recipes:
   instructionStep_remove: Remove step
   instructionStep_remove_a11y: Remove step number {position}
 
+  share_umai: Umai
+  share_solid: Solid url
+  share_jsonld: JSON-LD
+  shareWith: Share with
+
   index:
     title: Your cookbook
     add: add recipe
@@ -168,6 +174,8 @@ validation:
 
 ui:
   drag: Hold and drag to move!
+  copyToClipboard: Copy to clipboard
+  copiedToClipboard: Text copied to clipboard
 
 errors:
   notice: Something went wrong, but it's not your fault. Try again!

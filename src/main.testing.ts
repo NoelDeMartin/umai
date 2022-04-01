@@ -1,8 +1,12 @@
 import { closeEngineConnections } from 'soukai';
 import { Storage, arr } from '@noeldemartin/utils';
 
-import boot from '@/boot';
 import Events from '@/framework/core/facades/Events';
+import { services } from '@/framework/core';
+import type { Services } from '@/framework/core';
+
+import boot from '@/boot';
+import Cookbook from '@/services/facades/Cookbook';
 import Recipe from '@/models/Recipe';
 
 const authenticatedRequests = arr<{ url: string; options: RequestInit }>();
@@ -38,4 +42,6 @@ window.testing = {
     },
 
     createRecipe: attributes => Recipe.create(attributes),
+    getRecipe: uuid => Cookbook.recipes.first(recipe => recipe.uuid === uuid),
+    getService: name => (services as Services)[name],
 };

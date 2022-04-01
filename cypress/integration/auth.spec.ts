@@ -39,11 +39,12 @@ describe('Authentication', () => {
         cy.contains('Go ahead').click();
 
         // Act - Create recipe
+        cy.goOffline();
         cy.contains('Create from scratch').click();
         cy.get('[name="name"]').type('Ramen');
         cy.contains('button', 'Create').click();
         cy.contains('There is one pending update');
-        cy.contains('Syncing is up to date');
+        cy.comeBackOnline();
 
         // Assert
         cy.contains('online').click();
@@ -75,12 +76,13 @@ describe('Authentication', () => {
         cy.waitForReload({ resetProfiles: true });
 
         // Act - Update recipe
+        cy.goOffline();
         cy.contains('Pisto').click();
         cy.contains('Edit').click();
         cy.get('[name="name"]').type('!');
         cy.contains('Save').click();
         cy.contains('There are 2 pending updates');
-        cy.contains('Syncing is up to date');
+        cy.comeBackOnline();
 
         // Assert
         cy.contains('Pisto!').should('be.visible');

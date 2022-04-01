@@ -24,6 +24,16 @@ import type { ErrorReason } from '@/framework/core/services/ErrorsService';
 type ErrorHandler = (error: ErrorReason) => boolean;
 
 const frameworkHandler: ErrorHandler = error => {
+    if (!Errors.instance) {
+        // eslint-disable-next-line no-console
+        console.warn('Errors service hasn\'t been initialized properly!');
+
+        // eslint-disable-next-line no-console
+        console.error(error);
+
+        return true;
+    }
+
     Errors.report(error);
 
     return true;

@@ -6,12 +6,14 @@
 
 <script setup lang="ts">
 import Cloud from '@/framework/core/facades/Cloud';
+import Network from '@/framework/core/facades/Network';
 import Router from '@/framework/core/facades/Router';
 
 import type Recipe from '@/models/Recipe';
 
 function onCreated(recipe: Recipe) {
-    Cloud.sync();
+    Network.online && Cloud.sync();
+
     Router.push({
         name: 'recipes.show',
         params: { recipe: recipe.uuid as string },

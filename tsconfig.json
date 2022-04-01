@@ -11,6 +11,7 @@
         "types": [
             "@types/dompurify",
             "@types/jest",
+            "unplugin-icons/types/vue",
             "vite/client"
         ],
         "baseUrl": ".",

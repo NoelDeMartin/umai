@@ -103,7 +103,11 @@
 
         <!-- TODO refactor UX & translate -->
         <div class="fixed inset-x-0 bottom-0 z-10 bg-gray-300">
-            <div class="flex justify-end py-4 mx-auto space-x-4 max-w-content">
+            <div class="flex py-4 mx-auto space-x-4 max-w-content">
+                <BaseButton v-if="recipe" clear @click="deleteRecipe()">
+                    <i-zondicons-trash class="mr-2 w-4 h-4" /> {{ $t('recipes.delete') }}
+                </BaseButton>
+                <dev class="flex-grow" />
                 <BaseButton secondary @click="$emit('cancel')">
                     Cancel
                 </BaseButton>
@@ -185,6 +189,13 @@ async function editImage() {
 
     if (result !== undefined)
         imageUrl = result;
+}
+
+async function deleteRecipe() {
+    if (!recipe)
+        return;
+
+    // TODO
 }
 
 async function submit() {

@@ -85,6 +85,8 @@ export default {
         cy.waitForReload();
         cy.contains('online').should('be.visible');
         cy.contains('Go ahead').click();
+        cy.contains('Syncing in progress');
+        cy.contains('Syncing is up to date');
     },
 
     queueAuthenticatedRequest(url: string, options: RequestInit): void {

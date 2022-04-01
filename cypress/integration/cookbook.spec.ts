@@ -81,16 +81,18 @@ describe('Cookbook', () => {
         cy.login();
 
         // Act - Create
+        cy.goOffline();
         cy.contains('Create from scratch').click();
         cy.get('[name="name"]').type('Ramen');
         cy.contains('button', 'Add ingredient').click();
         cy.get(':focus').type('Broth{enter}');
         cy.get(':focus').type('Noodles');
         cy.contains('button', 'Create').click();
-        cy.contains('There is one pending update');
-        cy.contains('Syncing is up to date');
+        cy.see('There is one pending update');
+        cy.comeBackOnline();
 
         // Act - First update
+        cy.goOffline();
         cy.contains('Edit').click();
         cy.get('[name="name"]').type('!');
         cy.get('[name="description"]').type('is life');
@@ -101,9 +103,10 @@ describe('Cookbook', () => {
         cy.get(':focus').type('Dip them into the broth');
         cy.contains('Save').click();
         cy.contains('There are 2 pending updates');
-        cy.contains('Syncing is up to date');
+        cy.comeBackOnline();
 
         // Act - Second update
+        cy.goOffline();
         cy.contains('Edit').click();
         cy.get('[name="name"]').clear().type('Jun\'s Ramen');
         cy.get('[name="description"]').clear().type('Instructions: https://www.youtube.com/watch?v=9WXIrnWsaCo');
@@ -115,9 +118,10 @@ describe('Cookbook', () => {
         cy.get(':focus').type('Add Toppings');
         cy.contains('Save').click();
         cy.contains('There are 3 pending updates');
-        cy.contains('Syncing is up to date');
+        cy.comeBackOnline();
 
         // Act - Third update
+        cy.goOffline();
         cy.contains('Edit').click();
         cy.get('[name^="instruction-step-"]').last().click();
         cy.get(':focus').tab();
@@ -125,7 +129,7 @@ describe('Cookbook', () => {
         cy.get('[name^=instruction-step-]').should('have.length', 2);
         cy.contains('Save').click();
         cy.contains('There is one pending update');
-        cy.contains('Syncing is up to date');
+        cy.comeBackOnline();
 
         // Assert
         cy.contains('Jun\'s Ramen').should('be.visible');
@@ -328,21 +332,60 @@ describe('Cookbook', () => {
         cy.assertLocalDocumentEquals('solid://recipes/homemade-ramen', junsRamenJsonLD);
     });
 
+    it('Shares local recipes', () => {
+        // Arrange
+        cy.createRecipe({ name: 'Ramen' }).as('ramen');
+
+        // Act
+        cy.press('Ramen');
+        cy.press('Share');
+
+        // Assert
+        cy.ariaLabel('Umai').should('not.exist');
+        cy.ariaLabel('Solid url').should('not.exist');
+        cy.ariaLabel('JSON-LD').should('match', '[aria-checked="true"]');
+        cy.see('Download');
+    });
+
+    it('Shares remote recipes', () => {
+        // Arrange
+        cy.createRecipe({ name: 'Ramen' });
+        cy.login();
+
+        // Act
+        cy.press('Ramen');
+        cy.press('Share');
+
+        // Assert
+        cy.getRecipe('ramen').then(ramen => {
+            cy.ariaLabel('Umai').should('match', '[aria-checked="true"]');
+            cy.see(`${Cypress.config('baseUrl')}/viewer?url=${ramen.getDocumentUrl()}`);
+
+            cy.ariaLabel('Solid url').click();
+            cy.ariaLabel('Solid url').should('match', '[aria-checked="true"]');
+            cy.see(ramen.url);
+
+            // TODO test sharing button
+        });
+    });
+
     it('Downloads recipes', () => {
         // Arrange
         const downloadsFolder = Cypress.config('downloadsFolder');
 
         cy.task('deleteFolder', downloadsFolder);
         cy.createRecipe({ name: 'Ramen' });
-        cy.contains('Ramen').click();
+        cy.press('Ramen');
 
         // Act
-        cy.contains('Download').click();
+        cy.press('Share');
 
         // Assert
-        const filename = path.join(downloadsFolder, 'ramen.json');
+        cy.see('"@type": "Recipe"');
+        cy.see('"name": "Ramen"');
+        cy.press('Download');
 
-        cy.readFile(filename).then(recipe => {
+        cy.readFile(path.join(downloadsFolder, 'ramen.json')).then(recipe => {
             expect(recipe.name).to.equal('Ramen');
         });
     });

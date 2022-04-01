@@ -20,11 +20,8 @@
             <StrokeButton class="w-full" route="recipes.edit" :route-params="{ recipe: recipe.uuid }">
                 <i-zondicons-edit-pencil class="mr-2 w-4 h-4" /> {{ $t('recipes.edit') }}
             </StrokeButton>
-            <StrokeButton class="mt-2 w-full" @click="deleteRecipe()">
-                <i-zondicons-trash class="mr-2 w-4 h-4" /> {{ $t('recipes.delete') }}
-            </StrokeButton>
-            <StrokeButton class="mt-2 w-full" @click="recipe.download()">
-                <i-zondicons-download class="mr-2 w-4 h-4" /> {{ $t('recipes.download') }}
+            <StrokeButton class="mt-2 w-full" @click="$ui.openModal(ShareRecipeModal, { recipe })">
+                <i-zondicons-share class="mr-2 w-4 h-4" /> {{ $t('recipes.share') }}
             </StrokeButton>
         </template>
     </RecipePage>
@@ -37,6 +34,7 @@ import TailwindCSS from '@/framework/utils/tailwindcss';
 import { animateElements } from '@/framework/utils/dom';
 import { defineElementTransition, defineEnterTransition } from '@/framework/core/services/ElementTransitionsService';
 
+import ShareRecipeModal from '@/components/modals/ShareRecipeModal.vue';
 import type Recipe from '@/models/Recipe';
 
 const { recipe } = defineProps({
@@ -176,8 +174,4 @@ const transitionToCard = defineElementTransition(async (_, details, card) => {
         },
     ]);
 });
-
-async function deleteRecipe() {
-    // TODO
-}
 </script>
