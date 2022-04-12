@@ -24,12 +24,7 @@ export default class EventsService extends Service {
     public emit<Event extends EventWithPayload>(event: Event, payload: EventsPayload[Event]): Promise<void>;
     public emit<Event extends string>(event: UnknownEvent<Event>, payload?: unknown): Promise<void>;
     public async emit(event: string, payload?: unknown): Promise<void> {
-        if (!(event in this.listeners))
-            return;
-
-        const eventListeners = this.listeners[event];
-
-        await Promise.all(eventListeners.map(listener => listener(payload)));
+        await Promise.all(this.listeners[event]?.map(listener => listener(payload)) ?? []);
     }
 
     /* eslint-disable max-len */
@@ -39,21 +34,20 @@ export default class EventsService extends Service {
     /* eslint-enable max-len */
 
     public on(event: string, listener: EventListener): () => void {
-        if (!(event in this.listeners))
-            this.listeners[event] = arr<EventListener>([]);
-
-        this.listeners[event].push(listener);
+        (this.listeners[event] ??= arr<EventListener>([])).push(listener);
 
         return () => this.off(event, listener);
     }
 
     public off(event: string, listener: EventListener): void {
-        if (!(event in this.listeners))
+        const eventListener = this.listeners[event];
+
+        if (!eventListener)
             return;
 
-        this.listeners[event].remove(listener);
+        eventListener.remove(listener);
 
-        if (this.listeners[event].isEmpty())
+        if (eventListener.isEmpty())
             delete this.listeners[event];
     }
 

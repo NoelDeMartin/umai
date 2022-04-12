@@ -33,11 +33,15 @@ export default function installCustomCommands(): void {
     });
 
     for (const [name, implementation] of Object.entries(commands)) {
-        Cypress.Commands.add(name, implementation);
+        Cypress.Commands.add(
+            name as unknown as keyof Cypress.Chainable,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            implementation as Cypress.CommandFn<any>,
+        );
     }
 
-    Cypress.Commands.overwrite('reload', originalReload => {
-        originalReload();
+    Cypress.Commands.overwrite('reload', (originalReload, ...args) => {
+        originalReload(...args);
         cy.startApp();
     });
 }

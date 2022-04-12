@@ -30,12 +30,12 @@ export default class Form extends MagicObject {
 
         this.inputs = reactive(
             Object.entries(inputs).reduce((inputs, [name, input]) => {
-                inputs[name] = new FormInput(
+                const formInput = inputs[name] = new FormInput(
                     input.default ?? Form.getDefaultValue(input.type),
                     input.rules?.split('|'),
                 );
 
-                inputs[name].setForm(this);
+                formInput.setForm(this);
 
                 return inputs;
             }, {} as Record<string, FormInput>),
@@ -49,14 +49,13 @@ export default class Form extends MagicObject {
     public data(): Record<string, unknown>;
     public data<T=unknown>(name: string): T;
     public data(name?: string): Record<string, unknown> | unknown {
-        if (name)
-            return this.inputs[name].value;
+        return name
+            ? this.inputs[name]?.value
+            : Object.entries(this.inputs).reduce((data, [name, input]) => {
+                data[name] = input.value;
 
-        return Object.entries(this.inputs).reduce((data, [name, input]) => {
-            data[name] = input.value;
-
-            return data;
-        }, {} as Record<string, unknown>);
+                return data;
+            }, {} as Record<string, unknown>);
     }
 
     public submit(): boolean {

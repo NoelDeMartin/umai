@@ -3,9 +3,11 @@
         <Dialog
             as="div"
             class="flex overflow-y-auto fixed inset-0 z-40 justify-center items-center"
-            :initial-focus="getInitialFocus()"
             @close="cancellable && $ui.closeModal(modal.id)"
         >
+            <Portal v-if="$ui.snackbars.length > 0 && !childModal">
+                <AppSnackbars />
+            </Portal>
             <TransitionChild
                 as="template"
                 enter="ease-out duration-300"
@@ -33,8 +35,10 @@
                     class="flex flex-col overflow-hidden relative max-h-[90vh] bg-white shadow-xl transition-all m-edge"
                     v-bind="$attrs"
                 >
-                    <DialogTitle v-if="title" as="h2" class="px-4 pt-4 text-lg font-medium leading-6 text-gray-900">
-                        {{ title }}
+                    <DialogTitle v-if="title || $slots.title" as="h2" class="px-4 pt-4 text-lg font-medium leading-6 text-gray-900">
+                        <slot name="title">
+                            {{ title }}
+                        </slot>
                     </DialogTitle>
                     <div ref="content" :class="['flex overflow-auto flex-col mt-2 max-h-full', noPadding || 'px-4 pb-4']">
                         <slot :close="(result?: unknown) => $ui.closeModal(modal.id, result)" />
@@ -53,7 +57,6 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, watch } from 'vue';
 import type { PropType } from 'vue';
 
 import UI from '@/framework/core/facades/UI';
@@ -82,26 +85,5 @@ const { modal, childIndex } = defineProps({
     },
 });
 
-// Workaround to fix https://github.com/tailwindlabs/headlessui/issues/825
-const content = $ref<HTMLElement>();
 const childModal = $computed(() => UI.modals[childIndex] ?? null);
-const focusableElement = $computed(
-    () => content?.querySelector('button, input') as HTMLInputElement | HTMLButtonElement,
-);
-
-function getInitialFocus() {
-    return document.activeElement;
-}
-
-watch(
-    () => focusableElement,
-    async () => {
-        if (!modal.open)
-            return;
-
-        await nextTick();
-
-        focusableElement?.focus();
-    },
-);
 </script>

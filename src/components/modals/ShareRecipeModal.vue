@@ -1,15 +1,28 @@
 <template>
-    <AppModal v-slot="{ close }" :title="$t('recipes.share')">
-        <RecipeShareOptions v-model="shareOption" />
-        <BaseClipboard class="mt-4 max-w-readable" :text="clipboardContent" />
-        <div class="flex justify-end mt-4">
-            <BaseButton v-if="shareOption === 'jsonld'" @click="recipe.download(), close()">
-                <i-zondicons-download class="mr-2 w-4 h-4" /> {{ $t('recipes.download') }}
-            </BaseButton>
-            <BaseButton v-else @click="share(), close()">
+    <AppModal>
+        <template #title>
+            <div class="flex justify-between">
                 {{ $t('recipes.share') }}
-            </BaseButton>
-        </div>
+                <RecipeAccessControl v-if="$cookbook.isRemote" :recipe="recipe" />
+            </div>
+        </template>
+
+        <template #default="{ close }">
+            <RecipeShareOptions v-model="shareOption" />
+            <BaseClipboard class="mt-4 max-w-readable" :text="clipboardContent" />
+            <p v-if="shareOption === 'umai' && recipe.isPrivate" class="text-red-500 flex self-end mt-2">
+                <i-zondicons-exclamation-outline class="w-4 h-4 mt-1 mr-2 flex-shrink-0" />
+                {{ $t('recipes.accessControl.warning') }}
+            </p>
+            <div class="flex justify-end mt-4">
+                <BaseButton v-if="shareOption === 'jsonld'" @click="recipe.download(), close()">
+                    <i-zondicons-download class="mr-2 w-4 h-4" /> {{ $t('recipes.download') }}
+                </BaseButton>
+                <BaseButton v-else @click="share(), close()">
+                    {{ $t('recipes.share') }}
+                </BaseButton>
+            </div>
+        </template>
     </AppModal>
 </template>
 

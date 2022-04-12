@@ -71,13 +71,13 @@ async function addItem(index: number) {
 
     await nextTick();
 
-    inputs[index + 1].focus();
+    inputs[index + 1]?.focus();
 }
 
 async function removeItem(index: number) {
     inputs[index === 0 ? 1 : index - 1]?.focus();
 
-    await inputs[index].playLeaveAnimation();
+    await inputs[index]?.playLeaveAnimation();
 
     emit('update:modelValue', arrayWithoutIndex(items, index));
 }

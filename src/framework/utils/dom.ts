@@ -36,8 +36,8 @@ function getComputedClassStyle(property: keyof CSSStyleDeclaration, classes: str
         document.body.append(wrapper);
 
         for (const index in styleKeys) {
-            const styleKey = styleKeys[index];
-            const className = classes[index];
+            const styleKey = styleKeys[index] as string;
+            const className = classes[index] as string;
 
             if (styleKey in computedClassStyles)
                 continue;
@@ -52,7 +52,7 @@ function getComputedClassStyle(property: keyof CSSStyleDeclaration, classes: str
         wrapper.remove();
     }
 
-    return styleKeys.map(key => computedClassStyles[key]);
+    return styleKeys.map(key => computedClassStyles[key] as string);
 }
 
 export function hasAncestor(element: HTMLElement | null, selector: string): boolean {

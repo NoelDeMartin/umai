@@ -34,7 +34,11 @@ export default class FormInput<Value = unknown> {
 
     public validate(): boolean {
         this.errors = arr(this.rules)
-            .map(rule => rules[rule](this.value))
+            .map(rule => {
+                const validator = rules[rule] ?? fail(`Unknown '${rule}' validation rule`);
+
+                return validator(this.value);
+            })
             .filter()
             .toArray();
 

@@ -21,8 +21,10 @@ describe('Cloud Service', () => {
     beforeEach(async () => {
         const localModels: Recipe[] = [];
         const authenticator = mock<Authenticator>({
+            get engine() {
+                return remoteEngine;
+            },
             requireAuthenticatedFetch: () => async () => ({ status: 200 }),
-            newEngine: () => remoteEngine,
         });
 
         cloud = new CloudService;
@@ -78,14 +80,14 @@ describe('Cloud Service', () => {
 
         expect(remoteRamen).not.toBeNull();
         expect(remoteRamen.exists()).toBe(true);
-        expect(remoteRamen.operations[0].exists()).toBe(true);
-        expect(remoteRamen.operations[1].exists()).toBe(true);
-        expect(remoteRamen.operations[2].exists()).toBe(false);
+        expect(remoteRamen.operations[0]?.exists()).toBe(true);
+        expect(remoteRamen.operations[1]?.exists()).toBe(true);
+        expect(remoteRamen.operations[2]?.exists()).toBe(false);
 
         expect(cloud.remoteOperationUrls).toEqual({
             [remoteRamen.url]: [
-                remoteRamen.operations[0].url,
-                remoteRamen.operations[1].url,
+                remoteRamen.operations[0]?.url,
+                remoteRamen.operations[1]?.url,
             ],
         });
     });

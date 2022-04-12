@@ -1,5 +1,7 @@
 import { arr, stringToSlug } from '@noeldemartin/utils';
 
+import type { AuthenticatorName } from '@/framework/auth';
+
 interface ResetOptions {
     typeIndex: boolean;
     cookbook: boolean;
@@ -76,17 +78,31 @@ export default {
         }
     },
 
-    login(): void {
+    login(authenticator?: AuthenticatorName): void {
         // TODO use shortcut instead of logging in with the UI
-        cy.intercept('https://alice.example.com', { statusCode: 404 });
-        cy.intercept('https://alice.example.com/profile/card', { fixture: 'profile.ttl' });
-        cy.contains('disconnected').click();
-        cy.ariaInput('Login url').type('https://alice.example.com{enter}');
-        cy.waitForReload();
-        cy.contains('online').should('be.visible');
-        cy.contains('Go ahead').click();
-        cy.contains('Syncing in progress');
-        cy.contains('Syncing is up to date');
+
+        switch (authenticator) {
+            case 'inrupt':
+                cy.press('disconnected');
+                cy.ariaInput('Login url').type('http://localhost:4000/alice/{enter}');
+                cy.cssAuthorize({ reset: true });
+                cy.waitForReload({ resetProfiles: true });
+                break;
+            default:
+            case 'localStorage':
+                cy.intercept('https://alice.example.com', { statusCode: 404 });
+                cy.intercept('https://alice.example.com/profile/card', { fixture: 'profile.ttl' });
+                cy.press('disconnected');
+                cy.ariaInput('Login url').type('https://alice.example.com{enter}');
+                cy.waitForReload();
+                break;
+        }
+
+        cy.see('Syncing in progress');
+        cy.see('Syncing is up to date');
+        cy.press('Go ahead');
+        cy.see('Syncing in progress');
+        cy.see('Syncing is up to date');
     },
 
     queueAuthenticatedRequest(url: string, options: RequestInit): void {
@@ -127,6 +143,10 @@ export default {
                 body,
             });
         });
+    },
+
+    runAuthenticatedRequest(url: string, options: RequestInit): void {
+        cy.service('$auth').then(auth => auth.fetch(url, options));
     },
 
 };

@@ -47,9 +47,9 @@
                 <BaseMarkdown :text="$t('webImport.success_infoSingle')" />
                 <RecipeListItem
                     class="mt-4"
-                    :name="recipes[0].name"
-                    :description="recipes[0].description"
-                    :image-url="recipes[0].imageUrl"
+                    :name="recipes[0]?.name"
+                    :description="recipes[0]?.description"
+                    :image-url="recipes[0]?.imageUrl"
                 />
             </template>
 
@@ -271,7 +271,7 @@ async function submitRecipes(close: ModalCloseCallback<void>): Promise<void> {
 
     selectedRecipes.length === 1 && await Router.push({
         name: 'recipes.show',
-        params: { recipe: selectedRecipes[0].uuid },
+        params: { recipe: selectedRecipes[0]?.uuid },
     });
 
     UI.showSnackbar(I18n.translate('webImport.done', selectedRecipes.length));

@@ -61,7 +61,7 @@ export default {
 
                 return Cypress.Promise.all(promisedQuadArrays)
                     .then(quadArrays => quadArrays.map(quads => quadsToTurtle(quads)))
-                    .then(([expectedTurtle, actualTurtle]) => expect(actualTurtle).to.be.turtle(expectedTurtle));
+                    .then(([expectedTurtle, actualTurtle]) => expect(actualTurtle).to.be.turtle(expectedTurtle ?? ''));
             });
     },
 

@@ -25,7 +25,7 @@ export default {
 
             const blob = Cypress.Blob.base64StringToBlob(content, mimeType);
 
-            cy.contains('label', label).get<HTMLInputElement>('input[type="file"]').then(input => {
+            cy.contains('label', label).get<[HTMLInputElement]>('input[type="file"]').then(input => {
                 const file = new File([blob], filename);
                 const dataTransfer = new DataTransfer();
 

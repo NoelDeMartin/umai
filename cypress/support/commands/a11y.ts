@@ -1,5 +1,9 @@
 export default {
 
+    a11yGet(text: string): Cypress.Chainable {
+        return cy.contains(text);
+    },
+
     ariaLabel(label: string): Cypress.Chainable {
         return cy.get(`[aria-label="${label}"]`);
     },
@@ -8,7 +12,7 @@ export default {
         return cy.contains(label).then(matches => {
             const labelElement = (matches as unknown as HTMLElement[])[0];
 
-            return cy.get(`#${labelElement.getAttribute('for')}`);
+            return cy.get(`#${labelElement?.getAttribute('for')}`);
         });
     },
 
@@ -21,7 +25,7 @@ export default {
     },
 
     see(text: string): void {
-        cy.contains(text).scrollIntoView().should('be.visible');
+        cy.a11yGet(text).scrollIntoView().should('be.visible');
     },
 
     toggleDetails(text: string): void {

@@ -26,10 +26,17 @@ export default abstract class Authenticator {
     private authenticatedFetch?: Fetch;
     private booted?: PromisedValue<void>;
     private listeners: FluentArray<AuthenticatorListener> = arr<AuthenticatorListener>([]);
+    private _engine?: SolidEngine;
 
     public abstract login(loginUrl: string, user?: SolidUserProfile): Promise<AuthSession>;
 
     public abstract logout(): Promise<void>;
+
+    public get engine(): Engine {
+        this._engine = this._engine ?? new SolidEngine(this.requireAuthenticatedFetch());
+
+        return this._engine;
+    }
 
     public getAuthenticatedFetch(): Fetch | null {
         return this.authenticatedFetch ?? null;
@@ -37,10 +44,6 @@ export default abstract class Authenticator {
 
     public requireAuthenticatedFetch(): Fetch {
         return this.authenticatedFetch ?? fail('Authenticated fetch is not ready');
-    }
-
-    public newEngine(): Engine {
-        return new SolidEngine(this.requireAuthenticatedFetch());
     }
 
     public addListener(listener: AuthenticatorListener): () => void {

@@ -36,14 +36,10 @@
 </template>
 
 <script setup lang="ts">
+import { stringCapitalize } from '@noeldemartin/utils';
 import { useI18n } from 'vue-i18n';
 
 import Cloud from '@/framework/core/facades/Cloud';
-
-// TODO move to @noeldemartin/utils
-function stringCapitalize(text: string): string {
-    return text[0].toUpperCase() + text.slice(1);
-}
 
 const { t } = useI18n();
 const title = $computed(() => stringCapitalize(t(`cloud.statuses.${Cloud.status}`)));

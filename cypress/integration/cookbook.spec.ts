@@ -343,6 +343,8 @@ describe('Cookbook', () => {
         // Assert
         cy.ariaLabel('Umai').should('not.exist');
         cy.ariaLabel('Solid url').should('not.exist');
+        cy.dontSee('Public');
+        cy.dontSee('Private');
         cy.ariaLabel('JSON-LD').should('match', '[aria-checked="true"]');
         cy.see('Download');
     });
@@ -358,6 +360,7 @@ describe('Cookbook', () => {
 
         // Assert
         cy.getRecipe('ramen').then(ramen => {
+            cy.contains('button', 'Public').should('be.visible');
             cy.ariaLabel('Umai').should('match', '[aria-checked="true"]');
             cy.see(`${Cypress.config('baseUrl')}/viewer?url=${ramen.getDocumentUrl()}`);
 

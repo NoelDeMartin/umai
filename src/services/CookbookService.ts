@@ -40,7 +40,7 @@ export default class CookbookService extends Service<State, ComputedState> {
 
     public async createRemote(name: string, storageUrl: string): Promise<void> {
         const user = Auth.requireUser();
-        const engine = Auth.requireAuthenticator().newEngine();
+        const engine = Auth.requireAuthenticator().engine;
         const cookbook = await SolidContainerModel.withEngine(engine, async () => tap(
             new SolidContainerModel({ name }),
             async cookbook => {
@@ -120,7 +120,7 @@ export default class CookbookService extends Service<State, ComputedState> {
 
     private async loadCookbook(): Promise<void> {
         if (Auth.isLoggedIn()) {
-            const engine = Auth.authenticator.newEngine();
+            const engine = Auth.authenticator.engine;
             const cookbook = await SolidContainerModel.withEngine(engine, async () => tap(
                 await this.findCookbook(),
                 cookbook => cookbook && this.setRemoteCookbook(cookbook),

@@ -138,10 +138,12 @@ export default class CloudService extends Service<State, ComputedState> {
                 const pendingUpdates: Record<string, SolidModelOperation[]> = {};
 
                 for (const remoteModel of dirtyRemoteModels.items()) {
-                    pendingUpdates[remoteModel.url] = remoteModel.operations.filter(operation => !operation.exists());
+                    const modelPendingUpdates =
+                        pendingUpdates[remoteModel.url] =
+                        remoteModel.operations.filter(operation => !operation.exists());
 
                     for (const relatedModel of remoteModel.getRelatedModels()) {
-                        pendingUpdates[remoteModel.url].push(
+                        modelPendingUpdates.push(
                             ...(relatedModel.operations?.filter(operation => !operation.exists()) ?? []),
                         );
                     }
@@ -160,8 +162,7 @@ export default class CloudService extends Service<State, ComputedState> {
                         for (const operation of operations) {
                             const date = operation.date.toISOString();
 
-                            operationsMap[date] = operationsMap[date] ?? [];
-                            operationsMap[date].push(operation);
+                            (operationsMap[date] ??= []).push(operation);
                         }
 
                         Object.values(operationsMap).forEach(
@@ -192,7 +193,7 @@ export default class CloudService extends Service<State, ComputedState> {
     }
 
     protected initializeEngine(authenticator: Authenticator): void {
-        this.engine = authenticator.newEngine();
+        this.engine = authenticator.engine;
 
         for (const handler of this.handlers) {
             getRemoteClass(handler.modelClass).setEngine(this.engine);
@@ -387,10 +388,11 @@ export default class CloudService extends Service<State, ComputedState> {
     }
 
     protected cleanRemoteModel(remoteModel: SolidModel): void {
-        if (!(remoteModel.url in this.remoteOperationUrls))
+        const remoteOperationUrls = this.remoteOperationUrls[remoteModel.url];
+
+        if (!remoteOperationUrls)
             return;
 
-        const remoteOperationUrls = this.remoteOperationUrls[remoteModel.url];
         const relatedModels = remoteModel
             .getRelatedModels()
             .filter(

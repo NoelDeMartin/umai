@@ -37,8 +37,6 @@ export default {
         return typeof value === 'string' ? value : '0px';
     },
     pixels(key: string): number {
-        memoizedPixels[key] ??= measurePixels(this.css(key));
-
-        return memoizedPixels[key];
+        return memoizedPixels[key] ??= measurePixels(this.css(key));
     },
 };

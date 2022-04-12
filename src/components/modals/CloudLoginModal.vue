@@ -4,6 +4,7 @@
             <div class="prose">
                 <p v-safe-html="$t('cloud.login.info_reconnect', { url: $auth.previousSession?.loginUrl })" />
             </div>
+            <CloudConfiguration class="mt-4" />
             <BaseButton class="mt-4 bg-brand-solid-700 hover:bg-brand-solid-500" @click="$auth.reconnect()">
                 <i-app-solid-emblem aria-hidden="true" class="w-6 h-6" />
                 <span class="ml-2">{{ $t('cloud.reconnect_now') }}</span>

@@ -1,4 +1,4 @@
-import { arr, arrayFilter, isObject, silenced, tap } from '@noeldemartin/utils';
+import { arr, arrayFilter, isObject, silenced, stringMatchAll, tap } from '@noeldemartin/utils';
 import type { JsonLD } from '@noeldemartin/solid-utils';
 
 import Recipe from '@/models/Recipe';
@@ -122,7 +122,7 @@ export interface WebsiteMetadata {
 }
 
 export async function parseWebsiteRecipes(url: string, html: string): Promise<Recipe[]> {
-    const jsonLD = html.matchAll(/<script[^>]+type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/gim);
+    const jsonLD = stringMatchAll<2>(html, /<script[^>]+type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/gim);
     const recipes = await Promise.all(
         arr(jsonLD)
             .map(([, rawJson]) => JSON.parse(rawJson))

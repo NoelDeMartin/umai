@@ -9,15 +9,15 @@ export interface ListDraggingController {
 }
 
 function getHoveringItem(event: MouseEvent | TouchEvent, listY: number, itemsHeight: number[]): number {
-    const pointerY = 'pageY' in event ? event.pageY : event.touches[0].pageY;
+    const pointerY = 'pageY' in event ? event.pageY : event.touches[0]?.pageY;
 
-    if (pointerY < listY)
+    if (!pointerY || pointerY < listY)
         return 0;
 
     let y = listY;
 
     for (let item = 0; item < itemsHeight.length; item++) {
-        y += itemsHeight[item];
+        y += itemsHeight[item] ?? 0;
 
         if (y > pointerY)
             return item;

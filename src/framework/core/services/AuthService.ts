@@ -1,5 +1,6 @@
 import { createPrivateTypeIndex, fetchLoginUserProfile } from '@noeldemartin/solid-utils';
 import { fail, objectWithout, tap, urlRoot } from '@noeldemartin/utils';
+import { SolidACLAuthorization } from 'soukai-solid';
 import type { Fetch, SolidUserProfile } from '@noeldemartin/solid-utils';
 
 import { getAuthenticator } from '@/framework/auth';
@@ -26,6 +27,7 @@ interface State {
 
 interface ComputedState {
     authenticator: Authenticator | null;
+    fetch: Fetch;
     loggedIn: boolean;
     user: SolidUserProfile | null;
 }
@@ -193,6 +195,7 @@ export default class AuthService extends Service<State, ComputedState> {
     protected getComputedStateDefinitions(): ComputedStateDefinitions<State, ComputedState> {
         return {
             authenticator: state => state.session?.authenticator ?? null,
+            fetch: (_, { authenticator }) => authenticator?.getAuthenticatedFetch() ?? window.fetch.bind(window),
             loggedIn: state => state.session !== null,
             user: state => state.session?.user ?? null,
         };
@@ -204,6 +207,8 @@ export default class AuthService extends Service<State, ComputedState> {
         authenticator.addListener({
             onSessionStarted: async session => {
                 this.setState({ session });
+
+                SolidACLAuthorization.setEngine(session.authenticator.engine);
 
                 await Events.emit('login', session);
             },

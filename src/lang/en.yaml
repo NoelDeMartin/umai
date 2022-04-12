@@ -148,6 +148,18 @@ recipes:
   share_jsonld: JSON-LD
   shareWith: Share with
 
+  accessControl:
+    profile_public: Public
+    profile_publicDescription: Anyone with the link can view this recipe
+    profile_private: Private
+    profile_privateDescription: Only you can view this recipe
+    change_label_a11y: Public permissions
+    change_button_a11y: "Change permissions (current: {current})"
+    loading: loading permissions
+    updating: updating permissions
+    error: error reading permissions
+    warning: This recipe is private, remember to make it public before sharing it with someone else.
+
   index:
     title: Your cookbook
     add: add recipe

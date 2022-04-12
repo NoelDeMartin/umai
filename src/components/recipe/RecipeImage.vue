@@ -9,7 +9,6 @@
 import { urlRoot } from '@noeldemartin/utils';
 import { watchEffect } from 'vue';
 import type { PropType } from 'vue';
-import type { TypedFetch } from 'soukai-solid';
 
 import Auth from '@/framework/core/facades/Auth';
 
@@ -57,8 +56,7 @@ async function resolveSourceUrl(url: string): Promise<string | undefined> {
         return URL.createObjectURL(blob);
     };
     const downloadImage = async () => {
-        const fetch: TypedFetch = Auth.authenticator?.getAuthenticatedFetch() ?? window.fetch;
-        const response = await fetch(url);
+        const response = await Auth.fetch(url);
 
         if (response.status !== 200)
             return;

@@ -60,7 +60,7 @@ const form = reactiveForm({
         default: getLocationQueryParameter('url'),
     },
 });
-const engine = $computed(() => new SolidEngine(Auth.authenticator?.getAuthenticatedFetch() ?? window.fetch));
+const engine = $computed(() => new SolidEngine(Auth.fetch));
 
 async function findRecipe(): Promise<Recipe | null> {
     if (!form.url)
@@ -70,7 +70,7 @@ async function findRecipe(): Promise<Recipe | null> {
         const recipe = await Recipe.withEngine(engine, async () => {
             const recipes = await Recipe.all({ $in: [urlRoute(form.url)] });
 
-            return recipes.length === 1 ? recipes[0] : null;
+            return recipes[0] ?? null;
         });
 
         return recipe;
