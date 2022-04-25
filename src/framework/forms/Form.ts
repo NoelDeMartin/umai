@@ -16,6 +16,7 @@ export default class Form extends MagicObject {
     protected static getDefaultValue(input: FormInputDefinition<InferAny, InferAny>): unknown {
         this.defaultInputValues = this.defaultInputValues ?? {
             [FormInputType.String]: '',
+            [FormInputType.Boolean]: false,
             [FormInputType.Number]: 0,
         };
 

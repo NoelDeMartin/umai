@@ -85,7 +85,7 @@
                     {{ $t('webImport.failure_retry') }}
                 </summary>
 
-                <BaseForm :form="retryForm" class="flex flex-col mt-2 space-y-2" @submit="scanWebsite(submitRetry())">
+                <BaseForm :form="urlForm" class="flex flex-col mt-2 space-y-2" @submit="scanWebsite(submitRetry())">
                     <BaseMarkdown :text="$t('webImport.failure_retry_info')" />
                     <div class="flex items-center">
                         <BaseCheckbox id="use-proxy" name="useProxy" />
@@ -94,18 +94,12 @@
                             <BaseFluidInput
                                 ref="proxyUrlInput"
                                 name="proxyUrl"
-                                :placeholder="$t('webImport.failure_retry_proxyPlaceholder')"
-                                :disabled="!retryForm.useProxy"
+                                placeholder="https://"
+                                :disabled="!urlForm.useProxy"
                                 inline
                                 class="ml-1"
                                 @click="afterAnimationFrame().then(proxyUrlInput?.focus)"
                             />
-                        </label>
-                    </div>
-                    <div class="flex items-center">
-                        <BaseCheckbox id="reuse-proxy" name="reuseProxy" :disabled="!retryForm.useProxy" />
-                        <label for="reuse-proxy" class="ml-2 cursor-pointer">
-                            {{ $t('webImport.failure_retry_reuseProxy') }}
                         </label>
                     </div>
                     <BaseButton type="submit" class="!mt-4">
@@ -163,12 +157,16 @@
 <script setup lang="ts">
 import { after, afterAnimationFrame } from '@noeldemartin/utils';
 
+import Cloud from '@/framework/core/facades/Cloud';
 import I18n from '@/framework/core/facades/I18n';
+import Network from '@/framework/core/facades/Network';
 import Router from '@/framework/core/facades/Router';
 import UI from '@/framework/core/facades/UI';
 import { FormInputType, reactiveForm } from '@/framework/forms';
 import type { ModalCloseCallback } from '@/framework/core/services/UIService';
 
+import Config from '@/services/facades/Config';
+import ConfigureProxyModal from '@/components/modals/ConfigureProxyModal.vue';
 import Recipe from '@/models/Recipe';
 import { parseWebsiteMetadata, parseWebsiteRecipes } from '@/utils/web-parsing';
 import type IBaseFluidInput from '@/components/base/BaseFluidInput';
@@ -178,17 +176,20 @@ let scanning = $ref(false);
 let failure = $ref<Error | undefined>();
 let recipes = $ref<Recipe[] | undefined>();
 let websiteMetadata = $ref<WebsiteMetadata | undefined>();
+const proxyUrlInput = $ref<IBaseFluidInput>();
 const urlForm = reactiveForm({
     url: {
         type: FormInputType.String,
         rules: 'required',
     },
-});
-const proxyUrlInput = $ref<IBaseFluidInput>();
-const retryForm = reactiveForm({
-    useProxy: { type: FormInputType.String },
-    proxyUrl: { type: FormInputType.String },
-    reuseProxy: { type: FormInputType.String },
+    useProxy: {
+        type: FormInputType.Boolean,
+        default: !!Config.proxyUrl,
+    },
+    proxyUrl: {
+        type: FormInputType.String,
+        default: Config.proxyUrl || '',
+    },
 });
 const htmlForm = reactiveForm({
     html: {
@@ -226,9 +227,26 @@ async function scanWebsite(operation: Promise<void>): Promise<void> {
 }
 
 async function submitUrl() {
+    if (Config.proxyUrl === null) {
+        const modal = await UI.openModal(ConfigureProxyModal);
+
+        await modal.afterClose;
+
+        urlForm.useProxy = !!Config.proxyUrl;
+        urlForm.proxyUrl = Config.proxyUrl || '';
+    }
+
     try {
         const url = urlForm.url;
-        const response = await fetch(url);
+        const proxyUrl = urlForm.useProxy ? urlForm.proxyUrl : false;
+        const response = proxyUrl
+            ? await fetch(proxyUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url }),
+            })
+            : await fetch(url);
+
         const text = await response.text();
 
         if (Math.floor(response.status / 100) !== 2)
@@ -243,7 +261,7 @@ async function submitUrl() {
 async function submitRetry() {
     failure = undefined;
 
-    // TODO update proxy config and retry
+    await submitUrl();
 }
 
 async function submitHtml() {
@@ -275,6 +293,8 @@ async function submitRecipes(close: ModalCloseCallback<void>): Promise<void> {
     });
 
     UI.showSnackbar(I18n.translate('webImport.done', selectedRecipes.length));
+
+    Network.online && Cloud.sync();
 }
 
 async function copySourceUrlToClipboard() {

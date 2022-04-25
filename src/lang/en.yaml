@@ -32,6 +32,19 @@ cloud:
 
   logout: Log out
 
+proxyConfig:
+  title: Do you want to use a proxy?
+  info: |
+    This application runs entirely in the browser, so you will need a proxy in order to read content from other websites (or you will run into [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing) issues).
+
+    You can still import recipes without a proxy, but you'll have to copy & paste the source HTML into a text box.
+
+    [learn more]({url})
+  advancedOptions: Advanced options
+  proxyUrl: Proxy url
+  accept: OK
+  reject: Continue without a proxy
+
 webImport:
   title: Import recipes from the Web!
   info: Add a url from the internet and you'll get your recipe!
@@ -47,9 +60,7 @@ webImport:
       Here's some things you can do:
   failure_retry: Try again
   failure_retry_info: "If you think this error was temporary, just try again. You can also configure a proxy:"
-  failure_retry_proxyPlaceholder: enter proxy url
   failure_retry_useProxy: "Use a proxy:"
-  failure_retry_reuseProxy: Reuse this proxy in the future
   failure_retry_submit: Retry
   failure_html: Copy & paste HTML
   failure_html_info: "You can also view the source of the website and copy & paste it manually. If you don't know how to do that, copy the following url in your browser and copy & paste the contents you get into the textarea below:"

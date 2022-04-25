@@ -2,11 +2,13 @@ import Form from './Form';
 
 export const enum FormInputType {
     String = 'string',
+    Boolean = 'boolean',
     Number = 'number',
 }
 
 export type GetFormInputValue<InputType> =
     InputType extends FormInputType.String ? string :
+    InputType extends FormInputType.Boolean ? boolean :
     InputType extends FormInputType.Number ? number :
     never;
 

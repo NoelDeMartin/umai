@@ -98,14 +98,18 @@ export default class Service<
             target.static('__classProperties').includes(property);
 
         const proxy: this = this._proxy = new Proxy(this, {
-            get: (target, property, receiver) =>
-                isReservedProperty(target, property)
-                    ? Reflect.get(target, property, receiver)
-                    : (
-                        proxy.getState()[property] ??
-                        proxy.getComputedState(property) ??
-                        proxy.__get(property)
-                    ),
+            get: (target, property, receiver) => {
+                if (isReservedProperty(target, property))
+                    return Reflect.get(target, property, receiver);
+
+                if (proxy.hasState(property))
+                    return proxy.getState(property);
+
+                if (proxy.hasComputedState(property))
+                    return proxy.getComputedState(property);
+
+                return proxy.__get(property);
+            },
             set(target, property, value, receiver) {
                 if (isReservedProperty(target, property))
                     return Reflect.set(target, property, value, receiver);
@@ -117,10 +121,20 @@ export default class Service<
         });
     }
 
-    protected getState(): State {
+    protected hasState<P extends keyof State>(property: P): boolean {
         const appState = Store.state as Record<string, State>;
+        const serviceState = appState[this._namespace] ?? this.getInitialState();
 
-        return appState[this._namespace] ?? this.getInitialState();
+        return property in serviceState;
+    }
+
+    protected getState(): State;
+    protected getState<P extends keyof State>(property: P): State[P];
+    protected getState<P extends keyof State>(property?: P): State | State[P] {
+        const appState = Store.state as Record<string, State>;
+        const serviceState = appState[this._namespace] ?? this.getInitialState();
+
+        return property ? serviceState[property] : serviceState;
     }
 
     protected setState(state: Partial<State>): void {
@@ -141,6 +155,10 @@ export default class Service<
             ...storage,
             ...persisted,
         });
+    }
+
+    protected hasComputedState(property: keyof ComputedState): boolean {
+        return `${this._namespace}/${property}` in Store.getters;
     }
 
     protected getComputedState<P extends keyof ComputedState>(property: P): ComputedState[P] {

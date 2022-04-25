@@ -277,10 +277,10 @@ describe('Cookbook', () => {
         cy.contains('Import from the Web').click();
         cy.ariaInput('Website URL').type('https://recipes.example.com/hummus');
         cy.contains('Scan website for recipes').click();
+        cy.contains('Continue without a proxy').click();
         cy.see('We\'ve found the recipe!');
 
-        // TODO this shouldn't be necessary! there seems to be something wrong with the modal because it's
-        // re-rendering too much...
+        // Workaround for https://github.com/cypress-io/cypress/issues/7306
         cy.wait(200);
 
         cy.see('Simple houmous');
@@ -297,7 +297,37 @@ describe('Cookbook', () => {
         cy.assertLocalDocumentEquals('solid://recipes/simple-houmous', jaimiesHummusJsonLD);
     });
 
-    it.skip('Imports recipes from the Web using a proxy');
+    it('Imports recipes from the Web using a proxy', () => {
+        // Arrange
+        cy.intercept('https://proxy.example.com', { fixture: 'html/jaimies-hummus.html' });
+
+        cy.see('Are you ready to start cooking?');
+
+        // Act
+        cy.contains('Import from the Web').click();
+        cy.ariaInput('Website URL').type('https://recipes.example.com/hummus');
+        cy.contains('Scan website for recipes').click();
+        cy.contains('Advanced options').click();
+        cy.ariaInput('Proxy url').clear().type('https://proxy.example.com');
+        cy.contains('OK').click();
+        cy.see('We\'ve found the recipe!');
+
+        // Workaround for https://github.com/cypress-io/cypress/issues/7306
+        cy.wait(200);
+
+        cy.see('Simple houmous');
+        cy.see('Chickpeas – the star ingredient in houmous – are incredibly good for you.');
+        cy.contains('Import to my cookbook').click();
+
+        // Assert
+        cy.see('The recipe has been added to your cookbook');
+        cy.url().should('contain', 'simple-houmous');
+        cy.see('Chickpeas – the star ingredient in houmous – are incredibly good for you.');
+        cy.see('1 lemon');
+        cy.see('recipe on recipes.example.com');
+
+        cy.assertLocalDocumentEquals('solid://recipes/simple-houmous', jaimiesHummusJsonLD);
+    });
 
     it('Imports recipes from the Web copy & pasting HTML', () => {
         // Arrange
@@ -309,10 +339,10 @@ describe('Cookbook', () => {
         cy.contains('Import from the Web').click();
         cy.ariaInput('Website URL').type('https://recipes.example.com/ramen');
         cy.contains('Scan website for recipes').click();
+        cy.contains('Continue without a proxy').click();
         cy.see('Oops! That didn\'t work');
 
-        // TODO this shouldn't be necessary! there seems to be something wrong with the modal because it's
-        // re-rendering too much...
+        // Workaround for https://github.com/cypress-io/cypress/issues/7306
         cy.wait(200);
 
         cy.toggleDetails('Try again');
@@ -321,6 +351,10 @@ describe('Cookbook', () => {
         cy.contains('button', 'Scan HTML').click();
         cy.see('Homemade Ramen');
         cy.see('Cat Merch!');
+
+        // Workaround for https://github.com/cypress-io/cypress/issues/7306
+        cy.wait(200);
+
         cy.contains('Import to my cookbook').click();
 
         // Assert

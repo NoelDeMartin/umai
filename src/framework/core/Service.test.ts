@@ -42,6 +42,10 @@ describe('Service', () => {
         expect(instance.hasFoo).toBe(true);
     });
 
+    it('magic getters respect null values', () => {
+        expect(instance.foo).toBeNull();
+    });
+
 });
 
 describe('Service types', () => {
@@ -66,8 +70,10 @@ interface ComputedState {
 
 class StubService extends Service<State, ComputedState> {
 
-    public getState(): State {
-        return super.getState();
+    public getState(): State;
+    public getState<P extends keyof State>(property: P): State[P];
+    public getState<P extends keyof State>(property?: P): State | State[P] {
+        return super.getState(property as P);
     }
 
     public setState(state: Partial<State>): void {

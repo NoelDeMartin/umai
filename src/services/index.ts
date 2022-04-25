@@ -5,9 +5,11 @@ import { ApplicationComponent } from '@/framework/core/services/UIService';
 import AppLoadingModal from '@/components/modals/AppLoadingModal.vue';
 import Recipe from '@/models/Recipe';
 
+import Config from './facades/Config';
 import Cookbook from './facades/Cookbook';
 
 const services = {
+    $config: Config,
     $cookbook: Cookbook,
 };
 

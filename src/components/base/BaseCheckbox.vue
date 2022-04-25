@@ -9,6 +9,7 @@
         ]"
         :name="name"
         :value="inputValue"
+        :checked="!!inputValue"
         v-bind="otherAttrs"
         @change="onChange()"
     >

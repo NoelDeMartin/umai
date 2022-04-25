@@ -4,9 +4,13 @@ export default class AppService extends Service {
 
     public name: string = 'Solid App';
 
-    public sourceUrl!: string;
-    public version!: string;
-    public versionName!: string;
+    public sourceUrl: string = '';
+    public version: string = '';
+    public versionName: string = '';
+
+    public env<T = unknown>(property: string): T {
+        return import.meta.env[`VITE_${property}`] as unknown as T;
+    }
 
     protected async boot(): Promise<void> {
         await super.boot();
