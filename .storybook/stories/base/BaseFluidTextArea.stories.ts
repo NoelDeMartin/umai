@@ -22,7 +22,7 @@ export const Playground = story(Template);
 
 export default meta<Args>({
     component: BaseFluidTextArea,
-    title: 'BaseFluidTextArea',
+    title: 'WIP/BaseFluidTextArea',
     args: {
         value:
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' +

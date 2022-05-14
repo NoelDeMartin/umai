@@ -18,7 +18,7 @@ export const Playground = story(Template);
 
 export default meta<Args>({
     component: RecipeInstructionStepInput,
-    title: 'RecipeInstructionStepInput',
+    title: 'WIP/RecipeInstructionStepInput',
     args: {
         value:
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' +

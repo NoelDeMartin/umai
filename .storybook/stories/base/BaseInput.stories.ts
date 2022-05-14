@@ -39,6 +39,6 @@ export const Playground = story(Template);
 
 export default meta<Args>({
     component: BaseInput,
-    title: 'BaseInput',
+    title: 'WIP/BaseInput',
     args: { value: 'Foo bar' },
 });

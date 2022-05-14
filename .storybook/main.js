@@ -1,6 +1,7 @@
+const Components = require('unplugin-vue-components/vite');
 const Icons = require('unplugin-icons/vite');
 const IconsResolver = require('unplugin-icons/resolver');
-const Components = require('unplugin-vue-components/vite');
+const Vue = require('@vitejs/plugin-vue');
 const { default: I18n } = require('@intlify/vite-plugin-vue-i18n');
 const { FileSystemIconLoader } = require('unplugin-icons/loaders');
 const { HeadlessUiResolver } = require('unplugin-vue-components/resolvers');
@@ -12,17 +13,23 @@ module.exports = {
         './stories/**/*.ts',
     ],
     addons: [
-        '@storybook/addon-essentials',
+        {
+            name: '@storybook/addon-essentials',
+            options: {
+                actions: false,
+                docs: false,
+            },
+        },
     ],
     core: {
-        builder: 'storybook-builder-vite',
+        builder: '@storybook/builder-vite',
     },
     async viteFinal(defaultConfig) {
         const { config: projectConfig } = await loadConfigFromFile(resolve(__dirname, '../vite.config.ts'));
 
         projectConfig.resolve.alias['@sb'] = resolve(__dirname, './');
 
-        return mergeConfig(defaultConfig, {
+        const config = mergeConfig(defaultConfig, {
             ...projectConfig,
             plugins: [
                 I18n({ include: resolve(__dirname, '../src/lang/**') }),
@@ -39,5 +46,10 @@ module.exports = {
                 }),
             ],
         });
+        const vuePluginIndex = config.plugins.findIndex(({ name }) => name === 'vite:vue');
+
+        config.plugins[vuePluginIndex] = Vue({ reactivityTransform: true });
+
+        return config;
     },
 };

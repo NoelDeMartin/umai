@@ -32,7 +32,7 @@ export const Disconnected = story(Template, { status: CloudStatusEnum.Disconnect
 
 export default meta<Args>({
     component: CloudStatus,
-    title: 'CloudStatus',
+    title: 'WIP/CloudStatus',
     argTypes: {
         status: {
             control: { type: 'select' },

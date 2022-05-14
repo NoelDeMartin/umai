@@ -2,28 +2,28 @@ import { uuid } from '@noeldemartin/utils';
 
 import { meta, story, template } from '@sb/support/helpers';
 
-import RecipeIngredientsInput from '@/routing/pages/recipes/components/RecipeIngredientsInput.vue';
-import type { RecipeIngredientInputData } from '@/routing/pages/recipes/components/RecipeIngredientInput';
+import BaseInputList from '@/components/base/BaseInputList.vue';
+import type { BaseInputListItemData } from '@/components/base/BaseInputListItem';
 
 interface Args {
     value: string[];
 }
 
 const Template = template<Args>(({ value }) => {
-    const ingredients: RecipeIngredientInputData[] = value.map(name => ({ id: uuid(), name }));
+    const ingredients: BaseInputListItemData[] = value.map(value => ({ id: uuid(), value }));
 
     return {
-        components: { RecipeIngredientsInput },
+        components: { BaseInputList },
         data: () => ({ ingredients }),
-        template: '<RecipeIngredientsInput v-model="ingredients" />',
+        template: '<BaseInputList v-model="ingredients" />',
     };
 });
 
 export const Playground = story(Template);
 
 export default meta<Args>({
-    component: RecipeIngredientsInput,
-    title: 'RecipeIngredientsInput',
+    component: BaseInputList,
+    title: 'WIP/BaseInputList',
     args: {
         value: [
             '200g Chickpeas',

@@ -1,7 +1,7 @@
 import { meta, story, template } from '@sb/support/helpers';
 import { recipeFixtures } from '@sb/fixtures/recipes';
 
-import RecipesGrid from '@/components/RecipesGrid.vue';
+import RecipesGrid from '@/components/recipe/RecipesGrid.vue';
 
 interface Args {
     //
@@ -19,5 +19,5 @@ export const Base = story(Template);
 
 export default meta<Args>({
     component: RecipesGrid,
-    title: 'RecipesGrid',
+    title: 'WIP/RecipesGrid',
 });

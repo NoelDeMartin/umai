@@ -57,7 +57,7 @@ export const Guest = story(Template);
 
 export default meta<Args>({
     component: UserMenu,
-    title: 'UserMenu',
+    title: 'WIP/UserMenu',
     argTypes: {
         user: {
             control: { type: 'select' },

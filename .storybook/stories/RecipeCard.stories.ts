@@ -1,7 +1,7 @@
 import { meta, story, template } from '@sb/support/helpers';
 import { RecipeFixture, recipeFixtures } from '@sb/fixtures/recipes';
 
-import RecipeCard from '@/components/RecipeCard.vue';
+import RecipeCard from '@/components/recipe/RecipeCard.vue';
 
 interface Args {
     recipe: RecipeFixture;
@@ -40,7 +40,7 @@ export const Playground = story(Template);
 
 export default meta<Args>({
     component: RecipeCard,
-    title: 'RecipeCard',
+    title: 'WIP/RecipeCard',
     argTypes: {
         recipe: {
             control: { type: 'select' },

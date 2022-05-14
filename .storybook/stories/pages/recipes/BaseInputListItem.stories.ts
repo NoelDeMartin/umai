@@ -1,6 +1,6 @@
 import { meta, story, template } from '@sb/support/helpers';
 
-import RecipeIngredientInput from '@/routing/pages/recipes/components/RecipeIngredientInput.vue';
+import BaseInputListItem from '@/components/base/BaseInputListItem.vue';
 
 interface Args {
     value: string;
@@ -8,17 +8,17 @@ interface Args {
 
 const Template = template<Args>(({ value }) => {
     return {
-        components: { RecipeIngredientInput },
+        components: { BaseInputListItem },
         data: () => ({ value }),
-        template: '<RecipeIngredientInput v-model="value" />',
+        template: '<BaseInputListItem v-model="value" />',
     };
 });
 
 export const Playground = story(Template);
 
 export default meta<Args>({
-    component: RecipeIngredientInput,
-    title: 'RecipeIngredientInput',
+    component: BaseInputListItem,
+    title: 'WIP/BaseInputListItem',
     args: {
         value: '300g Cheese',
     },

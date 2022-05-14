@@ -18,7 +18,7 @@ export const Playground = story(Template);
 
 export default meta<Args>({
     component: BaseFluidInput,
-    title: 'BaseFluidInput',
+    title: 'WIP/BaseFluidInput',
     args: {
         value: 'Foobar',
     },

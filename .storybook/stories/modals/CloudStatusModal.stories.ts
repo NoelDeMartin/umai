@@ -6,7 +6,7 @@ import { meta, story, template } from '@sb/support/helpers';
 import { CloudStatus as CloudStatusEnum } from '@/framework/core/services/CloudService';
 import { fakeRemoteModel } from '@/framework/testing/model-helpers';
 
-import AppModals from '@/components/modals/AppModals.vue';
+import AppOverlays from '@/components/AppOverlays.vue';
 import CloudStatusModal from '@/components/modals/CloudStatusModal.vue';
 
 interface Args {
@@ -47,7 +47,7 @@ const Template = template<Args>(({ status, dirtyRemoteModels, webId, loginUrl })
 
     return {
         components: {
-            AppModals,
+            AppOverlays,
         },
         setup() {
             const modalId = ref<string | null>(null);
@@ -64,7 +64,7 @@ const Template = template<Args>(({ status, dirtyRemoteModels, webId, loginUrl })
         },
         template: `
             <div>
-                <AppModals />
+                <AppOverlays />
                 <button @click="open">Open modal</button>
             </div>
         `,
@@ -92,7 +92,7 @@ export const Reconnect = story(Template, {
 
 export default meta<Args>({
     component: CloudStatusModal,
-    title: 'CloudStatusModal',
+    title: 'WIP/CloudStatusModal',
     argTypes: {
         status: {
             control: { type: 'select' },
