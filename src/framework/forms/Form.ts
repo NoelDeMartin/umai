@@ -26,7 +26,7 @@ export default class Form extends MagicObject {
     public submitted: boolean = false;
     private inputs: Record<string, FormInput>;
 
-    constructor(inputs: Record<string, FormInputDefinition<InferAny, InferAny>>) {
+    constructor(inputs: Record<string, FormInputDefinition<InferAny, InferAny>> = {}) {
         super();
 
         this.inputs = reactive(
