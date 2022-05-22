@@ -1,5 +1,5 @@
 <template>
-    <BaseForm
+    <CoreForm
         :form="form"
         class="flex flex-col items-center justify-center"
         @submit="submit()"
@@ -35,7 +35,7 @@
                 :text="$t('viewer.notFound', { url: notFound })"
             />
         </template>
-    </BaseForm>
+    </CoreForm>
 </template>
 
 <script setup lang="ts">

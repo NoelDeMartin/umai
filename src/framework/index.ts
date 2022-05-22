@@ -5,6 +5,7 @@ import type { RouteRecordRaw } from 'vue-router';
 
 import App from '@/framework/core/facades/App';
 import getBasePlugins from '@/framework/plugins';
+import baseComponents from '@/framework/components/headless';
 import baseDirectives from '@/framework/directives';
 import baseRoutes from '@/framework/routing';
 import Errors from '@/framework/core/facades/Errors';
@@ -58,6 +59,7 @@ export type BootstrapApplicationOptions = Partial<{
     name: string;
     selector: string;
     plugins: Plugin[];
+    components: Record<string, Component>;
     directives: Record<string, Directive>;
     routes: RouteRecordRaw[];
     services: Record<string, Service>;
@@ -77,6 +79,7 @@ export async function bootstrapApplication(
     const routes = [...options.routes ?? [], ...baseRoutes];
     const basePlugins = await getBasePlugins(routes);
     const plugins = [...basePlugins, ...(options.plugins ?? [])];
+    const components = { ...baseComponents, ...(options.components ?? {}) };
     const directives = { ...baseDirectives, ...(options.directives ?? {}) };
     const services = { ...baseServices, ...(options.services ?? {}) };
     const authenticators = { ...baseAuthenticators, ...(options.authenticators ?? {}) };
@@ -87,9 +90,8 @@ export async function bootstrapApplication(
     plugins.forEach(plugin => app.use(plugin));
 
     Object.assign(app.config.globalProperties, services);
-    Object
-        .entries(directives)
-        .forEach(([name, directive]) => app.directive(name, directive));
+    Object.entries(components).forEach(([name, component]) => app.component(name, component));
+    Object.entries(directives).forEach(([name, directive]) => app.directive(name, directive));
     Object
         .entries(authenticators)
         .forEach(([name, authenticator]) => registerAuthenticator(name as AuthenticatorName, authenticator));

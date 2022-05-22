@@ -18,7 +18,7 @@ cloud:
   reconnect_onStartup: Reconnect on startup
 
   noPendingUpdates_a11y: Syncing is up to date
-  somePendingUpdates_a11y: "_ | There is one pending update | There are {n} pending updates"
+  somePendingUpdates_a11y: '_ | There is one pending update | There are {n} pending updates'
   manyPendingUpdates_a11y: There are many pending updates
 
   login:
@@ -78,7 +78,7 @@ webImport:
   success_importSingle: Import to my cookbook
   success_importMultiple: Import selected recipes
 
-  done: "_ | The recipe has been added to your cookbook | The recipes have been added to your cookbook"
+  done: '_ | The recipe has been added to your cookbook | The recipes have been added to your cookbook'
 
 menu:
   open: Open user menu
@@ -87,7 +87,15 @@ menu:
   settings: Settings
 
 footer:
+  about: about
+  about_title: About
+  about_content: |
+    Developed and maintained by [Noel De Martin](https://noeldemartin.com).
+
+    This application is open source and contributions are welcome, get the code in [github]({ sourceUrl }).
   source: source
+  source_title: View application source code
+  version_title: View release notes
 
 home:
   title: What will you cook today?
@@ -96,9 +104,27 @@ home:
   back: back home
 
   onboarding:
-    title: Welcome!
-    message: Are you ready to start cooking? Add your first recipe!
-    add_recipe: Add your first recipe
+    welcome: With {umai}, you'll be able to manage all your recipes and share them with others. Take control of your diet, and start your culinary adventure!
+    umai_title: Umai (うまい) means "delicious" in Japanese 😋
+    getStarted: How would you like to begin?
+    createRecipe: Create your first recipe
+    createRecipe_info: How do you want to create your recipe?
+    loginWithSolid: Connect your Solid POD
+    loginWithSolid_info: You can connect to your Solid POD using your webId or issue provider below. If you don't have one, learn how to get started at <CoreLink url="https://solidproject.org/users/get-a-pod" color="brand-solid">solidproject.org</CoreLink>.
+    loginWithSolid_label: Login url
+    loginWithSolid_placeholder: webId or issue provider
+    loginWithSolid_loading: Connecting to your Solid POD...
+    loginWithSolid_stale: This is taking too long, maybe try [reloading the page](action:reload) to start again.
+    loginWithSolid_submit: Log in
+    whatIsSolid: What is Solid?
+    whatIsSolid_title: What is Solid?
+    whatIsSolid_content: |
+      Solid is a decentralized storage protocol built on top of web standards. If you want to use this app across devices, you can connect it to your Solid POD to keep changes in sync. Even if you use it in a single device, this will also keep your recipes secure in case your device is lost. Using Solid is also useful to share recipes with others, and even yourself with a different Solid App.
+
+      In any case, Umai works 100% offline and you can connect it to your Solid POD later on. If you've never heard of Solid and you're just trying things out, you don't need to know anything about it.
+
+      <CoreLink url="https://solidproject.org" color="brand-solid" class="text-sm">Learn more</CoreLink>
+    back: Never mind, go back
 
   createCookbook:
     title: Create your cookbook
@@ -125,10 +151,11 @@ recipes:
 
   image_edit: Change image
   name_placeholder: Recipe name
+  description_label: Recipe description
   description_placeholder: Recipe description
-  servings_placeholder: "?? persons"
-  prepTime_placeholder: "?? minutes"
-  cookTime_placeholder: "?? minutes"
+  servings_placeholder: '?? persons'
+  prepTime_placeholder: '?? minutes'
+  cookTime_placeholder: '?? minutes'
 
   image_edit_placeholder: Write image url...
   image_edit_title: Change recipe image
@@ -165,7 +192,7 @@ recipes:
     profile_private: Private
     profile_privateDescription: Only you can view this recipe
     change_label_a11y: Public permissions
-    change_button_a11y: "Change permissions (current: {current})"
+    change_button_a11y: 'Change permissions (current: {current})'
     loading: loading permissions
     updating: updating permissions
     error: error reading permissions
@@ -182,7 +209,7 @@ recipes:
     title: Add a new recipe
     fromScratch: Create from scratch
     fromTheWeb: Import from the Web
-    fromJsonLD: Upload JsonLD
+    fromJsonLD: Upload JsonLD file
 
 viewer:
   title: Umai Viewer

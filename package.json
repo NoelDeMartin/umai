@@ -23,7 +23,7 @@
     "@headlessui/vue": "^0.0.0-insiders.ab6310c",
     "@inrupt/solid-client-authn-browser": "^1.11.6",
     "@noeldemartin/solid-utils": "^0.1.1-next.58b73c94b4d8c9b5b8fe26c1f1eb97095f1af84a",
-    "@noeldemartin/utils": "^0.2.1-next.e1d1a03c5f0e062d37212c66ff732fb7a73742ed",
+    "@noeldemartin/utils": "^0.2.1-next.7b6af1fba694005d843c282db078c54050cc1549",
     "@tailwindcss/forms": "^0.4.0",
     "@tailwindcss/typography": "^0.5.0",
     "buffer": "^6.0.3",
@@ -68,7 +68,7 @@
     "start-server-and-test": "^1.12.3",
     "ts-jest": "^26.5.3",
     "typescript": "^4.1.5",
-    "unplugin-icons": "^0.12.15",
+    "unplugin-icons": "^0.14.3",
     "unplugin-vue-components": "^0.15.6",
     "vite": "^2.9.0-beta.8",
     "vue-tsc": "^0.28.6"

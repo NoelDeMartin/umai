@@ -1,9 +1,8 @@
-const colors = require('tailwindcss/colors');
-
 module.exports = {
     content: [
         './index.html',
         './src/**/*.{vue,ts}',
+        './src/lang/*.yaml',
 
         // TODO only in storybook env
         './.storybook/stories/**/*.ts',
@@ -31,13 +30,29 @@ module.exports = {
         },
         extend: {
             colors: {
-                // TODO branding
-                'primary': colors.lime,
-                'dark-overlay': 'rgba(0,0,0,.5)',
-                'brand-solid': {
-                    500: '#7c4dff',
-                    700: '#653add',
+                'primary': {
+                    100: '#dff29c',
+                    200: '#d5ee7c',
+                    300: '#c0e147',
+                    400: '#b0d237',
+                    500: '#8db007',
+                    600: '#738e06',
+                    700: '#668104',
+                    800: '#637a05',
+                    900: '#475809',
                 },
+                'brand-solid': {
+                    100: '#e3dafb',
+                    200: '#c4b2f5',
+                    300: '#ab91f2',
+                    400: '#9d7cf8',
+                    500: '#7c4dff',
+                    600: '#7447f0',
+                    700: '#5f34d5',
+                    800: '#4a22b9',
+                    900: '#2c0f7b',
+                },
+                'dark-overlay': 'rgba(0,0,0,.5)',
             },
             margin: theme => ({
                 edge: theme('spacing.8'),

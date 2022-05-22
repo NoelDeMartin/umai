@@ -6,12 +6,12 @@
             </div>
             <CloudConfiguration class="mt-4" />
             <BaseButton class="mt-4 bg-brand-solid-700 hover:bg-brand-solid-500" @click="$auth.reconnect()">
-                <i-app-solid-emblem aria-hidden="true" class="w-6 h-6" />
+                <i-app-solid-emblem aria-hidden="true" class="h-6 w-6" />
                 <span class="ml-2">{{ $t('cloud.reconnect_now') }}</span>
             </BaseButton>
             <BaseButton secondary class="mt-2" @click="$auth.logout()">
                 <span>{{ $t('cloud.logout') }}</span>
-                <i-heroicons-solid-logout class="ml-2 w-4 h-4" />
+                <i-heroicons-solid-logout class="ml-2 h-4 w-4" />
             </BaseButton>
         </div>
         <template v-else>
@@ -23,17 +23,17 @@
                     </small>
                 </p>
             </div>
-            <BaseForm class="flex flex-col" :form="form" @submit="submit(close)">
+            <CoreForm class="flex flex-col" :form="form" @submit="submit(close)">
                 <BaseInput
                     ref="input"
                     :label="$t('cloud.login.loginUrl')"
                     name="loginUrl"
-                    class="mt-4 focus:!ring-brand-solid-700 focus:!border-brand-solid-500"
+                    class="mt-4 focus:!border-brand-solid-500 focus:!ring-brand-solid-700"
                     placeholder="e.g. https://alice.solidcommunity.net/profile/card#me"
-                    @keydown.enter="form.submit() && submit(close)"
+                    @keydown.enter="form.submit()"
                 />
                 <BaseButton type="submit" class="mt-4 w-full bg-brand-solid-700 hover:bg-brand-solid-500">
-                    <i-app-solid-emblem aria-hidden="true" class="w-6 h-6" />
+                    <i-app-solid-emblem aria-hidden="true" class="h-6 w-6" />
                     <span class="ml-2">{{ $t('cloud.login.submit') }}</span>
                 </BaseButton>
                 <BaseLink
@@ -43,7 +43,7 @@
                 >
                     {{ $t('cloud.login.dismiss') }}
                 </BaseLink>
-            </BaseForm>
+            </CoreForm>
         </template>
     </AppModal>
 </template>

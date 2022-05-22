@@ -1,6 +1,6 @@
 <template>
     <AppModal v-slot="{ close }" :title="$t('recipes.image_edit_title')">
-        <BaseForm :form="form" class="flex flex-col" @submit="submit(close)">
+        <CoreForm :form="form" class="flex flex-col" @submit="submit(close)">
             <div v-if="url">
                 <RecipeImage :url="url" class="w-full aspect-[5/2] max-h-[60vh] min-w-modal-content" />
                 <div class="flex items-center mt-2" :title="isUploadPending ? $t('recipes.image_edit_localUrl') : ''">
@@ -66,7 +66,7 @@
                     {{ $t('recipes.image_edit_submit') }}
                 </BaseButton>
             </div>
-        </BaseForm>
+        </CoreForm>
     </AppModal>
 </template>
 

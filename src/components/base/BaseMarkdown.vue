@@ -3,8 +3,9 @@
 </template>
 
 <script setup lang="ts">
-import { marked } from 'marked';
 import type { PropType } from 'vue';
+
+import { renderMarkdown } from '@/utils/markdown';
 
 const { text, actions } = defineProps({
     text: {
@@ -17,7 +18,7 @@ const { text, actions } = defineProps({
     },
 });
 
-const html = $computed(() => marked(text));
+const html = $computed(() => renderMarkdown(text));
 
 function onClick(event: Event) {
     if (!(event.target instanceof HTMLElement))

@@ -78,13 +78,13 @@ export default {
         }
     },
 
-    login(authenticator?: AuthenticatorName): void {
+    login(options: Partial<{ authenticator: AuthenticatorName; hasCookbook: boolean }> = {}): void {
         // TODO use shortcut instead of logging in with the UI
 
-        switch (authenticator) {
+        switch (options.authenticator) {
             case 'inrupt':
-                cy.press('disconnected');
-                cy.ariaInput('Login url').type('http://localhost:4000/alice/{enter}');
+                cy.press(options.hasCookbook ? 'disconnected' : 'Connect your Solid POD');
+                cy.ariaInput('Login url').clear().type('http://localhost:4000/alice/{enter}');
                 cy.cssAuthorize({ reset: true });
                 cy.waitForReload({ resetProfiles: true });
                 break;
@@ -92,8 +92,8 @@ export default {
             case 'localStorage':
                 cy.intercept('https://alice.example.com', { statusCode: 404 });
                 cy.intercept('https://alice.example.com/profile/card', { fixture: 'profile.ttl' });
-                cy.press('disconnected');
-                cy.ariaInput('Login url').type('https://alice.example.com{enter}');
+                cy.press(options.hasCookbook ? 'disconnected' : 'Connect your Solid POD');
+                cy.ariaInput('Login url').clear().type('https://alice.example.com{enter}');
                 cy.waitForReload();
                 break;
         }

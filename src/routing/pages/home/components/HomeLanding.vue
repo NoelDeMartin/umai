@@ -3,15 +3,18 @@
         <BaseHeading id="home-title">
             {{ $t('home.title') }}
         </BaseHeading>
-        <BaseButton clear @click="shuffleShowcase">
-            <i-zondicons-reload class="mr-2 w-4 h-4" />
+        <BaseButton v-if="!$cookbook.recipes.isEmpty()" clear @click="shuffleShowcase">
+            <i-zondicons-reload class="mr-2 h-4 w-4" />
             {{ $t('home.shuffle') }}
         </BaseButton>
     </div>
-    <RecipesGrid :recipes="showcasedRecipes" />
-    <BaseLink id="home--cookbook-link" class="self-end" route="recipes.index">
-        {{ $t('home.cookbook_link') }}<span aria-hidden="true"> &rarr;</span>
-    </BaseLink>
+    <RecipeCreateOptions v-if="$cookbook.recipes.isEmpty()" />
+    <template v-else>
+        <RecipesGrid :recipes="showcasedRecipes" />
+        <BaseLink id="home--cookbook-link" class="self-end" route="recipes.index">
+            {{ $t('home.cookbook_link') }}<span aria-hidden="true"> &rarr;</span>
+        </BaseLink>
+    </template>
 </template>
 
 <script setup lang="ts">

@@ -16,12 +16,12 @@
                 >
                     <div v-if="!$route.meta.fullBleedHeader" class="flex absolute left-0 top-1/2 w-full text-gray-900 -translate-y-1/2">
                         <router-link
+                            v-if="!$app.isOnboarding"
                             :to="{ name: 'home' }"
                             title="Umai"
                             class="flex justify-center items-center space-x-2"
                         >
-                            <i-twemoji-steaming-bowl class="mr-2 w-12 h-12" />
-                            <span class="text-xl">Umai</span>
+                            <i-app-umai class="mr-2 w-36 h-12 fill-primary-600" />
                         </router-link>
                     </div>
                     <!-- TODO investigate inferring previous route after a reload, instead of defaulting to home -->
@@ -29,15 +29,15 @@
                         v-else
                         type="button"
                         class="flex absolute left-0 top-1/2 items-center w-full text-white -translate-y-1/2"
-                        @click="$router.previousRoute ? $router.back() : $router.push({ name: 'home' })"
+                        @click="$router.previousRoute ? $router.back() : $router.push({ name: 'recipes.index' })"
                     >
                         <span aria-hidden="true" class="mr-2">&larr; </span>
-                        <span v-if="$router.previousRouteWas('recipes.index')">{{ $t('recipes.index.back') }}</span>
-                        <span v-else>{{ $t('home.back') }}</span>
+                        <span v-if="$router.previousRouteWas('recipes.index')">{{ $t('home.back') }}</span>
+                        <span v-else>{{ $t('recipes.index.back') }}</span>
                     </button>
                 </transition>
             </div>
-            <div class="flex space-x-2">
+            <div v-if="!$app.isOnboarding" class="flex space-x-2">
                 <CloudStatus v-if="!$auth.dismissed" />
                 <UserMenu />
             </div>

@@ -5,15 +5,17 @@ import { defineComponent, markRaw } from 'vue';
 
 import { meta, story } from '@sb/support/helpers';
 
-import AppButton from '@/components/base/AppButton.vue';
-import { AppButtonColor } from '@/components/base/AppButton';
+import CoreButton from '@/components/core/CoreButton.vue';
+import { CoreAlignment, CoreColor } from '@/components/core/constants';
 
 interface Args {
     text: string;
     icon: keyof typeof Icons;
-    color: keyof typeof AppButtonColor;
+    color: keyof typeof CoreColor;
+    alignment: keyof typeof CoreAlignment;
     secondary: boolean;
     clear: boolean;
+    width: string;
 }
 
 const Icons = {
@@ -24,14 +26,16 @@ const Icons = {
 };
 
 const Meta = meta<Args>({
-    component: AppButton,
-    title: 'AppButton',
+    component: CoreButton,
+    title: 'Core/Button',
     args: {
         text: 'Click me!',
         icon: 'None',
         color: 'Primary',
+        alignment: 'Start',
         secondary: false,
         clear: false,
+        width: '',
     },
     argTypes: {
         text: { type: 'string' },
@@ -41,15 +45,20 @@ const Meta = meta<Args>({
         },
         color: {
             control: { type: 'radio' },
-            options: Object.keys(AppButtonColor),
+            options: Object.keys(CoreColor),
+        },
+        alignment: {
+            control: { type: 'radio' },
+            options: Object.keys(CoreAlignment),
         },
         secondary: { type: 'boolean' },
         clear: { type: 'boolean' },
+        width: { type: 'string' },
     },
 });
 
 const UseCase = defineComponent({
-    components: { AppButton },
+    components: { CoreButton },
     props: Object.keys(Meta.argTypes ?? Meta.args ?? {}),
     computed: {
         $args(): Args {
@@ -59,20 +68,29 @@ const UseCase = defineComponent({
             return Icons[this.$args.icon];
         },
         colorValue() {
-            return AppButtonColor[this.$args.color];
+            return CoreColor[this.$args.color];
+        },
+        alignmentValue() {
+            return CoreAlignment[this.$args.alignment];
         },
     },
     template: `
-        <AppButton :color="colorValue" :secondary="secondary" :clear="clear">
+        <CoreButton
+            :color="colorValue"
+            :alignment="alignmentValue"
+            :secondary="secondary"
+            :clear="clear"
+            :style="width && ('width:' + width + 'px')"
+        >
             <component v-if="iconComponent" :is="iconComponent" />
             <span :class="iconComponent && 'ml-1'">{{ text }}</span>
-        </AppButton>
+        </CoreButton>
     `,
 });
 
 export default Meta;
 
-export const Playground = story<Args>(args => ({
+export const Playground = story<Args>((args) => ({
     components: { UseCase },
     data: () => args,
     template: `

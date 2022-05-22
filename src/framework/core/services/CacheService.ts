@@ -1,3 +1,5 @@
+import { PromisedValue, tap } from '@noeldemartin/utils';
+
 import Service from '@/framework/core/Service';
 import type { IService } from '@/framework/core/Service';
 
@@ -5,7 +7,7 @@ interface State {}
 
 export default class CacheService extends Service<State> {
 
-    private cache?: Cache;
+    private cache?: PromisedValue<Cache> = undefined;
 
     public async get(url: string): Promise<Response | null> {
         const cache = await this.open();
@@ -21,10 +23,10 @@ export default class CacheService extends Service<State> {
     }
 
     protected async open(): Promise<Cache> {
-        if (!this.cache)
-            this.cache = await caches.open('app');
-
-        return this.cache;
+        return this.cache = this.cache
+            ?? tap(new PromisedValue(), cache => {
+                caches.open('app').then(instance => cache.resolve(instance));
+            });
     }
 
 }

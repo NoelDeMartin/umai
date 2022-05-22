@@ -3,11 +3,11 @@ import { fail, objectWithout, tap, urlRoot } from '@noeldemartin/utils';
 import { SolidACLAuthorization } from 'soukai-solid';
 import type { Fetch, SolidUserProfile } from '@noeldemartin/solid-utils';
 
-import { getAuthenticator } from '@/framework/auth';
 import AuthenticationCancelledError from '@/framework/auth/errors/AuthenticationCancelledError';
-import AuthenticationTimeoutError from '@/framework/auth/errors/AuthenticationTimeoutError';
-import Service from '@/framework/core/Service';
+import Errors from '@/framework/core/facades/Errors';
 import Events from '@/framework/core/facades/Events';
+import Service from '@/framework/core/Service';
+import { getAuthenticator } from '@/framework/auth';
 import type Authenticator from '@/framework/auth/Authenticator';
 import type { AuthenticatorName } from '@/framework/auth';
 import type { AuthSession } from '@/framework/auth/Authenticator';
@@ -19,6 +19,8 @@ interface State {
     profiles: Record<string, SolidUserProfile>;
     dismissed: boolean;
     preferredAuthenticator: AuthenticatorName | null;
+    ongoing: boolean;
+    stale: boolean;
     previousSession: {
         authenticator: AuthenticatorName;
         loginUrl: string;
@@ -88,6 +90,12 @@ export default class AuthService extends Service<State, ComputedState> {
         if (this.loggedIn)
             return true;
 
+        if (this.ongoing)
+            throw new Error('Authentication already in progress');
+
+        const staleTimeout = setTimeout(() => (this.stale = true), 10000);
+        this.ongoing = true;
+
         try {
             const profile = await this.getUserProfile(loginUrl);
             const oidcIssuerUrl = profile?.oidcIssuerUrl ?? urlRoot(profile?.webId ?? loginUrl);
@@ -98,28 +106,23 @@ export default class AuthService extends Service<State, ComputedState> {
                 previousSession: { loginUrl, authenticator: authenticatorName },
             });
 
-            // TODO show "logging in..." alert
             await authenticator.login(oidcIssuerUrl);
 
             return true;
         } catch (error) {
-            if (error instanceof AuthenticationTimeoutError) {
-                alert('This is taking too long...');
-
-                return false;
-            }
-
             this.setState({ previousSession: null });
 
             if (error instanceof AuthenticationCancelledError)
                 return false;
 
-            // eslint-disable-next-line no-console
-            console.error(error);
-
-            alert('Could not log in (look at the console for more info)');
+            Errors.report(error);
 
             return false;
+        } finally {
+            clearTimeout(staleTimeout);
+
+            this.ongoing = false;
+            this.stale = false;
         }
     }
 
@@ -186,6 +189,8 @@ export default class AuthService extends Service<State, ComputedState> {
             autoReconnect: true,
             session: null,
             dismissed: false,
+            ongoing: false,
+            stale: false,
             previousSession: null,
             preferredAuthenticator: null,
             profiles: {},

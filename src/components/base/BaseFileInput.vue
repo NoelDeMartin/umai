@@ -17,7 +17,7 @@
 import { uuid } from '@noeldemartin/utils';
 import type { PropType } from 'vue';
 
-import I18n from '@/framework/core/facades/I18n';
+import { translate } from '@/framework/utils/translate';
 
 import { BaseFileInputParseFormat } from './BaseFileInput';
 
@@ -64,7 +64,7 @@ function parseFile(file: File, format: BaseFileInputParseFormat) {
         }
     };
 
-    reader.onerror = () => emit('error', I18n.translate('errors.fileUpload'));
+    reader.onerror = () => emit('error', translate('errors.fileUpload'));
     reader.onload = () => emit('success', parseResult(reader.result as string));
 
     reader.readAsText(file);

@@ -26,10 +26,7 @@ export default class FormInput<Value = unknown> {
     public update(value: Value | undefined): void {
         this.value = value;
 
-        if (this.form && !this.form.submitted)
-            return;
-
-        this.validate();
+        (this.form?.submitted as boolean) && this.validate();
     }
 
     public validate(): boolean {

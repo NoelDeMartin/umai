@@ -11,8 +11,9 @@ import type { Services } from '@/framework/core';
 
 import '@/assets/styles/main.css';
 import './styles.css';
-import router from '@/framework/plugins/router';
+import components from '@/framework/components/headless';
 import directives from '@/framework/directives';
+import router from '@/framework/plugins/router';
 
 bootSolidModels();
 Store.setInstance(createStore({ strict: true }));
@@ -26,6 +27,7 @@ app.use(await i18n());
 app.use(router([
     { name: 'recipes.show', path: '/recipes/:recipe', component: {} },
 ]));
+Object.entries(components).forEach(([name, component]) => app.component(name, component));
 Object.entries(directives).forEach(([name, directive]) => app.directive(name, directive));
 Object.assign(app.config.globalProperties, services);
 window.Storybook = services as unknown as MockServices<Services>;

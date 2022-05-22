@@ -37,6 +37,7 @@
                 <BaseFluidTextArea
                     v-model="description"
                     name="description"
+                    :label="$t('recipes.description_label')"
                     :placeholder="$t('recipes.description_placeholder')"
                 />
             </template>

@@ -24,6 +24,12 @@ export default defineConfig({
             customCollections: {
                 app: FileSystemIconLoader('./src/assets/icons'),
             },
+            iconCustomizer(_, icon, props) {
+                if (icon === 'umai') {
+                    props.width = '1.2em';
+                    props.height = `${(1.2 * 369) / 1047}em`;
+                }
+            },
         }),
         Components({
             resolvers: [

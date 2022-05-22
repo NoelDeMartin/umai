@@ -1,10 +1,10 @@
-import { MagicObject } from '@noeldemartin/utils';
-import { reactive } from 'vue';
-
-import { FormInputType } from './';
-import type { FormInputDefinition, GetFormInputValue } from './';
+import { computed, reactive, ref } from 'vue';
+import { MagicObject, arrayFilter } from '@noeldemartin/utils';
+import type { ComputedRef, Ref } from 'vue';
 
 import FormInput from './FormInput';
+import { FormInputType } from './';
+import type { FormInputDefinition, GetFormInputValue } from './';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type InferAny = any;
@@ -23,7 +23,10 @@ export default class Form extends MagicObject {
         return input.multi ? [] : this.defaultInputValues?.[input.type as FormInputType];
     }
 
-    public submitted: boolean = false;
+    // TODO find out why these are typed differently depending on the context
+    public submitted: boolean | Ref<boolean>;
+    public errors: string[] | ComputedRef<string[]>;
+    public showErrors: boolean | Ref<boolean>;
     private inputs: Record<string, FormInput>;
 
     constructor(inputs: Record<string, FormInputDefinition<InferAny, InferAny>> = {}) {
@@ -41,6 +44,12 @@ export default class Form extends MagicObject {
                 return inputs;
             }, {} as Record<string, FormInput>),
         ) as Record<string, FormInput>;
+
+        const submitted = this.submitted = ref(false);
+        const errors = this.errors = computed(
+            () => arrayFilter(Object.values(this.inputs).map((input) => input.error)),
+        );
+        this.showErrors = computed(() => submitted.value && errors.value.length > 0);
     }
 
     public input<T = unknown>(name: string): FormInput<T> | null {
@@ -60,7 +69,7 @@ export default class Form extends MagicObject {
     }
 
     public submit(): boolean {
-        this.submitted = true;
+        (this.submitted as Ref<boolean>).value = true;
 
         const invalidInput = Object
             .values(this.inputs)

@@ -19,6 +19,9 @@ export default {
 
             return Cypress.Promise.cast(window.testing?.start(options));
         });
+
+        cy.service('$errors').then((Errors) => Errors.disable());
+        cy.contains('Something went wrong').should('not.exist');
     },
 
     waitForReload(options: Partial<TestingStartOptions> = {}): void {

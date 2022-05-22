@@ -2,7 +2,7 @@
     <BaseHeading id="home-title">
         {{ $t('home.createCookbook.title') }}
     </BaseHeading>
-    <BaseForm class="flex flex-col space-y-2" :form="form" @submit="submit()">
+    <CoreForm class="flex flex-col space-y-2" :form="form" @submit="submit()">
         <p class="prose">
             {{ $t('home.createCookbook.message') }}
         </p>
@@ -21,7 +21,7 @@
         <BaseButton type="submit">
             {{ $t('home.createCookbook.submit') }}
         </BaseButton>
-    </BaseForm>
+    </CoreForm>
 </template>
 
 <script setup lang="ts">

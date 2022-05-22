@@ -1,21 +1,28 @@
 <template>
     <div class="relative">
+        <label v-if="label" :for="id" class="sr-only">
+            {{ label }}
+        </label>
         <span ref="filler" :class="fillerClasses">
             {{ fillerContent }}
         </span>
         <textarea
+            :id="id"
             ref="textArea"
             v-bind="$attrs"
             :rows="rows"
             :value="modelValue"
-            class="block w-full border-b-2 border-transparent resize-none caret-primary-500 focus:border-primary-600 hover:border-gray-300 focus:outline-none"
+            class="block w-full resize-none border-b-2 border-transparent caret-primary-500 hover:border-gray-300 focus:border-primary-600 focus:outline-none"
             @input="$emit('update:modelValue', textArea?.value)"
         />
     </div>
 </template>
 
 <script lang="ts">
+import { uuid } from '@noeldemartin/utils';
 import { defineComponent, nextTick, useAttrs, watch } from 'vue';
+
+import { requiredStringProp, stringProp } from '@/framework/utils/vue';
 
 import type IBaseFluidTextArea from './BaseFluidTextArea';
 
@@ -24,14 +31,13 @@ export default defineComponent({ inheritAttrs: false });
 
 <script setup lang="ts">
 const { modelValue } = defineProps({
-    modelValue: {
-        type: String,
-        required: true,
-    },
+    modelValue: requiredStringProp(),
+    label: stringProp(),
 });
 defineEmits(['update:modelValue']);
 
 let rows = $ref(1);
+const id = uuid();
 const attrs = useAttrs();
 const textArea = $ref<HTMLTextAreaElement>();
 const filler = $ref<HTMLElement>();

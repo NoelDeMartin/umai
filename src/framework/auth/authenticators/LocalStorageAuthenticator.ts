@@ -3,7 +3,6 @@ import type { SolidUserProfile } from '@noeldemartin/solid-utils';
 
 import Authenticator from '@/framework/auth/Authenticator';
 import AuthenticationCancelledError from '@/framework/auth/errors/AuthenticationCancelledError';
-import AuthenticationTimeoutError from '@/framework/auth/errors/AuthenticationTimeoutError';
 import type { AuthSession } from '@/framework/auth/Authenticator';
 
 const STORAGE_KEY = 'local-storage-authenticator';
@@ -33,9 +32,10 @@ export default class LocalStorageAuthenticator extends Authenticator {
         // TODO support authentication without reloading
         location.reload();
 
-        await after({ seconds: 10 });
+        // Browser should redirect, so just make it wait for a while.
+        await after({ seconds: 60 });
 
-        throw new AuthenticationTimeoutError();
+        return fail('Browser should have redirected, but it didn\'t');
     }
 
     public async logout(): Promise<void> {

@@ -4,7 +4,6 @@ import type { handleIncomingRedirect, login, logout } from '@inrupt/solid-client
 
 import App from '@/framework/core/facades/App';
 import Auth from '@/framework/core/facades/Auth';
-import AuthenticationTimeoutError from '@/framework/auth/errors/AuthenticationTimeoutError';
 import Authenticator from '@/framework/auth/Authenticator';
 import type { AuthSession } from '@/framework/auth/Authenticator';
 
@@ -20,16 +19,16 @@ export default class InruptAuthenticator extends Authenticator {
     public async login(loginUrl: string): Promise<AuthSession> {
         Storage.set<string>(STORAGE_KEY, loginUrl);
 
-        this._login({
+        await this._login({
             oidcIssuer: loginUrl,
             redirectUrl: window.location.href,
             clientName: App.name,
         });
 
-        await after({ seconds: 10 });
+        // Browser should redirect, so just make it wait for a while.
+        await after({ seconds: 60 });
 
-        // If we're still here after 10 seconds, something went wrong (or the network is too slow).
-        throw new AuthenticationTimeoutError;
+        return fail('Browser should have redirected, but it didn\'t');
     }
 
     public async logout(): Promise<void> {

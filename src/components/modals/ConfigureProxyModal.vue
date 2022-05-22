@@ -2,7 +2,7 @@
     <AppModal v-slot="{ close }" :title="$t('proxyConfig.title')">
         <BaseMarkdown :text="$t('proxyConfig.info', { url: `${$app.sourceUrl}/blob/main/docs/using-a-proxy.md` })" />
 
-        <BaseForm class="mt-4" :form="form" @submit="submit(close)">
+        <CoreForm class="mt-4" :form="form" @submit="submit(close)">
             <details>
                 <summary class="cursor-pointer">
                     {{ $t('proxyConfig.advancedOptions') }}
@@ -22,7 +22,7 @@
                     {{ $t('proxyConfig.accept') }}
                 </BaseButton>
             </div>
-        </BaseForm>
+        </CoreForm>
     </AppModal>
 </template>
 

@@ -16,10 +16,11 @@ describe('Cookbook', () => {
 
     it('Creates and edits recipes', () => {
         // Arrange
-        cy.contains('Are you ready to start cooking?').should('be.visible');
+        cy.see('How would you like to begin?');
 
         // Act - Create
-        cy.contains('Create from scratch').click();
+        cy.press('Create your first recipe');
+        cy.press('Create from scratch');
         cy.get('[name="name"]').type('Ramen');
         cy.contains('Add ingredient').click();
         cy.get(':focused').type('Broth{enter}');
@@ -95,7 +96,7 @@ describe('Cookbook', () => {
         cy.goOffline();
         cy.contains('Edit').click();
         cy.get('[name="name"]').type('!');
-        cy.get('[name="description"]').type('is life');
+        cy.ariaInput('Recipe description').type('is life');
         cy.contains('button', 'Add ingredient').click();
         cy.get(':focus').type('Toppings');
         cy.contains('Add step').click();
@@ -109,7 +110,7 @@ describe('Cookbook', () => {
         cy.goOffline();
         cy.contains('Edit').click();
         cy.get('[name="name"]').clear().type('Jun\'s Ramen');
-        cy.get('[name="description"]').clear().type('Instructions: https://www.youtube.com/watch?v=9WXIrnWsaCo');
+        cy.ariaInput('Recipe description').clear().type('Instructions: https://www.youtube.com/watch?v=9WXIrnWsaCo');
         cy.get('[name^="ingredient-"]').last().click();
         cy.get(':focus').clear().type('Shiitake{enter}');
         cy.get(':focus').type('Nori');
@@ -160,10 +161,11 @@ describe('Cookbook', () => {
 
     it('Stores local images', () => {
         // Arrange
-        cy.contains('Are you ready to start cooking?').should('be.visible');
+        cy.see('How would you like to begin?');
 
         // Act
-        cy.contains('Create from scratch').click();
+        cy.press('Create your first recipe');
+        cy.press('Create from scratch');
         cy.get('[name="name"]').type('Ramen');
         cy.contains('Change image').click();
         cy.uploadFixture('Upload an image', 'img/ramen.png');
@@ -181,10 +183,11 @@ describe('Cookbook', () => {
         // Arrange
         cy.intercept('PUT', 'http://localhost:4000/cookbook/ramen.png').as('putRamenImage');
 
-        cy.contains('Are you ready to start cooking?').should('be.visible');
+        cy.see('How would you like to begin?');
 
         // Act
-        cy.contains('Create from scratch').click();
+        cy.press('Create your first recipe');
+        cy.press('Create from scratch');
         cy.get('[name="name"]').type('Ramen');
         cy.contains('Change image').click();
         cy.uploadFixture('Upload an image', 'img/ramen.png');
@@ -195,7 +198,7 @@ describe('Cookbook', () => {
         // TODO go back to home instead of reloading
         cy.visit('/?authenticator=localStorage');
         cy.startApp();
-        cy.login();
+        cy.login({ hasCookbook: true });
 
         // Assert
         cy.wait('@putRamenImage');
@@ -208,7 +211,7 @@ describe('Cookbook', () => {
         cy.intercept('PUT', 'http://localhost:4000/cookbook/ramen.png').as('putRamenImage');
 
         cy.createRecipe({ name: 'Ramen' });
-        cy.login();
+        cy.login({ hasCookbook: true });
 
         // Act
         cy.contains('Ramen').click();
@@ -234,7 +237,7 @@ describe('Cookbook', () => {
             imageUrl: 'solid://recipes/ramen.png',
         });
         cy.createFile('solid://recipes/ramen.png', 'image/png', 'img/ramen.png');
-        cy.login();
+        cy.login({ hasCookbook: true });
 
         // Act
         cy.contains('Ramen').click();
@@ -257,9 +260,10 @@ describe('Cookbook', () => {
 
     it('Imports recipes from JSON-LD', () => {
         // Act
-        cy.contains('Are you ready to start cooking?').should('be.visible');
+        cy.see('How would you like to begin?');
 
         // Assert
+        cy.press('Create your first recipe');
         cy.uploadFixture('Upload JsonLD', 'recipes/aguachile.jsonld');
 
         // Assert
@@ -271,10 +275,11 @@ describe('Cookbook', () => {
         // Arrange
         cy.intercept('https://recipes.example.com/hummus', { fixture: 'html/jaimies-hummus.html' });
 
-        cy.see('Are you ready to start cooking?');
+        cy.see('How would you like to begin?');
 
         // Act
-        cy.contains('Import from the Web').click();
+        cy.press('Create your first recipe');
+        cy.press('Import from the Web');
         cy.ariaInput('Website URL').type('https://recipes.example.com/hummus');
         cy.contains('Scan website for recipes').click();
         cy.contains('Continue without a proxy').click();
@@ -301,10 +306,11 @@ describe('Cookbook', () => {
         // Arrange
         cy.intercept('https://proxy.example.com', { fixture: 'html/jaimies-hummus.html' });
 
-        cy.see('Are you ready to start cooking?');
+        cy.see('How would you like to begin?');
 
         // Act
-        cy.contains('Import from the Web').click();
+        cy.press('Create your first recipe');
+        cy.press('Import from the Web');
         cy.ariaInput('Website URL').type('https://recipes.example.com/hummus');
         cy.contains('Scan website for recipes').click();
         cy.contains('Advanced options').click();
@@ -333,10 +339,11 @@ describe('Cookbook', () => {
         // Arrange
         cy.intercept('https://recipes.example.com/ramen', { statusCode: 404 });
 
-        cy.see('Are you ready to start cooking?');
+        cy.see('How would you like to begin?');
 
         // Act
-        cy.contains('Import from the Web').click();
+        cy.press('Create your first recipe');
+        cy.press('Import from the Web');
         cy.ariaInput('Website URL').type('https://recipes.example.com/ramen');
         cy.contains('Scan website for recipes').click();
         cy.contains('Continue without a proxy').click();
@@ -386,7 +393,7 @@ describe('Cookbook', () => {
     it('Shares remote recipes', () => {
         // Arrange
         cy.createRecipe({ name: 'Ramen' });
-        cy.login();
+        cy.login({ hasCookbook: true });
 
         // Act
         cy.press('Ramen');

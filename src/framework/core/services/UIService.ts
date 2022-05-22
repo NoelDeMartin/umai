@@ -2,10 +2,13 @@ import { after, arrayFirst, arrayReplace, arrayWithoutIndex, uuid } from '@noeld
 import { markRaw, nextTick } from 'vue';
 import type { Component } from 'vue';
 
-import NotFound from '@/framework/components/NotFound.vue';
 import LoadingModal from '@/framework/components/LoadingModal.vue';
+import MarkdownModal from '@/framework/components/MarkdownModal.vue';
+import NotFound from '@/framework/components/NotFound.vue';
 import Service from '@/framework/core/Service';
 import type { IService } from '@/framework/core/Service';
+
+import ErrorReportModal from '@/components/modals/ErrorReportModal.vue';
 
 interface State {
     headerHeight: number;
@@ -52,16 +55,20 @@ export interface ModalComponent<
 export type ModalCloseCallback<Result = unknown> = (result: Result) => void;
 
 export const enum ApplicationComponent {
-    NotFound = 'not-found',
+    ErrorReportModal = 'error-report-modal',
     LoadingModal = 'loading-modal',
+    MarkdownModal = 'markdown-modal',
+    NotFound = 'not-found',
 }
 
 export default class UIService extends Service<State> {
 
     private modalCallbacks: Record<string, Partial<ModalCallbacks>> = {};
     private components: Record<ApplicationComponent, Component> = {
-        [ApplicationComponent.NotFound]: markRaw(NotFound),
+        [ApplicationComponent.ErrorReportModal]: markRaw(ErrorReportModal),
         [ApplicationComponent.LoadingModal]: markRaw(LoadingModal),
+        [ApplicationComponent.MarkdownModal]: markRaw(MarkdownModal),
+        [ApplicationComponent.NotFound]: markRaw(NotFound),
     };
 
     public async openModal<MC extends ModalComponent>(
@@ -127,6 +134,16 @@ export default class UIService extends Service<State> {
         this.setState({ modals: this.modals.filter(m => m.id !== modal.id) });
 
         callbacks?.closed && callbacks.closed(result);
+    }
+
+    public async showMarkdown(content: string): Promise<void>;
+    public async showMarkdown(title: string, content: string): Promise<void>;
+    public async showMarkdown(titleOrContent: string, content?: string): Promise<void> {
+        const title = typeof content === 'string' ? titleOrContent : null;
+
+        content = content ?? titleOrContent;
+
+        await this.openModal(this.components[ApplicationComponent.MarkdownModal], { title, content });
     }
 
     public showSnackbar(message: string, actions: SnackbarAction[] = []): string {

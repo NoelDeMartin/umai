@@ -4,7 +4,7 @@ describe('Authorization', () => {
         cy.visit('/?authenticator=inrupt');
         cy.startApp();
         cy.createRecipe({ name: 'Ramen' });
-        cy.login('inrupt');
+        cy.login({ authenticator: 'inrupt', hasCookbook: true });
     });
 
     it('Publishes recipes', () => {

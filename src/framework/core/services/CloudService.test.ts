@@ -1,5 +1,6 @@
 // Workaround for https://github.com/facebook/jest/issues/12183
 jest.mock('./AppService.ts', () => class AppService {});
+jest.mock('./UIService.ts', () => class UIService {});
 
 import Recipe from '@/models/Recipe';
 import { SolidContainerModel, bootSolidModels } from 'soukai-solid';

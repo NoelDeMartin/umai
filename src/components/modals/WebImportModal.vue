@@ -6,7 +6,7 @@
                 {{ $t('webImport.scanning') }}
             </p>
         </div>
-        <BaseForm
+        <CoreForm
             v-else-if="recipesForm && recipes && websiteMetadata"
             :form="recipesForm"
             class="flex flex-col"
@@ -70,7 +70,7 @@
             >
                 {{ recipes.length > 1 ? $t('webImport.success_importMultiple') : $t('webImport.success_importSingle') }}
             </BaseButton>
-        </BaseForm>
+        </CoreForm>
 
         <template v-else-if="failure">
             <BaseMarkdown
@@ -85,7 +85,7 @@
                     {{ $t('webImport.failure_retry') }}
                 </summary>
 
-                <BaseForm :form="urlForm" class="flex flex-col mt-2 space-y-2" @submit="scanWebsite(submitRetry())">
+                <CoreForm :form="urlForm" class="flex flex-col mt-2 space-y-2" @submit="scanWebsite(submitRetry())">
                     <BaseMarkdown :text="$t('webImport.failure_retry_info')" />
                     <div class="flex items-center">
                         <BaseCheckbox id="use-proxy" name="useProxy" />
@@ -105,7 +105,7 @@
                     <BaseButton type="submit" class="!mt-4">
                         {{ $t('webImport.failure_retry_submit') }}
                     </BaseButton>
-                </BaseForm>
+                </CoreForm>
             </details>
 
             <details class="mt-4">
@@ -113,7 +113,7 @@
                     {{ $t('webImport.failure_html') }}
                 </summary>
 
-                <BaseForm class="flex flex-col mt-2 space-y-2" :form="htmlForm" @submit="scanWebsite(submitHtml())">
+                <CoreForm class="flex flex-col mt-2 space-y-2" :form="htmlForm" @submit="scanWebsite(submitHtml())">
                     <BaseMarkdown :text="$t('webImport.failure_html_info')" />
                     <div class="relative p-2 bg-gray-200 rounded">
                         <pre class="flex items-center text-gray-700 whitespace-pre-wrap min-h-clickable align-center">view-source:{{ urlForm.url }}</pre>
@@ -130,11 +130,11 @@
                     <BaseButton type="submit" class="!mt-4">
                         {{ $t('webImport.failure_html_submit') }}
                     </BaseButton>
-                </BaseForm>
+                </CoreForm>
             </details>
         </template>
 
-        <BaseForm
+        <CoreForm
             v-else
             :form="urlForm"
             class="flex flex-col"
@@ -150,7 +150,7 @@
             <BaseButton type="submit" class="mt-2">
                 {{ $t('webImport.submit') }}
             </BaseButton>
-        </BaseForm>
+        </CoreForm>
     </AppModal>
 </template>
 

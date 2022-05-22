@@ -11,8 +11,8 @@ describe('Authentication', () => {
         cy.startApp();
 
         // Act
-        cy.contains('disconnected').click();
-        cy.ariaInput('Login url').type('https://alice.example.com{enter}');
+        cy.press('Connect your Solid POD');
+        cy.ariaInput('Login url').type('alice.example.com{enter}');
         cy.waitForReload();
 
         // Assert
@@ -30,8 +30,8 @@ describe('Authentication', () => {
         cy.startApp();
 
         // Act - Sign up
-        cy.contains('disconnected').click();
-        cy.ariaInput('Login url').type('http://localhost:4000/alice/{enter}');
+        cy.press('Connect your Solid POD');
+        cy.ariaInput('Login url').clear().type('http://localhost:4000/alice/{enter}');
         cy.cssAuthorize({ reset: true });
         cy.waitForReload({ resetProfiles: true });
 
@@ -64,8 +64,8 @@ describe('Authentication', () => {
         cy.startApp();
 
         // Act - Log in
-        cy.contains('disconnected').click();
-        cy.ariaInput('Login url').type('http://localhost:4000/alice/{enter}');
+        cy.press('Connect your Solid POD');
+        cy.ariaInput('Login url').clear().type('http://localhost:4000/alice/{enter}');
         cy.cssAuthorize({
             reset: {
                 typeIndex: true,
@@ -95,8 +95,8 @@ describe('Authentication', () => {
         // Arrange
         cy.visit('/?authenticator=inrupt');
         cy.startApp();
-        cy.contains('disconnected').click();
-        cy.ariaInput('Login url').type('http://localhost:4000/alice/{enter}');
+        cy.press('Connect your Solid POD');
+        cy.ariaInput('Login url').clear().type('http://localhost:4000/alice/{enter}');
         cy.cssAuthorize({ reset: true });
         cy.waitForReload({ resetProfiles: true });
         cy.contains('online').click();
@@ -121,8 +121,8 @@ describe('Authentication', () => {
         // Arrange
         cy.visit('/?authenticator=inrupt');
         cy.startApp();
-        cy.contains('disconnected').click();
-        cy.ariaInput('Login url').type('http://localhost:4000/alice/{enter}');
+        cy.press('Connect your Solid POD');
+        cy.ariaInput('Login url').clear().type('http://localhost:4000/alice/{enter}');
         cy.cssAuthorize({
             reset: {
                 typeIndex: true,
@@ -138,8 +138,7 @@ describe('Authentication', () => {
         cy.contains('Log out').click();
 
         // Assert
-        cy.contains('Are you ready to start cooking?').should('be.visible');
-        cy.contains('disconnected').should('be.visible');
+        cy.contains('How would you like to begin?').should('be.visible');
     });
 
     it('Migrates local data to cloud after logging in', () => {
@@ -149,6 +148,7 @@ describe('Authentication', () => {
         cy.startApp();
 
         // Act - Create
+        cy.contains('Create your first recipe').click();
         cy.contains('Create from scratch').click();
         cy.get('[name="name"]').type('Ramen');
         cy.contains('Add ingredient').click();
@@ -161,7 +161,7 @@ describe('Authentication', () => {
         // Act - First edit
         cy.contains('Edit').click();
         cy.get('[name="name"]').type('!');
-        cy.get('[name="description"]').type('is life');
+        cy.ariaInput('Recipe description').type('is life');
         cy.contains('Add ingredient').click();
         cy.get(':focus').type('Toppings');
         cy.contains('Add step').click();
@@ -174,7 +174,7 @@ describe('Authentication', () => {
         // Act - Second edit
         cy.contains('Edit').click();
         cy.get('[name="name"]').clear().type('Jun\'s Ramen');
-        cy.get('[name="description"]').clear().type('Instructions: https://www.youtube.com/watch?v=9WXIrnWsaCo');
+        cy.ariaInput('Recipe description').clear().type('Instructions: https://www.youtube.com/watch?v=9WXIrnWsaCo');
         cy.get('[name^=ingredient-]').last().click();
         cy.get(':focus').clear().type('Shiitake{enter}');
         cy.get(':focus').type('Nori');
