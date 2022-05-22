@@ -1,0 +1,23 @@
+{
+    "editor.formatOnSave": false,
+    "editor.codeActionsOnSave": {
+        "source.fixAll": false
+    },
+    "emeraldwalk.runonsave": {
+        "commands": [
+            {
+                "match": "\\.js$",
+                "cmd": "npx prettier-eslint --write ${file}"
+            },
+            {
+                "match": "\\.ts$",
+                "cmd": "npx prettier-eslint --parser typescript --write ${file}"
+            },
+            {
+                "match": "\\.vue$",
+                "cmd": "npx prettier-eslint --parser vue --write ${file}"
+            }
+        ]
+    },
+    "editor.wrappingIndent": "deepIndent"
+}

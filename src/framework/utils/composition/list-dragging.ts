@@ -11,16 +11,14 @@ export interface ListDraggingController {
 function getHoveringItem(event: MouseEvent | TouchEvent, listY: number, itemsHeight: number[]): number {
     const pointerY = 'pageY' in event ? event.pageY : event.touches[0]?.pageY;
 
-    if (!pointerY || pointerY < listY)
-        return 0;
+    if (!pointerY || pointerY < listY) return 0;
 
     let y = listY;
 
     for (let item = 0; item < itemsHeight.length; item++) {
         y += itemsHeight[item] ?? 0;
 
-        if (y > pointerY)
-            return item;
+        if (y > pointerY) return item;
     }
 
     return itemsHeight.length;
@@ -39,8 +37,7 @@ export function useListDragging(
 
     return {
         start(event) {
-            if (!list || !list.firstElementChild)
-                return;
+            if (!list || !list.firstElementChild) return;
 
             active = true;
             listY = list.getBoundingClientRect().y;
@@ -48,8 +45,7 @@ export function useListDragging(
             currentItem = getHoveringItem(event, listY, itemsHeight);
         },
         update(event) {
-            if (!active)
-                return;
+            if (!active) return;
 
             const nextItem = getHoveringItem(event, listY, itemsHeight);
 

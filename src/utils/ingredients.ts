@@ -53,35 +53,31 @@ function initializeHelpers(): [RegExp, RegExp, Record<string, IngredientQuantity
     const quantityRegex = '\\d[.,\\d]*';
     const quantityRangeSeparator = 'to|-|~';
     const quantityRangeRegex = `${quantityRegex}\\s*(?:${quantityRangeSeparator})\\s*${quantityRegex}`;
-    const unitsRegex = Object
-        .values(INGREDIENT_UNIT_QUANTITIES)
+    const unitsRegex = Object.values(INGREDIENT_UNIT_QUANTITIES)
         .reduce((units, quantities) => [...units, Object.keys(quantities).join('|')], [] as string[])
         .join('|');
 
     return [
         new RegExp(`((?:${quantityRangeRegex})|(?:${quantityRegex}))\\s*(?:(${unitsRegex})\\s+)?(.*)`, 'i'),
         new RegExp(quantityRangeSeparator, 'i'),
-        Object
-            .entries(INGREDIENT_UNIT_QUANTITIES)
-            .reduce((parsers, [unit, quantities]) => {
-                Object.entries(quantities).forEach(([alias, quantity]) => {
-                    parsers[alias] = q => [
-                        Array.isArray(q) ? [q[0] * quantity, q[1] * quantity] : q * quantity,
-                        unit as IngredientUnit,
-                    ];
-                });
+        Object.entries(INGREDIENT_UNIT_QUANTITIES).reduce((parsers, [unit, quantities]) => {
+            Object.entries(quantities).forEach(([alias, quantity]) => {
+                parsers[alias] = q => [
+                    Array.isArray(q) ? [q[0] * quantity, q[1] * quantity] : q * quantity,
+                    unit as IngredientUnit,
+                ];
+            });
 
-                return parsers;
-            }, {} as Record<string, IngredientQuantityParser>),
+            return parsers;
+        }, {} as Record<string, IngredientQuantityParser>),
     ];
 }
 
-function parseIngredientQuantity(quantity?: string, unit?: string): [(IngredientQuantity)?, IngredientUnit?] {
-    if (!quantity)
-        return [];
+function parseIngredientQuantity(quantity?: string, unit?: string): [IngredientQuantity?, IngredientUnit?] {
+    if (!quantity) return [];
 
     const parsedQuantity = quantity.match(QUANTITY_RANGE_SEPARATOR_REGEX)
-        ? quantity.split(QUANTITY_RANGE_SEPARATOR_REGEX).map(q => parseFloat(q.replace(',', '.'))) as [number, number]
+        ? (quantity.split(QUANTITY_RANGE_SEPARATOR_REGEX).map(q => parseFloat(q.replace(',', '.'))) as [number, number])
         : parseFloat(quantity.replace(',', '.'));
 
     return QUANTITY_PARSERS[unit?.trim().toLowerCase() ?? '']?.(parsedQuantity) ?? [parsedQuantity];

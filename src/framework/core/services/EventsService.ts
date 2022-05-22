@@ -5,7 +5,7 @@ import Service from '@/framework/core/Service';
 
 export interface EventsPayload {}
 
-export type EventListener<T=unknown> = (payload: T) => unknown;
+export type EventListener<T = unknown> = (payload: T) => unknown;
 export type UnknownEvent<T> = T extends keyof EventsPayload ? never : T;
 
 export type EventWithoutPayload = {
@@ -29,7 +29,11 @@ export default class EventsService extends Service {
 
     /* eslint-disable max-len */
     public on<Event extends EventWithoutPayload>(event: Event, listener: () => unknown): () => void;
-    public on<Event extends EventWithPayload>(event: Event, listener: EventListener<EventsPayload[Event]>): () => void | void;
+    public on<Event extends EventWithPayload>(
+        event: Event,
+        listener: EventListener<EventsPayload[Event]>
+    ): () => void | void;
+
     public on<Event extends string>(event: UnknownEvent<Event>, listener: EventListener): () => void;
     /* eslint-enable max-len */
 
@@ -42,13 +46,11 @@ export default class EventsService extends Service {
     public off(event: string, listener: EventListener): void {
         const eventListener = this.listeners[event];
 
-        if (!eventListener)
-            return;
+        if (!eventListener) return;
 
         eventListener.remove(listener);
 
-        if (eventListener.isEmpty())
-            delete this.listeners[event];
+        if (eventListener.isEmpty()) delete this.listeners[event];
     }
 
 }

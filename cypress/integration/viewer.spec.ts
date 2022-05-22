@@ -1,5 +1,4 @@
 describe('Viewer', () => {
-
     it('Views public recipes', () => {
         // Arrange
         cy.intercept('https://example.org/recipes/aguachile', { fixture: 'recipes/aguachile.ttl' });
@@ -14,5 +13,4 @@ describe('Viewer', () => {
         cy.see('Jalapeños');
         cy.see('Start by peeling the shrimps into a bowl');
     });
-
 });

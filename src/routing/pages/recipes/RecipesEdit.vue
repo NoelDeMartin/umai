@@ -1,5 +1,9 @@
 <template>
-    <main class="w-full" :style="`margin-top: -${$ui.headerHeight}px`" aria-labelledby="#recipe-form-title">
+    <main
+        class="w-full"
+        :style="`margin-top: -${$ui.headerHeight}px`"
+        aria-labelledby="#recipe-form-title"
+    >
         <RecipeForm
             :recipe="recipe"
             @done="onUpdated"

@@ -55,8 +55,7 @@ export default class CloudService extends Service<State, ComputedState> {
     protected syncInterval: number | null = null;
 
     public async sync(): Promise<void> {
-        if (!Auth.isLoggedIn())
-            return;
+        if (!Auth.isLoggedIn()) return;
 
         await this.asyncLock.run(async () => {
             const start = Date.now();
@@ -138,9 +137,9 @@ export default class CloudService extends Service<State, ComputedState> {
                 const pendingUpdates: Record<string, SolidModelOperation[]> = {};
 
                 for (const remoteModel of dirtyRemoteModels.items()) {
-                    const modelPendingUpdates =
-                        pendingUpdates[remoteModel.url] =
-                        remoteModel.operations.filter(operation => !operation.exists());
+                    const modelPendingUpdates = (pendingUpdates[remoteModel.url] = remoteModel.operations.filter(
+                        operation => !operation.exists(),
+                    ));
 
                     for (const relatedModel of remoteModel.getRelatedModels()) {
                         modelPendingUpdates.push(
@@ -165,22 +164,15 @@ export default class CloudService extends Service<State, ComputedState> {
                             (operationsMap[date] ??= []).push(operation);
                         }
 
-                        Object.values(operationsMap).forEach(
-                            dateOperations => pendingUpdates.push([
-                            dirtyRemoteModels.get(url) as SolidModel,
-                            dateOperations,
-                            ]),
-                        );
+                        Object.values(operationsMap).forEach(dateOperations =>
+                            pendingUpdates.push([dirtyRemoteModels.get(url) as SolidModel, dateOperations]));
 
                         return pendingUpdates;
                     },
                     [] as [SolidModel, SolidModelOperation[]][],
                 );
 
-                return [
-                    ...pendingModelUpdates,
-                    ...dirtyFileUrls,
-                ];
+                return [...pendingModelUpdates, ...dirtyFileUrls];
             },
         };
     }
@@ -188,8 +180,7 @@ export default class CloudService extends Service<State, ComputedState> {
     protected onStateUpdated(state: Partial<State>): void {
         super.onStateUpdated(state);
 
-        if ('autoSync' in state)
-            this.updateSyncInterval(state.autoSync as number | false);
+        if ('autoSync' in state) this.updateSyncInterval(state.autoSync as number | false);
     }
 
     protected initializeEngine(authenticator: Authenticator): void {
@@ -201,12 +192,9 @@ export default class CloudService extends Service<State, ComputedState> {
     }
 
     protected updateSyncInterval(autoSync: number | false): void {
-        if (this.syncInterval)
-            clearInterval(this.syncInterval);
+        if (this.syncInterval) clearInterval(this.syncInterval);
 
-        this.syncInterval = autoSync
-            ? window.setInterval(() => this.sync(), autoSync * 60 * 1000)
-            : null;
+        this.syncInterval = autoSync ? window.setInterval(() => this.sync(), autoSync * 60 * 1000) : null;
     }
 
     protected async pullChanges(): Promise<void> {
@@ -217,7 +205,10 @@ export default class CloudService extends Service<State, ComputedState> {
         await this.synchronizeModels(localModels, remoteModels);
 
         this.setState({
-            dirtyRemoteModels: map(remoteModels.getItems().filter(model => model.isDirty()), 'url'),
+            dirtyRemoteModels: map(
+                remoteModels.getItems().filter(model => model.isDirty()),
+                'url',
+            ),
             remoteOperationUrls: remoteModels.getItems().reduce((urls, model) => {
                 urls[model.url] = model
                     .getRelatedModels()
@@ -244,7 +235,6 @@ export default class CloudService extends Service<State, ComputedState> {
                     .flat()
                     .map(operation => operation.url);
 
-
                 return urls;
             }, this.remoteOperationUrls),
         });
@@ -264,8 +254,7 @@ export default class CloudService extends Service<State, ComputedState> {
                     body: file.blob,
                 });
 
-                if (!isSuccessfulResponse(response))
-                    continue;
+                if (!isSuccessfulResponse(response)) continue;
 
                 await Files.delete(url);
             }
@@ -291,8 +280,7 @@ export default class CloudService extends Service<State, ComputedState> {
         }
 
         for (const [url, localModel] of localModels) {
-            if (synchronizedModelUrls.has(url))
-                continue;
+            if (synchronizedModelUrls.has(url)) continue;
 
             const remoteModel = this.getRemoteModel(localModel, remoteModels);
 
@@ -352,17 +340,13 @@ export default class CloudService extends Service<State, ComputedState> {
     protected async fetchRemoteModels(): Promise<SolidModel[]> {
         const models = await Promise.all(
             this.handlers.map(async handler => {
-                if (!handler.isReady())
-                    return [];
+                if (!handler.isReady()) return [];
 
                 const remoteClass = getRemoteClass(handler.modelClass);
-                const container = await SolidContainerModel.withEngine(
-                    this.engine as Engine,
-                    () => SolidContainerModel.find(remoteClass.collection),
-                );
+                const container = await SolidContainerModel.withEngine(this.engine as Engine, () =>
+                    SolidContainerModel.find(remoteClass.collection));
 
-                if (!container)
-                    return [];
+                if (!container) return [];
 
                 const remoteModels = [];
                 const urlChunks = arrayChunk(
@@ -384,34 +368,31 @@ export default class CloudService extends Service<State, ComputedState> {
     }
 
     protected getLocalModels(): Iterable<SolidModel> {
-        return this.handlers.map(handler => handler.isReady() ? handler.getLocalModels() : []).flat();
+        return this.handlers.map(handler => (handler.isReady() ? handler.getLocalModels() : [])).flat();
     }
 
     protected cleanRemoteModel(remoteModel: SolidModel): void {
         const remoteOperationUrls = this.remoteOperationUrls[remoteModel.url];
 
-        if (!remoteOperationUrls)
-            return;
+        if (!remoteOperationUrls) return;
 
         const relatedModels = remoteModel
             .getRelatedModels()
-            .filter(
-                model =>
-                    !(model instanceof SolidModelMetadata) &&
-                    !(model instanceof SolidModelOperation),
-            );
+            .filter(model => !(model instanceof SolidModelMetadata) && !(model instanceof SolidModelOperation));
 
         for (const relatedModel of relatedModels) {
             const operations = relatedModel.operations ?? [];
 
-            relatedModel.setRelationModels('operations', operations.filter(operation => {
-                if (!remoteOperationUrls.includes(operation.url))
-                    return false;
+            relatedModel.setRelationModels(
+                'operations',
+                operations.filter(operation => {
+                    if (!remoteOperationUrls.includes(operation.url)) return false;
 
-                operation.cleanDirty(true);
+                    operation.cleanDirty(true);
 
-                return true;
-            }));
+                    return true;
+                }),
+            );
             relatedModel.rebuildAttributesFromHistory();
             relatedModel.cleanDirty(true);
             relatedModel.metadata.cleanDirty(true);

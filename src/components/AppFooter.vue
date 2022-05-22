@@ -1,5 +1,7 @@
 <template>
-    <footer class="flex justify-end items-center p-4 space-x-1 text-sm opacity-75 text-primary-700">
+    <footer
+        class="flex items-center justify-end space-x-1 p-4 text-sm text-primary-700 opacity-75"
+    >
         <BaseLink
             title="View application source code"
             :url="$app.sourceUrl"

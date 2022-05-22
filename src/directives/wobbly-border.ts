@@ -6,8 +6,11 @@ export default defineDirective({
     mounted(element: HTMLElement, { value }) {
         const [min, max] = value ?? [50, 150];
 
-        element.style.borderRadius = range(2).map(
-            () => range(4).map(() => `${randomInt(min, max)}px`).join(' '),
-        ).join(' / ');
+        element.style.borderRadius = range(2)
+            .map(() =>
+                range(4)
+                    .map(() => `${randomInt(min, max)}px`)
+                    .join(' '))
+            .join(' / ');
     },
 });

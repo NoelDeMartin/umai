@@ -23,9 +23,7 @@ for (const [name, facade] of Object.entries(services)) {
 }
 
 app.use(await i18n());
-app.use(router([
-    { name: 'recipes.show', path: '/recipes/:recipe', component: {} },
-]));
+app.use(router([{ name: 'recipes.show', path: '/recipes/:recipe', component: {} }]));
 Object.entries(directives).forEach(([name, directive]) => app.directive(name, directive));
 Object.assign(app.config.globalProperties, services);
 window.Storybook = services as unknown as MockServices<Services>;

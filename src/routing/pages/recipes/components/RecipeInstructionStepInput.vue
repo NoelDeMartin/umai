@@ -1,5 +1,5 @@
 <template>
-    <div ref="root" class="relative group">
+    <div ref="root" class="group relative">
         <BaseFluidTextArea
             ref="textArea"
             :placeholder="$t('recipes.ingredient_placeholder')"
@@ -15,12 +15,14 @@
         <button
             ref="removeButton"
             type="button"
-            :aria-label="$t('recipes.instructionStep_remove_a11y', { position })"
+            :aria-label="
+                $t('recipes.instructionStep_remove_a11y', { position })
+            "
             :title="$t('recipes.instructionStep_remove')"
             :class="[
-                'flex absolute right-0 bottom-1 justify-center items-center w-clickable h-clickable',
-                'text-gray-900 bg-white rounded-full ring-inset',
-                'focus:outline-none focus:opacity-100 focus-visible:ring-2 focus-visible:ring-primary-600',
+                'absolute right-0 bottom-1 flex h-clickable w-clickable items-center justify-center',
+                'rounded-full bg-white text-gray-900 ring-inset',
+                'focus:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-600',
                 'hover:bg-gray-200 hover:opacity-100',
                 'active:bg-gray-300',
                 focused ? 'opacity-60' : 'opacity-0 group-hover:opacity-60',
@@ -29,7 +31,7 @@
             @blur="updateFocus"
             @click="$emit('remove')"
         >
-            <i-zondicons-trash class="w-4 h-4" aria-hidden="true" />
+            <i-zondicons-trash class="h-4 w-4" aria-hidden="true" />
         </button>
     </div>
 </template>
@@ -55,7 +57,13 @@ defineProps({
         default: 0,
     },
 });
-const emit = defineEmits(['add', 'remove', 'swapUp', 'swapDown', 'update:modelValue']);
+const emit = defineEmits([
+    'add',
+    'remove',
+    'swapUp',
+    'swapDown',
+    'update:modelValue',
+]);
 
 let focused = $ref(false);
 const root = $ref<HTMLElement>();
@@ -67,8 +75,7 @@ function updateFocus() {
 }
 
 function onEnterKeydown(event: KeyboardEvent) {
-    if (event.shiftKey)
-        return;
+    if (event.shiftKey) return;
 
     event.preventDefault();
 
@@ -78,8 +85,7 @@ function onEnterKeydown(event: KeyboardEvent) {
 defineExpose<IRecipeInstructionStepInput>({
     focus: () => textArea?.focus(),
     async playLeaveAnimation() {
-        if (!root)
-            return;
+        if (!root) return;
 
         await shrink(root);
     },

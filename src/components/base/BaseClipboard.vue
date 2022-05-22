@@ -1,18 +1,18 @@
 <template>
-    <div class="relative bg-gray-200 rounded">
-        <div class="overflow-auto" style="max-height:250px">
+    <div class="relative rounded bg-gray-200">
+        <div class="overflow-auto" style="max-height: 250px">
             <pre
-                class="flex p-2 items-center text-gray-700 box-content min-h-clickable align-center"
+                class="align-center box-content flex min-h-clickable items-center p-2 text-gray-700"
                 v-text="text"
             />
         </div>
         <button
             type="button"
             :aria-label="copyLabel"
-            class="flex opacity-75 absolute top-2 right-2 justify-center items-center bg-white rounded w-clickable h-clickable hover:bg-gray-100 hover:opacity-100"
+            class="absolute top-2 right-2 flex h-clickable w-clickable items-center justify-center rounded bg-white opacity-75 hover:bg-gray-100 hover:opacity-100"
             @click="copyToClipboard()"
         >
-            <i-zondicons-copy class="w-4 h-4" />
+            <i-zondicons-copy class="h-4 w-4" />
         </button>
     </div>
 </template>

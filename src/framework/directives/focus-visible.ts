@@ -3,7 +3,7 @@ import type { Closure } from '@noeldemartin/utils';
 import { defineDirective } from '@/framework/utils/vue';
 import { hasAncestor } from '@/framework/utils/dom';
 
-const listeners: WeakMap<HTMLElement, { focus: Closure; blur: Closure}> = new WeakMap();
+const listeners: WeakMap<HTMLElement, { focus: Closure; blur: Closure }> = new WeakMap();
 
 export default defineDirective({
     mounted(element: HTMLElement, { value: setFocused }) {

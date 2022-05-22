@@ -12,9 +12,7 @@ interface ServiceInternals {
 
 export type GetState<T> = T extends Service<infer State> ? State : never;
 export type MockServices<T> = {
-    [k in keyof T]: T[k] extends Service<GetState<T[k]>>
-        ? MockService<T[k], GetState<T[k]>>
-        : never
+    [k in keyof T]: T[k] extends Service<GetState<T[k]>> ? MockService<T[k], GetState<T[k]>> : never;
 };
 export type MockService<T extends Service<State>, State> = {
     -readonly [k in keyof T]: T[k];
@@ -35,7 +33,7 @@ export function mockService<T extends Service<S>, S>(
 
             return this._ready;
         }
-
+    
     };
 
     return tap(new mockClass() as MockService<T, S>, service => {

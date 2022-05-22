@@ -39,19 +39,20 @@ const frameworkHandler: ErrorHandler = error => {
     return true;
 };
 
-function setUpErrorHandler(baseHandler: ErrorHandler = (() => false)): ErrorHandler {
-    return tap(error => baseHandler(error) || frameworkHandler(error), errorHandler => {
-        window.onerror = errorHandler;
-        window.onunhandledrejection = event => errorHandler(event.reason);
-    });
+function setUpErrorHandler(baseHandler: ErrorHandler = () => false): ErrorHandler {
+    return tap(
+        error => baseHandler(error) || frameworkHandler(error),
+        errorHandler => {
+            window.onerror = errorHandler;
+            window.onunhandledrejection = event => errorHandler(event.reason);
+        },
+    );
 }
 
 declare module '@/framework/core/services/EventsService' {
-
     export interface EventsPayload {
         'application-ready': void;
     }
-
 }
 
 export type BootstrapApplicationOptions = Partial<{
@@ -74,7 +75,7 @@ export async function bootstrapApplication(
 ): Promise<void> {
     const errorHandler = setUpErrorHandler(options.handleError);
     const app = createApp(rootComponent);
-    const routes = [...options.routes ?? [], ...baseRoutes];
+    const routes = [...(options.routes ?? []), ...baseRoutes];
     const basePlugins = await getBasePlugins(routes);
     const plugins = [...basePlugins, ...(options.plugins ?? [])];
     const directives = { ...baseDirectives, ...(options.directives ?? {}) };
@@ -87,12 +88,9 @@ export async function bootstrapApplication(
     plugins.forEach(plugin => app.use(plugin));
 
     Object.assign(app.config.globalProperties, services);
-    Object
-        .entries(directives)
-        .forEach(([name, directive]) => app.directive(name, directive));
-    Object
-        .entries(authenticators)
-        .forEach(([name, authenticator]) => registerAuthenticator(name as AuthenticatorName, authenticator));
+    Object.entries(directives).forEach(([name, directive]) => app.directive(name, directive));
+    Object.entries(authenticators).forEach(([name, authenticator]) =>
+        registerAuthenticator(name as AuthenticatorName, authenticator));
 
     setDefaultAuthenticator(getAuthenticator(options.defaultAuthenticator ?? 'inrupt'));
 

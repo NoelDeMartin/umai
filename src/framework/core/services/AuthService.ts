@@ -33,13 +33,11 @@ interface ComputedState {
 }
 
 declare module '@/framework/core/services/EventsService' {
-
     export interface EventsPayload {
         'authenticated-fetch-ready': Fetch;
-        'login': AuthSession;
-        'logout': void;
+        login: AuthSession;
+        logout: void;
     }
-
 }
 
 export default class AuthService extends Service<State, ComputedState> {
@@ -59,20 +57,22 @@ export default class AuthService extends Service<State, ComputedState> {
     }
 
     public async getUserProfile(url: string): Promise<SolidUserProfile | null> {
-        return this.profiles[url]
-            ?? tap(await fetchLoginUserProfile(url), profile => profile && this.rememberProfile(profile));
+        return (
+            this.profiles[url] ??
+            tap(await fetchLoginUserProfile(url), profile => profile && this.rememberProfile(profile)) ??
+            null ??
+            null
+        );
     }
 
     public async refreshUserProfile(): Promise<void> {
-        if (!this.isLoggedIn())
-            return;
+        if (!this.isLoggedIn()) return;
 
         this.setState({ profiles: objectWithout(this.profiles, [this.user.webId]) });
 
         const user = await this.getUserProfile(this.user.webId);
 
-        if (!user)
-            throw new Error('User profile went missing');
+        if (!user) throw new Error('User profile went missing');
 
         this.setState({
             session: {
@@ -85,8 +85,7 @@ export default class AuthService extends Service<State, ComputedState> {
     public async login(loginUrl: string, authenticatorName?: AuthenticatorName): Promise<boolean> {
         authenticatorName = authenticatorName ?? this.preferredAuthenticator ?? 'default';
 
-        if (this.loggedIn)
-            return true;
+        if (this.loggedIn) return true;
 
         try {
             const profile = await this.getUserProfile(loginUrl);
@@ -111,8 +110,7 @@ export default class AuthService extends Service<State, ComputedState> {
 
             this.setState({ previousSession: null });
 
-            if (error instanceof AuthenticationCancelledError)
-                return false;
+            if (error instanceof AuthenticationCancelledError) return false;
 
             // eslint-disable-next-line no-console
             console.error(error);
@@ -124,29 +122,26 @@ export default class AuthService extends Service<State, ComputedState> {
     }
 
     public async reconnect(): Promise<void> {
-        if (!this.previousSession || this.loggedIn)
-            return;
+        if (!this.previousSession || this.loggedIn) return;
 
         await this.login(this.previousSession.loginUrl, this.previousSession.authenticator);
     }
 
     public async logout(): Promise<void> {
-        if (!this.previousSession)
-            return;
+        if (!this.previousSession) return;
 
         if (
             // TODO show a different message if there are pending local modifications
             !confirm(
                 'Logging out will remove all your local recipes, are you sure? ' +
-                '(You still have them in your Solid POD!)',
+                    '(You still have them in your Solid POD!)',
             )
         )
             return;
 
         this.setState({ previousSession: null });
 
-        if (this.isLoggedIn())
-            await this.authenticator.logout();
+        if (this.isLoggedIn()) await this.authenticator.logout();
 
         Events.emit('logout');
     }
@@ -156,8 +151,7 @@ export default class AuthService extends Service<State, ComputedState> {
     }
 
     public async createPrivateTypeIndex(): Promise<string> {
-        if (!this.isLoggedIn())
-            throw new Error('Can\'t create a type index because the user is not logged in');
+        if (!this.isLoggedIn()) throw new Error('Can\'t create a type index because the user is not logged in');
 
         const user = this.user;
         const typeIndexUrl = await createPrivateTypeIndex(user, this.authenticator.requireAuthenticatedFetch());
@@ -177,8 +171,8 @@ export default class AuthService extends Service<State, ComputedState> {
         if (url.searchParams.has('authenticator'))
             this.setState({ preferredAuthenticator: url.searchParams.get('authenticator') as AuthenticatorName });
 
-        this.previousSession && await this.bootAuthenticator(this.previousSession.authenticator);
-        this.autoReconnect && await this.reconnect();
+        this.previousSession && (await this.bootAuthenticator(this.previousSession.authenticator));
+        this.autoReconnect && (await this.reconnect());
     }
 
     protected getInitialState(): State {

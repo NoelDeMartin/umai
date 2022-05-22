@@ -1,17 +1,17 @@
 <template>
     <!-- TODO a11y -->
     <HeadlessButton
-        class="flex flex-shrink-0 justify-center items-center px-3 text-white rounded-full shadow-lg bg-primary-600 min-w-clickable h-clickable hover:bg-primary-700"
+        class="flex h-clickable min-w-clickable flex-shrink-0 items-center justify-center rounded-full bg-primary-600 px-3 text-white shadow-lg hover:bg-primary-700"
         @focus="focused = true"
         @blur="focused = false"
         @mouseenter="hover = true"
         @mouseleave="hover = false"
         @click="button?.blur()"
     >
-        <i-mdi-plus class="w-5 h-5" />
+        <i-mdi-plus class="h-5 w-5" />
         <span
             ref="text"
-            class="overflow-hidden transition-[width] duration-150 whitespace-nowrap"
+            class="overflow-hidden whitespace-nowrap transition-[width] duration-150"
             :style="textStyles"
         >
             {{ label }}
@@ -38,10 +38,9 @@ const hover = $ref(false);
 const focused = $ref(false);
 const textPadding = TailwindCSS.pixels('spacing.2');
 const textStyles = $computed(() => {
-    if (textWidth === 0)
-        return;
+    if (textWidth === 0) return;
 
-    return (hover || focused) ? `width:${textWidth + textPadding}px` : 'width:0';
+    return hover || focused ? `width:${textWidth + textPadding}px` : 'width:0';
 });
 
 onMounted(() => {

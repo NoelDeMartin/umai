@@ -20,10 +20,12 @@ const { text, actions } = defineProps({
 const html = $computed(() => marked(text));
 
 function onClick(event: Event) {
-    if (!(event.target instanceof HTMLElement))
-        return;
+    if (!(event.target instanceof HTMLElement)) return;
 
-    if (!(event.target instanceof HTMLAnchorElement) || !event.target.href.startsWith('action:'))
+    if (
+        !(event.target instanceof HTMLAnchorElement) ||
+        !event.target.href.startsWith('action:')
+    )
         return;
 
     event.preventDefault();

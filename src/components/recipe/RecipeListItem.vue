@@ -1,11 +1,13 @@
 <template>
-    <div class="flex overflow-hidden bg-gray-100 rounded-lg border-gray-200 shadow">
-        <RecipeImage :url="imageUrl" class="w-40 h-40" />
-        <div class="overflow-y-auto p-4 h-40 prose">
+    <div
+        class="flex overflow-hidden rounded-lg border-gray-200 bg-gray-100 shadow"
+    >
+        <RecipeImage :url="imageUrl" class="h-40 w-40" />
+        <div class="prose h-40 overflow-y-auto p-4">
             <h3 class="mb-0">
                 {{ name }}
             </h3>
-            <p v-if="description" class="overflow-y-auto mt-1">
+            <p v-if="description" class="mt-1 overflow-y-auto">
                 {{ description }}
             </p>
         </div>

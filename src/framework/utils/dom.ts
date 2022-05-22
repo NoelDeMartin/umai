@@ -39,8 +39,7 @@ function getComputedClassStyle(property: keyof CSSStyleDeclaration, classes: str
             const styleKey = styleKeys[index] as string;
             const className = classes[index] as string;
 
-            if (styleKey in computedClassStyles)
-                continue;
+            if (styleKey in computedClassStyles) continue;
 
             div.classList.add(className);
 
@@ -113,8 +112,7 @@ export async function animateElements(
     animations: ((Partial<AnimateElementConfig> & { element: HTMLElement }) | null)[],
 ): Promise<void> {
     await Promise.all(
-        Object
-            .values(animations)
+        Object.values(animations)
             .filter((animation): animation is Partial<AnimateElementConfig> & { element: HTMLElement } => !!animation)
             .map(({ element, ...config }) => animateElement(element, { ...sharedConfig, ...config })),
     );

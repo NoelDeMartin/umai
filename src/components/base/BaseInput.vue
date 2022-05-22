@@ -6,9 +6,9 @@
         :id="id"
         ref="input"
         :class="[
-            'px-3 py-2 bg-white rounded-md border shadow-sm',
-            'focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500',
-            error ? 'border-red-600' : 'border-gray-300'
+            'rounded-md border bg-white px-3 py-2 shadow-sm',
+            'focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500',
+            error ? 'border-red-600' : 'border-gray-300',
         ]"
         :name="name"
         :value="inputValue"
@@ -17,7 +17,11 @@
         v-bind="$attrs"
         @input="onInput"
     >
-    <p v-if="error" :id="`${id}-error`" class="mt-1 text-sm text-red-600 opacity-75">
+    <p
+        v-if="error"
+        :id="`${id}-error`"
+        class="mt-1 text-sm text-red-600 opacity-75"
+    >
         {{ error }}
     </p>
 </template>
@@ -31,7 +35,11 @@ import type Form from '@/framework/forms/Form';
 
 import type IBaseInput from './BaseInput';
 
-const { modelValue, name, form: formProp } = defineProps({
+const {
+    modelValue,
+    name,
+    form: formProp,
+} = defineProps({
     modelValue: {
         type: [String, Number],
         default: null,

@@ -3,8 +3,8 @@
         ref="input"
         type="checkbox"
         :class="[
-            'rounded border-gray-300 cursor-pointer form-checkbox text-primary-600',
-            'focus:ring-primary-500 hover:bg-gray-200 disabled:bg-gray-300 disabled:cursor-default',
+            'form-checkbox cursor-pointer rounded border-gray-300 text-primary-600',
+            'hover:bg-gray-200 focus:ring-primary-500 disabled:cursor-default disabled:bg-gray-300',
             otherClasses,
         ]"
         :name="name"
@@ -16,13 +16,24 @@
 </template>
 
 <script setup lang="ts">
-import { arrayFilter, arrayWithout, objectWithoutEmpty } from '@noeldemartin/utils';
+import {
+    arrayFilter,
+    arrayWithout,
+    objectWithoutEmpty,
+} from '@noeldemartin/utils';
 import { inject } from 'vue';
 import type { PropType } from 'vue';
 
 import type Form from '@/framework/forms/Form';
 
-const { name, class: classProp, value, modelValue, disabled, form: formProp } = defineProps({
+const {
+    name,
+    class: classProp,
+    value,
+    modelValue,
+    disabled,
+    form: formProp,
+} = defineProps({
     name: {
         type: String,
         default: null,
@@ -52,12 +63,18 @@ const emit = defineEmits(['update:modelValue']);
 
 const form = formProp ?? inject('form', null);
 const input = $ref<HTMLInputElement>();
-const formInput = $computed(() => form?.input<boolean | unknown[]>(name ?? '') ?? null);
+const formInput = $computed(
+    () => form?.input<boolean | unknown[]>(name ?? '') ?? null,
+);
 const inputValue = $computed(() => formInput?.value ?? modelValue);
-const otherAttrs = $computed(() => objectWithoutEmpty({
-    disabled: disabled || null,
-    checked: Array.isArray(formInput?.value) && formInput?.value.includes(value) || null,
-}));
+const otherAttrs = $computed(() =>
+    objectWithoutEmpty({
+        disabled: disabled || null,
+        checked:
+            (Array.isArray(formInput?.value) &&
+                formInput?.value.includes(value)) ||
+            null,
+    }));
 const otherClasses = $computed(() => {
     const classNames = classProp.split(' ');
 
@@ -73,7 +90,11 @@ function onChange() {
 
     // TODO this should work with v-model as well, currently it only works in forms.
     if (formInput && Array.isArray(formInput?.value)) {
-        formInput.update(isChecked ? [...formInput.value, value] : arrayWithout(formInput.value, value));
+        formInput.update(
+            isChecked
+                ? [...formInput.value, value]
+                : arrayWithout(formInput.value, value),
+        );
 
         return;
     }

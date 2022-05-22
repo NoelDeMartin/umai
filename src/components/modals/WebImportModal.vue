@@ -1,7 +1,10 @@
 <template>
     <AppModal v-slot="{ close }" :title="title">
-        <div v-if="scanning" class="flex flex-col justify-center items-center p-4 space-y-4">
-            <i-app-scanning class="w-12 h-12 text-primary-500" />
+        <div
+            v-if="scanning"
+            class="flex flex-col items-center justify-center space-y-4 p-4"
+        >
+            <i-app-scanning class="h-12 w-12 text-primary-500" />
             <p class="text-xl text-gray-700">
                 {{ $t('webImport.scanning') }}
             </p>
@@ -13,26 +16,40 @@
             @submit="submitRecipes(close)"
         >
             <template v-if="recipes.length > 1">
-                <BaseMarkdown v-if="recipes.length > 1" :text="$t('webImport.success_infoMultiple')" />
+                <BaseMarkdown
+                    v-if="recipes.length > 1"
+                    :text="$t('webImport.success_infoMultiple')"
+                />
 
                 <ul v-if="recipes.length > 1" class="mt-4 space-y-2">
                     <li class="flex items-center">
                         <BaseCheckbox
                             id="all-recipes"
-                            class="w-6 h-6"
-                            :checked="recipesForm.recipes.length === recipes.length"
+                            class="h-6 w-6"
+                            :checked="
+                                recipesForm.recipes.length === recipes.length
+                            "
                             @change="selectAllRecipes($event)"
                         />
-                        <label class="ml-4 cursor-pointer" for="all-recipes">{{ $t('webImport.success_allRecipes') }}</label>
+                        <label class="ml-4 cursor-pointer" for="all-recipes">{{
+                            $t('webImport.success_allRecipes')
+                        }}</label>
                     </li>
-                    <li v-for="(recipe, index) of recipes" :key="index" class="flex items-center">
+                    <li
+                        v-for="(recipe, index) of recipes"
+                        :key="index"
+                        class="flex items-center"
+                    >
                         <BaseCheckbox
                             :id="`recipes-${index}`"
                             name="recipes"
                             :value="index"
-                            class="w-6 h-6"
+                            class="h-6 w-6"
                         />
-                        <label :for="`recipes-${index}`" class="mt-2 ml-4 w-full hover:cursor-pointer">
+                        <label
+                            :for="`recipes-${index}`"
+                            class="mt-2 ml-4 w-full hover:cursor-pointer"
+                        >
                             <RecipeListItem
                                 :name="recipe.name"
                                 :description="recipe.description"
@@ -64,11 +81,17 @@
             </template>
 
             <BaseButton
-                class="self-end mt-4"
+                class="mt-4 self-end"
                 type="submit"
-                :disabled="recipes.length > 0 && recipesForm.recipes.length === 0"
+                :disabled="
+                    recipes.length > 0 && recipesForm.recipes.length === 0
+                "
             >
-                {{ recipes.length > 1 ? $t('webImport.success_importMultiple') : $t('webImport.success_importSingle') }}
+                {{
+                    recipes.length > 1
+                        ? $t('webImport.success_importMultiple')
+                        : $t('webImport.success_importSingle')
+                }}
             </BaseButton>
         </BaseForm>
 
@@ -85,7 +108,11 @@
                     {{ $t('webImport.failure_retry') }}
                 </summary>
 
-                <BaseForm :form="urlForm" class="flex flex-col mt-2 space-y-2" @submit="scanWebsite(submitRetry())">
+                <BaseForm
+                    :form="urlForm"
+                    class="mt-2 flex flex-col space-y-2"
+                    @submit="scanWebsite(submitRetry())"
+                >
                     <BaseMarkdown :text="$t('webImport.failure_retry_info')" />
                     <div class="flex items-center">
                         <BaseCheckbox id="use-proxy" name="useProxy" />
@@ -98,7 +125,11 @@
                                 :disabled="!urlForm.useProxy"
                                 inline
                                 class="ml-1"
-                                @click="afterAnimationFrame().then(proxyUrlInput?.focus)"
+                                @click="
+                                    afterAnimationFrame().then(
+                                        proxyUrlInput?.focus
+                                    )
+                                "
                             />
                         </label>
                     </div>
@@ -113,20 +144,33 @@
                     {{ $t('webImport.failure_html') }}
                 </summary>
 
-                <BaseForm class="flex flex-col mt-2 space-y-2" :form="htmlForm" @submit="scanWebsite(submitHtml())">
+                <BaseForm
+                    class="mt-2 flex flex-col space-y-2"
+                    :form="htmlForm"
+                    @submit="scanWebsite(submitHtml())"
+                >
                     <BaseMarkdown :text="$t('webImport.failure_html_info')" />
-                    <div class="relative p-2 bg-gray-200 rounded">
-                        <pre class="flex items-center text-gray-700 whitespace-pre-wrap min-h-clickable align-center">view-source:{{ urlForm.url }}</pre>
+                    <div class="relative rounded bg-gray-200 p-2">
+                        <pre
+                            class="align-center flex min-h-clickable items-center whitespace-pre-wrap text-gray-700"
+                        >
+view-source:{{ urlForm.url }}</pre>
                         <button
                             type="button"
-                            :aria-label="$t('webImport.failure_html_copyToClipboard')"
-                            class="flex absolute top-2 right-2 justify-center items-center bg-white rounded w-clickable h-clickable hover:bg-gray-100"
+                            :aria-label="
+                                $t('webImport.failure_html_copyToClipboard')
+                            "
+                            class="absolute top-2 right-2 flex h-clickable w-clickable items-center justify-center rounded bg-white hover:bg-gray-100"
                             @click="copySourceUrlToClipboard()"
                         >
-                            <i-zondicons-copy class="w-4 h-4" />
+                            <i-zondicons-copy class="h-4 w-4" />
                         </button>
                     </div>
-                    <BaseTextArea name="html" :label="$t('webImport.failure_html_label')" :placeholder="$t('webImport.failure_html_placeholder')" />
+                    <BaseTextArea
+                        name="html"
+                        :label="$t('webImport.failure_html_label')"
+                        :placeholder="$t('webImport.failure_html_placeholder')"
+                    />
                     <BaseButton type="submit" class="!mt-4">
                         {{ $t('webImport.failure_html_submit') }}
                     </BaseButton>
@@ -205,13 +249,15 @@ const title = $computed(() => {
     return I18n.translate('webImport.title');
 });
 const recipesForm = $computed(
-    () => recipes && reactiveForm({
-        recipes: {
-            type: FormInputType.Number,
-            multi: true,
-            default: recipes?.map((_, index) => index),
-        },
-    }),
+    () =>
+        recipes &&
+        reactiveForm({
+            recipes: {
+                type: FormInputType.Number,
+                multi: true,
+                default: recipes?.map((_, index) => index),
+            },
+        }),
 );
 
 async function scanWebsite(operation: Promise<void>): Promise<void> {
@@ -250,7 +296,9 @@ async function submitUrl() {
         const text = await response.text();
 
         if (Math.floor(response.status / 100) !== 2)
-            throw new Error(`Got unexpected response code: ${response.status}\n\n${text}`);
+            throw new Error(
+                `Got unexpected response code: ${response.status}\n\n${text}`,
+            );
 
         await parseWebsite(url, text);
     } catch (error) {
@@ -283,14 +331,15 @@ async function submitRecipes(close: ModalCloseCallback<void>): Promise<void> {
                     externalUrls: [urlForm.url],
                 }),
             ]
-            : recipesForm?.recipes.map(index => recipes?.[index]) as Recipe[];
+            : (recipesForm?.recipes.map(index => recipes?.[index]) as Recipe[]);
 
     await Promise.all(selectedRecipes.map(recipe => recipe.save()));
 
-    selectedRecipes.length === 1 && await Router.push({
-        name: 'recipes.show',
-        params: { recipe: selectedRecipes[0]?.uuid },
-    });
+    selectedRecipes.length === 1 &&
+        (await Router.push({
+            name: 'recipes.show',
+            params: { recipe: selectedRecipes[0]?.uuid },
+        }));
 
     UI.showSnackbar(I18n.translate('webImport.done', selectedRecipes.length));
 
@@ -311,8 +360,7 @@ async function parseWebsite(url: string, html: string): Promise<void> {
 }
 
 function selectAllRecipes({ target }: Event) {
-    if (!recipesForm || !recipes)
-        return;
+    if (!recipesForm || !recipes) return;
 
     const checked = (target as HTMLInputElement)?.matches(':checked');
 

@@ -12,7 +12,7 @@ type Facade<T> = T & FacadeMethods<T>;
 export function facade<T extends object>(instance: T | null = null): Facade<T> {
     const facade: FacadeMethods<T> = {
         instance,
-        setInstance: instance => facade.instance = instance,
+        setInstance: instance => (facade.instance = instance),
         requireInstance: () => facade.instance ?? fail('Facade not initialized'),
     };
 

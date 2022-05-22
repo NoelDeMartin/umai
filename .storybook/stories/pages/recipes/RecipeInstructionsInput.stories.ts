@@ -10,7 +10,10 @@ interface Args {
 }
 
 const Template = template<Args>(({ value }) => {
-    const instructionSteps: RecipeInstructionStepInputData[] = value.map(description => ({ id: uuid(), description }));
+    const instructionSteps: RecipeInstructionStepInputData[] = value.map(description => ({
+        id: uuid(),
+        description,
+    }));
 
     return {
         components: { RecipeInstructionsInput },

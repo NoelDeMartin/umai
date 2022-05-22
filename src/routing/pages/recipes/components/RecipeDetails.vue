@@ -11,17 +11,31 @@
         :recipe="recipe"
     >
         <template #title>
-            <h1 id="recipe-details-title" class="text-4xl font-semibold text-white recipe-details--header-title text-shadow">
-                <span class="recipe-details--header-title-text">{{ recipe.name }}</span>
+            <h1
+                id="recipe-details-title"
+                class="recipe-details--header-title text-shadow text-4xl font-semibold text-white"
+            >
+                <span class="recipe-details--header-title-text">{{
+                    recipe.name
+                }}</span>
             </h1>
         </template>
 
         <template #actions>
-            <StrokeButton class="w-full" route="recipes.edit" :route-params="{ recipe: recipe.uuid }">
-                <i-zondicons-edit-pencil class="mr-2 w-4 h-4" /> {{ $t('recipes.edit') }}
+            <StrokeButton
+                class="w-full"
+                route="recipes.edit"
+                :route-params="{ recipe: recipe.uuid }"
+            >
+                <i-zondicons-edit-pencil class="mr-2 h-4 w-4" />
+                {{ $t('recipes.edit') }}
             </StrokeButton>
-            <StrokeButton class="mt-2 w-full" @click="$ui.openModal(ShareRecipeModal, { recipe })">
-                <i-zondicons-share class="mr-2 w-4 h-4" /> {{ $t('recipes.share') }}
+            <StrokeButton
+                class="mt-2 w-full"
+                @click="$ui.openModal(ShareRecipeModal, { recipe })"
+            >
+                <i-zondicons-share class="mr-2 h-4 w-4" />
+                {{ $t('recipes.share') }}
             </StrokeButton>
         </template>
     </RecipePage>
@@ -32,7 +46,10 @@ import type { PropType } from 'vue';
 
 import TailwindCSS from '@/framework/utils/tailwindcss';
 import { animateElements } from '@/framework/utils/dom';
-import { defineElementTransition, defineEnterTransition } from '@/framework/core/services/ElementTransitionsService';
+import {
+    defineElementTransition,
+    defineEnterTransition,
+} from '@/framework/core/services/ElementTransitionsService';
 
 import ShareRecipeModal from '@/components/modals/ShareRecipeModal.vue';
 import type Recipe from '@/models/Recipe';
@@ -46,10 +63,16 @@ const { recipe } = defineProps({
 
 const enterTransition = defineEnterTransition(async details => {
     const duration = 500;
-    const detailsHeader = details.querySelector('.recipe-details--header') as HTMLElement;
-    const detailsBody = details.querySelector('.recipe-details--body') as HTMLElement;
+    const detailsHeader = details.querySelector(
+        '.recipe-details--header',
+    ) as HTMLElement;
+    const detailsBody = details.querySelector(
+        '.recipe-details--body',
+    ) as HTMLElement;
     const detailsBodyBoundingRect = detailsBody.getBoundingClientRect();
-    const detailsMetadataDecoration = details.querySelector('.recipe-page-layout--metadata-decoration') as HTMLElement;
+    const detailsMetadataDecoration = details.querySelector(
+        '.recipe-page-layout--metadata-decoration',
+    ) as HTMLElement;
 
     await animateElements({ duration }, [
         {
@@ -64,7 +87,9 @@ const enterTransition = defineEnterTransition(async details => {
             styles: {
                 transform: [
                     `translateY(${
-                        window.innerHeight - detailsBodyBoundingRect.top + detailsMetadataDecoration.clientHeight
+                        window.innerHeight -
+                        detailsBodyBoundingRect.top +
+                        detailsMetadataDecoration.clientHeight
                     }px)`,
                     'translateY(0)',
                 ],
@@ -75,20 +100,39 @@ const enterTransition = defineEnterTransition(async details => {
 
 const transitionToCard = defineElementTransition(async (_, details, card) => {
     const duration = 500;
-    const detailsHeader = details.querySelector('.recipe-details--header') as HTMLElement;
+    const detailsHeader = details.querySelector(
+        '.recipe-details--header',
+    ) as HTMLElement;
     const detailsHeaderBoundingRect = detailsHeader.getBoundingClientRect();
-    const detailsHeaderWrapper = details.querySelector('.recipe-details--header-wrapper') as HTMLElement;
-    const detailsHeaderOverlay = details.querySelector('.recipe-details--header-overlay') as HTMLElement;
-    const detailsHeaderTitle = details.querySelector('.recipe-details--header-title') as HTMLElement;
-    const detailsHeaderTitleBoundingRect = detailsHeaderTitle.getBoundingClientRect();
-    const detailsHeaderTitleWrapper = details.querySelector('.recipe-details--header-title-wrapper') as HTMLElement;
-    const detailsHeaderTitleText = details.querySelector('.recipe-details--header-title-text') as HTMLElement;
+    const detailsHeaderWrapper = details.querySelector(
+        '.recipe-details--header-wrapper',
+    ) as HTMLElement;
+    const detailsHeaderOverlay = details.querySelector(
+        '.recipe-details--header-overlay',
+    ) as HTMLElement;
+    const detailsHeaderTitle = details.querySelector(
+        '.recipe-details--header-title',
+    ) as HTMLElement;
+    const detailsHeaderTitleBoundingRect =
+        detailsHeaderTitle.getBoundingClientRect();
+    const detailsHeaderTitleWrapper = details.querySelector(
+        '.recipe-details--header-title-wrapper',
+    ) as HTMLElement;
+    const detailsHeaderTitleText = details.querySelector(
+        '.recipe-details--header-title-text',
+    ) as HTMLElement;
     const detailsHeaderWrapperBackground = document.createElement('div');
-    const detailsBody = details.querySelector('.recipe-details--body') as HTMLElement;
+    const detailsBody = details.querySelector(
+        '.recipe-details--body',
+    ) as HTMLElement;
     const detailsBodyBoundingRect = detailsBody.getBoundingClientRect();
-    const detailsMetadataDecoration = details.querySelector('.recipe-page-layout--metadata-decoration') as HTMLElement;
+    const detailsMetadataDecoration = details.querySelector(
+        '.recipe-page-layout--metadata-decoration',
+    ) as HTMLElement;
     const cardBoundingRect = card.getBoundingClientRect();
-    const recipesFAB = document.querySelector('.recipes-index--fab') as HTMLElement | null;
+    const recipesFAB = document.querySelector(
+        '.recipes-index--fab',
+    ) as HTMLElement | null;
     const footer = document.querySelector('footer') as HTMLElement;
 
     await animateElements({ duration, fill: 'forwards' }, [
@@ -112,7 +156,8 @@ const transitionToCard = defineElementTransition(async (_, details, card) => {
         {
             element: detailsHeaderWrapperBackground,
             before: {
-                addClasses: 'opacity-0 absolute inset-0 bg-gradient-to-t to-transparent from-dark-overlay',
+                addClasses:
+                    'opacity-0 absolute inset-0 bg-gradient-to-t to-transparent from-dark-overlay',
             },
             styles: { opacity: [0, 1] },
         },
@@ -149,16 +194,21 @@ const transitionToCard = defineElementTransition(async (_, details, card) => {
             before: {
                 addClasses: 'z-20 fixed w-full',
                 styles: {
-                    height: Math.max(
-                        detailsBodyBoundingRect.height,
-                        window.innerHeight - detailsHeaderBoundingRect.height,
-                    ) + 'px',
+                    height:
+                        Math.max(
+                            detailsBodyBoundingRect.height,
+                            window.innerHeight -
+                                detailsHeaderBoundingRect.height,
+                        ) + 'px',
                 },
             },
             styles: {
                 top: [
                     `${detailsBodyBoundingRect.top}px`,
-                    `${window.innerHeight + detailsMetadataDecoration.clientHeight}px`,
+                    `${
+                        window.innerHeight +
+                        detailsMetadataDecoration.clientHeight
+                    }px`,
                 ],
             },
         },

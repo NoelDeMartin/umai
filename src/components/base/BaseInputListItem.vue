@@ -1,7 +1,7 @@
 <template>
-    <div ref="root" class="flex text-gray-700 group">
-        <span class="flex justify-center items-center w-8">
-            <span class="w-2 h-2 bg-gray-300 rounded-full" />
+    <div ref="root" class="group flex text-gray-700">
+        <span class="flex w-8 items-center justify-center">
+            <span class="h-2 w-2 rounded-full bg-gray-300" />
         </span>
         <BaseFluidInput
             ref="input"
@@ -19,8 +19,8 @@
             :aria-label="removeA11yLabel.replace(':item', modelValue)"
             :title="removeLabel"
             :class="[
-                'flex justify-center items-center ml-2 ring-inset text-gray-900 rounded-full w-clickable h-clickable',
-                'focus:outline-none focus:opacity-100 focus-visible:ring-2 focus-visible:ring-primary-600',
+                'ml-2 flex h-clickable w-clickable items-center justify-center rounded-full text-gray-900 ring-inset',
+                'focus:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-600',
                 'hover:bg-gray-200 hover:opacity-100',
                 'active:bg-gray-300',
                 focused ? 'opacity-60' : 'opacity-0 group-hover:opacity-60',
@@ -29,7 +29,7 @@
             @blur="updateFocus"
             @click="$emit('remove')"
         >
-            <i-zondicons-trash aria-hidden="true" class="w-4 h-4" />
+            <i-zondicons-trash aria-hidden="true" class="h-4 w-4" />
         </button>
     </div>
 </template>
@@ -78,8 +78,7 @@ function updateFocus() {
 defineExpose<IBaseInputListItem>({
     focus: () => input?.focus(),
     async playLeaveAnimation() {
-        if (!root || !input?.root)
-            return;
+        if (!root || !input?.root) return;
 
         const initialHeight = root.getBoundingClientRect().height;
 

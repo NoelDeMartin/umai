@@ -1,7 +1,8 @@
 import ramenJsonLD from '@cy/fixtures/ramen-3.json';
 
-describe('Authentication', () => {
+const DPoPRegex = /DPoP .*/;
 
+describe('Authentication', () => {
     it('Logs in using the localStorage authenticator', () => {
         // Arrange
         cy.intercept('https://alice.example.com', { statusCode: 404 });
@@ -50,10 +51,10 @@ describe('Authentication', () => {
         cy.contains('online').click();
         cy.contains('You are logged in as http://localhost:4000/alice/profile/card#me').should('be.visible');
 
-        cy.get('@createCookbook').its('request.headers.authorization').should('match', /DPoP .*/);
-        cy.get('@createTypeIndex').its('request.headers.authorization').should('match', /DPoP .*/);
-        cy.get('@registerCookbook').its('request.headers.authorization').should('match', /DPoP .*/);
-        cy.get('@patchRamen').its('request.headers.authorization').should('match', /DPoP .*/);
+        cy.get('@createCookbook').its('request.headers.authorization').should('match', DPoPRegex);
+        cy.get('@createTypeIndex').its('request.headers.authorization').should('match', DPoPRegex);
+        cy.get('@registerCookbook').its('request.headers.authorization').should('match', DPoPRegex);
+        cy.get('@patchRamen').its('request.headers.authorization').should('match', DPoPRegex);
         cy.get('@patchRamen').its('request.headers.if-none-match').should('equal', '*');
     });
 
@@ -87,7 +88,7 @@ describe('Authentication', () => {
         // Assert
         cy.contains('Pisto!').should('be.visible');
 
-        cy.get('@patchPisto').its('request.headers.authorization').should('match', /DPoP .*/);
+        cy.get('@patchPisto').its('request.headers.authorization').should('match', DPoPRegex);
         cy.get('@patchPisto').its('request.headers.if-none-match').should('not.exist');
     });
 
@@ -210,5 +211,4 @@ describe('Authentication', () => {
         cy.assertLocalDocumentEquals('http://localhost:4000/alice/cookbook/ramen', ramenJsonLD);
         cy.assertLocalDocumentDoesNotExist('solid://recipes/ramen');
     });
-
 });

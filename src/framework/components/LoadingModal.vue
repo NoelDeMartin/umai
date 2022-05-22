@@ -1,6 +1,8 @@
 <template>
-    <div class="fixed inset-0 bg-dark-overlay flex items-center justify-center z-10">
-        <div class="bg-white p-4 rounded-md">
+    <div
+        class="fixed inset-0 z-10 flex items-center justify-center bg-dark-overlay"
+    >
+        <div class="rounded-md bg-white p-4">
             {{ text }}
         </div>
     </div>

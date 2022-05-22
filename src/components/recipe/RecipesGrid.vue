@@ -6,7 +6,7 @@
         leave-active-class="!absolute transition-all duration-300"
         leave-to-class="opacity-0"
         move-class="transition-all duration-300"
-        class="grid grid-cols-1 gap-3 my-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+        class="my-3 grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
         @before-leave="element => $elementTransitions.freezeInPlace(element as HTMLElement)"
     >
         <RecipeCard
@@ -33,8 +33,7 @@ defineProps({
 });
 
 onBeforeUnmount(() => {
-    if (!root)
-        return;
+    if (!root) return;
 
     const boundingRect = root.getBoundingClientRect();
 

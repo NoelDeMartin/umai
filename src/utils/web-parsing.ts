@@ -39,8 +39,7 @@ function reshapeContexts(json: JsonLD): void {
 }
 
 function reshapeRecipeIngredients(json: RecipeJsonLD): void {
-    if (!json.recipeIngredient)
-        return;
+    if (!json.recipeIngredient) return;
 
     json.recipeIngredient = [json.recipeIngredient].flat().map(ingredient => ingredient.trim());
 }
@@ -53,8 +52,8 @@ function reshapeRecipeInstructions(json: RecipeJsonLD): void {
     }
 
     if (Array.isArray(json.recipeInstructions)) {
-        json.recipeInstructions = json.recipeInstructions.map(
-            (instruction, index) => typeof instruction === 'object'
+        json.recipeInstructions = json.recipeInstructions.map((instruction, index) =>
+            typeof instruction === 'object'
                 ? {
                     position: index + 1,
                     ...instruction,
@@ -64,8 +63,7 @@ function reshapeRecipeInstructions(json: RecipeJsonLD): void {
                     '@type': 'HowToStep',
                     'text': instruction,
                     'position': index + 1,
-                },
-        );
+                });
 
         return;
     }
@@ -134,8 +132,7 @@ export async function parseWebsiteRecipes(url: string, html: string): Promise<Re
             }),
     );
 
-    return arrayFilter(recipes)
-        .map(recipe => tap(recipe, () => recipe.setAttribute('externalUrls', [url])));
+    return arrayFilter(recipes).map(recipe => tap(recipe, () => recipe.setAttribute('externalUrls', [url])));
 }
 
 export function parseWebsiteMetadata(url: string, html: string): WebsiteMetadata {

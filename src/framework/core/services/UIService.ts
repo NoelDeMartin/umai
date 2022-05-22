@@ -17,7 +17,7 @@ interface State {
 type ModalProps<MC> = MC extends ModalComponent<infer P, unknown> ? P : never;
 type ModalResult<MC> = MC extends ModalComponent<Record<string, unknown>, infer R> ? R : never;
 
-interface ModalCallbacks<T=unknown> {
+interface ModalCallbacks<T = unknown> {
     willClose(result: T | undefined): void;
     closed(result: T | undefined): void;
 }
@@ -75,8 +75,8 @@ export default class UIService extends Service<State> {
             props: props ?? {},
             open: false,
             component: markRaw(component),
-            beforeClose: new Promise(resolve => callbacks.willClose = resolve),
-            afterClose: new Promise(resolve => callbacks.closed = resolve),
+            beforeClose: new Promise(resolve => (callbacks.willClose = resolve)),
+            afterClose: new Promise(resolve => (callbacks.closed = resolve)),
         };
 
         this.modalCallbacks[id] = callbacks;
@@ -101,8 +101,7 @@ export default class UIService extends Service<State> {
     public async closeModal(id: string, result?: unknown, animate: boolean = true): Promise<void> {
         const modal = arrayFirst(this.modals, modal => modal.id === id);
 
-        if (!modal)
-            return;
+        if (!modal) return;
 
         const callbacks = this.modalCallbacks[id];
 
@@ -137,10 +136,7 @@ export default class UIService extends Service<State> {
         };
 
         this.setState({
-            snackbars: [
-                ...this.snackbars,
-                snackbar,
-            ],
+            snackbars: [...this.snackbars, snackbar],
         });
 
         setTimeout(() => this.hideSnackbar(snackbar.id), 5000);
@@ -151,8 +147,7 @@ export default class UIService extends Service<State> {
     public hideSnackbar(id: string): void {
         const index = this.snackbars.findIndex(snackbar => snackbar.id === id);
 
-        if (index === -1)
-            return;
+        if (index === -1) return;
 
         this.setState({ snackbars: arrayWithoutIndex(this.snackbars, index) });
     }
@@ -170,8 +165,7 @@ export default class UIService extends Service<State> {
     public async hideLoading(): Promise<void> {
         const loadingModal = this.loadingModal;
 
-        if (!loadingModal)
-            return;
+        if (!loadingModal) return;
 
         this.loadingModal = null;
 

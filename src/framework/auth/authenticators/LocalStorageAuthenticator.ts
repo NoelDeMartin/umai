@@ -45,8 +45,7 @@ export default class LocalStorageAuthenticator extends Authenticator {
     }
 
     protected async restoreSession(): Promise<void> {
-        if (!Storage.has(STORAGE_KEY))
-            return;
+        if (!Storage.has(STORAGE_KEY)) return;
 
         await this.initAuthenticatedFetch(window.fetch.bind(window));
         await this.startSession(Storage.require<StorageData>(STORAGE_KEY));

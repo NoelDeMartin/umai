@@ -10,8 +10,7 @@ import UI from '@/framework/core/facades/UI';
 import { ApplicationComponent } from '@/framework/core/services/UIService';
 
 function enhanceRoute(route: RouteRecordRaw): RouteRecordRaw {
-    if (route.component)
-        route.component = enhanceRouteComponent(route.component);
+    if (route.component) route.component = enhanceRouteComponent(route.component);
 
     return route;
 }
@@ -61,35 +60,30 @@ function enhanceRouteComponent<P>(pageComponent: Component<P>): Component {
             },
             resolveRouteParameters(): Record<string, unknown> | null {
                 try {
-                    return Object
-                        .entries(this.$route.params)
-                        .reduce(
-                            (params, [paramName, paramValue]) => {
-                                const modelBinding = this.$router.getModelBinding(paramName);
+                    return Object.entries(this.$route.params).reduce((params, [paramName, paramValue]) => {
+                        const modelBinding = this.$router.getModelBinding(paramName);
 
-                                if (!modelBinding)
-                                    return params;
+                        if (!modelBinding) return params;
 
-                                return tap(params, params => {
-                                    params[paramName] = modelBinding.find(paramValue as string) ?? fail();
+                        return tap(params, params => {
+                            params[paramName] = modelBinding.find(paramValue as string) ?? fail();
 
-                                    if (modelBinding.subscribe)
-                                        this.subscriptions.push(modelBinding.subscribe(model => {
-                                            if (!this.routeParameters)
-                                                return;
+                            if (modelBinding.subscribe)
+                                this.subscriptions.push(
+                                    modelBinding.subscribe(model => {
+                                        if (!this.routeParameters) return;
 
-                                            if (!model) {
-                                                this.routeParameters = null;
+                                        if (!model) {
+                                            this.routeParameters = null;
 
-                                                return;
-                                            }
+                                            return;
+                                        }
 
-                                            this.routeParameters[paramName] = new Proxy(model, {});
-                                        }));
-                                });
-                            },
-                            Object.assign({}, this.$route.params) as Record<string, unknown>,
-                        );
+                                        this.routeParameters[paramName] = new Proxy(model, {});
+                                    }),
+                                );
+                        });
+                    }, Object.assign({}, this.$route.params) as Record<string, unknown>);
                 } catch (error) {
                     return null;
                 }

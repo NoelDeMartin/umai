@@ -18,9 +18,7 @@ interface TestingRuntime {
 }
 
 declare global {
-
     interface Window {
         testing?: TestingRuntime;
     }
-
 }

@@ -8,11 +8,10 @@ import Service from './Service';
 import type { ComputedStateDefinitions, IService } from './Service';
 
 describe('Service', () => {
-
     let instance: StubService;
 
     beforeAll(async () => {
-        instance = new StubService;
+        instance = new StubService();
         Store.setInstance(createStore({}));
 
         await instance.launch();
@@ -45,18 +44,18 @@ describe('Service', () => {
     it('magic getters respect null values', () => {
         expect(instance.foo).toBeNull();
     });
-
 });
 
 describe('Service types', () => {
-
-    it('has correct types', tt<
-        Expect<Equals<StubService['foo'], string | null>> |
-        Expect<Equals<StubService['bar'], number | null>> |
-        Expect<Equals<Pick<StubService, 'hasFoo'>, Readonly<{ hasFoo: boolean }>>> |
-        true
-    >());
-
+    it(
+        'has correct types',
+        tt<
+            | Expect<Equals<StubService['foo'], string | null>>
+            | Expect<Equals<StubService['bar'], number | null>>
+            | Expect<Equals<Pick<StubService, 'hasFoo'>, Readonly<{ hasFoo: boolean }>>>
+            | true
+        >(),
+    );
 });
 
 interface State {

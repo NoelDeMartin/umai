@@ -1,8 +1,10 @@
 <template>
     <li class="my-0">
-        <div class="flex group">
+        <div class="group flex">
             <div class="relative mr-2">
-                <div class="flex justify-center min-w-clickable group-hover:opacity-0">
+                <div
+                    class="flex min-w-clickable justify-center group-hover:opacity-0"
+                >
                     <slot name="marker" />
                 </div>
                 <button
@@ -10,15 +12,15 @@
                     tabindex="-1"
                     aria-hidden="true"
                     :class="[
-                        'absolute top-0 inset-x-1/2 -translate-x-1/2 w-clickable h-clickable',
-                        'hidden justify-center items-center text-gray-900 rounded-full opacity-50',
+                        'absolute inset-x-1/2 top-0 h-clickable w-clickable -translate-x-1/2',
+                        'hidden items-center justify-center rounded-full text-gray-900 opacity-50',
                         'hover:!opacity-100 group-hover:flex',
                     ]"
                     :title="$t('ui.drag')"
                     @mousedown="startDragging"
                     @touchstart="startDragging"
                 >
-                    <i-carbon-drag-vertical class="w-4 h-4" />
+                    <i-carbon-drag-vertical class="h-4 w-4" />
                 </button>
             </div>
             <slot />

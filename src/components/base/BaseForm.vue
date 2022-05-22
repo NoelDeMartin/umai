@@ -21,8 +21,7 @@ const emit = defineEmits(['submit']);
 provide('form', form);
 
 async function submit() {
-    if (!form.submit())
-        return;
+    if (!form.submit()) return;
 
     emit('submit', form.data());
 }

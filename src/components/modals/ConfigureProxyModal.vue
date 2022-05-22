@@ -1,6 +1,12 @@
 <template>
     <AppModal v-slot="{ close }" :title="$t('proxyConfig.title')">
-        <BaseMarkdown :text="$t('proxyConfig.info', { url: `${$app.sourceUrl}/blob/main/docs/using-a-proxy.md` })" />
+        <BaseMarkdown
+            :text="
+                $t('proxyConfig.info', {
+                    url: `${$app.sourceUrl}/blob/main/docs/using-a-proxy.md`,
+                })
+            "
+        />
 
         <BaseForm class="mt-4" :form="form" @submit="submit(close)">
             <details>
@@ -10,7 +16,11 @@
 
                 <label class="flex items-center">
                     <span>{{ $t('proxyConfig.proxyUrl') }}:</span>
-                    <BaseFluidInput class="ml-2" placeholder="https://..." name="proxyUrl" />
+                    <BaseFluidInput
+                        class="ml-2"
+                        placeholder="https://..."
+                        name="proxyUrl"
+                    />
                 </label>
             </details>
 

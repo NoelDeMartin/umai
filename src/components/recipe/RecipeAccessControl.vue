@@ -5,15 +5,21 @@
         class="flex items-center space-x-2 text-red-500"
         @click="$errors.inspect(error)"
     >
-        <i-zondicons-exclamation-outline class="w-4 h-4" aria-hidden="true" />
+        <i-zondicons-exclamation-outline class="h-4 w-4" aria-hidden="true" />
         <span class="text-sm">{{ $t('recipes.accessControl.error') }}</span>
     </BaseButton>
-    <span v-else-if="!profile" class="flex items-center space-x-2 text-gray-600">
-        <i-app-spinner class="animate-spin w-4 h-4" aria-hidden="true" />
+    <span
+        v-else-if="!profile"
+        class="flex items-center space-x-2 text-gray-600"
+    >
+        <i-app-spinner class="h-4 w-4 animate-spin" aria-hidden="true" />
         <span class="text-sm">{{ $t('recipes.accessControl.loading') }}</span>
     </span>
-    <span v-else-if="updatingPermissions" class="flex items-center space-x-2 text-gray-600">
-        <i-app-spinner class="animate-spin w-4 h-4" aria-hidden="true" />
+    <span
+        v-else-if="updatingPermissions"
+        class="flex items-center space-x-2 text-gray-600"
+    >
+        <i-app-spinner class="h-4 w-4 animate-spin" aria-hidden="true" />
         <span class="text-sm">{{ $t('recipes.accessControl.updating') }}</span>
     </span>
     <Listbox
@@ -29,18 +35,30 @@
         <div class="relative">
             <ListboxButton
                 ref="button"
-                class="relative inline-flex items-center p-2 rounded-md text-sm font-medium focus:outline-none focus:z-10 focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-primary-500 hover:bg-gray-200"
-                :aria-label="$t('recipes.accessControl.change_label_a11y', { current: profile.name })"
+                class="relative inline-flex items-center rounded-md p-2 text-sm font-medium hover:bg-gray-200 focus:z-10 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+                :aria-label="
+                    $t('recipes.accessControl.change_label_a11y', {
+                        current: profile.name,
+                    })
+                "
             >
-                <component :is="profile.iconComponent" class="h-4 w-4" aria-hidden="true" />
+                <component
+                    :is="profile.iconComponent"
+                    class="h-4 w-4"
+                    aria-hidden="true"
+                />
                 <p class="ml-2 text-sm font-medium">
                     {{ profile.name }}
                 </p>
             </ListboxButton>
 
-            <transition leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100" leave-to-class="opacity-0">
+            <transition
+                leave-active-class="transition ease-in duration-100"
+                leave-from-class="opacity-100"
+                leave-to-class="opacity-0"
+            >
                 <ListboxOptions
-                    class="fixed z-10 mt-2 max-w-readable rounded-md shadow-lg overflow-hidden bg-white divide-y divide-gray-200 ring-1 ring-black ring-opacity-5 focus:outline-none"
+                    class="fixed z-10 mt-2 max-w-readable divide-y divide-gray-200 overflow-hidden rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                     :style="`top:${optionsPosition.top}px;right:${optionsPosition.right}px`"
                 >
                     <ListboxOption
@@ -52,24 +70,60 @@
                     >
                         <li
                             :class="[
-                                active ? 'text-white bg-primary-500' : 'text-gray-900',
-                                'select-none relative p-4 text-sm flex items-center cursor-pointer'
+                                active
+                                    ? 'bg-primary-500 text-white'
+                                    : 'text-gray-900',
+                                'relative flex cursor-pointer select-none items-center p-4 text-sm',
                             ]"
                         >
                             <div class="flex flex-col">
                                 <div class="flex justify-between">
-                                    <p :class="[selected ? 'font-semibold' : 'font-normal', 'flex items-center']">
-                                        <component :is="profileOption.iconComponent" :class="optionIconClasses(active, selected)" aria-hidden="true" />
-                                        <span class="ml-2">{{ profileOption.name }}</span>
+                                    <p
+                                        :class="[
+                                            selected
+                                                ? 'font-semibold'
+                                                : 'font-normal',
+                                            'flex items-center',
+                                        ]"
+                                    >
+                                        <component
+                                            :is="profileOption.iconComponent"
+                                            :class="
+                                                optionIconClasses(
+                                                    active,
+                                                    selected
+                                                )
+                                            "
+                                            aria-hidden="true"
+                                        />
+                                        <span class="ml-2">{{
+                                            profileOption.name
+                                        }}</span>
                                     </p>
                                 </div>
-                                <p :class="[active ? 'text-primary-200' : 'text-gray-500', 'mt-2']">
+                                <p
+                                    :class="[
+                                        active
+                                            ? 'text-primary-200'
+                                            : 'text-gray-500',
+                                        'mt-2',
+                                    ]"
+                                >
                                     {{ profileOption.description }}
                                 </p>
                             </div>
                             <div class="flex-grow" />
-                            <span v-if="selected" :class="[active ? 'text-white' : 'text-primary-500', 'ml-4']">
-                                <i-zondicons-checkmark class="h-5 w-5" aria-hidden="true" />
+                            <span
+                                v-if="selected"
+                                :class="[
+                                    active ? 'text-white' : 'text-primary-500',
+                                    'ml-4',
+                                ]"
+                            >
+                                <i-zondicons-checkmark
+                                    class="h-5 w-5"
+                                    aria-hidden="true"
+                                />
                             </span>
                         </li>
                     </ListboxOption>
@@ -107,13 +161,17 @@ const { recipe } = defineProps({
 
 const publicProfile: AccessControlProfile = markRaw({
     name: I18n.translate('recipes.accessControl.profile_public'),
-    description: I18n.translate('recipes.accessControl.profile_publicDescription'),
+    description: I18n.translate(
+        'recipes.accessControl.profile_publicDescription',
+    ),
     iconComponent: IconViewShow,
     publicPermissions: [SolidDocumentPermission.Read],
 });
 const privateProfile: AccessControlProfile = markRaw({
     name: I18n.translate('recipes.accessControl.profile_private'),
-    description: I18n.translate('recipes.accessControl.profile_privateDescription'),
+    description: I18n.translate(
+        'recipes.accessControl.profile_privateDescription',
+    ),
     iconComponent: IconViewHide,
     publicPermissions: [],
 });
@@ -127,11 +185,9 @@ const button = $ref<{ el: HTMLButtonElement } | undefined>();
 
 function optionIconClasses(active: boolean, selected: boolean): string {
     const conditionalClasses = () => {
-        if (active)
-            return 'text-white';
+        if (active) return 'text-white';
 
-        if (selected)
-            return 'text-gray-600';
+        if (selected) return 'text-gray-600';
 
         return 'text-gray-400';
     };
@@ -140,8 +196,7 @@ function optionIconClasses(active: boolean, selected: boolean): string {
 }
 
 async function updatePermissions(newProfile: AccessControlProfile) {
-    if (newProfile === profile)
-        return;
+    if (newProfile === profile) return;
 
     updatingPermissions = true;
 

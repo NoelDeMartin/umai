@@ -1,7 +1,6 @@
 import { IngredientUnit, parseIngredient, sortIngredients } from './ingredients';
 
 describe('Ingredients helpers', () => {
-
     it('parses ingredients', () => {
         expect(parseIngredient('100g Cheese')).toEqual({
             name: 'Cheese',
@@ -86,5 +85,4 @@ describe('Ingredients helpers', () => {
             ],
         );
     });
-
 });

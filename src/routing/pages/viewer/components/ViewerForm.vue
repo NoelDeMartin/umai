@@ -4,8 +4,11 @@
         class="flex flex-col items-center justify-center"
         @submit="submit()"
     >
-        <div v-if="searching" class="flex flex-col justify-center items-center p-4 space-y-4">
-            <i-app-scanning class="w-12 h-12 text-primary-500" />
+        <div
+            v-if="searching"
+            class="flex flex-col items-center justify-center space-y-4 p-4"
+        >
+            <i-app-scanning class="h-12 w-12 text-primary-500" />
             <p class="text-xl text-gray-700">
                 {{ $t('viewer.searching') }}
             </p>
@@ -23,7 +26,10 @@
             </div>
 
             <div class="mt-2">
-                <BaseInput name="url" :placeholder="$t('viewer.urlPlaceholder')" />
+                <BaseInput
+                    name="url"
+                    :placeholder="$t('viewer.urlPlaceholder')"
+                />
                 <BaseButton type="submit">
                     {{ $t('viewer.submit') }}
                 </BaseButton>
@@ -31,7 +37,7 @@
 
             <BaseMarkdown
                 v-if="notFound"
-                class="mt-2 text-center prose"
+                class="prose mt-2 text-center"
                 :text="$t('viewer.notFound', { url: notFound })"
             />
         </template>
@@ -39,7 +45,11 @@
 </template>
 
 <script setup lang="ts">
-import { getLocationQueryParameter, updateLocationQueryParameters, urlRoute } from '@noeldemartin/utils';
+import {
+    getLocationQueryParameter,
+    updateLocationQueryParameters,
+    urlRoute,
+} from '@noeldemartin/utils';
 import { onMounted } from 'vue';
 import { NetworkError, SolidEngine } from 'soukai-solid';
 
@@ -63,8 +73,7 @@ const form = reactiveForm({
 const engine = $computed(() => new SolidEngine(Auth.fetch));
 
 async function findRecipe(): Promise<Recipe | null> {
-    if (!form.url)
-        return null;
+    if (!form.url) return null;
 
     try {
         const recipe = await Recipe.withEngine(engine, async () => {
@@ -74,9 +83,8 @@ async function findRecipe(): Promise<Recipe | null> {
         });
 
         return recipe;
-    } catch(error) {
-        if (!(error instanceof NetworkError))
-            Errors.report(error);
+    } catch (error) {
+        if (!(error instanceof NetworkError)) Errors.report(error);
 
         return null;
     }

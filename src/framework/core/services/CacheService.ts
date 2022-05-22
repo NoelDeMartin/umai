@@ -21,8 +21,7 @@ export default class CacheService extends Service<State> {
     }
 
     protected async open(): Promise<Cache> {
-        if (!this.cache)
-            this.cache = await caches.open('app');
+        if (!this.cache) this.cache = await caches.open('app');
 
         return this.cache;
     }

@@ -7,7 +7,6 @@ import junsRamenJsonLD from '@cy/fixtures/juns-ramen.json';
 import secondRamenJsonLD from '@cy/fixtures/ramen-2.json';
 
 describe('Cookbook', () => {
-
     beforeEach(() => {
         cy.task('resetSolidPOD');
         cy.visit('/recipes?authenticator=localStorage');
@@ -426,5 +425,4 @@ describe('Cookbook', () => {
             expect(recipe.name).to.equal('Ramen');
         });
     });
-
 });

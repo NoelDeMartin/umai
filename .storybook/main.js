@@ -9,9 +9,7 @@ const { loadConfigFromFile, mergeConfig } = require('vite');
 const { resolve } = require('path');
 
 module.exports = {
-    stories: [
-        './stories/**/*.ts',
-    ],
+    stories: ['./stories/**/*.ts'],
     addons: [
         {
             name: '@storybook/addon-essentials',
@@ -40,6 +38,7 @@ module.exports = {
                 }),
                 Components({
                     resolvers: [
+                        //
                         HeadlessUiResolver(),
                         IconsResolver({ customCollections: ['app'] }),
                     ],

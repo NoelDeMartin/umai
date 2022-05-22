@@ -19,12 +19,10 @@ const commands = {
 type CustomCommands = typeof commands;
 
 declare global {
-
     // eslint-disable-next-line @typescript-eslint/no-namespace
     namespace Cypress {
         interface Chainable extends CustomCommands {}
     }
-
 }
 
 export default function installCustomCommands(): void {

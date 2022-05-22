@@ -5,19 +5,15 @@ import type { Plugin } from 'vue';
 import Store from '@/framework/core/facades/Store';
 
 declare module '@vue/runtime-core' {
-
     export interface ComponentCustomProperties {
         $store: NonNullable<typeof Store['instance']>;
     }
-
 }
 
 declare module '@/framework/core' {
-
     export interface Services {
         $store: NonNullable<typeof Store['instance']>;
     }
-
 }
 
 export default function(): Plugin {

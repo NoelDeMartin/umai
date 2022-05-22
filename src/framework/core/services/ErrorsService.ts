@@ -23,13 +23,15 @@ export default class ErrorsService extends Service {
     public report(error: ErrorReason): void {
         const report = this.getErrorReport(error);
 
-        const snackbarId = UI.showSnackbar(I18n.translate('errors.notice'), [{
-            text: I18n.translate('errors.viewDetails'),
-            handler: () => {
-                UI.hideSnackbar(snackbarId);
-                UI.openModal(ErrorReportModal, { report });
+        const snackbarId = UI.showSnackbar(I18n.translate('errors.notice'), [
+            {
+                text: I18n.translate('errors.viewDetails'),
+                handler: () => {
+                    UI.hideSnackbar(snackbarId);
+                    UI.openModal(ErrorReportModal, { report });
+                },
             },
-        }]);
+        ]);
     }
 
     private getErrorReport(reason: ErrorReason): ErrorReport {

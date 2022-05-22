@@ -6,16 +6,15 @@
         <p class="prose">
             {{ $t('home.createCookbook.message') }}
         </p>
-        <BaseInput
-            :label="$t('home.createCookbook.nameLabel')"
-            name="name"
-        />
+        <BaseInput :label="$t('home.createCookbook.nameLabel')" name="name" />
         <BaseInput
             :label="$t('home.createCookbook.storageUrlLabel')"
             name="storageUrl"
         />
         <span
-            v-safe-html="$t('home.createCookbook.info', { url: `<pre>${url}</pre>` })"
+            v-safe-html="
+                $t('home.createCookbook.info', { url: `<pre>${url}</pre>` })
+            "
             class="text-sm"
         />
         <BaseButton type="submit">
@@ -46,7 +45,8 @@ const form = reactiveForm({
     },
 });
 
-const url = $computed(() => urlResolveDirectory(form.storageUrl, stringToSlug(form.name)));
+const url = $computed(() =>
+    urlResolveDirectory(form.storageUrl, stringToSlug(form.name)));
 
 async function submit() {
     await Cookbook.createRemote(form.name, form.storageUrl);

@@ -2,9 +2,15 @@
     <div>
         <span class="sr-only">{{ $t('recipes.drag_instructions_a11y') }}</span>
         <SortableList class="pl-0" @swapItems="swapInstructionStep">
-            <SortableListItem v-for="(instruction, index) of instructionSteps" :key="instruction.id">
+            <SortableListItem
+                v-for="(instruction, index) of instructionSteps"
+                :key="instruction.id"
+            >
                 <template #marker>
-                    <span class="text-lg font-semibold text-primary-600" aria-hidden="true">
+                    <span
+                        class="text-lg font-semibold text-primary-600"
+                        aria-hidden="true"
+                    >
                         {{ index + 1 }}.
                     </span>
                 </template>
@@ -21,7 +27,10 @@
                 />
             </SortableListItem>
         </SortableList>
-        <BaseButton class="mt-4" @click="addInstructionStep(instructionSteps.length - 1)">
+        <BaseButton
+            class="mt-4"
+            @click="addInstructionStep(instructionSteps.length - 1)"
+        >
             {{ $t('recipes.instructionStep_add') }}
         </BaseButton>
     </div>
@@ -29,7 +38,12 @@
 
 <script setup lang="ts">
 import { nextTick } from 'vue';
-import { arraySwap, arrayWithItemAt, arrayWithoutIndex, uuid } from '@noeldemartin/utils';
+import {
+    arraySwap,
+    arrayWithItemAt,
+    arrayWithoutIndex,
+    uuid,
+} from '@noeldemartin/utils';
 import type { PropType } from 'vue';
 
 import type IRecipeInstructionStepInput from './RecipeInstructionStepInput';
@@ -45,14 +59,20 @@ const { modelValue } = defineProps({
 const instructionSteps = $computed(() => modelValue);
 const inputs = $ref<IRecipeInstructionStepInput[]>([]);
 
-async function swapInstructionStep(firstIndex: number, secondIndex: number, focus?: boolean) {
-    if (Math.max(firstIndex, secondIndex) > instructionSteps.length - 1 || Math.min(firstIndex, secondIndex) < 0)
+async function swapInstructionStep(
+    firstIndex: number,
+    secondIndex: number,
+    focus?: boolean,
+) {
+    if (
+        Math.max(firstIndex, secondIndex) > instructionSteps.length - 1 ||
+        Math.min(firstIndex, secondIndex) < 0
+    )
         return;
 
     arraySwap(instructionSteps, firstIndex, secondIndex);
 
-    if (!focus)
-        return;
+    if (!focus) return;
 
     await nextTick();
 
@@ -60,9 +80,15 @@ async function swapInstructionStep(firstIndex: number, secondIndex: number, focu
 }
 
 async function addInstructionStep(index: number) {
-    const newInstructionStep: RecipeInstructionStepInputData = { id: uuid(), description: '' };
+    const newInstructionStep: RecipeInstructionStepInputData = {
+        id: uuid(),
+        description: '',
+    };
 
-    emit('update:modelValue', arrayWithItemAt(instructionSteps, newInstructionStep, index));
+    emit(
+        'update:modelValue',
+        arrayWithItemAt(instructionSteps, newInstructionStep, index),
+    );
 
     await nextTick();
 

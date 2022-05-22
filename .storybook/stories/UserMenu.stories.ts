@@ -39,7 +39,7 @@ const Template = template<Args>(({ user }) => {
             ? {
                 user: profiles[user],
                 loginUrl: 'https://example.com',
-                authenticator: new LocalStorageAuthenticator,
+                authenticator: new LocalStorageAuthenticator(),
             }
             : null,
     });

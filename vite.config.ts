@@ -13,7 +13,7 @@ import packageJson from './package.json';
 
 const version = packageJson.version;
 const isProduction = process.env.NODE_ENV === 'production';
-const versionName = 'v' + version + (isProduction ? '' : ('-next-' + execSync('git rev-parse HEAD')));
+const versionName = 'v' + version + (isProduction ? '' : '-next-' + execSync('git rev-parse HEAD'));
 const sourceUrl = packageJson.repository.replace('github:', 'https://github.com/');
 
 export default defineConfig({
@@ -27,10 +27,12 @@ export default defineConfig({
         }),
         Components({
             resolvers: [
+                //
                 HeadlessUiResolver(),
                 IconsResolver({ customCollections: ['app'] }),
             ],
             dirs: [
+                //
                 'src/assets/icons',
                 'src/components',
                 'src/routing/pages',
@@ -39,15 +41,13 @@ export default defineConfig({
         }),
         {
             name: 'jsonld',
-            transform: (code, id) => id.endsWith('.jsonld') ? `export default ${code}` : null,
+            transform: (code, id) => (id.endsWith('.jsonld') ? `export default ${code}` : null),
         },
     ],
     resolve: {
         alias: {
             '@': resolve(__dirname, './src'),
-            '/src/main.ts': process.env.NODE_ENV === 'testing'
-                ? '/src/main.testing.ts'
-                : '/src/main.ts',
+            '/src/main.ts': process.env.NODE_ENV === 'testing' ? '/src/main.testing.ts' : '/src/main.ts',
         },
     },
     build: {

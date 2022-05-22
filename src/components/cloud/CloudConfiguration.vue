@@ -3,20 +3,29 @@
         <summary class="cursor-pointer">
             {{ $t('cloud.advancedOptions') }}
         </summary>
-        <div v-for="option of options" :key="option.name" class="flex relative items-start py-1">
-            <div class="flex items-center h-5">
+        <div
+            v-for="option of options"
+            :key="option.name"
+            class="relative flex items-start py-1"
+        >
+            <div class="flex h-5 items-center">
                 <input
                     :id="option.name"
                     v-model="option.enabled"
                     :name="option.name"
                     type="checkbox"
-                    class="w-4 h-4 rounded border-gray-300 cursor-pointer form-checkbox text-primary-600 focus:ring-primary-500 hover:bg-gray-200"
+                    class="form-checkbox h-4 w-4 cursor-pointer rounded border-gray-300 text-primary-600 hover:bg-gray-200 focus:ring-primary-500"
                     @change="option.updated()"
                 >
             </div>
             <div class="ml-3 w-full text-sm">
-                <label :for="option.name" class="inline-block w-full font-medium text-gray-700 cursor-pointer">
-                    <span v-if="!isConfigurable(option)">{{ option.text }}</span>
+                <label
+                    :for="option.name"
+                    class="inline-block w-full cursor-pointer font-medium text-gray-700"
+                >
+                    <span v-if="!isConfigurable(option)">{{
+                        option.text
+                    }}</span>
                     <!-- TODO review a11y -->
                     <template v-else>
                         <span>{{ option.text[0] }}</span>
@@ -75,11 +84,14 @@ const options: (BasicAuthOption | ConfigurableAuthOption)[] = $ref([
     },
     {
         name: 'auto-sync',
-        text: I18n.translate('cloud.sync_onInterval').split(' X ') as [string, string],
+        text: I18n.translate('cloud.sync_onInterval').split(' X ') as [
+            string,
+            string
+        ],
         enabled: !!Cloud.autoSync,
         value: Cloud.autoSync || 10,
         updated() {
-            Cloud.autoSync = this.enabled ? this.value as number : false;
+            Cloud.autoSync = this.enabled ? (this.value as number) : false;
         },
     },
 ]);

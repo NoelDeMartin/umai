@@ -13,17 +13,15 @@ export default class Recipe extends Model {
     public static history = true;
     public static rdfContexts = { schema: 'https://schema.org/' };
 
-    declare public instructions?: RecipeInstructionsStep[];
-    declare public relatedInstructions: SolidBelongsToManyRelation<
+    public declare instructions?: RecipeInstructionsStep[];
+    public declare relatedInstructions: SolidBelongsToManyRelation<
         this,
         RecipeInstructionsStep,
         typeof RecipeInstructionsStep
     >;
 
     public get uuid(): string | null {
-        return this.url
-            ? (this.url.match(/([^/#]+)(#.*)?$/)?.[1] ?? null)
-            : null;
+        return this.url ? this.url.match(/([^/#]+)(#.*)?$/)?.[1] ?? null : null;
     }
 
     public get sortedExternalUrls(): string[] {
@@ -44,13 +42,11 @@ export default class Recipe extends Model {
     }
 
     public is(other: Recipe): boolean {
-        return this.url === other.url
-            || this.externalUrls.some(url => url === other.url);
+        return this.url === other.url || this.externalUrls.some(url => url === other.url);
     }
 
     public instructionsRelationship(): Relation {
-        return this
-            .belongsToMany(RecipeInstructionsStep, 'instructionSteps')
+        return this.belongsToMany(RecipeInstructionsStep, 'instructionSteps')
             .onDelete('cascade')
             .usingSameDocument(true);
     }

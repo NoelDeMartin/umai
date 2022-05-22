@@ -2,8 +2,8 @@ import { bootModels } from 'soukai';
 import { fail } from '@noeldemartin/utils';
 import type { SolidModel, SolidModelConstructor } from 'soukai-solid';
 
-const remoteClasses: WeakMap<SolidModelConstructor, SolidModelConstructor> = new WeakMap;
-const localClasses: WeakMap<SolidModelConstructor, SolidModelConstructor> = new WeakMap;
+const remoteClasses: WeakMap<SolidModelConstructor, SolidModelConstructor> = new WeakMap();
+const localClasses: WeakMap<SolidModelConstructor, SolidModelConstructor> = new WeakMap();
 
 function makeRemoteClass<T extends SolidModelConstructor>(localClass: T): T {
     const LocalClass = localClass as typeof SolidModel;
@@ -11,7 +11,7 @@ function makeRemoteClass<T extends SolidModelConstructor>(localClass: T): T {
 
         public static timestamps = false;
         public static history = false;
-
+    
     } as T;
 
     remoteClasses.set(LocalClass, RemoteClass);
@@ -23,13 +23,11 @@ function makeRemoteClass<T extends SolidModelConstructor>(localClass: T): T {
 }
 
 export function getLocalClass<T extends SolidModelConstructor>(remoteClass: T): T {
-    return localClasses.get(remoteClass) as T
-        ?? fail(`Couldn't find local class for ${remoteClass.modelName}`);
+    return (localClasses.get(remoteClass) as T) ?? fail(`Couldn't find local class for ${remoteClass.modelName}`);
 }
 
 export function getRemoteClass<T extends SolidModelConstructor>(localClass: T): T {
-    return remoteClasses.get(localClass) as T
-        ?? makeRemoteClass(localClass);
+    return (remoteClasses.get(localClass) as T) ?? makeRemoteClass(localClass);
 }
 
 export function setRemoteCollection(localClass: typeof SolidModel, collection: string): void {
@@ -37,6 +35,5 @@ export function setRemoteCollection(localClass: typeof SolidModel, collection: s
 
     const remoteClass = remoteClasses.get(localClass);
 
-    if (remoteClass)
-        remoteClass.collection = collection;
+    if (remoteClass) remoteClass.collection = collection;
 }

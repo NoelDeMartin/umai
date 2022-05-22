@@ -8,7 +8,7 @@
             v-bind="$attrs"
             :rows="rows"
             :value="modelValue"
-            class="block w-full border-b-2 border-transparent resize-none caret-primary-500 focus:border-primary-600 hover:border-gray-300 focus:outline-none"
+            class="block w-full resize-none border-b-2 border-transparent caret-primary-500 hover:border-gray-300 focus:border-primary-600 focus:outline-none"
             @input="$emit('update:modelValue', textArea?.value)"
         />
     </div>
@@ -35,24 +35,32 @@ let rows = $ref(1);
 const attrs = useAttrs();
 const textArea = $ref<HTMLTextAreaElement>();
 const filler = $ref<HTMLElement>();
-const fillerContent = $computed(() => modelValue.endsWith('\n') ? modelValue + '\n' : modelValue);
-const fillerClasses = $computed(() => 'invisible absolute w-full whitespace-pre-wrap ' + (attrs.class ?? ''));
+const fillerContent = $computed(() =>
+    modelValue.endsWith('\n') ? modelValue + '\n' : modelValue);
+const fillerClasses = $computed(
+    () => 'invisible absolute w-full whitespace-pre-wrap ' + (attrs.class ?? ''),
+);
 const lineHeight = $computed(() => {
-    if (!filler)
-        return 0;
+    if (!filler) return 0;
 
-    const lineHeight = document.defaultView?.getComputedStyle(filler, null).lineHeight;
+    const lineHeight = document.defaultView?.getComputedStyle(
+        filler,
+        null,
+    ).lineHeight;
 
     return lineHeight ? parseInt(lineHeight) : 0;
 });
 
-watch(() => [modelValue, lineHeight], async () => {
-    await nextTick();
+watch(
+    () => [modelValue, lineHeight],
+    async () => {
+        await nextTick();
 
-    rows = filler
-        ? Math.max(1, Math.round(filler.offsetHeight / lineHeight))
-        : 1;
-});
+        rows = filler
+            ? Math.max(1, Math.round(filler.offsetHeight / lineHeight))
+            : 1;
+    },
+);
 
 defineExpose<IBaseFluidTextArea>({
     focus: () => textArea?.focus(),

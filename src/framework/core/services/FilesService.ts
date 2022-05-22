@@ -1,6 +1,6 @@
 import { openDB } from 'idb';
 import { tap } from '@noeldemartin/utils';
-import type { DBSchema, IDBPDatabase , IDBPTransaction } from 'idb';
+import type { DBSchema, IDBPDatabase, IDBPTransaction } from 'idb';
 
 import Service from '@/framework/core/Service';
 import type { IService } from '@/framework/core/Service';
@@ -86,7 +86,7 @@ export default class FilesService extends Service<State> {
     }
 
     protected async connect(): Promise<IDBPDatabase<FilesDatabaseSchema>> {
-        const connection = this.connection ?? await this.openDatabaseConnection();
+        const connection = this.connection ?? (await this.openDatabaseConnection());
 
         return tap(connection, connection => this.rememberDatabaseConnection(connection));
     }

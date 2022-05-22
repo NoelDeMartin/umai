@@ -29,7 +29,8 @@ const { route, routeParams, url } = defineProps({
     },
 });
 
-const linkComponent = computed(() => route ? 'router-link' : (url ? 'a' : 'button'));
+const linkComponent = computed(() =>
+    route ? 'router-link' : url ? 'a' : 'button');
 const linkProps = computed(() => ({
     'a': {
         href: url,

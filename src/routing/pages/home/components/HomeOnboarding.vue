@@ -3,7 +3,7 @@
         {{ $t('home.onboarding.title') }}
     </BaseHeading>
     <div class="flex flex-col items-center self-center">
-        <p class="mb-4 prose">
+        <p class="prose mb-4">
             {{ $t('home.onboarding.message') }}
         </p>
         <RecipeCreateOptions />

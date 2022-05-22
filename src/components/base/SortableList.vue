@@ -15,6 +15,7 @@ const list = $ref<HTMLElement>();
 
 provide<ListDraggingController>(
     'list-dragging',
-    useListDragging($$(list), (currentItem, nextItem) => emit('swapItems', currentItem, nextItem, false)),
+    useListDragging($$(list), (currentItem, nextItem) =>
+        emit('swapItems', currentItem, nextItem, false)),
 );
 </script>

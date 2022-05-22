@@ -19,15 +19,14 @@ const { route, routeParams } = defineProps({
     },
 });
 
-const buttonComponent = $computed(() => route ? 'router-link' : 'button');
-const buttonProps = $computed(
-    () => buttonComponent === 'button'
+const buttonComponent = $computed(() => (route ? 'router-link' : 'button'));
+const buttonProps = $computed(() =>
+    buttonComponent === 'button'
         ? { type: 'button' }
         : {
             to: objectWithoutEmpty({
                 name: route,
                 params: routeParams,
             }),
-        },
-);
+        });
 </script>

@@ -2,7 +2,7 @@
     <TransitionRoot as="template" :show="modal.open">
         <Dialog
             as="div"
-            class="flex overflow-y-auto fixed inset-0 z-40 justify-center items-center"
+            class="fixed inset-0 z-40 flex items-center justify-center overflow-y-auto"
             @close="cancellable && $ui.closeModal(modal.id)"
         >
             <Portal v-if="$ui.snackbars.length > 0 && !childModal">
@@ -17,7 +17,9 @@
                 leave-from="opacity-100"
                 leave-to="opacity-0"
             >
-                <DialogOverlay class="fixed inset-0 bg-black bg-opacity-30 transition-opacity" />
+                <DialogOverlay
+                    class="fixed inset-0 bg-black bg-opacity-30 transition-opacity"
+                />
             </TransitionChild>
 
             <!-- TODO close button (focusable element!) -->
@@ -32,16 +34,28 @@
                 leave-to="opacity-0 scale-90"
             >
                 <div
-                    class="flex flex-col overflow-hidden relative max-h-[90vh] bg-white shadow-xl transition-all m-edge"
+                    class="relative m-edge flex max-h-[90vh] flex-col overflow-hidden bg-white shadow-xl transition-all"
                     v-bind="$attrs"
                 >
-                    <DialogTitle v-if="title || $slots.title" as="h2" class="px-4 pt-4 text-lg font-medium leading-6 text-gray-900">
+                    <DialogTitle
+                        v-if="title || $slots.title"
+                        as="h2"
+                        class="px-4 pt-4 text-lg font-medium leading-6 text-gray-900"
+                    >
                         <slot name="title">
                             {{ title }}
                         </slot>
                     </DialogTitle>
-                    <div ref="content" :class="['flex overflow-auto flex-col mt-2 max-h-full', noPadding || 'px-4 pb-4']">
-                        <slot :close="(result?: unknown) => $ui.closeModal(modal.id, result)" />
+                    <div
+                        ref="content"
+                        :class="[
+                            'mt-2 flex max-h-full flex-col overflow-auto',
+                            noPadding || 'px-4 pb-4',
+                        ]"
+                    >
+                        <slot
+                            :close="(result?: unknown) => $ui.closeModal(modal.id, result)"
+                        />
                     </div>
                 </div>
             </TransitionChild>

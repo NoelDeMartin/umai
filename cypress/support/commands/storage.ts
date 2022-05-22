@@ -39,68 +39,67 @@ async function getIndexedDBObject<T = object>(database: string, store: string, i
 }
 
 export default {
-
     assertLocalDocumentDoesNotExist(documentId: string): void {
-        cy.getIndexedDBObject<JsonLD>('soukai', requireUrlParentDirectory(documentId), documentId)
-            .then(document => expect(document).to.be.null);
+        cy.getIndexedDBObject<JsonLD>('soukai', requireUrlParentDirectory(documentId), documentId).then(
+            document => expect(document).to.be.null,
+        );
     },
 
     assertLocalDocumentEquals(documentId: string, expected: JsonLD): void {
-        cy
-            .getIndexedDBObject<JsonLD>('soukai', requireUrlParentDirectory(documentId), documentId)
-            .then(actual => {
-                expect(actual).not.to.be.null;
+        cy.getIndexedDBObject<JsonLD>('soukai', requireUrlParentDirectory(documentId), documentId).then(actual => {
+            expect(actual).not.to.be.null;
 
-                Cypress.log({
-                    name: 'assert',
-                    message: 'comparing database documents',
-                    consoleProps: () => ({ expected, actual }),
-                });
-
-                const promisedQuadArrays = [expected, actual as JsonLD].map(doc => jsonldToQuads(doc));
-
-                return Cypress.Promise.all(promisedQuadArrays)
-                    .then(quadArrays => quadArrays.map(quads => quadsToTurtle(quads)))
-                    .then(([expectedTurtle, actualTurtle]) => expect(actualTurtle).to.be.turtle(expectedTurtle ?? ''));
+            Cypress.log({
+                name: 'assert',
+                message: 'comparing database documents',
+                consoleProps: () => ({ expected, actual }),
             });
+
+            const promisedQuadArrays = [expected, actual as JsonLD].map(doc => jsonldToQuads(doc));
+
+            return Cypress.Promise.all(promisedQuadArrays)
+                .then(quadArrays => quadArrays.map(quads => quadsToTurtle(quads)))
+                .then(([expectedTurtle, actualTurtle]) => expect(actualTurtle).to.be.turtle(expectedTurtle ?? ''));
+        });
     },
 
     assertLocalDocumentExists(documentId: string): void {
-        cy.getIndexedDBObject<JsonLD>('soukai', requireUrlParentDirectory(documentId), documentId)
-            .then(document => expect(document).not.to.be.null);
+        cy.getIndexedDBObject<JsonLD>('soukai', requireUrlParentDirectory(documentId), documentId).then(
+            document => expect(document).not.to.be.null,
+        );
     },
 
     resetStorage(): void {
         cy.window()
             .then(window => window.testing && Cypress.Promise.cast(window.testing.stop()))
-            .then(success => success && Cypress.Promise.all([
-                deleteIndexedDBDatabase('app'),
-                deleteIndexedDBDatabase('soukai'),
-                deleteIndexedDBDatabase('soukai-meta'),
-            ]));
+            .then(
+                success =>
+                    success &&
+                    Cypress.Promise.all([
+                        deleteIndexedDBDatabase('app'),
+                        deleteIndexedDBDatabase('soukai'),
+                        deleteIndexedDBDatabase('soukai-meta'),
+                    ]),
+            );
     },
 
-
     assertStoredFileMatches(url: string, expected: Record<string, unknown>): void {
-        cy
-            .getIndexedDBObject<JsonLD>('app', 'files', url)
-            .then(actual => {
-                expect(actual).not.to.be.null;
+        cy.getIndexedDBObject<JsonLD>('app', 'files', url).then(actual => {
+            expect(actual).not.to.be.null;
 
-                Cypress.log({
-                    name: 'assert',
-                    message: 'comparing stored files',
-                    consoleProps: () => ({ expected, actual }),
-                });
-
-                expect(actual).to.contain(expected);
+            Cypress.log({
+                name: 'assert',
+                message: 'comparing stored files',
+                consoleProps: () => ({ expected, actual }),
             });
+
+            expect(actual).to.contain(expected);
+        });
     },
 
     createFile(url: string, mimeType: string, fixture: string): void {
         cy.fixture(fixture).then(content => {
-            if (mimeType === 'application/json')
-                content = btoa(content);
+            if (mimeType === 'application/json') content = btoa(content);
 
             const blob = Cypress.Blob.base64StringToBlob(content, mimeType);
 
@@ -117,5 +116,4 @@ export default {
     getIndexedDBObject<T = object>(database: string, store: string, id: string): Bluebird<T | null> {
         return Cypress.Promise.cast(getIndexedDBObject<T>(database, store, id));
     },
-
 };

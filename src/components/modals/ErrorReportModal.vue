@@ -6,27 +6,36 @@
                 <div v-if="details" class="flex flex-row space-x-2">
                     <button
                         type="button"
-                        class="flex justify-center items-center rounded-full w-clickable h-clickable hover:bg-dark-overlay"
+                        class="flex h-clickable w-clickable items-center justify-center rounded-full hover:bg-dark-overlay"
                         @click="inspectInConsole"
                     >
-                        <i-ic-baseline-terminal class="w-4 h-4" aria-hidden="true" />
-                        <span class="hidden">{{ $t('errors.inspectInConsole') }}</span>
+                        <i-ic-baseline-terminal
+                            class="h-4 w-4"
+                            aria-hidden="true"
+                        />
+                        <span class="hidden">{{
+                            $t('errors.inspectInConsole')
+                        }}</span>
                     </button>
                     <button
                         type="button"
-                        class="flex justify-center items-center rounded-full w-clickable h-clickable hover:bg-dark-overlay"
+                        class="flex h-clickable w-clickable items-center justify-center rounded-full hover:bg-dark-overlay"
                         @click="copyToClipboard"
                     >
-                        <i-zondicons-copy class="w-4 h-4" aria-hidden="true" />
-                        <span class="hidden">{{ $t('errors.copyToClipboard') }}</span>
+                        <i-zondicons-copy class="h-4 w-4" aria-hidden="true" />
+                        <span class="hidden">{{
+                            $t('errors.copyToClipboard')
+                        }}</span>
                     </button>
                     <a
                         target="_blank"
                         :href="githubReportUrl"
-                        class="flex justify-center items-center rounded-full w-clickable h-clickable hover:bg-dark-overlay"
+                        class="flex h-clickable w-clickable items-center justify-center rounded-full hover:bg-dark-overlay"
                     >
-                        <i-mdi-github class="w-4 h-4" aria-hidden="true" />
-                        <span class="hidden">{{ $t('errors.reportToGithub') }}</span>
+                        <i-mdi-github class="h-4 w-4" aria-hidden="true" />
+                        <span class="hidden">{{
+                            $t('errors.reportToGithub')
+                        }}</span>
                     </a>
                 </div>
             </div>
@@ -36,7 +45,7 @@
         </div>
         <pre
             v-if="details"
-            class="overflow-auto p-4 h-full text-xs text-red-900 bg-gray-200"
+            class="h-full overflow-auto bg-gray-200 p-4 text-xs text-red-900"
             v-text="details"
         />
     </AppModal>
@@ -58,14 +67,15 @@ const { report } = defineProps({
 });
 
 const title = $computed(() => report.error?.name ?? report.title);
-const description = $computed(() => report.error ? report.error.message : null);
-const summary = $computed(() => description ? `${title}: ${description}` : title);
+const description = $computed(() =>
+    report.error ? report.error.message : null);
+const summary = $computed(() =>
+    description ? `${title}: ${description}` : title);
 const details = $computed(() => report.error?.stack || null);
 const githubReportUrl = $computed(() => {
     const issueTitle = encodeURIComponent(summary);
     const issueBody = encodeURIComponent(
-        I18n
-            .translate('errors.githubIssueBody', { stackTrace: details }),
+        I18n.translate('errors.githubIssueBody', { stackTrace: details }),
     );
 
     return `${App.sourceUrl}/issues/new?title=${issueTitle}&body=${issueBody}`;

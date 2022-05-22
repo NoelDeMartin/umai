@@ -8,11 +8,15 @@
         :name="name"
         :value="inputValue"
         :aria-describedby="error ? `${name}-error` : undefined"
-        class="w-full form-textarea focus:border-primary-500 focus:shadow-primary-500"
+        class="form-textarea w-full focus:border-primary-500 focus:shadow-primary-500"
         v-bind="$attrs"
         @input="onInput"
     />
-    <p v-if="error" :id="`${name}-error`" class="mt-1 text-sm text-red-600 opacity-75">
+    <p
+        v-if="error"
+        :id="`${name}-error`"
+        class="mt-1 text-sm text-red-600 opacity-75"
+    >
         {{ error }}
     </p>
 </template>
@@ -24,7 +28,11 @@ import type { PropType } from 'vue';
 import type Form from '@/framework/forms/Form';
 import { uuid } from '@noeldemartin/utils';
 
-const { name, modelValue, form: formProp } = defineProps({
+const {
+    name,
+    modelValue,
+    form: formProp,
+} = defineProps({
     name: {
         type: String as PropType<string | undefined>,
         default: undefined,

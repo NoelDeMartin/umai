@@ -38,7 +38,6 @@ export function queueAuthenticatedRequests(window: Window): void {
 }
 
 export default {
-
     cssAuthorize(options: Partial<CSSAuthorizeOptions> = {}): void {
         const requestOptions = {
             url: 'http://localhost:4000/alice/profile/card',
@@ -148,5 +147,4 @@ export default {
     runAuthenticatedRequest(url: string, options: RequestInit): void {
         cy.service('$auth').then(auth => auth.fetch(url, options));
     },
-
 };

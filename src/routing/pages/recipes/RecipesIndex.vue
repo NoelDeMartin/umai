@@ -14,7 +14,7 @@
             },
         }"
         aria-labelledby="#cookbook-title"
-        class="w-full mx-edge max-w-content"
+        class="mx-edge w-full max-w-content"
     >
         <div class="flex justify-between">
             <BaseHeading id="cookbook-title">
@@ -27,8 +27,10 @@
             />
         </div>
         <RecipesGrid :recipes="filteredRecipes" class="w-full" />
-        <div class="flex fixed right-0 bottom-0 z-40 justify-center p-5 w-screen pointer-events-none recipes-index--fab">
-            <div class="flex justify-center w-full">
+        <div
+            class="recipes-index--fab pointer-events-none fixed right-0 bottom-0 z-40 flex w-screen justify-center p-5"
+        >
+            <div class="flex w-full justify-center">
                 <div class="w-clickable" />
                 <div class="mx-4 w-full max-w-content" />
                 <BaseFloatingActionButton
@@ -52,8 +54,7 @@ export default defineComponent({
     async beforeRouteEnter() {
         await Cookbook.ready;
 
-        if (!Cookbook.recipes.isEmpty())
-            return;
+        if (!Cookbook.recipes.isEmpty()) return;
 
         return { name: 'home', replace: true };
     },
@@ -62,14 +63,16 @@ export default defineComponent({
 
 <script setup lang="ts">
 const search = $ref('');
-const searchIndex = $computed(() => Cookbook.recipes.map(recipe => ({
-    recipe,
-    searchableText: stringToSlug(recipe.name).replaceAll('-', ''),
-})));
+const searchIndex = $computed(() =>
+    Cookbook.recipes.map(recipe => ({
+        recipe,
+        searchableText: stringToSlug(recipe.name).replaceAll('-', ''),
+    })));
 const filteredRecipes = $computed(() => {
     const searchQuery = search.trim();
     const filteredSearchIndex = searchQuery.length
-        ? searchIndex.filter(({ searchableText }) => searchableText.includes(searchQuery))
+        ? searchIndex.filter(({ searchableText }) =>
+            searchableText.includes(searchQuery))
         : searchIndex;
 
     return filteredSearchIndex.map(({ recipe }) => recipe);

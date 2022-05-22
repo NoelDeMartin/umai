@@ -41,15 +41,13 @@ export default class CookbookService extends Service<State, ComputedState> {
     public async createRemote(name: string, storageUrl: string): Promise<void> {
         const user = Auth.requireUser();
         const engine = Auth.requireAuthenticator().engine;
-        const cookbook = await SolidContainerModel.withEngine(engine, async () => tap(
-            new SolidContainerModel({ name }),
-            async cookbook => {
-                const typeIndexUrl = user.privateTypeIndexUrl ?? await Auth.createPrivateTypeIndex();
+        const cookbook = await SolidContainerModel.withEngine(engine, async () =>
+            tap(new SolidContainerModel({ name }), async cookbook => {
+                const typeIndexUrl = user.privateTypeIndexUrl ?? (await Auth.createPrivateTypeIndex());
 
                 await cookbook.save(storageUrl);
                 await cookbook.register(typeIndexUrl, Recipe);
-            },
-        ));
+            }));
 
         await this.setRemoteCookbook(cookbook);
         await this.reloadRecipes();
@@ -72,16 +70,17 @@ export default class CookbookService extends Service<State, ComputedState> {
         Events.on('logout', async () => {
             Recipe.collection = this.localCookbookUrl;
 
-            await Promise.all(this.recipes.map(async recipe => {
-                if (recipe.imageUrl?.startsWith(this.localCookbookUrl))
-                    await Files.delete(recipe.imageUrl);
+            await Promise.all(
+                this.recipes.map(async recipe => {
+                    if (recipe.imageUrl?.startsWith(this.localCookbookUrl)) await Files.delete(recipe.imageUrl);
 
-                await recipe.delete();
-            }));
+                    await recipe.delete();
+                }),
+            );
 
             this.setState({
                 remoteCookbookUrl: null,
-                cookbook: new PromisedValue,
+                cookbook: new PromisedValue(),
                 recipes: arr<Recipe>(),
             });
         });
@@ -96,7 +95,7 @@ export default class CookbookService extends Service<State, ComputedState> {
         return {
             localCookbookUrl: Recipe.collection,
             remoteCookbookUrl: null,
-            cookbook: new PromisedValue,
+            cookbook: new PromisedValue(),
             recipes: arr<Recipe>([]),
         };
     }
@@ -121,10 +120,8 @@ export default class CookbookService extends Service<State, ComputedState> {
     private async loadCookbook(): Promise<void> {
         if (Auth.isLoggedIn()) {
             const engine = Auth.authenticator.engine;
-            const cookbook = await SolidContainerModel.withEngine(engine, async () => tap(
-                await this.findCookbook(),
-                cookbook => cookbook && this.setRemoteCookbook(cookbook),
-            ));
+            const cookbook = await SolidContainerModel.withEngine(engine, async () =>
+                tap(await this.findCookbook(), cookbook => cookbook && this.setRemoteCookbook(cookbook)));
 
             cookbook && this.cookbook.resolve(cookbook);
 
@@ -141,8 +138,7 @@ export default class CookbookService extends Service<State, ComputedState> {
 
         setRemoteCollection(Recipe, cookbook.url);
 
-        if (cookbook.url !== this.remoteCookbookUrl)
-            this.setState({ remoteCookbookUrl: cookbook.url });
+        if (cookbook.url !== this.remoteCookbookUrl) this.setState({ remoteCookbookUrl: cookbook.url });
 
         this.cookbook.resolve(cookbook);
     }
@@ -156,8 +152,7 @@ export default class CookbookService extends Service<State, ComputedState> {
                 : null;
         } catch (error) {
             // TODO check that error was NetworkRequestError
-            if (!refreshStaleProfile)
-                throw error;
+            if (!refreshStaleProfile) throw error;
 
             await Auth.refreshUserProfile();
             await Auth.createPrivateTypeIndex();
@@ -179,8 +174,7 @@ export default class CookbookService extends Service<State, ComputedState> {
                     continue;
                 }
 
-                if (typeof value !== 'string' || !value.startsWith(Recipe.collection))
-                    continue;
+                if (typeof value !== 'string' || !value.startsWith(Recipe.collection)) continue;
 
                 switch (field) {
                     case '@id':
@@ -199,32 +193,31 @@ export default class CookbookService extends Service<State, ComputedState> {
         };
 
         for (const recipe of recipes) {
-            if (recipe.url.startsWith(remoteCollection))
-                continue;
+            if (recipe.url.startsWith(remoteCollection)) continue;
 
             const documentUrl = recipe.requireDocumentUrl();
             const document = await engine.readOne(Recipe.collection, documentUrl);
             const fileRenames = migrateLocalUrls(document);
 
-            await Promise.all(fileRenames.map(async ([url, newUrl]) => {
-                await Files.rename(url, newUrl);
+            await Promise.all(
+                fileRenames.map(async ([url, newUrl]) => {
+                    await Files.rename(url, newUrl);
 
-                Cloud.enqueueFileUpload(newUrl);
-            }));
+                    Cloud.enqueueFileUpload(newUrl);
+                }),
+            );
             await engine.create(remoteCollection, document, documentUrl.replace(Recipe.collection, remoteCollection));
             await engine.delete(Recipe.collection, documentUrl);
         }
     }
 
     private async enqueueFileUploads(): Promise<void> {
-        if (!this.remoteCookbookUrl)
-            return;
+        if (!this.remoteCookbookUrl) return;
 
         const urls = await Files.getUrls();
 
         for (const url of urls) {
-            if (!url.startsWith(this.remoteCookbookUrl))
-                continue;
+            if (!url.startsWith(this.remoteCookbookUrl)) continue;
 
             Cloud.enqueueFileUpload(url);
         }

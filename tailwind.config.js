@@ -10,10 +10,7 @@ module.exports = {
     ],
     theme: {
         fontFamily: {
-            livvic: [
-                '"Livvic"',
-                'sans-serif',
-            ],
+            livvic: ['"Livvic"', 'sans-serif'],
         },
         fontSize: {
             'xs': ['0.875rem', { lineHeight: '1rem' }],
@@ -69,6 +66,7 @@ module.exports = {
         },
     },
     plugins: [
+        //
         require('@tailwindcss/forms')({ strategy: 'class' }),
         require('@tailwindcss/typography'),
     ],

@@ -16,9 +16,7 @@ const services = {
 type AppServices = typeof services;
 
 declare module '@/framework/core' {
-
     export interface Services extends AppServices {}
-
 }
 
 export function registerServices(): void {

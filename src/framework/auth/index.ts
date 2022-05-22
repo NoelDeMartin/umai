@@ -7,8 +7,8 @@ const _authenticators = {} as Authenticators;
 type BaseAuthenticators = typeof authenticators;
 
 export const authenticators = {
-    localStorage: new LocalStorageAuthenticator,
-    inrupt: new InruptAuthenticator,
+    localStorage: new LocalStorageAuthenticator(),
+    inrupt: new InruptAuthenticator(),
 };
 
 export function setDefaultAuthenticator(authenticator: Authenticator): void {

@@ -26,6 +26,7 @@ export default meta<Args>({
     title: 'WIP/BaseInputList',
     args: {
         value: [
+            //
             '200g Chickpeas',
             '1tbsp Tahini',
             '2 Lemons',

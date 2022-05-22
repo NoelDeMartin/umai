@@ -2,16 +2,25 @@
     <AppModal v-slot="{ close }" :title="$t('cloud.login.title')">
         <div v-if="$auth.previousSession?.loginUrl" class="flex flex-col">
             <div class="prose">
-                <p v-safe-html="$t('cloud.login.info_reconnect', { url: $auth.previousSession?.loginUrl })" />
+                <p
+                    v-safe-html="
+                        $t('cloud.login.info_reconnect', {
+                            url: $auth.previousSession?.loginUrl,
+                        })
+                    "
+                />
             </div>
             <CloudConfiguration class="mt-4" />
-            <BaseButton class="mt-4 bg-brand-solid-700 hover:bg-brand-solid-500" @click="$auth.reconnect()">
-                <i-app-solid-emblem aria-hidden="true" class="w-6 h-6" />
+            <BaseButton
+                class="mt-4 bg-brand-solid-700 hover:bg-brand-solid-500"
+                @click="$auth.reconnect()"
+            >
+                <i-app-solid-emblem aria-hidden="true" class="h-6 w-6" />
                 <span class="ml-2">{{ $t('cloud.reconnect_now') }}</span>
             </BaseButton>
             <BaseButton secondary class="mt-2" @click="$auth.logout()">
                 <span>{{ $t('cloud.logout') }}</span>
-                <i-heroicons-solid-logout class="ml-2 w-4 h-4" />
+                <i-heroicons-solid-logout class="ml-2 h-4 w-4" />
             </BaseButton>
         </div>
         <template v-else>
@@ -19,21 +28,30 @@
                 <p>{{ $t('cloud.login.info') }}</p>
                 <p>
                     <small>
-                        <a href="https://solidproject.org/" target="_blank">{{ $t('cloud.login.info_learnMore') }}</a>
+                        <a href="https://solidproject.org/" target="_blank">{{
+                            $t('cloud.login.info_learnMore')
+                        }}</a>
                     </small>
                 </p>
             </div>
-            <BaseForm class="flex flex-col" :form="form" @submit="submit(close)">
+            <BaseForm
+                class="flex flex-col"
+                :form="form"
+                @submit="submit(close)"
+            >
                 <BaseInput
                     ref="input"
                     :label="$t('cloud.login.loginUrl')"
                     name="loginUrl"
-                    class="mt-4 focus:!ring-brand-solid-700 focus:!border-brand-solid-500"
+                    class="mt-4 focus:!border-brand-solid-500 focus:!ring-brand-solid-700"
                     placeholder="e.g. https://alice.solidcommunity.net/profile/card#me"
                     @keydown.enter="form.submit() && submit(close)"
                 />
-                <BaseButton type="submit" class="mt-4 w-full bg-brand-solid-700 hover:bg-brand-solid-500">
-                    <i-app-solid-emblem aria-hidden="true" class="w-6 h-6" />
+                <BaseButton
+                    type="submit"
+                    class="mt-4 w-full bg-brand-solid-700 hover:bg-brand-solid-500"
+                >
+                    <i-app-solid-emblem aria-hidden="true" class="h-6 w-6" />
                     <span class="ml-2">{{ $t('cloud.login.submit') }}</span>
                 </BaseButton>
                 <BaseLink
@@ -79,7 +97,6 @@ async function submit(close: Function) {
 
     const loggedIn = await Auth.login(form.loginUrl);
 
-    if (loggedIn)
-        close();
+    if (loggedIn) close();
 }
 </script>

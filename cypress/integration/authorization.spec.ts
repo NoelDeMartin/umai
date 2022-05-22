@@ -1,5 +1,4 @@
 describe('Authorization', () => {
-
     beforeEach(() => {
         cy.visit('/?authenticator=inrupt');
         cy.startApp();
@@ -25,29 +24,39 @@ describe('Authorization', () => {
         cy.dontSee('This recipe is private');
 
         cy.get('@patchACL.all').should('have.length', 2);
-        cy.get('@patchACL.0').its('request.body').should('be.sparql', `
-            INSERT DATA {
-                @prefix acl: <http://www.w3.org/ns/auth/acl#> .
+        cy.get('@patchACL.0')
+            .its('request.body')
+            .should(
+                'be.sparql',
+                `
+                    INSERT DATA {
+                        @prefix acl: <http://www.w3.org/ns/auth/acl#> .
 
-                <#owner>
-                    a acl:Authorization ;
-                    acl:agent <http://localhost:4000/alice/profile/card#me>, <mailto:alice@example.com> ;
-                    acl:accessTo <http://localhost:4000/alice/cookbook/ramen> ;
-                    acl:mode acl:Read, acl:Write, acl:Control .
-            }
-        `);
-        cy.get('@patchACL.1').its('request.body').should('be.sparql', `
-            INSERT DATA {
-                @prefix acl: <http://www.w3.org/ns/auth/acl#> .
-                @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+                        <#owner>
+                            a acl:Authorization ;
+                            acl:agent <http://localhost:4000/alice/profile/card#me>, <mailto:alice@example.com> ;
+                            acl:accessTo <http://localhost:4000/alice/cookbook/ramen> ;
+                            acl:mode acl:Read, acl:Write, acl:Control .
+                    }
+                `,
+            );
+        cy.get('@patchACL.1')
+            .its('request.body')
+            .should(
+                'be.sparql',
+                `
+                    INSERT DATA {
+                        @prefix acl: <http://www.w3.org/ns/auth/acl#> .
+                        @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 
-                <#public>
-                    a acl:Authorization ;
-                    acl:agentClass foaf:Agent ;
-                    acl:accessTo <http://localhost:4000/alice/cookbook/ramen> ;
-                    acl:mode acl:Read .
-            }
-        `);
+                        <#public>
+                            a acl:Authorization ;
+                            acl:agentClass foaf:Agent ;
+                            acl:accessTo <http://localhost:4000/alice/cookbook/ramen> ;
+                            acl:mode acl:Read .
+                    }
+                `,
+            );
     });
 
     it('Makes public recipes private', () => {
@@ -87,18 +96,23 @@ describe('Authorization', () => {
         cy.see('Private');
         cy.see('This recipe is private');
 
-        cy.get('@patchACL').its('request.body').should('be.sparql', `
-            DELETE DATA {
-                @prefix acl: <http://www.w3.org/ns/auth/acl#> .
-                @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+        cy.get('@patchACL')
+            .its('request.body')
+            .should(
+                'be.sparql',
+                `
+                    DELETE DATA {
+                        @prefix acl: <http://www.w3.org/ns/auth/acl#> .
+                        @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 
-                <#public>
-                    a acl:Authorization ;
-                    acl:agentClass foaf:Agent ;
-                    acl:accessTo <http://localhost:4000/alice/cookbook/ramen> ;
-                    acl:mode acl:Read .
-            }
-        `);
+                        <#public>
+                            a acl:Authorization ;
+                            acl:agentClass foaf:Agent ;
+                            acl:accessTo <http://localhost:4000/alice/cookbook/ramen> ;
+                            acl:mode acl:Read .
+                    }
+                `,
+            );
     });
 
     it('Makes private recipes public', () => {
@@ -131,18 +145,22 @@ describe('Authorization', () => {
         cy.contains('button', 'Public').should('be.visible');
         cy.dontSee('This recipe is private');
 
-        cy.get('@patchACL').its('request.body').should('be.sparql', `
-            INSERT DATA {
-                @prefix acl: <http://www.w3.org/ns/auth/acl#> .
-                @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+        cy.get('@patchACL')
+            .its('request.body')
+            .should(
+                'be.sparql',
+                `
+                    INSERT DATA {
+                        @prefix acl: <http://www.w3.org/ns/auth/acl#> .
+                        @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 
-                <#public>
-                    a acl:Authorization ;
-                    acl:agentClass foaf:Agent ;
-                    acl:accessTo <http://localhost:4000/alice/cookbook/ramen> ;
-                    acl:mode acl:Read .
-            }
-        `);
+                        <#public>
+                            a acl:Authorization ;
+                            acl:agentClass foaf:Agent ;
+                            acl:accessTo <http://localhost:4000/alice/cookbook/ramen> ;
+                            acl:mode acl:Read .
+                    }
+                `,
+            );
     });
-
 });

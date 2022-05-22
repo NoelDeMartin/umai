@@ -6,15 +6,20 @@
         </h1>
         <RecipePage>
             <template #image>
-                <div class="absolute inset-0 group">
-                    <RecipeImage :url="imageUrl" class="w-full h-full" />
+                <div class="group absolute inset-0">
+                    <RecipeImage :url="imageUrl" class="h-full w-full" />
                     <button
                         type="button"
-                        class="flex absolute inset-0 justify-center items-center w-full text-xl text-white bg-black bg-opacity-10 opacity-0 group-hover:opacity-100 focus:opacity-100"
+                        class="absolute inset-0 flex w-full items-center justify-center bg-black bg-opacity-10 text-xl text-white opacity-0 focus:opacity-100 group-hover:opacity-100"
                         @click="editImage"
                     >
-                        <div class="flex items-center self-center px-4 py-2 bg-black bg-opacity-50 rounded-md hover:bg-opacity-100">
-                            <i-zondicons-edit-pencil aria-hidden="true" class="mr-3 w-4 h-4" />
+                        <div
+                            class="flex items-center self-center rounded-md bg-black bg-opacity-50 px-4 py-2 hover:bg-opacity-100"
+                        >
+                            <i-zondicons-edit-pencil
+                                aria-hidden="true"
+                                class="mr-3 h-4 w-4"
+                            />
                             {{ $t('recipes.image_edit') }}
                         </div>
                     </button>
@@ -27,7 +32,7 @@
                     name="name"
                     :placeholder="$t('recipes.name_placeholder')"
                     :class="[
-                        'text-4xl text-white bg-transparent caret-primary-500',
+                        'bg-transparent text-4xl text-white caret-primary-500',
                         name && 'text-shadow font-semibold',
                     ]"
                 />
@@ -49,7 +54,11 @@
                         :add-label="$t('recipes.ingredient_add')"
                         :item-placeholder="$t('recipes.ingredient_placeholder')"
                         :item-remove-label="$t('recipes.ingredient_remove')"
-                        :item-remove-a11y-label="$t('recipes.ingredient_remove_a11y', { ingredient: ':item' })"
+                        :item-remove-a11y-label="
+                            $t('recipes.ingredient_remove_a11y', {
+                                ingredient: ':item',
+                            })
+                        "
                     />
                 </div>
             </template>
@@ -59,38 +68,38 @@
             </template>
 
             <template #metadata>
-                <ul class="hidden mb-2 space-y-2 text-gray-700 md:block">
+                <ul class="mb-2 hidden space-y-2 text-gray-700 md:block">
                     <li class="flex items-center space-x-1">
-                        <i-zondicons-location-food class="w-3 h-3" />
+                        <i-zondicons-location-food class="h-3 w-3" />
                         <strong>{{ $t('recipes.servings') }}</strong>
                         <div class="flex-grow" />
                         <BaseFluidInput
                             v-model="servings"
                             :placeholder="$t('recipes.servings_placeholder')"
                             name="servings"
-                            class="text-right bg-transparent"
+                            class="bg-transparent text-right"
                         />
                     </li>
                     <li class="flex items-center space-x-1">
-                        <i-zondicons-hour-glass class="w-3 h-3" />
+                        <i-zondicons-hour-glass class="h-3 w-3" />
                         <strong>{{ $t('recipes.prepTime') }}</strong>
                         <div class="flex-grow" />
                         <BaseFluidInput
                             v-model="prepTime"
                             :placeholder="$t('recipes.prepTime_placeholder')"
                             name="prep-time"
-                            class="text-right bg-transparent"
+                            class="bg-transparent text-right"
                         />
                     </li>
                     <li class="flex items-center space-x-1">
-                        <i-zondicons-time class="w-3 h-3" />
+                        <i-zondicons-time class="h-3 w-3" />
                         <strong>{{ $t('recipes.cookTime') }}</strong>
                         <div class="flex-grow" />
                         <BaseFluidInput
                             v-model="cookTime"
                             :placeholder="$t('recipes.cookTime_placeholder')"
                             name="cook-time"
-                            class="text-right bg-transparent"
+                            class="bg-transparent text-right"
                         />
                     </li>
                 </ul>
@@ -103,9 +112,10 @@
 
         <!-- TODO refactor UX & translate -->
         <div class="fixed inset-x-0 bottom-0 z-10 bg-gray-300">
-            <div class="flex py-4 mx-auto space-x-4 max-w-content">
+            <div class="mx-auto flex max-w-content space-x-4 py-4">
                 <BaseButton v-if="recipe" clear @click="deleteRecipe()">
-                    <i-zondicons-trash class="mr-2 w-4 h-4" /> {{ $t('recipes.delete') }}
+                    <i-zondicons-trash class="mr-2 h-4 w-4" />
+                    {{ $t('recipes.delete') }}
                 </BaseButton>
                 <dev class="flex-grow" />
                 <BaseButton secondary @click="$emit('cancel')">
@@ -120,7 +130,12 @@
 </template>
 
 <script setup lang="ts">
-import { arrayFilter, arraySorted, objectWithoutEmpty, uuid } from '@noeldemartin/utils';
+import {
+    arrayFilter,
+    arraySorted,
+    objectWithoutEmpty,
+    uuid,
+} from '@noeldemartin/utils';
 import { useI18n } from 'vue-i18n';
 import type { Attributes } from 'soukai';
 import type { PropType } from 'vue';
@@ -175,25 +190,24 @@ const instructions = $ref<RecipeInstructionStepInputData[]>(
         description: instruction.text,
     })),
 );
-const a11yTitle = $computed(
-    () => recipe
+const a11yTitle = $computed(() =>
+    recipe
         ? t('recipes.edit_a11y_title', { recipe: recipe.name })
-        : t('recipes.create_a11y_title'),
-);
+        : t('recipes.create_a11y_title'));
 
 async function editImage() {
-    const modal = await UI.openModal<IRecipeImageFormModal>(RecipeImageModal, { imageUrl });
+    const modal = await UI.openModal<IRecipeImageFormModal>(RecipeImageModal, {
+        imageUrl,
+    });
     const result = await modal.beforeClose;
 
     document.querySelector<HTMLElement>(':focus')?.blur();
 
-    if (result !== undefined)
-        imageUrl = result;
+    if (result !== undefined) imageUrl = result;
 }
 
 async function deleteRecipe() {
-    if (!recipe)
-        return;
+    if (!recipe) return;
 
     // TODO
 }
@@ -214,28 +228,33 @@ async function submit() {
     const instructionUrls = instructions.map(({ url }) => url);
     const instructionStepsAttributes = instructions
         .filter(({ description }) => !!description)
-        .map(instruction => objectWithoutEmpty({
-            url: instruction.url,
-            text: instruction.description,
-        } as Attributes));
+        .map(instruction =>
+            objectWithoutEmpty({
+                url: instruction.url,
+                text: instruction.description,
+            } as Attributes));
 
     updatedRecipe.setAttributes(attributes);
 
     let position = 1;
     for (const instructionStepAttributes of instructionStepsAttributes) {
-        const instructionStep = instructionStepAttributes.url
-            && updatedRecipe.instructions?.find(model => model.url === instructionStepAttributes.url);
+        const instructionStep =
+            instructionStepAttributes.url &&
+            updatedRecipe.instructions?.find(
+                model => model.url === instructionStepAttributes.url,
+            );
 
         instructionStepAttributes.position = position++;
 
         instructionStep
             ? instructionStep.setAttributes(instructionStepAttributes)
-            : updatedRecipe.relatedInstructions.attach(instructionStepAttributes);
+            : updatedRecipe.relatedInstructions.attach(
+                instructionStepAttributes,
+            );
     }
 
     for (const instruction of updatedRecipe.instructions ?? []) {
-        if (instructionUrls.includes(instruction.url))
-            continue;
+        if (instructionUrls.includes(instruction.url)) continue;
 
         updatedRecipe.relatedInstructions.detach(instruction);
     }
@@ -247,7 +266,10 @@ async function submit() {
 
         await Files.rename(updatedRecipe.imageUrl, persistentImageUrl);
 
-        if (Cookbook.remoteCookbookUrl && persistentImageUrl.startsWith(Cookbook.remoteCookbookUrl))
+        if (
+            Cookbook.remoteCookbookUrl &&
+            persistentImageUrl.startsWith(Cookbook.remoteCookbookUrl)
+        )
             Cloud.enqueueFileUpload(persistentImageUrl);
 
         updatedRecipe.imageUrl = persistentImageUrl;

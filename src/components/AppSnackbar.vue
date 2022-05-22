@@ -1,5 +1,7 @@
 <template>
-    <div class="flex overflow-hidden z-50 flex-row bg-white rounded-md shadow-sm pointer-events-auto">
+    <div
+        class="pointer-events-auto z-50 flex flex-row overflow-hidden rounded-md bg-white shadow-sm"
+    >
         <div class="p-4">
             <BaseMarkdown :text="message" />
         </div>
@@ -7,7 +9,7 @@
             v-for="(action, index) of actions"
             :key="index"
             type="button"
-            class="p-4 text-white bg-primary-600 hover:bg-primary-700"
+            class="bg-primary-600 p-4 text-white hover:bg-primary-700"
             @click="action.handler"
         >
             {{ action.text }}

@@ -8,17 +8,13 @@ import { createFrameworkRouter } from '@/framework/routing/router';
 import type FrameworkRouter from '@/framework/routing/router/FrameworkRouter';
 
 declare module '@/framework/core' {
-
     export interface Services {
         $router: VueRouter;
     }
-
 }
 
 declare module 'vue-router' {
-
-    export interface Router extends FrameworkRouter { }
-
+    export interface Router extends FrameworkRouter {}
 }
 
 export default function(routes: RouteRecordRaw[]): Plugin {

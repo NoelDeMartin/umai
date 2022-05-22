@@ -3,10 +3,12 @@
     <AppModal v-else v-slot="{ close }" :title="title">
         <div v-if="$cloud.online">
             <p
-                v-safe-html="$t('cloud.statuses.online_description', {
-                    url: $auth.user?.webId,
-                    name: $auth.user?.name ?? $auth.user?.webId,
-                })"
+                v-safe-html="
+                    $t('cloud.statuses.online_description', {
+                        url: $auth.user?.webId,
+                        name: $auth.user?.name ?? $auth.user?.webId,
+                    })
+                "
                 class="prose"
             />
             <CloudConfiguration class="mt-4" />
@@ -42,6 +44,8 @@ import { useI18n } from 'vue-i18n';
 import Cloud from '@/framework/core/facades/Cloud';
 
 const { t } = useI18n();
-const title = $computed(() => stringCapitalize(t(`cloud.statuses.${Cloud.status}`)));
-const body = $computed(() => stringCapitalize(t(`cloud.statuses.${Cloud.status}_description`)));
+const title = $computed(() =>
+    stringCapitalize(t(`cloud.statuses.${Cloud.status}`)));
+const body = $computed(() =>
+    stringCapitalize(t(`cloud.statuses.${Cloud.status}_description`)));
 </script>

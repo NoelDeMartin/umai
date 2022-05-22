@@ -1,6 +1,8 @@
 <template>
     <main
-        :aria-labelledby="viewerRecipe ? '#viewer-recipe-title' : '#viewer-form-title'"
+        :aria-labelledby="
+            viewerRecipe ? '#viewer-recipe-title' : '#viewer-form-title'
+        "
         class="w-full"
     >
         <transition
@@ -31,5 +33,5 @@ import type Recipe from '@/models/Recipe';
 let viewerRecipe = $ref<Recipe | null>(null);
 let starting = $ref(hasLocationQueryParameter('url'));
 
-onMounted(() => starting && setTimeout(() => starting = false, 1000));
+onMounted(() => starting && setTimeout(() => (starting = false), 1000));
 </script>

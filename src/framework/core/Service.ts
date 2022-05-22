@@ -7,14 +7,14 @@ export type ServiceState = Record<string, any>; // eslint-disable-line @typescri
 export type DefaultServiceState = {}; // eslint-disable-line @typescript-eslint/ban-types
 
 export type ComputedStateDefinitions<State, ComputedState> = {
-    [ComputedProperty in keyof ComputedState]:
-        (state: State, computed: ComputedState) => ComputedState[ComputedProperty];
+    [ComputedProperty in keyof ComputedState]: (
+        state: State,
+        computed: ComputedState
+    ) => ComputedState[ComputedProperty];
 };
 
-export type IService<
-    State extends ServiceState,
-    ComputedState extends ServiceState = DefaultServiceState
-> = State & Readonly<ComputedState>;
+export type IService<State extends ServiceState, ComputedState extends ServiceState = DefaultServiceState> = State &
+    Readonly<ComputedState>;
 
 export type ServiceConstructor<T extends Service> = Constructor<T> & typeof Service;
 
@@ -27,12 +27,12 @@ export default class Service<
     public static persist: string[] = [];
     public static __constructingPure: boolean = false;
     public static __classProperties: string[];
-    private static pureInstances = new WeakMap;
+    private static pureInstances = new WeakMap();
 
     protected static pureInstance<T extends Service>(this: ServiceConstructor<T>): T {
         if (!this.pureInstances.has(this)) {
             this.__constructingPure = true;
-            this.pureInstances.set(this, new this);
+            this.pureInstances.set(this, new this());
             this.__constructingPure = false;
         }
 
@@ -47,8 +47,7 @@ export default class Service<
     private _rejectReady!: () => void;
 
     constructor() {
-        if (this.static('__constructingPure'))
-            return;
+        if (this.static('__constructingPure')) return;
 
         this._namespace = new.target.name;
         this._ready = new Promise((resolve, reject) => {
@@ -72,9 +71,7 @@ export default class Service<
     ): ServiceConstructor<this> | ServiceConstructor<this>[T] {
         const constructor = this.constructor as ServiceConstructor<this>;
 
-        return property
-            ? constructor[property] as ServiceConstructor<this>[T]
-            : constructor;
+        return property ? (constructor[property] as ServiceConstructor<this>[T]) : constructor;
     }
 
     public launch(namespace?: string): Promise<void> {
@@ -93,32 +90,26 @@ export default class Service<
         }
 
         const isReservedProperty = (target: this, property: string | number | symbol): property is number | symbol =>
-            typeof property !== 'string' ||
-            property in target ||
-            target.static('__classProperties').includes(property);
+            typeof property !== 'string' || property in target || target.static('__classProperties').includes(property);
 
-        const proxy: this = this._proxy = new Proxy(this, {
+        const proxy: this = (this._proxy = new Proxy(this, {
             get: (target, property, receiver) => {
-                if (isReservedProperty(target, property))
-                    return Reflect.get(target, property, receiver);
+                if (isReservedProperty(target, property)) return Reflect.get(target, property, receiver);
 
-                if (proxy.hasState(property))
-                    return proxy.getState(property);
+                if (proxy.hasState(property)) return proxy.getState(property);
 
-                if (proxy.hasComputedState(property))
-                    return proxy.getComputedState(property);
+                if (proxy.hasComputedState(property)) return proxy.getComputedState(property);
 
                 return proxy.__get(property);
             },
             set(target, property, value, receiver) {
-                if (isReservedProperty(target, property))
-                    return Reflect.set(target, property, value, receiver);
+                if (isReservedProperty(target, property)) return Reflect.set(target, property, value, receiver);
 
                 proxy.setState({ [property]: value } as Partial<State>);
 
                 return true;
             },
-        });
+        }));
     }
 
     protected hasState<P extends keyof State>(property: P): boolean {
@@ -146,8 +137,7 @@ export default class Service<
     protected onStateUpdated(state: Partial<State>): void {
         const persisted = objectOnly(state, this.static('persist'));
 
-        if (isEmpty(persisted))
-            return;
+        if (isEmpty(persisted)) return;
 
         const storage = Storage.require<ServiceStorage>(this._namespace);
 
@@ -181,8 +171,7 @@ export default class Service<
     protected async boot(): Promise<void> {
         this.registerStoreModule();
 
-        if (isEmpty(this.static('persist')))
-            return;
+        if (isEmpty(this.static('persist'))) return;
 
         if (Storage.has(this._namespace)) {
             const persisted = Storage.require<ServiceStorage>(this._namespace);
@@ -198,8 +187,7 @@ export default class Service<
     protected registerStoreModule(): void {
         const initialState = this.getInitialState();
 
-        if (Object.keys(initialState).length === 0)
-            return;
+        if (Object.keys(initialState).length === 0) return;
 
         Store.registerModule(this._namespace, {
             namespaced: true,

@@ -1,6 +1,9 @@
 <template>
-    <div aria-live="assertive" class="flex fixed inset-0 z-50 items-end px-4 py-6 pointer-events-none sm:p-6">
-        <div class="flex flex-col items-center space-y-4 w-full sm:items-start">
+    <div
+        aria-live="assertive"
+        class="pointer-events-none fixed inset-0 z-50 flex items-end px-4 py-6 sm:p-6"
+    >
+        <div class="flex w-full flex-col items-center space-y-4 sm:items-start">
             <AppSnackbar
                 v-for="snackbar of $ui.snackbars"
                 :key="snackbar.id"

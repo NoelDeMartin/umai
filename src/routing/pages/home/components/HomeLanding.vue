@@ -4,7 +4,7 @@
             {{ $t('home.title') }}
         </BaseHeading>
         <BaseButton clear @click="shuffleShowcase">
-            <i-zondicons-reload class="mr-2 w-4 h-4" />
+            <i-zondicons-reload class="mr-2 h-4 w-4" />
             {{ $t('home.shuffle') }}
         </BaseButton>
     </div>
@@ -18,7 +18,8 @@
 import Cookbook from '@/services/facades/Cookbook';
 
 let shuffle = $ref({ count: 8 });
-const showcasedRecipes = $computed(() => Cookbook.recipes.randomItems(shuffle.count));
+const showcasedRecipes = $computed(() =>
+    Cookbook.recipes.randomItems(shuffle.count));
 
 function shuffleShowcase() {
     shuffle = { count: 8 };

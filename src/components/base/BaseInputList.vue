@@ -62,7 +62,7 @@ let inputs = $ref<IBaseInputListItem[]>([]);
 const list = $ref<HTMLElement>();
 const items = $computed(() => modelValue);
 
-onBeforeUpdate(() => inputs = []);
+onBeforeUpdate(() => (inputs = []));
 
 async function addItem(index: number) {
     const newItem: BaseInputListItemData = { id: uuid(), value: '' };

@@ -28,12 +28,12 @@
                 :aria-label="label"
                 :title="label"
                 :class="[
-                    'absolute right-0 flex justify-center items-center rounded-full w-clickable h-clickable',
+                    'absolute right-0 flex h-clickable w-clickable items-center justify-center rounded-full',
                     'hover:bg-black hover:bg-opacity-30',
                 ]"
                 @click="activate"
             >
-                <i-zondicons-search class="w-4 h-4" />
+                <i-zondicons-search class="h-4 w-4" />
             </button>
         </transition>
     </div>
@@ -87,21 +87,14 @@ async function showInput(element: Element) {
 
     const minWidth = input?.minWidth;
 
-    element.animate(
-        [
-            { opacity: 0 },
-            { opacity: 1 },
-        ],
-        { duration: 150, fill: 'forwards' },
-    );
+    element.animate([{ opacity: 0 }, { opacity: 1 }], {
+        duration: 150,
+        fill: 'forwards',
+    });
 
-    element.animate(
-        [
-            { width: 0 },
-            { width: `${minWidth}px` },
-        ],
-        { duration: 300 },
-    );
+    element.animate([{ width: 0 }, { width: `${minWidth}px` }], {
+        duration: 300,
+    });
 }
 
 async function showButton(element: Element) {
@@ -109,42 +102,27 @@ async function showButton(element: Element) {
 
     await after({ milliseconds: 150 });
 
-    element.animate(
-        [
-            { opacity: 0 },
-            { opacity: 1 },
-        ],
-        { duration: 150, fill: 'forwards' },
-    );
+    element.animate([{ opacity: 0 }, { opacity: 1 }], {
+        duration: 150,
+        fill: 'forwards',
+    });
 }
 
 async function hideInput(element: Element) {
-    element.animate(
-        [
-            { width: `${element.clientWidth}px` },
-            { width: 0 },
-        ],
-        { duration: 300, fill: 'forwards' },
-    );
+    element.animate([{ width: `${element.clientWidth}px` }, { width: 0 }], {
+        duration: 300,
+        fill: 'forwards',
+    });
 
     await after({ milliseconds: 150 });
 
-    element.animate(
-        [
-            { opacity: 1 },
-            { opacity: 0 },
-        ],
-        { duration: 150 },
-    );
+    element.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 150 });
 }
 
 function hideButton(element: Element) {
-    element.animate(
-        [
-            { opacity: 1 },
-            { opacity: 0 },
-        ],
-        { duration: 150, fill: 'forwards' },
-    );
+    element.animate([{ opacity: 1 }, { opacity: 0 }], {
+        duration: 150,
+        fill: 'forwards',
+    });
 }
 </script>

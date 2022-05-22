@@ -39,8 +39,7 @@ const input = $ref<HTMLInputElement>();
 function uploadFile() {
     const file = input.files?.[0];
 
-    if (!file)
-        return;
+    if (!file) return;
 
     emit('start');
 

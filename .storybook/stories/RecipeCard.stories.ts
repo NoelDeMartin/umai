@@ -15,10 +15,11 @@ const Template = template<Args>(({ recipe }) => {
     };
 });
 
-export const Showcase = story(template<Args>(({ recipe }) => ({
-    components: { RecipeCard },
-    setup: () => ({ recipe: recipeFixtures[recipe] }),
-    template: `
+export const Showcase = story(
+    template<Args>(({ recipe }) => ({
+        components: { RecipeCard },
+        setup: () => ({ recipe: recipeFixtures[recipe] }),
+        template: `
         <div>
             <h2 class="mb-2 font-semibold text-center">Default</h2>
             <div class="w-80"><RecipeCard :recipe="recipe" /></div>
@@ -34,7 +35,8 @@ export const Showcase = story(template<Args>(({ recipe }) => ({
             <div class="w-80"><RecipeCard :recipe="recipe" class=":focus-visible" /></div>
         </div>
     `,
-})));
+    })),
+);
 
 export const Playground = story(Template);
 

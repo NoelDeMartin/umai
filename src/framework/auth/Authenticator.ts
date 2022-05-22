@@ -47,8 +47,7 @@ export default abstract class Authenticator {
     }
 
     public addListener(listener: AuthenticatorListener): () => void {
-        if (!this.listeners.includes(listener))
-            this.listeners.push(listener);
+        if (!this.listeners.includes(listener)) this.listeners.push(listener);
 
         return () => {
             this.removeListener(listener);
@@ -56,17 +55,15 @@ export default abstract class Authenticator {
     }
 
     public removeListener(listener: AuthenticatorListener): void {
-        if (!this.listeners.includes(listener))
-            return;
+        if (!this.listeners.includes(listener)) return;
 
         this.listeners.remove(listener);
     }
 
     public async boot(): Promise<void> {
-        if (this.booted)
-            return this.booted;
+        if (this.booted) return this.booted;
 
-        this.booted = new PromisedValue;
+        this.booted = new PromisedValue();
 
         await this.restoreSession();
 
@@ -79,11 +76,9 @@ export default abstract class Authenticator {
         this.authenticatedFetch = fetch;
 
         await Promise.all(
-            this.listeners.toArray().map(
-                async listener => {
-                    await listener.onAuthenticatedFetchReady?.call(listener, fetch);
-                },
-            ),
+            this.listeners.toArray().map(async listener => {
+                await listener.onAuthenticatedFetchReady?.call(listener, fetch);
+            }),
         );
     }
 
@@ -94,11 +89,9 @@ export default abstract class Authenticator {
         };
 
         await Promise.all(
-            this.listeners.toArray().map(
-                async listener => {
-                    await listener.onSessionStarted?.call(listener, session);
-                },
-            ),
+            this.listeners.toArray().map(async listener => {
+                await listener.onSessionStarted?.call(listener, session);
+            }),
         );
 
         return session;
@@ -106,11 +99,9 @@ export default abstract class Authenticator {
 
     protected async endSession(): Promise<void> {
         await Promise.all(
-            this.listeners.toArray().map(
-                async listener => {
-                    await listener.onSessionEnded?.call(listener);
-                },
-            ),
+            this.listeners.toArray().map(async listener => {
+                await listener.onSessionEnded?.call(listener);
+            }),
         );
     }
 

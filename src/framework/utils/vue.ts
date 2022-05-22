@@ -28,7 +28,7 @@ export function enumProp<Enum>(enumeration: Enum): Prop<Enum[keyof Enum]> {
 }
 
 export async function nextTicks(count: number): Promise<void> {
-    while(count-- > 0) {
+    while (count-- > 0) {
         await nextTick();
     }
 }

@@ -6,18 +6,15 @@ export function defineValidationRule(rule: FormValidationRule): FormValidationRu
     return rule;
 }
 
-export default Object
-    .entries(import.meta.globEager('@/framework/forms/rules/*.ts'))
-    .reduce(
-        (rules, [fileName, { default: rule }]) => {
-            const name = fileName.match(/\.\/(.+)\.ts/)?.[1];
+export default Object.entries(import.meta.globEager('@/framework/forms/rules/*.ts')).reduce(
+    (rules, [fileName, { default: rule }]) => {
+        const name = fileName.match(/\.\/(.+)\.ts/)?.[1];
 
-            return tap(rules, () => {
-                if (!name)
-                    return;
+        return tap(rules, () => {
+            if (!name) return;
 
-                rules[name] = rule;
-            });
-        },
-        {} as Record<string, FormValidationRule>,
-    );
+            rules[name] = rule;
+        });
+    },
+    {} as Record<string, FormValidationRule>,
+);

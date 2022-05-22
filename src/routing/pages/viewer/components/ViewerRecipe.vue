@@ -1,7 +1,10 @@
 <template>
     <RecipePage :recipe="recipe">
         <template #title>
-            <h1 id="viewer-recipe-title" class="text-4xl font-semibold text-white text-shadow">
+            <h1
+                id="viewer-recipe-title"
+                class="text-shadow text-4xl font-semibold text-white"
+            >
                 <span>{{ recipe.name }}</span>
             </h1>
         </template>

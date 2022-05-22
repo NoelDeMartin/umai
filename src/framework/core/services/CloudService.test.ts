@@ -16,7 +16,6 @@ import type AuthService from '@/framework/core/services/AuthService';
 import CloudService from './CloudService';
 
 describe('Cloud Service', () => {
-
     let cloud: CloudService;
     let localEngine: InMemoryEngine;
     let remoteEngine: InMemoryEngine;
@@ -30,20 +29,22 @@ describe('Cloud Service', () => {
             requireAuthenticatedFetch: () => async () => ({ status: 200 }),
         });
 
-        cloud = new CloudService;
-        localEngine = new InMemoryEngine;
-        remoteEngine = new InMemoryEngine;
+        cloud = new CloudService();
+        localEngine = new InMemoryEngine();
+        remoteEngine = new InMemoryEngine();
 
         setEngine(localEngine);
         bootSolidModels();
         bootModels({ Recipe });
 
         Store.setInstance(createStore({}));
-        Auth.setInstance(mock<AuthService>({
-            isLoggedIn: () => true,
-            requireAuthenticator: () => authenticator,
-            authenticator,
-        }));
+        Auth.setInstance(
+            mock<AuthService>({
+                isLoggedIn: () => true,
+                requireAuthenticator: () => authenticator,
+                authenticator,
+            }),
+        );
         cloud.registerHandler(Recipe, {
             getLocalModels: () => localModels,
             isReady: () => true,
@@ -60,7 +61,7 @@ describe('Cloud Service', () => {
         await cloud.sync();
 
         // Assert
-        const localRamen = await Recipe.find(remoteRamen.url) as Recipe;
+        const localRamen = (await Recipe.find(remoteRamen.url)) as Recipe;
 
         expect(localRamen).not.toBeNull();
         expect(localRamen.getAttributes()).toEqual(remoteRamen.getAttributes());
@@ -73,7 +74,7 @@ describe('Cloud Service', () => {
 
         await cloud.sync();
 
-        const localRamen = await Recipe.find(remoteRamen.url) as Recipe;
+        const localRamen = (await Recipe.find(remoteRamen.url)) as Recipe;
 
         // Act
         await localRamen.update({ name: 'Large Ramen' });
@@ -88,13 +89,9 @@ describe('Cloud Service', () => {
         expect(remoteRamen.operations[2]?.exists()).toBe(false);
 
         expect(cloud.remoteOperationUrls).toEqual({
-            [remoteRamen.url]: [
-                remoteRamen.operations[0]?.url,
-                remoteRamen.operations[1]?.url,
-            ],
+            [remoteRamen.url]: [remoteRamen.operations[0]?.url, remoteRamen.operations[1]?.url],
         });
     });
-
 });
 
 async function createRemoteRamen(remoteEngine: InMemoryEngine): Promise<Recipe> {
@@ -108,10 +105,8 @@ async function createRemoteRamen(remoteEngine: InMemoryEngine): Promise<Recipe> 
         return ramen;
     });
 
-    await SolidContainerModel.withEngine(
-        remoteEngine,
-        () => SolidContainerModel.create({ url: Recipe.collection, resourceUrls: [remoteRamen.getDocumentUrl()] }),
-    );
+    await SolidContainerModel.withEngine(remoteEngine, () =>
+        SolidContainerModel.create({ url: Recipe.collection, resourceUrls: [remoteRamen.getDocumentUrl()] }));
 
     setRemoteCollection(Recipe, Recipe.collection);
 

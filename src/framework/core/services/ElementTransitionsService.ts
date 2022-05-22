@@ -39,12 +39,12 @@ export default interface ElementTransitionsService extends GlobalElementTransiti
 export default class ElementTransitionsService extends Service {
 
     private activeElements: HTMLElement[] = [];
-    private elementsChildren: WeakMap<HTMLElement, HTMLElement[]> = new WeakMap;
-    private elementsConfig: WeakMap<HTMLElement, TransitionalElementConfig> = new WeakMap;
-    private elementsSourceTransitions: WeakMap<HTMLElement, Promise<void>> = new WeakMap;
-    private elementsTargetTransitions: WeakMap<HTMLElement, Promise<void>> = new WeakMap;
-    private elementsReady: WeakMap<HTMLElement, Promise<void>> = new WeakMap;
-    private elementsFreezingInPlace: WeakMap<HTMLElement, void> = new WeakMap;
+    private elementsChildren: WeakMap<HTMLElement, HTMLElement[]> = new WeakMap();
+    private elementsConfig: WeakMap<HTMLElement, TransitionalElementConfig> = new WeakMap();
+    private elementsSourceTransitions: WeakMap<HTMLElement, Promise<void>> = new WeakMap();
+    private elementsTargetTransitions: WeakMap<HTMLElement, Promise<void>> = new WeakMap();
+    private elementsReady: WeakMap<HTMLElement, Promise<void>> = new WeakMap();
+    private elementsFreezingInPlace: WeakMap<HTMLElement, void> = new WeakMap();
     private transitions: Record<string, ElementTransition | EnterTransition | LeaveTransition> = {};
 
     public defineGlobalEnterTransition(name: string, transition: EnterTransition): void {
@@ -71,8 +71,7 @@ export default class ElementTransitionsService extends Service {
     public async elementMounted(element: HTMLElement): Promise<void> {
         const config = this.elementsConfig.get(element);
 
-        if (!config)
-            return;
+        if (!config) return;
 
         this.activeElements.push(element);
         this.registerElementHierarchy(element);
@@ -81,8 +80,7 @@ export default class ElementTransitionsService extends Service {
     }
 
     public beforeElementUnmounted(element: HTMLElement): void {
-        if (!this.activeElements.includes(element))
-            return;
+        if (!this.activeElements.includes(element)) return;
 
         this.removeElement(element, this.elementsConfig.get(element) as TransitionalElementConfig);
     }
@@ -103,8 +101,7 @@ export default class ElementTransitionsService extends Service {
         this.defineGlobalLeaveTransition('waitChildrenTransitions', async (_, element) => {
             const children = this.elementsChildren.get(element) ?? [];
 
-            if (children.length > 0)
-                await nextTick();
+            if (children.length > 0) await nextTick();
 
             await Promise.all(children.map(element => this.elementsSourceTransitions.get(element)) ?? []);
         });
@@ -125,8 +122,7 @@ export default class ElementTransitionsService extends Service {
     }
 
     private async addElement(element: HTMLElement): Promise<void> {
-        if (!Router.hasNavigated())
-            return;
+        if (!Router.hasNavigated()) return;
 
         element.style.opacity = '0';
 
@@ -150,26 +146,29 @@ export default class ElementTransitionsService extends Service {
             ? this.runElementTransition(wrapper, element, config, target)
             : this.runLeaveElementTransition(wrapper, element);
 
-        this.elementsSourceTransitions.set(element, transitionPromise.then(() => wrapper.remove()));
+        this.elementsSourceTransitions.set(
+            element,
+            transitionPromise.then(() => wrapper.remove()),
+        );
     }
 
     private findElementTarget(config: TransitionalElementConfig): ElementTransitionTarget | null {
         const targetElement = this.activeElements.find(activeElement => {
             const activeElementConfig = this.elementsConfig.get(activeElement) as TransitionalElementConfig;
 
-            return config.id
-                && config.name
-                && config.id === activeElementConfig.id
-                && config.name in activeElementConfig.transitions;
+            return (
+                config.id &&
+                config.name &&
+                config.id === activeElementConfig.id &&
+                config.name in activeElementConfig.transitions
+            );
         });
 
-        if (!targetElement)
-            return null;
+        if (!targetElement) return null;
 
         const targetConfig = this.elementsConfig.get(targetElement) as TransitionalElementConfig;
 
-        if (!targetConfig || !targetConfig.name || !(targetConfig.name in config.transitions))
-            return null;
+        if (!targetConfig || !targetConfig.name || !(targetConfig.name in config.transitions)) return null;
 
         return {
             element: targetElement,
@@ -213,16 +212,15 @@ export default class ElementTransitionsService extends Service {
     private async runEnterElementTransition(element: HTMLElement): Promise<void> {
         const config = this.elementsConfig.get(element) as TransitionalElementConfig;
 
-        if (!config.transitions.enter)
-            return;
+        if (!config.transitions.enter) return;
 
         const previousRouteName = Router.previousRoute ? toString(Router.previousRoute.name) : null;
-        const enterTransition = previousRouteName && previousRouteName in config.transitions.enter
-            ? config.transitions.enter[previousRouteName]
-            : config.transitions.enter['*'];
+        const enterTransition =
+            previousRouteName && previousRouteName in config.transitions.enter
+                ? config.transitions.enter[previousRouteName]
+                : config.transitions.enter['*'];
 
-        if (!enterTransition)
-            return;
+        if (!enterTransition) return;
 
         await enterTransition(element, this.elementsTargetTransitions.has(element));
     }
@@ -230,16 +228,15 @@ export default class ElementTransitionsService extends Service {
     private async runLeaveElementTransition(wrapper: HTMLElement, element: HTMLElement): Promise<void> {
         const config = this.elementsConfig.get(element) as TransitionalElementConfig;
 
-        if (!config.transitions.leave)
-            return;
+        if (!config.transitions.leave) return;
 
         const currentRouteName = toString(Router.currentRoute.value.name);
-        const leaveTransition = currentRouteName in config.transitions.leave
-            ? config.transitions.leave[currentRouteName]
-            : config.transitions.leave['*'];
+        const leaveTransition =
+            currentRouteName in config.transitions.leave
+                ? config.transitions.leave[currentRouteName]
+                : config.transitions.leave['*'];
 
-        if (!leaveTransition)
-            return;
+        if (!leaveTransition) return;
 
         await leaveTransition(wrapper, element);
     }
@@ -250,9 +247,10 @@ export default class ElementTransitionsService extends Service {
         config: TransitionalElementConfig,
         target: ElementTransitionTarget,
     ): Promise<void> {
-        const blocking = typeof config.blocking === 'function'
-            ? config.blocking(target.config, target.element)
-            : config.blocking ?? false;
+        const blocking =
+            typeof config.blocking === 'function'
+                ? config.blocking(target.config, target.element)
+                : config.blocking ?? false;
 
         return tap(target.transition(wrapper, element, target.element), transitionPromise => {
             blocking && this.elementsTargetTransitions.set(target.element, transitionPromise);

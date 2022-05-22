@@ -29,7 +29,7 @@ export default class InruptAuthenticator extends Authenticator {
         await after({ seconds: 10 });
 
         // If we're still here after 10 seconds, something went wrong (or the network is too slow).
-        throw new AuthenticationTimeoutError;
+        throw new AuthenticationTimeoutError();
     }
 
     public async logout(): Promise<void> {
@@ -49,8 +49,7 @@ export default class InruptAuthenticator extends Authenticator {
     }
 
     protected async loginFromRedirect(): Promise<void> {
-        if (!Storage.has(STORAGE_KEY))
-            return;
+        if (!Storage.has(STORAGE_KEY)) return;
 
         const loginUrl = Storage.pull<string>(STORAGE_KEY) as string;
         const session = await this._handleIncomingRedirect(window.location.href);
@@ -60,7 +59,7 @@ export default class InruptAuthenticator extends Authenticator {
 
             const user = await Auth.getUserProfile(session.webId);
 
-            user && await this.startSession({ user, loginUrl });
+            user && (await this.startSession({ user, loginUrl }));
         }
     }
 
