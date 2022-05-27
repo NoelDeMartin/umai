@@ -14,10 +14,11 @@ import type { WobblyBorderOptions } from '@/directives/wobbly-border';
 
 import { CoreAlignment, CoreColor } from './constants';
 
-const { color, alignment, secondary, clear } = defineProps({
+const { color, alignment, secondary, tinted, clear } = defineProps({
     color: enumProp(CoreColor),
     alignment: enumProp(CoreAlignment),
     secondary: booleanProp(),
+    tinted: booleanProp(),
     clear: booleanProp(),
     wobblyBorder: objectProp<WobblyBorderOptions>(),
 });
@@ -26,6 +27,8 @@ interface ColorClasses {
     baseBackground: string;
     baseFocusBackground: string;
     baseFocusRing: string;
+    tintedBackground: string;
+    tintedText: string;
     accentHoverBackground: string;
     accentFocusHoverBackground: string;
 }
@@ -49,7 +52,10 @@ function getColorClasses(color: CoreColor): string {
             ].join(' ');
         case Style.Secondary:
             return [
-                'bg-gray-300 text-gray-700 hover:text-white focus:text-white',
+                'hover:text-white focus:text-white',
+                tinted
+                    ? `${colorClasses.tintedBackground} ${colorClasses.tintedText}`
+                    : 'bg-gray-300 text-gray-700',
                 colorClasses.accentHoverBackground,
                 colorClasses.accentFocusHoverBackground,
                 colorClasses.baseFocusBackground,
@@ -65,6 +71,8 @@ const colorsClasses: Record<CoreColor, ColorClasses> = {
         baseBackground: 'bg-primary-600',
         baseFocusBackground: 'focus:bg-primary-600',
         baseFocusRing: 'focus:ring-primary-600',
+        tintedBackground: 'bg-primary-gray-300',
+        tintedText: 'text-primary-gray-700',
         accentHoverBackground: 'hover:bg-primary-700',
         accentFocusHoverBackground: 'focus:hover:bg-primary-700',
     },
@@ -72,6 +80,8 @@ const colorsClasses: Record<CoreColor, ColorClasses> = {
         baseBackground: 'bg-brand-solid-500',
         baseFocusBackground: 'focus:bg-brand-solid-500',
         baseFocusRing: 'focus:ring-brand-solid-500',
+        tintedBackground: 'bg-brand-solid-gray-300',
+        tintedText: 'text-brand-solid-gray-700',
         accentHoverBackground: 'hover:bg-brand-solid-700',
         accentFocusHoverBackground: 'focus:hover:bg-brand-solid-700',
     },

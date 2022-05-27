@@ -2,7 +2,7 @@
     <div class="flex space-x-4">
         <HeadlessButton
             v-wobbly-border="{ min: 200, max: 350 }"
-            class="flex h-40 w-40 flex-col items-center justify-center bg-gray-200 p-4 text-gray-600 hover:bg-primary-500 hover:text-white focus:bg-primary-500 focus:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 active:bg-primary-700"
+            class="flex h-40 w-40 flex-col items-center justify-center bg-gray-300 text-gray-700 hover:bg-primary-500 hover:text-white focus:bg-primary-500 focus:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 active:bg-primary-700"
             route="recipes.create"
             @click="$emit('optionSelected')"
         >
@@ -11,7 +11,7 @@
         </HeadlessButton>
         <HeadlessButton
             v-wobbly-border="{ min: 200, max: 350 }"
-            class="flex h-40 w-40 flex-col items-center justify-center bg-gray-200 p-4 text-gray-600 hover:bg-primary-500 hover:text-white focus:bg-primary-500 focus:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 active:bg-primary-700"
+            class="flex h-40 w-40 flex-col items-center justify-center bg-gray-300 text-gray-700 hover:bg-primary-500 hover:text-white focus:bg-primary-500 focus:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 active:bg-primary-700"
             @click="$ui.openModal(WebImportModal), $emit('optionSelected')"
         >
             <i-pepicons-internet class="h-12 w-12" aria-hidden="true" />
@@ -21,7 +21,7 @@
             v-wobbly-border="{ min: 200, max: 350 }"
             accept="application/json, application/ld+json"
             parse="json"
-            class="flex h-40 w-40 flex-col items-center justify-center bg-gray-200 p-4 text-gray-600 focus-within:bg-primary-500 focus-within:text-white focus-within:ring-2 focus-within:ring-primary-500 focus-within:ring-offset-2 hover:cursor-pointer hover:bg-primary-500 hover:text-white active:bg-primary-700 active:text-white"
+            class="flex h-40 w-40 flex-col items-center justify-center bg-gray-300 text-gray-700 focus-within:bg-primary-500 focus-within:text-white focus-within:ring-2 focus-within:ring-primary-500 focus-within:ring-offset-2 hover:cursor-pointer hover:bg-primary-500 hover:text-white active:bg-primary-700 active:text-white"
             @error="(error: unknown) => $errors.report(error)"
             @success="(jsonld: JsonLD) => (importFromJsonLD(jsonld), $emit('optionSelected'))"
         >

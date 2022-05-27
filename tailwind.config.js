@@ -1,3 +1,5 @@
+const colors = require('tailwindcss/colors');
+
 module.exports = {
     content: [
         './index.html',
@@ -28,32 +30,46 @@ module.exports = {
             '7xl': ['6rem', { lineHeight: '1' }],
             '8xl': ['8rem', { lineHeight: '1' }],
         },
-        extend: {
-            colors: {
-                'primary': {
-                    100: '#dff29c',
-                    200: '#d5ee7c',
-                    300: '#c0e147',
-                    400: '#b0d237',
-                    500: '#8db007',
-                    600: '#738e06',
-                    700: '#668104',
-                    800: '#637a05',
-                    900: '#475809',
-                },
-                'brand-solid': {
-                    100: '#e3dafb',
-                    200: '#c4b2f5',
-                    300: '#ab91f2',
-                    400: '#9d7cf8',
-                    500: '#7c4dff',
-                    600: '#7447f0',
-                    700: '#5f34d5',
-                    800: '#4a22b9',
-                    900: '#2c0f7b',
-                },
-                'dark-overlay': 'rgba(0,0,0,.5)',
+        colors: {
+            'gray': colors.neutral,
+            'white': colors.white,
+            'black': colors.black,
+            'transparent': colors.transparent,
+            'dark-overlay': 'rgba(0,0,0,.5)',
+
+            'primary': {
+                100: '#dff29c',
+                200: '#d5ee7c',
+                300: '#c0e147',
+                400: '#b0d237',
+                500: '#8db007',
+                600: '#738e06',
+                700: '#668104',
+                800: '#637a05',
+                900: '#475809',
             },
+            'primary-gray': {
+                300: '#d9dccb',
+                700: '#464a36',
+            },
+
+            'brand-solid': {
+                100: '#e3dafb',
+                200: '#c4b2f5',
+                300: '#ab91f2',
+                400: '#9d7cf8',
+                500: '#7c4dff',
+                600: '#7447f0',
+                700: '#5f34d5',
+                800: '#4a22b9',
+                900: '#2c0f7b',
+            },
+            'brand-solid-gray': {
+                300: '#d0cddb',
+                700: '#3c3749',
+            },
+        },
+        extend: {
             margin: theme => ({
                 edge: theme('spacing.8'),
             }),

@@ -1,5 +1,5 @@
 <template>
-    <HeadlessLink v-wobbly-border class="focus-visible:outline-none focus-visible:ring-4" :class="computedClasses">
+    <HeadlessLink v-wobbly-border class="inline-block focus-visible:outline-none focus-visible:ring-4" :class="computedClasses">
         <slot />
     </HeadlessLink>
 </template>

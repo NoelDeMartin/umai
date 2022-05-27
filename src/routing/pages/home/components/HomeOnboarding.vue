@@ -12,16 +12,41 @@
 
             <template v-else>
                 <div class="prose max-w-md text-center">
-                    <p v-safe-html="welcomeMessage" />
+                    <p>
+                        <span v-safe-html="welcomeMessage.beforeTooltip" />
+                        <CoreTooltip
+                            v-slot="{ tooltipId, openTooltip, closeTooltip }"
+                            :text="$t('home.onboarding.umai_title')"
+                        >
+                            <CoreLink
+                                :aria-describedby="tooltipId"
+                                url="/"
+                                internal
+                                secondary
+                                class="no-underline font-semibold hover:!text-gray-700"
+                                @focus="openTooltip()"
+                                @blur="closeTooltip()"
+                            >
+                                Umai
+                            </CoreLink>
+                        </CoreTooltip>
+                        <span v-safe-html="welcomeMessage.afterTooltip" />
+                    </p>
                     <p>{{ $t('home.onboarding.getStarted') }}</p>
                 </div>
-                <div class="mt-2 flex flex-col items-end">
-                    <CoreButton secondary class="w-full" @click="creatingNewRecipe = true">
+                <div class="mt-2 flex flex-col items-center">
+                    <CoreButton
+                        secondary
+                        tinted
+                        class="w-full"
+                        @click="creatingNewRecipe = true"
+                    >
                         <i-pepicons-knive-fork class="h-6 w-6" aria-hidden="true" />
                         <span class="ml-2">{{ $t('home.onboarding.createRecipe') }}</span>
                     </CoreButton>
                     <CoreButton
                         secondary
+                        tinted
                         color="brand-solid"
                         class="group mt-2 w-full"
                         @click="loggingIn = true"
@@ -52,19 +77,17 @@
 </template>
 
 <script setup lang="ts">
-import { escapeHtmlEntities, stringTrimmed } from '@noeldemartin/utils';
-
 import { translate } from '@/framework/utils/translate';
 
 const creatingNewRecipe = $ref(false);
 const loggingIn = $ref(false);
-const welcomeMessage = $computed(() =>
-    translate('home.onboarding.welcome', {
-        umai: stringTrimmed(`
-            <span
-                class="font-semibold"
-                title="${escapeHtmlEntities(translate('home.onboarding.umai_title'))}"
-            >Umai</span>
-        `),
-    }));
+const welcomeMessage = $computed(() => {
+    const text = translate('home.onboarding.welcome', { umai: '%SEPARATOR%' });
+    const [beforeTooltip, afterTooltip] = text.split('%SEPARATOR%');
+
+    return {
+        beforeTooltip: beforeTooltip?.replace(/\s+$/, '&nbsp;'),
+        afterTooltip: afterTooltip?.replace(/^\s+/, '&nbsp;'),
+    };
+});
 </script>

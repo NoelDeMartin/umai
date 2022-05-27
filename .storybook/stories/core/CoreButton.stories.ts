@@ -14,6 +14,7 @@ interface Args {
     color: keyof typeof CoreColor;
     alignment: keyof typeof CoreAlignment;
     secondary: boolean;
+    tinted: boolean;
     clear: boolean;
     width: string;
 }
@@ -34,6 +35,7 @@ const Meta = meta<Args>({
         color: 'Primary',
         alignment: 'Start',
         secondary: false,
+        tinted: false,
         clear: false,
         width: '',
     },
@@ -52,6 +54,7 @@ const Meta = meta<Args>({
             options: Object.keys(CoreAlignment),
         },
         secondary: { type: 'boolean' },
+        tinted: { type: 'boolean' },
         clear: { type: 'boolean' },
         width: { type: 'string' },
     },
@@ -79,6 +82,7 @@ const UseCase = defineComponent({
             :color="colorValue"
             :alignment="alignmentValue"
             :secondary="secondary"
+            :tinted="tinted"
             :clear="clear"
             :style="width && ('width:' + width + 'px')"
         >

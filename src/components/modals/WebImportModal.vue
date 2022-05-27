@@ -157,6 +157,7 @@
 <script setup lang="ts">
 import { after, afterAnimationFrame } from '@noeldemartin/utils';
 
+import App from '@/framework/core/facades/App';
 import Cloud from '@/framework/core/facades/Cloud';
 import I18n from '@/framework/core/facades/I18n';
 import Network from '@/framework/core/facades/Network';
@@ -188,7 +189,7 @@ const urlForm = reactiveForm({
     },
     proxyUrl: {
         type: FormInputType.String,
-        default: Config.proxyUrl || '',
+        default: Config.proxyUrl || App.env('DEFAULT_PROXY_URL'),
     },
 });
 const htmlForm = reactiveForm({

@@ -1,6 +1,6 @@
 <template>
     <footer
-        class="flex items-center space-x-1 p-4 text-sm font-medium text-primary-900 opacity-75"
+        class="flex items-center space-x-1 p-4 text-sm font-medium text-primary-700 opacity-75"
         :class="$app.isOnboarding ? 'justify-center' : 'justify-start'"
     >
         <CoreLink
