@@ -119,3 +119,16 @@ export async function animateElements(
             .map(({ element, ...config }) => animateElement(element, { ...sharedConfig, ...config })),
     );
 }
+
+export function elementIsInViewport(element: HTMLElement): boolean {
+    const clientRect = element.getBoundingClientRect();
+
+    return clientRect.top >= 0
+        && clientRect.left >= 0
+        && clientRect.bottom <= window.innerHeight
+        && clientRect.right <= window.innerWidth;
+}
+
+export function requireChildElement<T extends HTMLElement = HTMLElement>(parent: HTMLElement, selector: string): T {
+    return parent.querySelector(selector) ?? fail(`Could not find child element with '${selector}' selector`);
+}

@@ -32,7 +32,7 @@
                 leave-to="opacity-0 scale-90"
             >
                 <div
-                    class="flex flex-col overflow-hidden relative max-h-[90vh] bg-white shadow-xl transition-all m-edge"
+                    class="flex flex-col overflow-hidden relative max-h-[90vh] bg-white shadow-xl transition-all m-edge rounded-md"
                     v-bind="$attrs"
                 >
                     <DialogTitle v-if="title || $slots.title" as="h2" class="px-4 pt-4 text-lg font-medium leading-6 text-gray-900">

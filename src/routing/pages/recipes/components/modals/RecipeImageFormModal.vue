@@ -4,7 +4,7 @@
             <div v-if="url">
                 <RecipeImage :url="url" class="w-full aspect-[5/2] max-h-[60vh] min-w-modal-content" />
                 <div class="flex items-center mt-2" :title="isUploadPending ? $t('recipes.image_edit_localUrl') : ''">
-                    <i-zondicons-time
+                    <i-pepicons-clock
                         v-if="isUploadPending"
                         class="w-4 h-4 mr-2"
                         :aria-label="$t('recipes.image_edit_uploadPending')"
@@ -19,7 +19,7 @@
                 <div>
                     <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md w-96">
                         <div class="space-y-1 text-center">
-                            <i-zondicons-photo class="mx-auto h-12 w-12 text-gray-400" aria-hidden="true" />
+                            <i-bi-image class="mx-auto h-12 w-12 text-gray-400" aria-hidden="true" />
                             <div class="flex text-sm text-gray-600">
                                 <BaseFileInput
                                     class="relative cursor-pointer bg-white rounded-md font-medium text-primary-600 hover:text-primary-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary-500"
@@ -43,6 +43,7 @@
                 <span class="text-gray-800 mt-4">{{ $t('recipes.image_edit_customUrl') }}:</span>
                 <BaseInput
                     ref="input"
+                    :label="$t('recipes.image_edit_url')"
                     name="customUrl"
                     class="mt-2"
                     placeholder="https://..."
@@ -55,7 +56,7 @@
                     class="self-start"
                     @click="url = '', form.customUrl = ''"
                 >
-                    <i-zondicons-trash class="w-4 h-4 mr-2" aria-hidden="true" />
+                    <i-pepicons-trash class="w-5 h-5 mr-2" aria-hidden="true" />
                     {{ $t('recipes.image_edit_remove') }}
                 </BaseButton>
                 <div class="flex-grow" />

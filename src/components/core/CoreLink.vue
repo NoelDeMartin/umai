@@ -7,7 +7,7 @@
 <script setup lang="ts">
 import { booleanProp, enumProp } from '@/framework/utils/vue';
 
-import { CoreColor } from './constants';
+import { CoreColor } from './index';
 
 const { color, secondary } = defineProps({
     color: enumProp(CoreColor),

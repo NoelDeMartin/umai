@@ -33,6 +33,8 @@ module.exports = {
         colors: {
             'gray': colors.neutral,
             'white': colors.white,
+            'red': colors.red,
+            'current': colors.current,
             'black': colors.black,
             'transparent': colors.transparent,
             'dark-overlay': 'rgba(0,0,0,.5)',

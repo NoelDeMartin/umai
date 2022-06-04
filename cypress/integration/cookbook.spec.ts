@@ -21,56 +21,62 @@ describe('Cookbook', () => {
         // Act - Create
         cy.press('Create your first recipe');
         cy.press('Create from scratch');
-        cy.get('[name="name"]').type('Ramen');
-        cy.contains('Add ingredient').click();
-        cy.get(':focused').type('Broth{enter}');
-        cy.get(':focused').type('Noodles');
-        cy.contains('Add step').click();
-        cy.get(':focused').type('Boil the noodles{enter}');
-        cy.get(':focused').type('Dip them into the broth');
-        cy.contains('button', 'Create').click();
-        cy.url().should('contain', 'ramen');
+        cy.ariaInput('Recipe name').type('Ramen');
+        cy.press('Add ingredients');
+        cy.currentElement().type('Broth{enter}');
+        cy.currentElement().type('Noodles');
+        cy.press('Add instructions');
+        cy.currentElement().type('Boil the noodles{enter}');
+        cy.currentElement().type('Dip them into the broth');
+        cy.press('Create recipe');
+        cy.see('What will you cook today?');
+        cy.see('Ramen');
         cy.reload();
 
         // Act - First edit
-        cy.contains('Edit').click();
-        cy.contains('Change image').click();
-        cy.get('[name="customUrl"]').type('https://media.example.com/ramen.jpg');
-        cy.contains('Update').click();
-        cy.get('[name="name"]').type('!');
-        cy.contains('button', 'Add ingredient').click();
-        cy.get(':focus').type('Toppings');
-        cy.get('[name^="instruction-step-"]').first().click();
-        cy.get(':focus').type('{enter}');
-        cy.get(':focus').type('Prepare toppings');
-        cy.get('[name^="instruction-step-"]').last().click();
-        cy.get(':focus').clear().type('Dip the noodles into the broth');
+        cy.press('Ramen');
+        cy.see('Broth');
+        cy.see('Noodles');
+        cy.see('Boil the noodles');
+        cy.see('Dip them into the broth');
+        cy.press('Edit');
+        cy.press('Add an image');
+        cy.ariaInput('Image url').type('https://media.example.com/ramen.jpg');
+        cy.press('Update');
+        cy.ariaInput('Recipe name').type('!');
+        cy.press('Add ingredient');
+        cy.currentElement().type('Toppings');
+        cy.ariaInput('Recipe instructions step #1').click();
+        cy.currentElement().type('{enter}');
+        cy.currentElement().type('Prepare toppings');
+        cy.ariaInput('Recipe instructions step #3').click();
+        cy.currentElement().clear().type('Dip the noodles into the broth');
         cy.contains('Save').click();
         cy.url().should('contain', 'ramen');
         cy.url().should('not.contain', 'edit');
         cy.reload();
 
         // Act - Second edit
-        cy.contains('Edit').click();
-        cy.get('[name^="instruction-step-"]').eq(1).click();
-        cy.get(':focus').tab();
-        cy.get(':focus').click();
-        cy.get('[name^=instruction-step-]').should('have.length', 2);
-        cy.contains('Add step').click();
-        cy.get(':focus').type('Add toppings');
-        cy.contains('Save').click();
+        cy.press('Edit');
+        cy.ariaInput('Recipe instructions step #2').click();
+        cy.currentElement().tab();
+        cy.currentElement().click();
+        cy.get('label:contains("Recipe instructions step")').should('have.length', 2);
+        cy.press('Add step');
+        cy.currentElement().type('Add toppings');
+        cy.press('Save');
         cy.url().should('contain', 'ramen');
         cy.url().should('not.contain', 'edit');
         cy.reload();
 
         // Assert
-        cy.contains('Ramen!').should('be.visible');
-        cy.contains('Broth').should('be.visible');
-        cy.contains('Noodles').should('be.visible');
-        cy.contains('Toppings').should('be.visible');
-        cy.contains('Boil the noodles').scrollIntoView().should('be.visible');
-        cy.contains('Dip the noodles into the broth').scrollIntoView().should('be.visible');
-        cy.contains('Add Toppings').should('not.exist');
+        cy.see('Ramen!');
+        cy.see('Broth');
+        cy.see('Noodles');
+        cy.see('Toppings');
+        cy.see('Boil the noodles');
+        cy.see('Dip the noodles into the broth');
+        cy.see('Add toppings');
 
         cy.assertLocalDocumentEquals('solid://recipes/ramen', firstRamenJsonLD);
     });
@@ -83,65 +89,67 @@ describe('Cookbook', () => {
 
         // Act - Create
         cy.goOffline();
-        cy.contains('Create from scratch').click();
-        cy.get('[name="name"]').type('Ramen');
-        cy.contains('button', 'Add ingredient').click();
-        cy.get(':focus').type('Broth{enter}');
-        cy.get(':focus').type('Noodles');
-        cy.contains('button', 'Create').click();
+        cy.press('Create from scratch');
+        cy.ariaInput('Recipe name').type('Ramen');
+        cy.press('Add ingredients');
+        cy.currentElement().type('Broth{enter}');
+        cy.currentElement().type('Noodles');
+        cy.press('Create recipe');
         cy.see('There is one pending update');
         cy.comeBackOnline();
 
         // Act - First update
         cy.goOffline();
-        cy.contains('Edit').click();
+        cy.press('Ramen');
+        cy.press('Edit');
         cy.get('[name="name"]').type('!');
-        cy.ariaInput('Recipe description').type('is life');
-        cy.contains('button', 'Add ingredient').click();
-        cy.get(':focus').type('Toppings');
-        cy.contains('Add step').click();
-        cy.get(':focus').type('Boil the noodles{enter}');
-        cy.get(':focus').type('Dip them into the broth');
-        cy.contains('Save').click();
-        cy.contains('There are 2 pending updates');
+        cy.press('Write a description');
+        cy.currentElement().type('is life');
+        cy.press('Add ingredient');
+        cy.currentElement().type('Toppings');
+        cy.press('Add instructions');
+        cy.currentElement().type('Boil the noodles{enter}');
+        cy.currentElement().type('Dip them into the broth');
+        cy.press('Save');
+        cy.see('There are 2 pending updates');
         cy.comeBackOnline();
 
         // Act - Second update
         cy.goOffline();
-        cy.contains('Edit').click();
-        cy.get('[name="name"]').clear().type('Jun\'s Ramen');
+        cy.press('Edit');
+        cy.ariaInput('Recipe name').clear().type('Jun\'s Ramen');
         cy.ariaInput('Recipe description').clear().type('Instructions: https://www.youtube.com/watch?v=9WXIrnWsaCo');
-        cy.get('[name^="ingredient-"]').last().click();
-        cy.get(':focus').clear().type('Shiitake{enter}');
-        cy.get(':focus').type('Nori');
-        cy.get('[name^="instruction-step-"]').last().click();
-        cy.get(':focus').type('!{enter}');
-        cy.get(':focus').type('Add Toppings');
-        cy.contains('Save').click();
-        cy.contains('There are 3 pending updates');
+        cy.ariaInput('Recipe ingredient #3').click();
+        cy.currentElement().clear().type('Shiitake{enter}');
+        cy.currentElement().type('Nori');
+        cy.ariaInput('Recipe instructions step #2').click();
+        cy.currentElement().type('!{enter}');
+        cy.currentElement().type('Add toppings');
+        cy.press('Save');
+        cy.see('There are 3 pending updates');
         cy.comeBackOnline();
 
         // Act - Third update
         cy.goOffline();
-        cy.contains('Edit').click();
-        cy.get('[name^="instruction-step-"]').last().click();
-        cy.get(':focus').tab();
-        cy.get(':focus').click();
-        cy.get('[name^=instruction-step-]').should('have.length', 2);
-        cy.contains('Save').click();
-        cy.contains('There is one pending update');
+        cy.press('Edit');
+        cy.ariaInput('Recipe instructions step #3').click();
+        cy.currentElement().tab();
+        cy.currentElement().click();
+        cy.get('label:contains("Recipe instructions step")').should('have.length', 2);
+        cy.press('Save');
+        cy.see('There is one pending update');
         cy.comeBackOnline();
 
         // Assert
-        cy.contains('Jun\'s Ramen').should('be.visible');
-        cy.contains('Instructions: https://www.youtube.com/watch?v=9WXIrnWsaCo').should('be.visible');
-        cy.contains('Broth').should('be.visible');
-        cy.contains('Noodles').should('be.visible');
-        cy.contains('Shiitake').should('be.visible');
-        cy.contains('Nori').should('be.visible');
-        cy.contains('Dip them into the broth!').scrollIntoView().should('be.visible');
-        cy.contains('Boil the noodles').scrollIntoView().should('be.visible');
-        cy.contains('Toppings').should('not.exist');
+        cy.see('Jun\'s Ramen');
+        cy.see('Instructions: https://www.youtube.com/watch?v=9WXIrnWsaCo');
+        cy.see('Broth');
+        cy.see('Noodles');
+        cy.see('Shiitake');
+        cy.see('Nori');
+        cy.see('Dip them into the broth!');
+        cy.see('Boil the noodles');
+        cy.dontSee('Toppings');
 
         const fixtures: string[] = [];
 
@@ -166,12 +174,12 @@ describe('Cookbook', () => {
         // Act
         cy.press('Create your first recipe');
         cy.press('Create from scratch');
-        cy.get('[name="name"]').type('Ramen');
-        cy.contains('Change image').click();
+        cy.ariaInput('Recipe name').type('Ramen');
+        cy.press('Add an image');
         cy.uploadFixture('Upload an image', 'img/ramen.png');
-        cy.contains('Remove image').should('be.visible');
-        cy.contains('Update').click();
-        cy.contains('button', 'Create').click();
+        cy.see('Remove image');
+        cy.press('Update');
+        cy.press('Create recipe');
 
         // Assert
         cy.assertStoredFileMatches('solid://recipes/ramen.png', {
@@ -188,12 +196,12 @@ describe('Cookbook', () => {
         // Act
         cy.press('Create your first recipe');
         cy.press('Create from scratch');
-        cy.get('[name="name"]').type('Ramen');
-        cy.contains('Change image').click();
+        cy.ariaInput('Recipe name').type('Ramen');
+        cy.press('Add an image');
         cy.uploadFixture('Upload an image', 'img/ramen.png');
-        cy.contains('Remove image').should('be.visible');
-        cy.contains('Update').click();
-        cy.contains('button', 'Create').click();
+        cy.see('Remove image');
+        cy.press('Update');
+        cy.press('Create recipe');
 
         // TODO go back to home instead of reloading
         cy.visit('/?authenticator=localStorage');
@@ -214,13 +222,13 @@ describe('Cookbook', () => {
         cy.login({ hasCookbook: true });
 
         // Act
-        cy.contains('Ramen').click();
-        cy.contains('Edit').click();
-        cy.contains('Change image').click();
+        cy.press('Ramen');
+        cy.press('Edit');
+        cy.press('Add an image');
         cy.uploadFixture('Upload an image', 'img/ramen.png');
-        cy.contains('Remove image').should('be.visible');
-        cy.contains('Update').click();
-        cy.contains('Save').click();
+        cy.see('Remove image');
+        cy.press('Update');
+        cy.press('Save');
 
         // Assert
         cy.wait('@putRamenImage');
@@ -240,16 +248,16 @@ describe('Cookbook', () => {
         cy.login({ hasCookbook: true });
 
         // Act
-        cy.contains('Ramen').click();
-        cy.contains('Edit').click();
-        cy.contains('Change image').click();
-        cy.contains('Remove image').click();
+        cy.press('Ramen');
+        cy.press('Edit');
+        cy.press('Change image');
+        cy.press('Remove image');
         cy.uploadFixture('Upload an image', 'img/ramen.png');
-        cy.contains('Remove image').should('be.visible');
-        cy.contains('Update').click();
-        cy.contains('Save').click();
-        cy.contains('syncing').should('be.visible');
-        cy.contains('online').should('be.visible');
+        cy.see('Remove image');
+        cy.press('Update');
+        cy.press('Save');
+        cy.see('syncing');
+        cy.see('online');
 
         // Assert
         cy.get('@putRamenImage.all').should('have.length', 2);
@@ -268,7 +276,7 @@ describe('Cookbook', () => {
 
         // Assert
         cy.url().should('contain', 'aguachile');
-        cy.contains('200g Shrimps').scrollIntoView().should('be.visible');
+        cy.see('200g Shrimps');
     });
 
     it('Imports recipes from the Web', () => {
@@ -281,8 +289,8 @@ describe('Cookbook', () => {
         cy.press('Create your first recipe');
         cy.press('Import from the Web');
         cy.ariaInput('Website URL').type('https://recipes.example.com/hummus');
-        cy.contains('Scan website for recipes').click();
-        cy.contains('Continue without a proxy').click();
+        cy.press('Scan website for recipes');
+        cy.press('Continue without a proxy');
         cy.see('We\'ve found the recipe!');
 
         // Workaround for https://github.com/cypress-io/cypress/issues/7306
@@ -290,7 +298,7 @@ describe('Cookbook', () => {
 
         cy.see('Simple houmous');
         cy.see('Chickpeas – the star ingredient in houmous – are incredibly good for you.');
-        cy.contains('Import to my cookbook').click();
+        cy.press('Import to my cookbook');
 
         // Assert
         cy.see('The recipe has been added to your cookbook');
@@ -312,10 +320,10 @@ describe('Cookbook', () => {
         cy.press('Create your first recipe');
         cy.press('Import from the Web');
         cy.ariaInput('Website URL').type('https://recipes.example.com/hummus');
-        cy.contains('Scan website for recipes').click();
-        cy.contains('Advanced options').click();
+        cy.press('Scan website for recipes');
+        cy.toggleDetails('Advanced options');
         cy.ariaInput('Proxy url').clear().type('https://proxy.example.com');
-        cy.contains('OK').click();
+        cy.press('OK');
         cy.see('We\'ve found the recipe!');
 
         // Workaround for https://github.com/cypress-io/cypress/issues/7306
@@ -323,7 +331,7 @@ describe('Cookbook', () => {
 
         cy.see('Simple houmous');
         cy.see('Chickpeas – the star ingredient in houmous – are incredibly good for you.');
-        cy.contains('Import to my cookbook').click();
+        cy.press('Import to my cookbook');
 
         // Assert
         cy.see('The recipe has been added to your cookbook');
@@ -345,8 +353,8 @@ describe('Cookbook', () => {
         cy.press('Create your first recipe');
         cy.press('Import from the Web');
         cy.ariaInput('Website URL').type('https://recipes.example.com/ramen');
-        cy.contains('Scan website for recipes').click();
-        cy.contains('Continue without a proxy').click();
+        cy.press('Scan website for recipes');
+        cy.press('Continue without a proxy');
         cy.see('Oops! That didn\'t work');
 
         // Workaround for https://github.com/cypress-io/cypress/issues/7306
@@ -355,14 +363,14 @@ describe('Cookbook', () => {
         cy.toggleDetails('Try again');
         cy.toggleDetails('Copy & paste HTML');
         cy.fixture('html/juns-ramen.html').then(html => cy.ariaInput('Page source HTML').fill(html));
-        cy.contains('button', 'Scan HTML').click();
+        cy.press('Scan HTML');
         cy.see('Homemade Ramen');
         cy.see('Cat Merch!');
 
         // Workaround for https://github.com/cypress-io/cypress/issues/7306
         cy.wait(200);
 
-        cy.contains('Import to my cookbook').click();
+        cy.press('Import to my cookbook');
 
         // Assert
         cy.see('The recipe has been added to your cookbook');
@@ -401,7 +409,7 @@ describe('Cookbook', () => {
 
         // Assert
         cy.getRecipe('ramen').then(ramen => {
-            cy.contains('button', 'Public').should('be.visible');
+            cy.see('Public', 'button');
             cy.ariaLabel('Umai').should('match', '[aria-checked="true"]');
             cy.see(`${Cypress.config('baseUrl')}/viewer?url=${ramen.getDocumentUrl()}`);
 

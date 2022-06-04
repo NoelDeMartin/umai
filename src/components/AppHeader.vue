@@ -14,9 +14,8 @@
                     leave-from-class="opacity-100"
                     :leave-to-class="leaveToClasses"
                 >
-                    <div v-if="!$route.meta.fullBleedHeader" class="flex absolute left-0 top-1/2 w-full text-gray-900 -translate-y-1/2">
+                    <div v-if="!$route.meta.fullBleedHeader && !$app.isOnboarding" class="flex absolute left-0 top-1/2 w-full text-gray-900 -translate-y-1/2">
                         <router-link
-                            v-if="!$app.isOnboarding"
                             :to="{ name: 'home' }"
                             title="Umai"
                             class="flex justify-center items-center space-x-2"
@@ -26,7 +25,7 @@
                     </div>
                     <!-- TODO investigate inferring previous route after a reload, instead of defaulting to home -->
                     <button
-                        v-else
+                        v-else-if="!$app.isOnboarding"
                         type="button"
                         class="flex absolute left-0 top-1/2 items-center w-full text-white -translate-y-1/2"
                         @click="$router.previousRoute ? $router.back() : $router.push({ name: 'recipes.index' })"

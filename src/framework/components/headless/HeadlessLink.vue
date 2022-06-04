@@ -12,7 +12,7 @@ import { booleanProp, objectProp, stringProp } from '@/framework/utils/vue';
 
 const { route, routeParams, url, internal } = defineProps({
     route: stringProp(),
-    routeParams: objectProp<RouteParams>({}),
+    routeParams: objectProp<RouteParams>(() => ({})),
     url: stringProp(),
     internal: booleanProp(),
 });

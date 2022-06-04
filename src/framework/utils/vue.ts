@@ -1,11 +1,18 @@
 import { fail } from '@noeldemartin/utils';
-import { inject, nextTick } from 'vue';
-import type { Directive, InjectionKey, PropType } from 'vue';
+import { customRef, inject, nextTick } from 'vue';
+import type { Directive, InjectionKey, PropType, Ref } from 'vue';
 
 type Prop<T> = {
     type: PropType<T>;
     validator?(value: unknown): boolean;
-} & ({ required: true } | { default: T });
+} & ({ required: true } | { default: T | (() => T) });
+
+export function arrayProp<T>(defaultValue?: () => T[]): Prop<T[]> {
+    return {
+        type: Array as PropType<T[]>,
+        default: defaultValue ?? (() => []),
+    };
+}
 
 export function booleanProp(): Prop<boolean> {
     return {
@@ -45,12 +52,28 @@ export async function nextTicks(count: number): Promise<void> {
     }
 }
 
+export function numberProp(): Prop<number | null>;
+export function numberProp(defaultValue: number): Prop<number>;
+export function numberProp(defaultValue: number | null = null): Prop<number | null> {
+    return {
+        type: Number,
+        default: defaultValue,
+    };
+}
+
 export function objectProp<T = Object>(): Prop<T | null>;
-export function objectProp<T>(defaultValue: T): Prop<T>;
-export function objectProp<T = Object>(defaultValue: T | null = null): Prop<T | null> {
+export function objectProp<T>(defaultValue: () => T): Prop<T>;
+export function objectProp<T = Object>(defaultValue: (() => T) | null = null): Prop<T | null> {
     return {
         type: Object,
         default: defaultValue,
+    };
+}
+
+export function requiredNumberProp(): Prop<number> {
+    return {
+        type: Number,
+        required: true,
     };
 }
 
@@ -75,4 +98,28 @@ export function stringProp(defaultValue: string | null = null): Prop<string | nu
         type: String,
         default: defaultValue,
     };
+}
+
+export function useRouteState<T>(name: string, defaultValue: T): Ref<T> {
+    let value = history.state?.[name] ?? defaultValue;
+
+    return customRef((track, trigger) => {
+        return {
+            get() {
+                track();
+
+                return value;
+            },
+            set(newValue) {
+                value = newValue;
+
+                history.replaceState({
+                    ...history.state,
+                    [name]: value,
+                }, '');
+
+                trigger();
+            },
+        };
+    });
 }

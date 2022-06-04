@@ -2,53 +2,41 @@ import { defineComponent } from 'vue';
 
 import { meta, story } from '@sb/support/helpers';
 
-import CoreInput from '@/components/core/CoreInput.vue';
-import { CoreColor } from '@/components/core';
+import CoreFluidTextarea from '@/components/core/CoreFluidTextarea.vue';
 
 interface Args {
     value: string;
     placeholder: string;
     error: string;
-    color: keyof typeof CoreColor;
 }
 
 const Meta = meta<Args>({
-    component: CoreInput,
-    title: 'Core/Input',
+    component: CoreFluidTextarea,
+    title: 'Core/Fluid Textarea',
     args: {
-        value: 'john@example.com',
+        value: [
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+            'Ut vitae magna sed turpis fringilla tempor vel nec libero.',
+            'Vivamus mi ante, finibus porta maximus at, cursus non ligula.',
+        ].join('\n\n'),
         placeholder: 'Enter text...',
         error: '',
-        color: 'Primary',
     },
     argTypes: {
         value: { type: 'string' },
         placeholder: { type: 'string' },
         error: { type: 'string' },
-        color: {
-            control: { type: 'radio' },
-            options: Object.keys(CoreColor),
-        },
     },
 });
 
 const UseCase = defineComponent({
-    components: { CoreInput },
+    components: { CoreFluidTextarea },
     emits: ['update:modelValue'],
     props: Object.keys(Meta.argTypes ?? Meta.args ?? {}),
-    computed: {
-        $args(): Args {
-            return this.$props as unknown as Args;
-        },
-        colorValue() {
-            return CoreColor[this.$args.color];
-        },
-    },
     template: `
-        <CoreInput
+        <CoreFluidTextarea
             :placeholder="placeholder"
             :error="error"
-            :color="colorValue"
             :modelValue="value"
             @update:modelValue="$emit('update:modelValue', $event)"
         />
@@ -70,6 +58,10 @@ export const Playground = story<Args>((args) => ({
         <div class="text-center">
             <h2 class="font-semibold">Default</h2>
             <UseCase class="mt-2" v-bind="otherArgs" v-model="value" />
+        </div>
+        <div class="text-center">
+            <h2 class="font-semibold">Hover</h2>
+            <UseCase class=":hover mt-2" v-bind="otherArgs" v-model="value" />
         </div>
         <div class="text-center">
             <h2 class="font-semibold">Focus</h2>

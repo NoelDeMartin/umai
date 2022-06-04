@@ -1,7 +1,7 @@
 import { marked } from 'marked';
 import { stringMatchAll } from '@noeldemartin/utils';
 
-import { CoreColor } from '@/components/core/constants';
+import { CoreColor } from '@/components/core';
 import { randomWobblyBorderRadius } from '@/directives/wobbly-border';
 
 function parseCoreLinkAttributes(attributes: string): {

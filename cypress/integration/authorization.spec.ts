@@ -14,14 +14,14 @@ describe('Authorization', () => {
         // Act
         cy.press('Ramen');
         cy.press('Share');
-        cy.see('Private');
+        cy.see('Private', 'button');
         cy.see('This recipe is private');
-        cy.press('Private');
-        cy.contains('li', 'Public').click();
+        cy.press('Private', 'button');
+        cy.press('Public', 'li');
 
         // Assert
         cy.see('updating permissions');
-        cy.contains('button', 'Public').should('be.visible');
+        cy.see('Public', 'button');
         cy.dontSee('This recipe is private');
 
         cy.get('@patchACL.all').should('have.length', 2);
@@ -77,10 +77,10 @@ describe('Authorization', () => {
         // Act
         cy.press('Ramen');
         cy.press('Share');
-        cy.contains('button', 'Public').should('be.visible');
+        cy.see('Public', 'button');
         cy.dontSee('This recipe is private');
-        cy.contains('button', 'Public').click();
-        cy.press('Private');
+        cy.press('Public', 'button');
+        cy.press('Private', 'li');
 
         // Assert
         cy.see('updating permissions');
@@ -121,14 +121,14 @@ describe('Authorization', () => {
         // Act
         cy.press('Ramen');
         cy.press('Share');
-        cy.see('Private');
+        cy.see('Private', 'button');
         cy.see('This recipe is private');
-        cy.press('Private');
-        cy.contains('li', 'Public').click();
+        cy.press('Private', 'button');
+        cy.press('Public', 'li');
 
         // Assert
         cy.see('updating permissions');
-        cy.contains('button', 'Public').should('be.visible');
+        cy.see('Public', 'button');
         cy.dontSee('This recipe is private');
 
         cy.get('@patchACL').its('request.body').should('be.sparql', `

@@ -3,7 +3,7 @@ import { defineComponent } from 'vue';
 import { meta, story } from '@sb/support/helpers';
 
 import CoreLink from '@/components/core/CoreLink.vue';
-import { CoreColor } from '@/components/core/constants';
+import { CoreColor } from '@/components/core';
 
 interface Args {
     text: string;

@@ -3,10 +3,16 @@
         v-element-transitions="{
             enter: {
                 'recipes.show': fadeInCookbookLink,
+                'recipes.create': () => $elementTransitions.waitElementsReady('recipe-form'),
                 '*': $elementTransitions.fadeIn,
             },
             leave: {
                 'recipes.show': fadeOutCookbookLink,
+                'recipes.create': async ($wrapper: HTMLElement) => {
+                    $wrapper.classList.add('flex');
+
+                    await $elementTransitions.waitElementsReady('recipe-form');
+                },
                 '*': $elementTransitions.fadeOut,
             },
         }"

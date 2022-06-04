@@ -43,6 +43,10 @@ export default class Recipe extends Model {
         return ingredients.map(({ original }) => original);
     }
 
+    public get sortedInstructions(): RecipeInstructionsStep[] {
+        return arraySorted(this.instructions ?? [], 'position');
+    }
+
     public is(other: Recipe): boolean {
         return this.url === other.url
             || this.externalUrls.some(url => url === other.url);

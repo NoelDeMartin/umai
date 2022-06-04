@@ -1,5 +1,9 @@
 <template>
-    <main class="w-full" :style="`margin-top: -${$ui.headerHeight}px`" aria-labelledby="#recipe-form-title">
+    <main
+        class="flex flex-col w-full min-h-screen"
+        :style="`margin-top: -${$ui.headerHeight}px`"
+        aria-labelledby="#recipe-form-title"
+    >
         <RecipeForm @done="onCreated" @cancel="$router.back()" />
     </main>
 </template>
@@ -9,14 +13,9 @@ import Cloud from '@/framework/core/facades/Cloud';
 import Network from '@/framework/core/facades/Network';
 import Router from '@/framework/core/facades/Router';
 
-import type Recipe from '@/models/Recipe';
-
-function onCreated(recipe: Recipe) {
+function onCreated() {
     Network.online && Cloud.sync();
 
-    Router.push({
-        name: 'recipes.show',
-        params: { recipe: recipe.uuid as string },
-    });
+    Router.push({ name: 'home' });
 }
 </script>

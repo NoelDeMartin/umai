@@ -1,6 +1,6 @@
 <template>
     <div :class="`flex justify-center items-center bg-gray-200 ${extraClasses}`">
-        <i-zondicons-photo class="w-full h-2/5 opacity-25" />
+        <i-bi-image class="w-full h-2/5 opacity-25" aria-hidden="true" />
         <img v-if="sourceUrl" :src="sourceUrl" class="absolute inset-0 object-cover w-full h-full">
     </div>
 </template>

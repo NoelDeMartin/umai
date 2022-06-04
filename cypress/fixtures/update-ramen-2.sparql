@@ -94,7 +94,7 @@ INSERT DATA {
 
     <#[[instruction-step-3][%uuid%]]>
         a schema:HowToStep ;
-        schema:text "Add Toppings" ;
+        schema:text "Add toppings" ;
         schema:position 3 .
 
     <#[[instruction-step-3][%uuid%]]-metadata>

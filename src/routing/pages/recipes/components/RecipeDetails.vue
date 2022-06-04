@@ -1,5 +1,6 @@
 <template>
     <RecipePage
+        ref="$recipePage"
         v-element-transitions="{
             name: 'recipe-details',
             id: recipe.url,
@@ -31,10 +32,11 @@
 import type { PropType } from 'vue';
 
 import TailwindCSS from '@/framework/utils/tailwindcss';
-import { animateElements } from '@/framework/utils/dom';
+import { animateElements, requireChildElement } from '@/framework/utils/dom';
 import { defineElementTransition, defineEnterTransition } from '@/framework/core/services/ElementTransitionsService';
 
 import ShareRecipeModal from '@/components/modals/ShareRecipeModal.vue';
+import { bodySlideUp, headerDelay } from '@/components/recipe/RecipePage.transitions';
 import type Recipe from '@/models/Recipe';
 
 const { recipe } = defineProps({
@@ -44,27 +46,40 @@ const { recipe } = defineProps({
     },
 });
 
-const enterTransition = defineEnterTransition(async details => {
+const $recipePage = $ref<null>(null);
+
+const enterTransition = defineEnterTransition(async ($root, previous) => {
+    if (previous?.config.name === 'recipe-card') {
+        const duration = 500;
+
+        await Promise.all([
+            headerDelay($root, duration),
+            bodySlideUp($root, duration),
+        ]);
+
+        return;
+    }
+
     const duration = 500;
-    const detailsHeader = details.querySelector('.recipe-details--header') as HTMLElement;
-    const detailsBody = details.querySelector('.recipe-details--body') as HTMLElement;
-    const detailsBodyBoundingRect = detailsBody.getBoundingClientRect();
-    const detailsMetadataDecoration = details.querySelector('.recipe-page-layout--metadata-decoration') as HTMLElement;
+    const $detailsHeader = requireChildElement($root, '.recipe-page--header');
+    const $detailsBody = requireChildElement($root, '.recipe-page--body');
+    const $detailsMetadataDecoration = requireChildElement($root, '.recipe-page--metadata-decoration');
+    const detailsBodyBoundingRect = $detailsBody.getBoundingClientRect();
 
     await animateElements({ duration }, [
         {
-            element: detailsHeader,
+            element: $detailsHeader,
             before: { addClasses: 'opacity-0' },
             after: { removeClasses: 'opacity-0' },
         },
         {
-            element: detailsBody,
+            element: $detailsBody,
             before: { addClasses: 'z-20' },
             after: { removeClasses: 'z-20' },
             styles: {
                 transform: [
                     `translateY(${
-                        window.innerHeight - detailsBodyBoundingRect.top + detailsMetadataDecoration.clientHeight
+                        window.innerHeight - detailsBodyBoundingRect.top + $detailsMetadataDecoration.clientHeight
                     }px)`,
                     'translateY(0)',
                 ],
@@ -73,27 +88,27 @@ const enterTransition = defineEnterTransition(async details => {
     ]);
 });
 
-const transitionToCard = defineElementTransition(async (_, details, card) => {
+const transitionToCard = defineElementTransition(async (_, $details, { element: $card }) => {
     const duration = 500;
-    const detailsHeader = details.querySelector('.recipe-details--header') as HTMLElement;
-    const detailsHeaderBoundingRect = detailsHeader.getBoundingClientRect();
-    const detailsHeaderWrapper = details.querySelector('.recipe-details--header-wrapper') as HTMLElement;
-    const detailsHeaderOverlay = details.querySelector('.recipe-details--header-overlay') as HTMLElement;
-    const detailsHeaderTitle = details.querySelector('.recipe-details--header-title') as HTMLElement;
-    const detailsHeaderTitleBoundingRect = detailsHeaderTitle.getBoundingClientRect();
-    const detailsHeaderTitleWrapper = details.querySelector('.recipe-details--header-title-wrapper') as HTMLElement;
-    const detailsHeaderTitleText = details.querySelector('.recipe-details--header-title-text') as HTMLElement;
-    const detailsHeaderWrapperBackground = document.createElement('div');
-    const detailsBody = details.querySelector('.recipe-details--body') as HTMLElement;
-    const detailsBodyBoundingRect = detailsBody.getBoundingClientRect();
-    const detailsMetadataDecoration = details.querySelector('.recipe-page-layout--metadata-decoration') as HTMLElement;
-    const cardBoundingRect = card.getBoundingClientRect();
-    const recipesFAB = document.querySelector('.recipes-index--fab') as HTMLElement | null;
-    const footer = document.querySelector('footer') as HTMLElement;
+    const $detailsHeader = requireChildElement($details, '.recipe-page--header');
+    const $detailsHeaderWrapper = requireChildElement($details, '.recipe-page--header-wrapper');
+    const $detailsHeaderOverlay = requireChildElement($details, '.recipe-page--header-overlay');
+    const $detailsHeaderTitle = requireChildElement($details, '.recipe-details--header-title');
+    const $detailsHeaderTitleWrapper = requireChildElement($details, '.recipe-page--header-title-wrapper');
+    const $detailsHeaderTitleText = requireChildElement($details, '.recipe-details--header-title-text');
+    const $detailsHeaderWrapperBackground = document.createElement('div');
+    const $detailsBody = requireChildElement($details, '.recipe-page--body');
+    const $detailsMetadataDecoration = requireChildElement($details, '.recipe-page--metadata-decoration');
+    const $recipesFAB = document.querySelector('.recipes-index--fab') as HTMLElement | null;
+    const $footer = document.querySelector('footer') as HTMLElement;
+    const detailsHeaderBoundingRect = $detailsHeader.getBoundingClientRect();
+    const detailsHeaderTitleBoundingRect = $detailsHeaderTitle.getBoundingClientRect();
+    const detailsBodyBoundingRect = $detailsBody.getBoundingClientRect();
+    const cardBoundingRect = $card.getBoundingClientRect();
 
     await animateElements({ duration, fill: 'forwards' }, [
         {
-            element: detailsHeader,
+            element: $detailsHeader,
             before: {
                 addClasses: 'overflow-hidden z-10 relative',
                 removeClasses: 'justify-center',
@@ -101,30 +116,30 @@ const transitionToCard = defineElementTransition(async (_, details, card) => {
             classes: { borderRadius: ['rounded-none', 'rounded-lg'] },
             boundingRects: [detailsHeaderBoundingRect, cardBoundingRect],
         },
-        { element: detailsHeaderOverlay, styles: { opacity: [1, 0] } },
+        { element: $detailsHeaderOverlay, styles: { opacity: [1, 0] } },
         {
-            element: detailsHeaderWrapper,
+            element: $detailsHeaderWrapper,
             before: {
                 removeClasses: 'justify-center pb-4 mx-edge',
-                prepend: detailsHeaderWrapperBackground,
+                prepend: $detailsHeaderWrapperBackground,
             },
         },
         {
-            element: detailsHeaderWrapperBackground,
+            element: $detailsHeaderWrapperBackground,
             before: {
                 addClasses: 'opacity-0 absolute inset-0 bg-gradient-to-t to-transparent from-dark-overlay',
             },
             styles: { opacity: [0, 1] },
         },
         {
-            element: detailsHeaderTitleWrapper,
+            element: $detailsHeaderTitleWrapper,
             before: {
                 addClasses: 'w-full flex-shrink-0',
                 removeClasses: 'pr-36 max-w-readable',
             },
         },
         {
-            element: detailsHeaderTitle,
+            element: $detailsHeaderTitle,
             before: { addClasses: 'relative w-full' },
             classes: {
                 paddingTop: ['p-4', 'p-2'],
@@ -141,11 +156,11 @@ const transitionToCard = defineElementTransition(async (_, details, card) => {
             },
         },
         {
-            element: detailsHeaderTitleText,
+            element: $detailsHeaderTitleText,
             before: { addClasses: 'relative' },
         },
         {
-            element: detailsBody,
+            element: $detailsBody,
             before: {
                 addClasses: 'z-20 fixed w-full',
                 styles: {
@@ -158,17 +173,17 @@ const transitionToCard = defineElementTransition(async (_, details, card) => {
             styles: {
                 top: [
                     `${detailsBodyBoundingRect.top}px`,
-                    `${window.innerHeight + detailsMetadataDecoration.clientHeight}px`,
+                    `${window.innerHeight + $detailsMetadataDecoration.clientHeight}px`,
                 ],
             },
         },
-        recipesFAB && {
-            element: recipesFAB,
+        $recipesFAB && {
+            element: $recipesFAB,
             before: { styles: { zIndex: '0' } },
             after: { resetStyles: true },
         },
         {
-            element: footer,
+            element: $footer,
             before: { addClasses: 'z-50' },
             after: { removeClasses: 'z-50' },
         },

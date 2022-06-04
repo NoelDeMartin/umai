@@ -1,12 +1,12 @@
 <template>
     <HeadlessInput
         v-slot="{ hasErrors }"
-        ref="input"
+        ref="$root"
         :name="name"
         :placeholder="placeholder"
         :model-value="modelValue"
         :error="error"
-        @update:modelValue="(value: number | string | null) => $emit('update:modelValue', value)"
+        @update:modelValue="$emit('update:modelValue', $event)"
     >
         <HeadlessInputLabel v-if="label" class="sr-only">
             {{ label }}
@@ -27,17 +27,18 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
+import { booleanProp, enumProp, mixedProp, objectProp, stringProp } from '@/framework/utils/vue';
+import { focusable } from '@/framework/components/headless';
+import type { IFocusable } from '@/framework/components/headless';
+
+import type { WobblyBorderOptions } from '@/directives/wobbly-border';
+
+import { CoreColor } from './index';
+
 export default defineComponent({ inheritAttrs: false });
 </script>
 
 <script setup lang="ts">
-import { booleanProp, enumProp, mixedProp, objectProp, stringProp } from '@/framework/utils/vue';
-
-import type { WobblyBorderOptions } from '@/directives/wobbly-border';
-
-import { CoreColor } from './constants';
-import type ICoreInput from '@/components/core/CoreInput';
-import type IHeadlessInput from '@/framework/components/headless/HeadlessInput';
 
 const { color } = defineProps({
     name: stringProp(),
@@ -51,7 +52,7 @@ const { color } = defineProps({
 });
 defineEmits(['update:modelValue']);
 
-const input = $ref<IHeadlessInput | null>(null);
+const $root = $ref<IFocusable | null>(null);
 const colorsClasses: Record<CoreColor, string> = {
     [CoreColor.Primary]: 'focus:placeholder:text-primary-500 focus:bg-primary-200',
     [CoreColor.Solid]: 'focus:placeholder:text-brand-solid-400 focus:bg-brand-solid-100',
@@ -59,7 +60,5 @@ const colorsClasses: Record<CoreColor, string> = {
 
 const computedClasses = $computed(() => colorsClasses[color]);
 
-defineExpose<ICoreInput>({
-    focus: () => input?.focus(),
-});
+defineExpose<IFocusable>(focusable($$($root)));
 </script>

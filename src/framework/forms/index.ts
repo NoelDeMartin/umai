@@ -4,44 +4,37 @@ export const enum FormInputType {
     String = 'string',
     Boolean = 'boolean',
     Number = 'number',
+    Object = 'object',
 }
 
+export type FormObjectInput<Type> = FormInputType.Object & { __objectType: Type };
+
 export type GetFormInputValue<InputType> =
+    InputType extends FormObjectInput<infer T> ? T :
     InputType extends FormInputType.String ? string :
     InputType extends FormInputType.Boolean ? boolean :
     InputType extends FormInputType.Number ? number :
+    InputType extends FormInputType.Object ? object :
     never;
 
-export type GetFormInputDefinitions<
-    InputTypes extends Record<keyof InputMultis, FormInputType>,
-    InputMultis extends Record<keyof InputTypes, boolean>,
-> =
-    { [key in keyof InputTypes]: FormInputDefinition<InputTypes[key], InputMultis[key]> } |
-    { [key in keyof InputMultis]: FormInputDefinition<InputTypes[key], InputMultis[key]> };
-
-export interface FormInputDefinition<Type extends FormInputType, Multi extends boolean> {
+export interface FormInputDefinition<
+    Type extends FormInputType = FormInputType,
+    Multi extends boolean = boolean
+> {
     type: Type;
     rules?: string;
     multi?: Multi;
 
-    // TODO this doesn't seem to be working properly in all scenarios
+    // TODO require default for object types
     default?: Multi extends true ? GetFormInputValue<Type>[] : GetFormInputValue<Type>;
 }
 
-export type MagicForm<
-    InputTypes extends Record<keyof InputMultis, FormInputType>,
-    InputMultis extends Record<keyof InputTypes, boolean>,
-> = {
-    [key in keyof InputTypes]: InputMultis[key] extends true
-        ? GetFormInputValue<InputTypes[key]>[]
-        : GetFormInputValue<InputTypes[key]>
+export type MagicForm<Inputs extends Record<string, FormInputDefinition>> = {
+    [key in keyof Inputs]: Inputs[key]['multi'] extends true
+        ? GetFormInputValue<Inputs[key]['type']>[]
+        : GetFormInputValue<Inputs[key]['type']>
 } & Form;
 
-export function reactiveForm<
-    InputTypes extends Record<keyof InputMultis, FormInputType>,
-    InputMultis extends Record<keyof InputTypes, boolean>,
->(
-    inputs: GetFormInputDefinitions<InputTypes, InputMultis>,
-): MagicForm<InputTypes, InputMultis> {
-    return new Form(inputs) as unknown as MagicForm<InputTypes, InputMultis>;
+export function reactiveForm<Inputs extends Record<string, FormInputDefinition>>(inputs: Inputs): MagicForm<Inputs> {
+    return new Form(inputs) as MagicForm<Inputs>;
 }

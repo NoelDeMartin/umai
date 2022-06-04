@@ -16,8 +16,8 @@ describe('Authentication', () => {
         cy.waitForReload();
 
         // Assert
-        cy.contains('online').click();
-        cy.contains('You are logged in as John Doe').should('be.visible');
+        cy.press('online');
+        cy.see('You are logged in as John Doe');
     });
 
     it('Signs up using the Inrupt authenticator', () => {
@@ -36,19 +36,19 @@ describe('Authentication', () => {
         cy.waitForReload({ resetProfiles: true });
 
         // Act - Create cookbook
-        cy.contains('Go ahead').click();
+        cy.press('Go ahead');
 
         // Act - Create recipe
         cy.goOffline();
-        cy.contains('Create from scratch').click();
-        cy.get('[name="name"]').type('Ramen');
-        cy.contains('button', 'Create').click();
-        cy.contains('There is one pending update');
+        cy.press('Create from scratch');
+        cy.ariaInput('Recipe name').type('Ramen');
+        cy.press('Create recipe');
+        cy.see('There is one pending update');
         cy.comeBackOnline();
 
         // Assert
-        cy.contains('online').click();
-        cy.contains('You are logged in as http://localhost:4000/alice/profile/card#me').should('be.visible');
+        cy.press('online');
+        cy.see('You are logged in as http://localhost:4000/alice/profile/card#me');
 
         cy.get('@createCookbook').its('request.headers.authorization').should('match', /DPoP .*/);
         cy.get('@createTypeIndex').its('request.headers.authorization').should('match', /DPoP .*/);
@@ -77,15 +77,15 @@ describe('Authentication', () => {
 
         // Act - Update recipe
         cy.goOffline();
-        cy.contains('Pisto').click();
-        cy.contains('Edit').click();
-        cy.get('[name="name"]').type('!');
-        cy.contains('Save').click();
-        cy.contains('There are 2 pending updates');
+        cy.press('Pisto');
+        cy.press('Edit');
+        cy.ariaInput('Recipe name').type('!');
+        cy.press('Save');
+        cy.see('There are 2 pending updates');
         cy.comeBackOnline();
 
         // Assert
-        cy.contains('Pisto!').should('be.visible');
+        cy.see('Pisto!');
 
         cy.get('@patchPisto').its('request.headers.authorization').should('match', /DPoP .*/);
         cy.get('@patchPisto').its('request.headers.if-none-match').should('not.exist');
@@ -99,22 +99,22 @@ describe('Authentication', () => {
         cy.ariaInput('Login url').clear().type('http://localhost:4000/alice/{enter}');
         cy.cssAuthorize({ reset: true });
         cy.waitForReload({ resetProfiles: true });
-        cy.contains('online').click();
-        cy.contains('You are logged in').should('be.visible');
-        cy.contains('Advanced options').click();
-        cy.contains('Reconnect on startup').click();
+        cy.press('online');
+        cy.see('You are logged in');
+        cy.toggleDetails('Advanced options');
+        cy.press('Reconnect on startup');
         cy.reload();
 
         // Act
-        cy.contains('disconnected').click();
-        cy.contains('button', 'Reconnect').click();
-        cy.contains('Consent').click();
+        cy.press('disconnected');
+        cy.press('Reconnect', 'button');
+        cy.press('Consent');
         cy.cssReset();
         cy.waitForReload();
 
         // Assert
-        cy.contains('online').click();
-        cy.contains('You are logged in').should('be.visible');
+        cy.press('online');
+        cy.see('You are logged in');
     });
 
     it('Wipes local data on log out', () => {
@@ -131,14 +131,14 @@ describe('Authentication', () => {
             },
         });
         cy.waitForReload({ resetProfiles: true });
-        cy.contains('Pisto').should('be.visible');
+        cy.see('Pisto');
 
         // Act
-        cy.contains('online').click();
-        cy.contains('Log out').click();
+        cy.press('online');
+        cy.press('Log out');
 
         // Assert
-        cy.contains('How would you like to begin?').should('be.visible');
+        cy.see('How would you like to begin?');
     });
 
     it('Migrates local data to cloud after logging in', () => {
@@ -148,61 +148,62 @@ describe('Authentication', () => {
         cy.startApp();
 
         // Act - Create
-        cy.contains('Create your first recipe').click();
-        cy.contains('Create from scratch').click();
-        cy.get('[name="name"]').type('Ramen');
-        cy.contains('Add ingredient').click();
-        cy.get(':focus').type('Broth{enter}');
-        cy.get(':focus').type('Noodles');
-        cy.contains('button', 'Create').click();
-        cy.url().should('contain', 'ramen');
-        cy.url().should('not.contain', 'edit');
+        cy.press('Create your first recipe');
+        cy.press('Create from scratch');
+        cy.ariaInput('Recipe name').type('Ramen');
+        cy.press('Add ingredient');
+        cy.currentElement().type('Broth{enter}');
+        cy.currentElement().type('Noodles');
+        cy.press('Create recipe');
+        cy.see('What will you cook today?');
 
         // Act - First edit
-        cy.contains('Edit').click();
-        cy.get('[name="name"]').type('!');
-        cy.ariaInput('Recipe description').type('is life');
-        cy.contains('Add ingredient').click();
-        cy.get(':focus').type('Toppings');
-        cy.contains('Add step').click();
-        cy.get(':focus').type('Boil the noodles{enter}');
-        cy.get(':focus').type('Dip them into the broth');
-        cy.contains('Save').click();
+        cy.press('Ramen');
+        cy.press('Edit');
+        cy.ariaInput('Recipe name').type('!');
+        cy.press('Write a description');
+        cy.currentElement().type('is life');
+        cy.press('Add ingredient');
+        cy.currentElement().type('Toppings');
+        cy.press('Add instructions');
+        cy.currentElement().type('Boil the noodles{enter}');
+        cy.currentElement().type('Dip them into the broth');
+        cy.press('Save');
         cy.url().should('contain', 'ramen');
         cy.url().should('not.contain', 'edit');
 
         // Act - Second edit
-        cy.contains('Edit').click();
-        cy.get('[name="name"]').clear().type('Jun\'s Ramen');
+        cy.press('Edit');
+        cy.ariaInput('Recipe name').clear().type('Jun\'s Ramen');
         cy.ariaInput('Recipe description').clear().type('Instructions: https://www.youtube.com/watch?v=9WXIrnWsaCo');
-        cy.get('[name^=ingredient-]').last().click();
-        cy.get(':focus').clear().type('Shiitake{enter}');
-        cy.get(':focus').type('Nori');
-        cy.get('[name^=instruction-step-]').last().click();
-        cy.get(':focus').type('!{enter}');
-        cy.get(':focus').type('Add Toppings');
-        cy.contains('Save').click();
+        cy.ariaInput('Recipe ingredient #3').click();
+        cy.currentElement().clear().type('Shiitake{enter}');
+        cy.currentElement().type('Nori');
+        cy.ariaInput('Recipe instructions step #2').click();
+        cy.currentElement().type('!{enter}');
+        cy.currentElement().type('Add toppings');
+        cy.press('Save');
         cy.url().should('contain', 'ramen');
         cy.url().should('not.contain', 'edit');
 
         // Act - Third edit
-        cy.contains('Edit').click();
-        cy.get('[name^=instruction-step-]').last().click();
-        cy.get(':focus').tab();
-        cy.get(':focus').click();
-        cy.get('[name^=instruction-step-]').should('have.length', 2);
-        cy.contains('Save').click();
+        cy.press('Edit');
+        cy.ariaInput('Recipe instructions step #3').click();
+        cy.currentElement().tab();
+        cy.currentElement().click();
+        cy.get('label:contains("Recipe instructions step")').should('have.length', 2);
+        cy.press('Save');
         cy.url().should('contain', 'ramen');
         cy.url().should('not.contain', 'edit');
 
         // Act - Connect with cloud
         cy.visit('/?authenticator=inrupt');
         cy.startApp();
-        cy.contains('disconnected').click();
+        cy.press('disconnected');
         cy.ariaInput('Login url').type('http://localhost:4000/alice/{enter}');
         cy.cssAuthorize({ reset: true });
         cy.waitForReload({ resetProfiles: true });
-        cy.contains('Go ahead').click();
+        cy.press('Go ahead');
 
         // Assert
         cy.wait('@patchRamen');

@@ -24,6 +24,7 @@
                                 internal
                                 secondary
                                 class="no-underline font-semibold hover:!text-gray-700"
+                                @click.prevent
                                 @focus="openTooltip()"
                                 @blur="closeTooltip()"
                             >
@@ -78,9 +79,10 @@
 
 <script setup lang="ts">
 import { translate } from '@/framework/utils/translate';
+import { useRouteState } from '@/framework/utils/vue';
 
-const creatingNewRecipe = $ref(false);
-const loggingIn = $ref(false);
+const loggingIn = $(useRouteState('loggingIn', false));
+const creatingNewRecipe = $(useRouteState('creatingNewRecipe', false));
 const welcomeMessage = $computed(() => {
     const text = translate('home.onboarding.welcome', { umai: '%SEPARATOR%' });
     const [beforeTooltip, afterTooltip] = text.split('%SEPARATOR%');

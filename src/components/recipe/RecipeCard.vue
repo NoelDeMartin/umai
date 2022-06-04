@@ -35,8 +35,6 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue';
-
 import ElementTransitions from '@/framework/core/facades/ElementTransitions';
 import Router from '@/framework/core/facades/Router';
 import TailwindCSS from '@/framework/utils/tailwindcss';
@@ -46,16 +44,14 @@ import {
     defineEnterTransition,
     defineLeaveTransition,
 } from '@/framework/core/services/ElementTransitionsService';
-import { animateElement, animateElements } from '@/framework/utils/dom';
+import { animateElement, animateElements, requireChildElement } from '@/framework/utils/dom';
 import { fadeIn, fadeOut } from '@/framework/utils/transitions';
+import { requiredObjectProp } from '@/framework/utils/vue';
 
 import type Recipe from '@/models/Recipe';
 
 defineProps({
-    recipe: {
-        type: Object as PropType<Recipe>,
-        required: true,
-    },
+    recipe: requiredObjectProp<Recipe>(),
 });
 
 let visibleFocus = $ref(false);
@@ -76,46 +72,46 @@ const leaveTransition = defineLeaveTransition(async wrapper => {
         : await fadeOut(wrapper);
 });
 
-const transitionToCard = defineElementTransition(async (wrapper, el, next) => {
+const transitionToCard = defineElementTransition(async ($wrapper, $card, { element: $nextCard }) => {
     const duration = 700;
-    const boundingRect = el.getBoundingClientRect();
-    const nextBoundingRect = next.getBoundingClientRect();
+    const boundingRect = $card.getBoundingClientRect();
+    const nextBoundingRect = $nextCard.getBoundingClientRect();
 
-    await animateElement(wrapper, {
+    await animateElement($wrapper, {
         duration,
         boundingRects: [boundingRect, nextBoundingRect],
     });
 });
 
-const transitionToDetails = defineElementTransition(async (wrapper, card, details) => {
+const transitionToDetails = defineElementTransition(async ($wrapper, $card, { element: $details }) => {
     const duration = 500;
-    const cardBoundingRect = card.getBoundingClientRect();
-    const cardOverlay = document.createElement('div');
-    const cardTitleWrapper = card.querySelector('.recipe-card--title-wrapper') as HTMLElement;
-    const cardTitleText = card.querySelector('.recipe-card--title-text') as HTMLElement;
-    const cardTitleBackground = card.querySelector('.recipe-card--title-background') as HTMLElement;
-    const detailsHeader = details.querySelector('.recipe-details--header') as HTMLElement;
-    const detailsHeaderBoundingRect = detailsHeader.getBoundingClientRect();
-    const detailsHeaderTitle = details.querySelector('.recipe-details--header-title') as HTMLElement;
-    const detailsHeaderTitleBoundingRect = detailsHeaderTitle.getBoundingClientRect();
+    const $cardOverlay = document.createElement('div');
+    const $cardTitleWrapper = requireChildElement($card, '.recipe-card--title-wrapper');
+    const $cardTitleText = requireChildElement($card, '.recipe-card--title-text');
+    const $cardTitleBackground = requireChildElement($card, '.recipe-card--title-background');
+    const $detailsHeader = requireChildElement($details, '.recipe-page--header');
+    const $detailsHeaderTitle = requireChildElement($details, '.recipe-details--header-title');
+    const cardBoundingRect = $card.getBoundingClientRect();
+    const detailsHeaderBoundingRect = $detailsHeader.getBoundingClientRect();
+    const detailsHeaderTitleBoundingRect = $detailsHeaderTitle.getBoundingClientRect();
 
     await animateElements({ duration, fill: 'forwards' }, [
         {
-            element: card,
+            element: $card,
             before: {
                 addClasses: 'w-full h-full',
                 removeClasses: 'aspect-[5/2] hover:opacity-75 rounded-lg',
-                prepend: cardOverlay,
+                prepend: $cardOverlay,
             },
             classes: { borderRadius: ['rounded-lg', 'rounded-none'] },
         },
         {
-            element: wrapper,
+            element: $wrapper,
             before: { addClasses: 'z-20' },
             boundingRects: [cardBoundingRect, detailsHeaderBoundingRect],
         },
         {
-            element: cardOverlay,
+            element: $cardOverlay,
             before: {
                 addClasses: 'absolute z-10 inset-x-0 top-0 bg-gradient-to-b from-dark-overlay to-transparent',
             },
@@ -128,7 +124,7 @@ const transitionToDetails = defineElementTransition(async (wrapper, card, detail
             },
         },
         {
-            element: cardTitleWrapper,
+            element: $cardTitleWrapper,
             before: { removeClasses: 'p-2' },
             classes: {
                 paddingTop: ['p-2', 'p-4'],
@@ -137,7 +133,7 @@ const transitionToDetails = defineElementTransition(async (wrapper, card, detail
             },
             styles: {
                 height: [
-                    `${cardTitleWrapper.clientHeight}px`,
+                    `${$cardTitleWrapper.clientHeight}px`,
                     (TailwindCSS.pixels('fontSizes.4xl') + 2 * TailwindCSS.pixels('spacing.4')) + 'px',
                 ],
                 paddingLeft: [
@@ -147,14 +143,14 @@ const transitionToDetails = defineElementTransition(async (wrapper, card, detail
             },
         },
         {
-            element: cardTitleText,
+            element: $cardTitleText,
             before: { addClasses: 'font-semibold' },
             classes: {
                 textShadow: ['text-shadow-transparent', 'text-shadow'],
                 fontSize: ['text-lg', 'text-4xl'],
             },
         },
-        { element: cardTitleBackground, styles: { opacity: [1, 0] } },
+        { element: $cardTitleBackground, styles: { opacity: [1, 0] } },
     ]);
 
     await ElementTransitions.waitElementsReady('recipe-details');

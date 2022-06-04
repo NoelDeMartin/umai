@@ -5,8 +5,11 @@
 <script setup lang="ts">
 import { inject, provide } from 'vue';
 import { tap, uuid } from '@noeldemartin/utils';
+import type { Tuple } from '@noeldemartin/utils';
 
-import { mixedProp, objectProp, stringProp } from '@/framework/utils/vue';
+import FormValue from '@/framework/forms/FormValue';
+import { focusableElement } from '@/framework/components/headless';
+import { mixedProp, stringProp } from '@/framework/utils/vue';
 import type Form from '@/framework/forms/Form';
 
 import type IHeadlessInput from './HeadlessInput';
@@ -15,22 +18,53 @@ import type { HeadlessInputController } from './HeadlessInput';
 const {
     name,
     placeholder,
-    form: formProp,
     modelValue,
     type,
     error: errorProp,
 } = defineProps({
     name: stringProp(),
     placeholder: stringProp(),
-    form: objectProp<Form>(),
     modelValue: mixedProp<string | number>([String, Number]),
     type: stringProp('text'),
     error: stringProp(),
 });
 const emit = defineEmits(['update:modelValue']);
 
-const form = formProp ?? inject('form', null);
-const formInput = $computed(() => form?.input<string>(name ?? '') ?? null);
+const form = inject<Form | null>('form', null);
+const formInput = $computed(() => {
+    if (!form || !name)
+        return null;
+
+    if (name.match(/\[\d+\]$/)) {
+        const [inputName, inputPosition] = name.split('[') as Tuple<string, 2>;
+        const input = form.input<unknown[]>(inputName);
+        const index = parseInt(inputPosition.slice(0, -1));
+
+        if (!input)
+            return null;
+
+        return {
+            get value() {
+                return input.value?.[index];
+            },
+            get error() {
+                return input.error;
+            },
+            update(newValue: unknown) {
+                const items = input.value as unknown[];
+                const previousValue = items[index];
+
+                input.update([
+                    ...items.slice(0, index),
+                    previousValue instanceof FormValue ? previousValue.update(newValue) : newValue,
+                    ...items.slice(index + 1),
+                ]);
+            },
+        };
+    }
+
+    return form.input<string | number>(name);
+});
 const inputValue = $computed(() => formInput?.value ?? modelValue);
 const error = $computed(() => formInput?.error ?? errorProp);
 const controller: HeadlessInputController = {
@@ -42,18 +76,22 @@ const controller: HeadlessInputController = {
         return error;
     },
     get value() {
-        return inputValue;
+        return inputValue instanceof FormValue ? inputValue.value : inputValue;
     },
     update() {
         emit(
             'update:modelValue',
-            tap(this.inputElement?.value, (value) => formInput?.update(value)),
+            tap(this.inputElement?.value, value => formInput?.update(value)),
         );
     },
 };
 
 provide('input', controller);
 defineExpose<IHeadlessInput>({
-    focus: () => controller.inputElement?.focus(),
+    ...focusableElement(() => controller.inputElement ?? null),
+
+    get value() {
+        return controller?.value;
+    },
 });
 </script>

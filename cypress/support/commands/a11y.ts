@@ -19,16 +19,22 @@ export default {
         });
     },
 
-    dontSee(text: string): void {
-        cy.contains(text).should('not.exist');
+    currentElement(): Cypress.Chainable {
+        return cy.get(':focus');
     },
 
-    press(label: string): void {
-        cy.contains(label).click();
+    dontSee(text: string): Cypress.Chainable {
+        return cy.contains(text).should('not.exist');
     },
 
-    see(text: string): void {
-        cy.a11yGet(text).scrollIntoView().should('be.visible');
+    press(label: string, selector: string = 'button, a, label'): void {
+        cy.contains(selector, label).click();
+    },
+
+    see(text: string, selector: string | null = null): Cypress.Chainable {
+        return selector
+            ? cy.contains(selector, text).scrollIntoView().should('be.visible')
+            : cy.a11yGet(text).scrollIntoView().should('be.visible');
     },
 
     toggleDetails(text: string): void {

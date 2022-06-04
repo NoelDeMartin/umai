@@ -14,10 +14,14 @@ export default class Form extends MagicObject {
     protected static defaultInputValues?: { [K in FormInputType]: GetFormInputValue<K> };
 
     protected static getDefaultValue(input: FormInputDefinition<InferAny, InferAny>): unknown {
+        if (input.type === FormInputType.Object)
+            throw new Error('Object input fields must provide the default value.');
+
         this.defaultInputValues = this.defaultInputValues ?? {
             [FormInputType.String]: '',
             [FormInputType.Boolean]: false,
             [FormInputType.Number]: 0,
+            [FormInputType.Object]: {},
         };
 
         return input.multi ? [] : this.defaultInputValues?.[input.type as FormInputType];

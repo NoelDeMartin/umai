@@ -6,7 +6,7 @@ import { defineComponent, markRaw } from 'vue';
 import { meta, story } from '@sb/support/helpers';
 
 import CoreButton from '@/components/core/CoreButton.vue';
-import { CoreAlignment, CoreColor } from '@/components/core/constants';
+import { CoreAlignment, CoreColor } from '@/components/core';
 
 interface Args {
     text: string;

@@ -1,15 +1,17 @@
+import type { IFocusable } from '@/framework/components/headless';
+
+export default interface IHeadlessInput<T = unknown | null> extends IFocusable {
+    value: T;
+}
+
 export interface HeadlessInputController {
     id: string;
     type: string;
-    value: string | number | null;
+    value: unknown | null;
     name?: string;
     placeholder?: string;
     error?: string | null;
-    inputElement?: HTMLInputElement;
+    inputElement?: HTMLInputElement | HTMLTextAreaElement;
 
     update(): void;
-}
-
-export default interface IHeadlessInput {
-    focus(): void;
 }

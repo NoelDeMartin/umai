@@ -1,17 +1,20 @@
-import { afterAnimationFrame, arrayRemove, tap, toString } from '@noeldemartin/utils';
+import { afterAnimationFrame, arr, tap, toString } from '@noeldemartin/utils';
 import { nextTick } from 'vue';
 
 import Router from '@/framework/core/facades/Router';
 import Service from '@/framework/core/Service';
 import { fadeIn, fadeOut } from '@/framework/utils/transitions';
 
-type EnterTransition = (element: HTMLElement, existed: boolean) => Promise<void>;
+type EnterTransition = (element: HTMLElement, previous?: ElementData) => Promise<void>;
 type LeaveTransition = (wrapper: HTMLElement, element: HTMLElement) => Promise<void>;
-type ElementTransition = (wrapper: HTMLElement, source: HTMLElement, target: HTMLElement) => Promise<void>;
+type ElementTransition = (wrapper: HTMLElement, source: HTMLElement, target: ElementData) => Promise<void>;
 
-interface ElementTransitionTarget {
+interface ElementData {
     element: HTMLElement;
     config: TransitionalElementConfig;
+}
+
+interface ElementTransitionData extends ElementData {
     transition: ElementTransition;
 }
 
@@ -38,11 +41,13 @@ export interface GlobalElementTransitions {
 export default interface ElementTransitionsService extends GlobalElementTransitions {}
 export default class ElementTransitionsService extends Service {
 
-    private activeElements: HTMLElement[] = [];
+    private activeElements: Set<HTMLElement> = new Set();
+    private elementsLeaving: Set<HTMLElement> = new Set();
     private elementsChildren: WeakMap<HTMLElement, HTMLElement[]> = new WeakMap;
     private elementsConfig: WeakMap<HTMLElement, TransitionalElementConfig> = new WeakMap;
     private elementsSourceTransitions: WeakMap<HTMLElement, Promise<void>> = new WeakMap;
     private elementsTargetTransitions: WeakMap<HTMLElement, Promise<void>> = new WeakMap;
+    private elementsTarget: WeakMap<HTMLElement, HTMLElement> = new WeakMap;
     private elementsReady: WeakMap<HTMLElement, Promise<void>> = new WeakMap;
     private elementsFreezingInPlace: WeakMap<HTMLElement, void> = new WeakMap;
     private transitions: Record<string, ElementTransition | EnterTransition | LeaveTransition> = {};
@@ -74,22 +79,26 @@ export default class ElementTransitionsService extends Service {
         if (!config)
             return;
 
-        this.activeElements.push(element);
+        this.activeElements.add(element);
         this.registerElementHierarchy(element);
 
         await tap(this.addElement(element), enterPromise => this.elementsReady.set(element, enterPromise));
     }
 
-    public beforeElementUnmounted(element: HTMLElement): void {
-        if (!this.activeElements.includes(element))
+    public async beforeElementUnmounted(element: HTMLElement): Promise<void> {
+        if (!this.activeElements.has(element))
             return;
 
-        this.removeElement(element, this.elementsConfig.get(element) as TransitionalElementConfig);
+        this.activeElements.delete(element);
+        this.elementsLeaving.add(element);
+        this.removeElement(element, this.requireElementConfig(element)).then(() => {
+            this.elementsLeaving.delete(element);
+        });
     }
 
     public async waitElementsReady(name: string): Promise<void> {
         await Promise.all(
-            this.activeElements
+            arr(this.activeElements)
                 .filter(el => this.elementsConfig.get(el)?.name === name)
                 .map(el => this.elementsReady.get(el)),
         );
@@ -112,6 +121,10 @@ export default class ElementTransitionsService extends Service {
 
     protected __get(name: string): unknown {
         return this.transitions[name];
+    }
+
+    private requireElementConfig(element: HTMLElement): TransitionalElementConfig {
+        return this.elementsConfig.get(element) ?? fail('Couldn\'t get required element config');
     }
 
     private registerElementHierarchy(element: HTMLElement): void {
@@ -139,43 +152,56 @@ export default class ElementTransitionsService extends Service {
     }
 
     private async removeElement(element: HTMLElement, config: TransitionalElementConfig): Promise<void> {
-        arrayRemove(this.activeElements, element);
-
         const wrapper = await this.freezeElement(element);
 
-        if (!wrapper) return;
+        if (!wrapper)
+            return;
 
-        const target = this.findElementTarget(config);
+        const target = this.findElementTarget(element, config);
         const transitionPromise = target
             ? this.runElementTransition(wrapper, element, config, target)
             : this.runLeaveElementTransition(wrapper, element);
 
-        this.elementsSourceTransitions.set(element, transitionPromise.then(() => wrapper.remove()));
+        this.elementsSourceTransitions.set(element, transitionPromise);
+
+        await transitionPromise;
+
+        wrapper.remove();
     }
 
-    private findElementTarget(config: TransitionalElementConfig): ElementTransitionTarget | null {
-        const targetElement = this.activeElements.find(activeElement => {
-            const activeElementConfig = this.elementsConfig.get(activeElement) as TransitionalElementConfig;
+    private findElementTarget(element: HTMLElement, config: TransitionalElementConfig): ElementTransitionData | null {
+        const targetElement = this.elementsTarget.get(element) ??
+            arr(this.activeElements).find(activeElement => {
+                const activeElementConfig = this.requireElementConfig(activeElement);
 
-            return config.id
-                && config.name
-                && config.id === activeElementConfig.id
-                && config.name in activeElementConfig.transitions;
-        });
+                return this.isTargetConfig(activeElementConfig, config);
+            });
 
         if (!targetElement)
             return null;
 
-        const targetConfig = this.elementsConfig.get(targetElement) as TransitionalElementConfig;
+        const targetConfig = this.requireElementConfig(targetElement);
 
         if (!targetConfig || !targetConfig.name || !(targetConfig.name in config.transitions))
             return null;
+
+        this.elementsTarget.set(element, targetElement);
 
         return {
             element: targetElement,
             config: targetConfig,
             transition: config.transitions[targetConfig.name] as ElementTransition,
         };
+    }
+
+    private isTargetConfig(
+        activeConfig: TransitionalElementConfig,
+        enteringConfig: TransitionalElementConfig,
+    ): boolean {
+        return !!enteringConfig.id
+            && !!enteringConfig.name
+            && enteringConfig.id === activeConfig.id
+            && enteringConfig.name in activeConfig.transitions;
     }
 
     private async freezeElement(element: HTMLElement): Promise<HTMLElement | void> {
@@ -211,7 +237,12 @@ export default class ElementTransitionsService extends Service {
     }
 
     private async runEnterElementTransition(element: HTMLElement): Promise<void> {
-        const config = this.elementsConfig.get(element) as TransitionalElementConfig;
+        const config = this.requireElementConfig(element);
+        const previous = arr(this.elementsLeaving)
+            .map(element => ({ element, config: this.requireElementConfig(element) }))
+            .find(({ config: leavingConfig }) => this.isTargetConfig(leavingConfig, config));
+
+        previous && this.elementsTarget.set(previous.element, element);
 
         if (!config.transitions.enter)
             return;
@@ -224,11 +255,11 @@ export default class ElementTransitionsService extends Service {
         if (!enterTransition)
             return;
 
-        await enterTransition(element, this.elementsTargetTransitions.has(element));
+        await enterTransition(element, previous);
     }
 
     private async runLeaveElementTransition(wrapper: HTMLElement, element: HTMLElement): Promise<void> {
-        const config = this.elementsConfig.get(element) as TransitionalElementConfig;
+        const config = this.requireElementConfig(element);
 
         if (!config.transitions.leave)
             return;
@@ -248,13 +279,13 @@ export default class ElementTransitionsService extends Service {
         wrapper: HTMLElement,
         element: HTMLElement,
         config: TransitionalElementConfig,
-        target: ElementTransitionTarget,
+        target: ElementTransitionData,
     ): Promise<void> {
         const blocking = typeof config.blocking === 'function'
             ? config.blocking(target.config, target.element)
             : config.blocking ?? false;
 
-        return tap(target.transition(wrapper, element, target.element), transitionPromise => {
+        return tap(target.transition(wrapper, element, target), transitionPromise => {
             blocking && this.elementsTargetTransitions.set(target.element, transitionPromise);
         });
     }

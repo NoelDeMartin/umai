@@ -13,7 +13,7 @@ describe('Reactivity', () => {
         cy.createRecipe({ name: 'Ramen' });
 
         // Assert
-        cy.contains('Ramen').should('be.visible');
+        cy.see('Ramen');
     });
 
     it('Reacts to new remote recipes', () => {
@@ -27,27 +27,27 @@ describe('Reactivity', () => {
         }));
 
         // Act
-        cy.contains('online').click();
-        cy.contains('Synchronize now').click();
-        cy.contains('Syncing is up to date');
+        cy.press('online');
+        cy.press('Synchronize now');
+        cy.see('Syncing is up to date');
 
         // Assert
-        cy.contains('Ramen').should('be.visible');
+        cy.see('Ramen');
     });
 
-    it.skip('Reacts to local recipe updates in recipes list', () => {
+    it('Reacts to local recipe updates in recipes list', () => {
         // Arrange
         let ramen: Recipe;
 
         cy.createRecipe({ name: 'Ramen' }).then(_ramen => ramen = _ramen);
 
         // Act
-        cy.contains('Ramen').should('be.visible').then(() => {
+        cy.see('Ramen').then(() => {
             return Cypress.Promise.cast(ramen.update({ name: 'Ramen!' }));
         });
 
         // Assert
-        cy.contains('Ramen!').should('be.visible');
+        cy.see('Ramen!');
     });
 
     it('Reacts to local recipe updates in recipe details', () => {
@@ -55,7 +55,7 @@ describe('Reactivity', () => {
         let ramen: Recipe;
 
         cy.createRecipe({ name: 'Ramen' }).then(_ramen => ramen = _ramen);
-        cy.contains('Ramen').click();
+        cy.press('Ramen');
 
         // Act
         cy.url().should('include', 'ramen').then(() => {
@@ -66,8 +66,8 @@ describe('Reactivity', () => {
         });
 
         // Assert
-        cy.contains('is life').should('be.visible');
-        cy.contains('Boil the noodles').should('be.visible');
+        cy.see('is life');
+        cy.see('Boil the noodles');
     });
 
 });

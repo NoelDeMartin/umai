@@ -1,21 +1,22 @@
 <template>
-    <div class="flex overflow-hidden flex-col min-h-full">
-        <div class="flex relative justify-center items-end w-full h-52 md:h-80 recipe-details--header">
+    <div class="flex flex-grow overflow-hidden flex-col min-h-full">
+        <div class="flex relative justify-center items-end w-full h-52 md:h-80 recipe-page--header">
             <slot name="image">
                 <RecipeImage :url="recipe?.imageUrl" class="absolute inset-0" />
             </slot>
             <div
-                class="absolute inset-x-0 top-0 bg-gradient-to-b to-transparent from-dark-overlay recipe-details--header-overlay"
+                class="absolute inset-x-0 top-0 recipe-page--header-overlay"
+                :class="{ 'bg-gradient-to-b to-transparent from-dark-overlay': !$app.isOnboarding }"
                 :style="`height: ${$ui.headerHeight}px`"
             />
-            <div class="flex relative justify-center pb-4 w-full mx-edge recipe-details--header-wrapper">
-                <div class="flex-grow pr-36 mr-8 max-w-readable recipe-details--header-title-wrapper">
+            <div class="flex relative justify-center pb-4 w-full mx-edge recipe-page--header-wrapper">
+                <div class="flex-grow pr-36 mr-8 max-w-readable recipe-page--header-title-wrapper">
                     <slot name="title" />
                 </div>
                 <div class="w-72" />
             </div>
         </div>
-        <div class="flex flex-grow justify-center pt-4 bg-white recipe-details--body">
+        <div class="flex flex-grow justify-center pt-4 bg-white recipe-page--body">
             <div class="flex-grow mx-edge">
                 <div class="flex flex-col justify-center md:flex-row">
                     <div class="mr-8 prose">
@@ -61,10 +62,7 @@
                                 </ol>
                             </slot>
                         </template>
-                        <span aria-hidden="true" class="block h-0 opacity-0">
-                            This text is here just to make this div grow... If you're reading this without using some
-                            developer tool, this is a bug. Please report it :).
-                        </span>
+                        <CoreProseFiller />
                     </div>
                     <div
                         class="flex-shrink-0 w-72"
@@ -73,7 +71,7 @@
                         <div class="relative">
                             <svg
                                 preserveAspectRatio="none"
-                                class="absolute -top-4 right-1/2 text-white translate-x-1/2 pointer-events-none fill-current recipe-page-layout--metadata-decoration"
+                                class="absolute -top-4 right-1/2 text-white translate-x-1/2 pointer-events-none fill-current recipe-page--metadata-decoration"
                                 viewBox="0 0 260 30"
                                 :style="`height:${metadataHeight}px;width:400%`"
                             >
@@ -85,7 +83,7 @@
                                         <tr v-if="recipe.servings" class="h-10">
                                             <th>
                                                 <div class="flex items-center space-x-2">
-                                                    <i-zondicons-location-food class="w-3 h-3" />
+                                                    <i-pepicons-knive-fork class="w-3 h-3" aria-hidden="true" />
                                                     <span>{{ $t('recipes.servings') }}</span>
                                                 </div>
                                             </th>
@@ -94,7 +92,7 @@
                                         <tr v-if="recipe.prepTime" class="h-10">
                                             <th>
                                                 <div class="flex items-center space-x-2">
-                                                    <i-zondicons-hour-glass class="w-3 h-3" />
+                                                    <i-pepicons-clock class="w-3 h-3" aria-hidden="true" />
                                                     <span>{{ $t('recipes.prepTime') }}</span>
                                                 </div>
                                             </th>
@@ -103,7 +101,7 @@
                                         <tr v-if="recipe.cookTime" class="h-10">
                                             <th>
                                                 <div class="flex items-center space-x-2">
-                                                    <i-zondicons-time class="w-3 h-3" />
+                                                    <i-pepicons-clock class="w-3 h-3" aria-hidden="true" />
                                                     <span>{{ $t('recipes.cookTime') }}</span>
                                                 </div>
                                             </th>

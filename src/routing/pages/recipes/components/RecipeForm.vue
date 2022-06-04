@@ -1,195 +1,405 @@
 <template>
-    <!-- TODO fix scrollable area to cover only form, not buttons -->
-    <form ref="form" class="mb-10" @submit.prevent="submit">
+    <CoreForm
+        v-element-transitions="{
+            name: 'recipe-form',
+            transitions: {
+                enter: enterTransition,
+                leave: leaveTransition,
+            },
+        }"
+        :form="form"
+        class="flex-grow"
+        @submit="submit()"
+    >
         <h1 id="recipe-form-title" class="sr-only">
             {{ a11yTitle }}
         </h1>
-        <RecipePage>
+        <RecipePage class="recipe-form--recipe">
             <template #image>
                 <div class="absolute inset-0 group">
-                    <RecipeImage :url="imageUrl" class="w-full h-full" />
+                    <RecipeImage :url="form.imageUrl" class="w-full h-full" />
                     <button
                         type="button"
-                        class="flex absolute inset-0 justify-center items-center w-full text-xl text-white bg-black bg-opacity-10 opacity-0 group-hover:opacity-100 focus:opacity-100"
+                        class="group flex absolute inset-0 justify-center items-center w-full text-xl text-white opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-none focus:bg-opacity-20"
                         @click="editImage"
                     >
-                        <div class="flex items-center self-center px-4 py-2 bg-black bg-opacity-50 rounded-md hover:bg-opacity-100">
-                            <i-zondicons-edit-pencil aria-hidden="true" class="mr-3 w-4 h-4" />
-                            {{ $t('recipes.image_edit') }}
+                        <div
+                            v-wobbly-border
+                            class="flex items-center self-center px-4 py-2 bg-black bg-opacity-50 rounded-md hover:bg-opacity-100 group-focus:ring-2 group-focus:ring-offset-[rgba(255,255,255,.5)] group-focus:ring-offset-2 group-focus:ring-[rgba(0,0,0,.5)] hover:group-focus:ring-black"
+                        >
+                            <i-pepicons-pen v-if="form.imageUrl" class="mr-3 w-4 h-4" aria-hidden="true" />
+                            <i-pepicons-plus v-else class="mr-3 w-4 h-4" aria-hidden="true" />
+                            {{ form.imageUrl ? $t('recipes.image_edit') : $t('recipes.image_set') }}
                         </div>
                     </button>
                 </div>
             </template>
 
             <template #title>
-                <BaseFluidInput
-                    v-model="name"
-                    name="name"
-                    :placeholder="$t('recipes.name_placeholder')"
-                    :class="[
-                        'text-4xl text-white bg-transparent caret-primary-500',
-                        name && 'text-shadow font-semibold',
-                    ]"
-                />
+                <label class="flex">
+                    <span class="sr-only">{{ $t('recipes.name_label') }}</span>
+
+                    <CoreFluidInput
+                        ref="$name"
+                        name="name"
+                        :placeholder="$t('recipes.name_placeholder')"
+                        :class="[
+                            'text-4xl text-white bg-transparent caret-primary-500',
+                            form.name && 'text-shadow font-semibold',
+                        ]"
+                    />
+                </label>
             </template>
 
             <template #description>
-                <BaseFluidTextArea
-                    v-model="description"
-                    name="description"
-                    :label="$t('recipes.description_label')"
-                    :placeholder="$t('recipes.description_placeholder')"
-                />
+                <div class="flex flex-col items-start space-y-3">
+                    <div v-if="form.description || writingDescription" class="group relative w-full">
+                        <CoreFluidTextarea
+                            ref="$description"
+                            name="description"
+                            :label="$t('recipes.description_label')"
+                            :placeholder="$t('recipes.description_placeholder')"
+                            @focus="writingDescription = true"
+                            @blur="writingDescription = false"
+                        />
+                        <CoreFluidActionButton
+                            v-if="form.description"
+                            :aria-label="$t('recipes.description_remove')"
+                            :title="$t('recipes.description_remove')"
+                            class="absolute right-1 bottom-1"
+                            @click="removeDescription($event)"
+                        >
+                            <i-pepicons-trash aria-hidden="true" class="w-5 h-5" />
+                        </CoreFluidActionButton>
+                    </div>
+                    <CoreButton
+                        v-if="!form.description && !writingDescription"
+                        secondary
+                        tinted
+                        @click="focusDescription()"
+                    >
+                        <i-pepicons-pen class="w-4 h-4" aria-hidden="true" />
+                        <span class="ml-1">{{ $t('recipes.description_set') }}</span>
+                    </CoreButton>
+                    <CoreButton
+                        v-if="form.ingredients.length === 0"
+                        secondary
+                        tinted
+                        @click="initializeIngredients()"
+                    >
+                        <i-pepicons-plus class="w-4 h-4" aria-hidden="true" />
+                        <span class="ml-1">{{ $t('recipes.ingredients_set') }}</span>
+                    </CoreButton>
+                    <CoreButton
+                        v-if="form.instructions.length === 0"
+                        secondary
+                        tinted
+                        @click="initializeInstructions()"
+                    >
+                        <i-pepicons-plus class="w-4 h-4" aria-hidden="true" />
+                        <span class="ml-1">{{ $t('recipes.instructions_set') }}</span>
+                    </CoreButton>
+                </div>
             </template>
 
-            <template #ingredients>
-                <div class="not-prose">
-                    <BaseInputList
-                        v-model="ingredients"
-                        item-name-prefix="ingredient"
+            <template v-if="form.ingredients.length > 0" #ingredients>
+                <div class="not-prose mt-4">
+                    <CoreFluidInputList
+                        ref="$ingredients"
+                        name="ingredients"
                         :add-label="$t('recipes.ingredient_add')"
+                        :item-label="$t('recipes.ingredient_label')"
                         :item-placeholder="$t('recipes.ingredient_placeholder')"
                         :item-remove-label="$t('recipes.ingredient_remove')"
-                        :item-remove-a11y-label="$t('recipes.ingredient_remove_a11y', { ingredient: ':item' })"
+                        :item-remove-a11y-label="$t('recipes.ingredient_remove_a11y', { ingredient: ':value' })"
                     />
                 </div>
             </template>
 
-            <template #instructions>
-                <RecipeInstructionsInput v-model="instructions" />
+            <template v-if="form.instructions.length > 0" #instructions>
+                <CoreFluidTextareaList
+                    ref="$instructions"
+                    name="instructions"
+                    :instructions-a11y="$t('recipes.drag_instructions_a11y')"
+                    :add-label="$t('recipes.instructionStep_add')"
+                    :item-label="$t('recipes.instructionStep_label')"
+                    :item-placeholder="$t('recipes.instructionStep_placeholder')"
+                    :item-remove-label="$t('recipes.instructionStep_remove')"
+                    :item-remove-a11y-label="$t('recipes.instructionStep_remove_a11y', { position: ':position' })"
+                />
             </template>
 
             <template #metadata>
                 <ul class="hidden mb-2 space-y-2 text-gray-700 md:block">
                     <li class="flex items-center space-x-1">
-                        <i-zondicons-location-food class="w-3 h-3" />
+                        <i-pepicons-knive-fork class="w-4 h-4 mt-0.5" aria-hidden="true" />
                         <strong>{{ $t('recipes.servings') }}</strong>
                         <div class="flex-grow" />
-                        <BaseFluidInput
-                            v-model="servings"
-                            :placeholder="$t('recipes.servings_placeholder')"
+                        <CoreFluidInput
                             name="servings"
                             class="text-right bg-transparent"
+                            :placeholder="$t('recipes.servings_placeholder')"
                         />
                     </li>
                     <li class="flex items-center space-x-1">
-                        <i-zondicons-hour-glass class="w-3 h-3" />
+                        <i-pepicons-clock class="w-4 h-4 mt-0.5" aria-hidden="true" />
                         <strong>{{ $t('recipes.prepTime') }}</strong>
                         <div class="flex-grow" />
-                        <BaseFluidInput
-                            v-model="prepTime"
-                            :placeholder="$t('recipes.prepTime_placeholder')"
-                            name="prep-time"
+                        <CoreFluidInput
+                            name="prepTime"
                             class="text-right bg-transparent"
+                            :placeholder="$t('recipes.prepTime_placeholder')"
                         />
                     </li>
                     <li class="flex items-center space-x-1">
-                        <i-zondicons-time class="w-3 h-3" />
+                        <i-pepicons-clock class="w-4 h-4 mt-0.5" aria-hidden="true" />
                         <strong>{{ $t('recipes.cookTime') }}</strong>
                         <div class="flex-grow" />
-                        <BaseFluidInput
-                            v-model="cookTime"
-                            :placeholder="$t('recipes.cookTime_placeholder')"
-                            name="cook-time"
+                        <CoreFluidInput
+                            name="cookTime"
                             class="text-right bg-transparent"
+                            :placeholder="$t('recipes.cookTime_placeholder')"
                         />
                     </li>
                 </ul>
             </template>
 
             <template #urls>
-                <BaseInputList v-model="externalUrls" />
+                <CoreButton
+                    v-if="form.externalUrls.length === 0"
+                    secondary
+                    tinted
+                    @click="initializeExternalUrls()"
+                >
+                    <i-pepicons-plus class="w-4 h-4" aria-hidden="true" />
+                    <span class="ml-1">{{ $t('recipes.externalUrls_set') }}</span>
+                </CoreButton>
+                <CoreFluidInputList
+                    v-else
+                    ref="$externalUrls"
+                    name="externalUrls"
+                    :add-label="$t('recipes.externalUrl_add')"
+                    :item-label="$t('recipes.externalUrl_label')"
+                    :item-placeholder="$t('recipes.externalUrl_placeholder')"
+                    :item-remove-label="$t('recipes.externalUrl_remove')"
+                    :item-remove-a11y-label="$t('recipes.externalUrl_remove_a11y', { url: ':value' })"
+                />
             </template>
         </RecipePage>
 
-        <!-- TODO refactor UX & translate -->
-        <div class="fixed inset-x-0 bottom-0 z-10 bg-gray-300">
-            <div class="flex py-4 mx-auto space-x-4 max-w-content">
-                <BaseButton v-if="recipe" clear @click="deleteRecipe()">
-                    <i-zondicons-trash class="mr-2 w-4 h-4" /> {{ $t('recipes.delete') }}
-                </BaseButton>
-                <dev class="flex-grow" />
-                <BaseButton secondary @click="$emit('cancel')">
-                    Cancel
-                </BaseButton>
-                <BaseButton type="submit">
-                    {{ recipe ? 'Save' : 'Create' }}
-                </BaseButton>
+        <div class="fixed flex justify-center inset-x-0 bottom-0 z-10 bg-primary-gray-300 recipe-form--footer">
+            <div class="mx-edge">
+                <div class="flex">
+                    <div class="prose mr-8">
+                        <CoreProseFiller />
+                    </div>
+                    <div class="w-72" />
+                </div>
+                <div class="flex flex-row-reverse items-center py-4 space-x-reverse space-x-4">
+                    <div class="flex flex-row-reverse space-x-4 space-x-reverse">
+                        <CoreButton
+                            type="submit"
+                            class="text-lg focus:ring-offset-primary-gray-300"
+                        >
+                            {{ recipe ? $t('recipes.form.update') : $t('recipes.form.create') }}
+                        </CoreButton>
+                        <CoreButton
+                            clear
+                            class="text-lg focus:ring-offset-primary-gray-300"
+                            @click="$emit('cancel')"
+                        >
+                            {{ $t('recipes.form.cancel') }}
+                        </CoreButton>
+                    </div>
+                    <div class="flex-grow" />
+                    <CoreButton
+                        v-if="recipe"
+                        clear
+                        class="focus:ring-offset-primary-gray-300"
+                        @click="deleteRecipe()"
+                    >
+                        <i-pepicons-trash class="w-4 h-4" />
+                        <span class="ml-1">{{ $t('recipes.delete') }}</span>
+                    </CoreButton>
+                </div>
             </div>
         </div>
-    </form>
+    </CoreForm>
 </template>
 
 <script setup lang="ts">
-import { arrayFilter, arraySorted, objectWithoutEmpty, uuid } from '@noeldemartin/utils';
-import { useI18n } from 'vue-i18n';
+import { arrayFilter, objectWithoutEmpty, tap } from '@noeldemartin/utils';
+import { nextTick, onMounted } from 'vue';
 import type { Attributes } from 'soukai';
-import type { PropType } from 'vue';
 
 import Cloud from '@/framework/core/facades/Cloud';
 import Files from '@/framework/core/facades/Files';
 import UI from '@/framework/core/facades/UI';
+import { requireChildElement } from '@/framework/utils/dom';
+import { defineEnterTransition, defineLeaveTransition } from '@/framework/core/services/ElementTransitionsService';
+import { FormInputType, reactiveForm } from '@/framework/forms';
+import { objectProp } from '@/framework/utils/vue';
+import { slideDown, slideUp } from '@/framework/utils/transitions';
+import { translate } from '@/framework/utils/translate';
+import type { FormObjectInput } from '@/framework/forms';
+import type { IFocusable } from '@/framework/components/headless';
 
 import Cookbook from '@/services/facades/Cookbook';
 import Recipe from '@/models/Recipe';
-import type { BaseInputListItemData } from '@/components/base/BaseInputListItem';
+import CoreListItemValue from '@/components/core/lists/CoreListItemValue';
+import { bodySlideDown, bodySlideUp, headerSlideDown, headerSlideUp } from '@/components/recipe/RecipePage.transitions';
 
 import RecipeImageModal from './modals/RecipeImageFormModal.vue';
 import type { IRecipeImageFormModal } from './modals/RecipeImageFormModal';
-import type { RecipeInstructionStepInputData } from './RecipeInstructionStepInput';
 
 const { recipe } = defineProps({
-    recipe: {
-        type: Object as PropType<Recipe | null>,
-        default: null,
-    },
+    recipe: objectProp<Recipe>(),
 });
 const emit = defineEmits(['done', 'cancel']);
 
-let imageUrl = $ref(recipe?.imageUrl ?? null);
-const { t } = useI18n();
-const form = $ref(null as unknown as HTMLElement);
-const name = $ref(recipe?.name ?? '');
-const description = $ref(recipe?.description ?? '');
-const servings = $ref(recipe?.servings ?? '');
-const prepTime = $ref(recipe?.prepTime ?? '');
-const cookTime = $ref(recipe?.cookTime ?? '');
-const externalUrls = $ref<BaseInputListItemData[]>(
-    // TODO sort in model
-    (recipe?.sortedExternalUrls ?? []).map(url => ({
-        id: uuid(),
-        value: url,
-    })),
-);
-const ingredients = $ref<BaseInputListItemData[]>(
-    // TODO sort in model
-    (recipe?.sortedIngredients ?? []).map(name => ({
-        id: uuid(),
-        value: name,
-    })),
-);
-const instructions = $ref<RecipeInstructionStepInputData[]>(
-    // TODO sort in model
-    arraySorted(recipe?.instructions ?? [], 'position').map(instruction => ({
-        id: uuid(),
-        url: instruction.url,
-        description: instruction.text,
-    })),
-);
+let writingDescription = $ref<boolean>(false);
+const instructionUrls: Record<string, string> = {};
+
+const form = reactiveForm({
+    name: {
+        type: FormInputType.String,
+        rules: 'required',
+        default: recipe?.name ?? '',
+    },
+    description: {
+        type: FormInputType.String,
+        default: recipe?.description ?? '',
+    },
+    imageUrl: {
+        type: FormInputType.String,
+        default: recipe?.imageUrl ?? '',
+    },
+    servings: {
+        type: FormInputType.String,
+        default: recipe?.servings ?? '',
+    },
+    prepTime: {
+        type: FormInputType.String,
+        default: recipe?.prepTime ?? '',
+    },
+    cookTime: {
+        type: FormInputType.String,
+        default: recipe?.cookTime ?? '',
+    },
+    ingredients: {
+        type: FormInputType.Object as FormObjectInput<CoreListItemValue>,
+        multi: true,
+        default: (recipe?.sortedIngredients ?? []).map(name => new CoreListItemValue(name)),
+    },
+    instructions: {
+        type: FormInputType.Object as FormObjectInput<CoreListItemValue>,
+        multi: true,
+        default: (recipe?.sortedInstructions ?? []).map(
+            step => tap(
+                new CoreListItemValue(step.text),
+                value =>(instructionUrls[value.id] = step.url),
+            ),
+        ),
+    },
+    externalUrls: {
+        type: FormInputType.Object as FormObjectInput<CoreListItemValue>,
+        multi: true,
+        default: (recipe?.sortedExternalUrls ?? []).map(url => new CoreListItemValue(url)),
+    },
+});
+
+const $name = $ref<IFocusable | null>(null);
+const $description = $ref<IFocusable | null>(null);
+const $ingredients = $ref<IFocusable | null>(null);
+const $instructions = $ref<IFocusable | null>(null);
+const $externalUrls = $ref<IFocusable | null>(null);
 const a11yTitle = $computed(
     () => recipe
-        ? t('recipes.edit_a11y_title', { recipe: recipe.name })
-        : t('recipes.create_a11y_title'),
+        ? translate('recipes.edit_a11y_title', { recipe: recipe.name })
+        : translate('recipes.create_a11y_title'),
 );
 
+const enterTransition = defineEnterTransition(async ($root) => {
+    const duration = 500;
+    const $recipe = requireChildElement($root, '.recipe-form--recipe');
+    const $footer = requireChildElement($root, '.recipe-form--footer');
+
+    $root.classList.add('z-20');
+    $root.classList.add('relative');
+    $footer.classList.add('z-30');
+
+    await Promise.all([
+        bodySlideUp($recipe, duration),
+        headerSlideDown($recipe, duration),
+        slideUp($footer, duration),
+    ]);
+
+    $root.classList.remove('z-20');
+    $root.classList.remove('relative');
+    $footer.classList.remove('z-30');
+});
+
+const leaveTransition = defineLeaveTransition(async ($wrapper, $root) => {
+    const duration = 500;
+    const $recipe = requireChildElement($root, '.recipe-form--recipe');
+    const $footer = requireChildElement($root, '.recipe-form--footer');
+
+    $wrapper.classList.add('z-10');
+    $root.classList.add('z-20');
+    $root.classList.add('relative');
+
+    await Promise.all([
+        bodySlideDown($recipe, duration),
+        headerSlideUp($recipe, duration),
+        slideDown($footer, duration),
+    ]);
+});
+
 async function editImage() {
-    const modal = await UI.openModal<IRecipeImageFormModal>(RecipeImageModal, { imageUrl });
+    const modal = await UI.openModal<IRecipeImageFormModal>(RecipeImageModal, { imageUrl: form.imageUrl });
     const result = await modal.beforeClose;
 
     document.querySelector<HTMLElement>(':focus')?.blur();
 
-    if (result !== undefined)
-        imageUrl = result;
+    result !== undefined && form.input<string>('imageUrl')?.update(result ?? '');
+}
+
+async function focusDescription() {
+    writingDescription = true;
+
+    await nextTick();
+
+    $description?.focus();
+}
+
+function removeDescription({ target }: Event) {
+    form.input('description')?.update('');
+
+    (target as HTMLElement | null)?.blur();
+}
+
+async function initializeIngredients() {
+    form.input('ingredients')?.update([new CoreListItemValue()]);
+
+    await nextTick();
+
+    $ingredients?.focus();
+}
+
+async function initializeInstructions() {
+    form.input('instructions')?.update([new CoreListItemValue()]);
+
+    await nextTick();
+
+    $instructions?.focus();
+}
+
+async function initializeExternalUrls() {
+    form.input('externalUrls')?.update([new CoreListItemValue()]);
+
+    await nextTick();
+
+    $externalUrls?.focus();
 }
 
 async function deleteRecipe() {
@@ -200,30 +410,29 @@ async function deleteRecipe() {
 }
 
 async function submit() {
-    const attributes = {
-        name: name,
-        imageUrl: imageUrl || null,
-        description: description || null,
-        servings: servings || null,
-        prepTime: prepTime || null,
-        cookTime: cookTime || null,
-        ingredients: arrayFilter(ingredients.map(({ value }) => value)),
-        externalUrls: arrayFilter(externalUrls.map(({ value }) => value)),
+    const updatedAttributes = {
+        name: form.name,
+        imageUrl: form.imageUrl || null,
+        description: form.description || null,
+        servings: form.servings || null,
+        prepTime: form.prepTime || null,
+        cookTime: form.cookTime || null,
+        ingredients: arrayFilter(form.ingredients.map(({ value }) => value)),
+        externalUrls: arrayFilter(form.externalUrls.map(({ value }) => value)),
     };
-
-    const updatedRecipe = recipe ?? new Recipe(attributes);
-    const instructionUrls = instructions.map(({ url }) => url);
-    const instructionStepsAttributes = instructions
-        .filter(({ description }) => !!description)
-        .map(instruction => objectWithoutEmpty({
-            url: instruction.url,
-            text: instruction.description,
+    const updatedRecipe = recipe ?? new Recipe(updatedAttributes);
+    const updatedInstructionUrls = form.instructions.map(({ id }) => instructionUrls[id] ?? null);
+    const updateInstructionAttributes = form.instructions
+        .filter(({ value }) => !!value)
+        .map(({ id, value }) => objectWithoutEmpty({
+            url: instructionUrls[id],
+            text: value,
         } as Attributes));
 
-    updatedRecipe.setAttributes(attributes);
+    updatedRecipe.setAttributes(updatedAttributes);
 
     let position = 1;
-    for (const instructionStepAttributes of instructionStepsAttributes) {
+    for (const instructionStepAttributes of updateInstructionAttributes) {
         const instructionStep = instructionStepAttributes.url
             && updatedRecipe.instructions?.find(model => model.url === instructionStepAttributes.url);
 
@@ -235,7 +444,7 @@ async function submit() {
     }
 
     for (const instruction of updatedRecipe.instructions ?? []) {
-        if (instructionUrls.includes(instruction.url))
+        if (!instruction.exists() || updatedInstructionUrls.includes(instruction.url))
             continue;
 
         updatedRecipe.relatedInstructions.detach(instruction);
@@ -258,4 +467,13 @@ async function submit() {
 
     emit('done', updatedRecipe);
 }
+
+onMounted(() => $name?.focus());
 </script>
+
+<style>
+.recipe-form--recipe .recipe-page--body {
+    /* Footer height + p-4 */
+    padding-bottom: calc(66px + 1rem);
+}
+</style>

@@ -119,9 +119,9 @@ home:
     whatIsSolid: What is Solid?
     whatIsSolid_title: What is Solid?
     whatIsSolid_content: |
-      Solid is a decentralized storage protocol built on top of web standards. If you want to use this app across devices, you can connect it to your Solid POD to keep changes in sync. Even if you use it in a single device, this will also keep your recipes secure in case your device is lost. Using Solid is also useful to share recipes with others, and even yourself with a different Solid App.
+      Solid is a decentralized storage protocol built on top of web standards. If you want to use this app across devices, you can use Solid to keep changes in sync. Even if you use it in a single device, this will also keep your recipes secure in case your device is lost. It is also useful to share recipes with others.
 
-      In any case, Umai works 100% offline and you can connect it to your Solid POD later on. If you've never heard of Solid and you're just trying things out, you don't need to know anything about it.
+      In any case, Umai works 100% offline and you can connect your Solid POD later on. If you've never heard of Solid and you're just trying things out, you don't need to know anything about it.
 
       <CoreLink url="https://solidproject.org" color="brand-solid" class="text-sm">Learn more</CoreLink>
     back: Never mind, go back
@@ -149,10 +149,14 @@ recipes:
   create_a11y_title: Create new recipe
   edit_a11y_title: Edit "{recipe}" recipe
 
+  image_set: Add an image
   image_edit: Change image
-  name_placeholder: Recipe name
+  name_label: Recipe name
+  name_placeholder: Name
+  description_set: Write a description
   description_label: Recipe description
-  description_placeholder: Recipe description
+  description_placeholder: Description
+  description_remove: Remove description
   servings_placeholder: '?? persons'
   prepTime_placeholder: '?? minutes'
   cookTime_placeholder: '?? minutes'
@@ -160,6 +164,7 @@ recipes:
   image_edit_placeholder: Write image url...
   image_edit_title: Change recipe image
   image_edit_upload: Upload an image
+  image_edit_url: Image url
   image_edit_drop: or drop it here
   image_edit_mimeTypes: PNG, JPG, or GIF
   image_edit_customUrl: or set a custom url
@@ -167,19 +172,30 @@ recipes:
   image_edit_uploadPending: This image has not been uploaded to the cloud yet
   image_edit_remove: Remove image
   image_edit_submit: Update
-  image_edit_discard: Discard changes
+  image_edit_discard: Cancel
 
   ingredients: Ingredients
+  ingredients_set: Add ingredients
   ingredient_add: Add ingredient
+  ingredient_label: "Recipe ingredient #:position"
   ingredient_placeholder: e.g. 100g Cheese
   ingredient_remove: Remove ingredient
   ingredient_remove_a11y: Remove "{ingredient}" ingredient
 
   instructions: Instructions
+  instructions_set: Add instructions
   instructionStep_add: Add step
+  instructionStep_label: "Recipe instructions step #:position"
   instructionStep_placeholder: e.g. Rinse and repeat
   instructionStep_remove: Remove step
   instructionStep_remove_a11y: Remove step number {position}
+
+  externalUrls_set: Add urls
+  externalUrl_add: Add url
+  externalUrl_label: "Recipe url #:position"
+  externalUrl_placeholder: http://...
+  externalUrl_remove: Remove url
+  externalUrl_remove_a11y: Remove {url}
 
   share_umai: Umai
   share_solid: Solid url
@@ -210,6 +226,11 @@ recipes:
     fromScratch: Create from scratch
     fromTheWeb: Import from the Web
     fromJsonLD: Upload JsonLD file
+
+  form:
+    cancel: Cancel
+    create: Create recipe
+    update: Save
 
 viewer:
   title: Umai Viewer

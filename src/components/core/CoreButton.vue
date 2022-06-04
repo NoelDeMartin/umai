@@ -1,5 +1,6 @@
 <template>
     <HeadlessButton
+        ref="$root"
         v-wobbly-border="wobblyBorder"
         class="inline-flex items-center px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2"
         :class="computedClasses"
@@ -10,9 +11,12 @@
 
 <script setup lang="ts">
 import { booleanProp, enumProp, objectProp } from '@/framework/utils/vue';
+import { focusable } from '@/framework/components/headless';
+import type { IFocusable } from '@/framework/components/headless';
+
 import type { WobblyBorderOptions } from '@/directives/wobbly-border';
 
-import { CoreAlignment, CoreColor } from './constants';
+import { CoreAlignment, CoreColor } from './index';
 
 const { color, alignment, secondary, tinted, clear } = defineProps({
     color: enumProp(CoreColor),
@@ -66,6 +70,7 @@ function getColorClasses(color: CoreColor): string {
     }
 }
 
+const $root = $ref<IFocusable | null>(null);
 const colorsClasses: Record<CoreColor, ColorClasses> = {
     [CoreColor.Primary]: {
         baseBackground: 'bg-primary-600',
@@ -99,4 +104,6 @@ const style: Style = $computed(() => {
     return Style.Primary;
 });
 const computedClasses: string = $computed(() => `${alignmentClasses[alignment]} ${getColorClasses(color)}`);
+
+defineExpose<IFocusable>(focusable($$($root)));
 </script>
