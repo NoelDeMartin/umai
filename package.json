@@ -16,6 +16,7 @@
     "test:coverage": "jest --coverage",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
+    "cy:dev": "concurrently --kill-others \"npm run test:serve-app\" \"npm run test:serve-pod\" \"npm run cy:open\"",
     "cy:test": "start-server-and-test test:serve-app http-get://localhost:3000 test:serve-pod http-get://localhost:4000 cy:run",
     "storybook": "start-storybook -p 6006"
   },
@@ -56,6 +57,7 @@
     "@vitejs/plugin-vue": "^2.1.0",
     "@vue/compiler-sfc": "^3.0.5",
     "autoprefixer": "^10.4.0",
+    "concurrently": "^7.2.1",
     "cypress": "^9.5.0",
     "cypress-fill-command": "^1.0.2",
     "cypress-plugin-tab": "^1.0.5",
