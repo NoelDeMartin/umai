@@ -1,7 +1,7 @@
 <template>
     <div v-if="$auth.ongoing" class="flex items-center">
         <i-app-spinner class="h-4 w-4 animate-spin text-brand-solid-700" aria-hidden="true" />
-        <BaseMarkdown
+        <CoreMarkdown
             :text="
                 $auth.stale
                     ? $t('home.onboarding.loginWithSolid_stale')
@@ -17,7 +17,7 @@
         class="flex flex-col items-center"
         @submit="$auth.login(form.url)"
     >
-        <BaseMarkdown :text="$t('home.onboarding.loginWithSolid_info')" class="max-w-md text-center" />
+        <CoreMarkdown :text="$t('home.onboarding.loginWithSolid_info')" class="max-w-md text-center" />
         <div>
             <div class="mt-2 flex">
                 <CoreInput

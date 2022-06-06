@@ -29,7 +29,7 @@
                 </BaseButton>
             </div>
 
-            <BaseMarkdown
+            <CoreMarkdown
                 v-if="notFound"
                 class="mt-2 text-center prose"
                 :text="$t('viewer.notFound', { url: notFound })"

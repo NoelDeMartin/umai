@@ -1,6 +1,6 @@
 <template>
     <AppModal v-slot="{ close }" :title="$t('proxyConfig.title')">
-        <BaseMarkdown :text="$t('proxyConfig.info', { url: `${$app.sourceUrl}/blob/main/docs/using-a-proxy.md` })" />
+        <CoreMarkdown :text="$t('proxyConfig.info', { url: `${$app.sourceUrl}/blob/main/docs/using-a-proxy.md` })" />
 
         <CoreForm class="mt-4" :form="form" @submit="submit(close)">
             <details>

@@ -1,7 +1,7 @@
 import { meta, story } from '@sb/support/helpers';
 
 import CoreFluidTextareaList from '@/components/core/CoreFluidTextareaList.vue';
-import { CoreListItemValue } from '@/components/core';
+import CoreListItemValue from '@/components/core/lists/CoreListItemValue';
 
 const Meta = meta({
     component: CoreFluidTextareaList,

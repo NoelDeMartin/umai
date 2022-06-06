@@ -1,7 +1,7 @@
 <template>
     <div class="flex overflow-hidden z-50 flex-row bg-white rounded-md shadow-sm pointer-events-auto">
         <div class="p-4">
-            <BaseMarkdown :text="message" />
+            <CoreMarkdown :text="message" />
         </div>
         <button
             v-for="(action, index) of actions"

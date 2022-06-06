@@ -90,6 +90,15 @@ const colorsClasses: Record<CoreColor, ColorClasses> = {
         accentHoverBackground: 'hover:bg-brand-solid-700',
         accentFocusHoverBackground: 'focus:hover:bg-brand-solid-700',
     },
+    [CoreColor.Danger]: {
+        baseBackground: 'bg-red-500',
+        baseFocusBackground: 'focus:bg-red-500',
+        baseFocusRing: 'focus:ring-red-500',
+        tintedBackground: 'bg-red-gray-300',
+        tintedText: 'text-red-gray-700',
+        accentHoverBackground: 'hover:bg-red-700',
+        accentFocusHoverBackground: 'focus:hover:bg-red-700',
+    },
 };
 const alignmentClasses: Record<CoreAlignment, string> = {
     [CoreAlignment.Start]: 'justify-start',

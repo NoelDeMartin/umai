@@ -1,6 +1,7 @@
 export enum CoreColor {
     Primary = 'primary',
     Solid = 'brand-solid',
+    Danger = 'danger',
 }
 
 export enum CoreAlignment {

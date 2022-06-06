@@ -34,6 +34,12 @@ const colorsClasses: Record<CoreColor, ColorClasses> = {
         focusVisibleRing: 'focus-visible:ring-brand-solid-100',
         focusVisibleBackground: 'focus-visible:bg-brand-solid-100',
     },
+    [CoreColor.Danger]: {
+        text: 'text-red-700',
+        hoverText: 'hover:text-red-700',
+        focusVisibleRing: 'focus-visible:ring-red-100',
+        focusVisibleBackground: 'focus-visible:bg-red-100',
+    },
 };
 
 const computedClasses = $computed(() => {

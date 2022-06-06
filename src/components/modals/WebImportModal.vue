@@ -13,7 +13,7 @@
             @submit="submitRecipes(close)"
         >
             <template v-if="recipes.length > 1">
-                <BaseMarkdown v-if="recipes.length > 1" :text="$t('webImport.success_infoMultiple')" />
+                <CoreMarkdown v-if="recipes.length > 1" :text="$t('webImport.success_infoMultiple')" />
 
                 <ul v-if="recipes.length > 1" class="mt-4 space-y-2">
                     <li class="flex items-center">
@@ -44,7 +44,7 @@
             </template>
 
             <template v-else-if="recipes.length === 1">
-                <BaseMarkdown :text="$t('webImport.success_infoSingle')" />
+                <CoreMarkdown :text="$t('webImport.success_infoSingle')" />
                 <RecipeListItem
                     class="mt-4"
                     :name="recipes[0]?.name"
@@ -54,7 +54,7 @@
             </template>
 
             <template v-else>
-                <BaseMarkdown :text="$t('webImport.success_infoFallback')" />
+                <CoreMarkdown :text="$t('webImport.success_infoFallback')" />
                 <RecipeListItem
                     class="mt-4"
                     :name="websiteMetadata.title"
@@ -73,7 +73,7 @@
         </CoreForm>
 
         <template v-else-if="failure">
-            <BaseMarkdown
+            <CoreMarkdown
                 :text="$t('webImport.failure_info', { url: urlForm.url })"
                 :actions="{
                     'view-error-details': () => $errors.inspect(failure),
@@ -86,7 +86,7 @@
                 </summary>
 
                 <CoreForm :form="urlForm" class="flex flex-col mt-2 space-y-2" @submit="scanWebsite(submitRetry())">
-                    <BaseMarkdown :text="$t('webImport.failure_retry_info')" />
+                    <CoreMarkdown :text="$t('webImport.failure_retry_info')" />
                     <div class="flex items-center">
                         <BaseCheckbox id="use-proxy" name="useProxy" />
                         <label for="use-proxy" class="ml-2 cursor-pointer">
@@ -114,7 +114,7 @@
                 </summary>
 
                 <CoreForm class="flex flex-col mt-2 space-y-2" :form="htmlForm" @submit="scanWebsite(submitHtml())">
-                    <BaseMarkdown :text="$t('webImport.failure_html_info')" />
+                    <CoreMarkdown :text="$t('webImport.failure_html_info')" />
                     <div class="relative p-2 bg-gray-200 rounded">
                         <pre class="flex items-center text-gray-700 whitespace-pre-wrap min-h-clickable align-center">view-source:{{ urlForm.url }}</pre>
                         <button
@@ -140,7 +140,7 @@
             class="flex flex-col"
             @submit="scanWebsite(submitUrl())"
         >
-            <BaseMarkdown :text="$t('webImport.info')" />
+            <CoreMarkdown :text="$t('webImport.info')" />
             <BaseInput
                 name="url"
                 :label="$t('webImport.url_placeholder')"

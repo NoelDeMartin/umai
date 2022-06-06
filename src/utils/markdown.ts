@@ -30,7 +30,7 @@ function getCoreLinkColorClasses(color?: string | null): string {
 }
 
 function renderCoreLinks(markdown: string): string {
-    const matches = stringMatchAll<3>(markdown, /<CoreLink([^>]+)>([^<]+)<\/CoreLink>/g);
+    const matches = stringMatchAll<3>(markdown, /<CoreLink([^>]*)>([^<]+)<\/CoreLink>/g);
 
     for (const [match, attributes, text] of matches) {
         const { url, classes, color } = parseCoreLinkAttributes(attributes);

@@ -56,6 +56,7 @@ const $root = $ref<IFocusable | null>(null);
 const colorsClasses: Record<CoreColor, string> = {
     [CoreColor.Primary]: 'focus:placeholder:text-primary-500 focus:bg-primary-200',
     [CoreColor.Solid]: 'focus:placeholder:text-brand-solid-400 focus:bg-brand-solid-100',
+    [CoreColor.Danger]: 'focus:placeholder:text-red-400 focus:bg-red-100',
 };
 
 const computedClasses = $computed(() => colorsClasses[color]);

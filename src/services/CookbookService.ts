@@ -28,16 +28,6 @@ export default class CookbookService extends Service<State, ComputedState> {
 
     public static persist: Array<keyof State> = ['remoteCookbookUrl'];
 
-    public addRecipe(recipe: Recipe): void {
-        this.recipes.push(recipe);
-    }
-
-    public async removeRecipe(recipe: Recipe): Promise<void> {
-        this.recipes.remove(recipe);
-
-        await recipe.delete();
-    }
-
     public async createRemote(name: string, storageUrl: string): Promise<void> {
         const user = Auth.requireUser();
         const engine = Auth.requireAuthenticator().engine;
@@ -86,7 +76,8 @@ export default class CookbookService extends Service<State, ComputedState> {
             });
         });
 
-        Recipe.on('created', recipe => this.addRecipe(recipe));
+        Recipe.on('created', recipe => this.recipes.push(recipe));
+        Recipe.on('deleted', recipe => this.recipes.remove(recipe));
 
         // TODO investigate a different way to work around reactivity issues
         Recipe.on('updated', () => this.setState({ recipes: this.recipes.slice(0) }));

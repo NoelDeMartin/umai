@@ -21,7 +21,7 @@
                 <div class="flex flex-col justify-center md:flex-row">
                     <div class="mr-8 prose">
                         <slot name="description">
-                            <BaseMarkdown v-if="recipe?.description" :text="recipe.description" />
+                            <CoreMarkdown v-if="recipe?.description" :text="recipe.description" />
                         </slot>
                         <template v-if="$slots.ingredients || ingredients.length > 0">
                             <h2>{{ $t('recipes.ingredients') }}</h2>
@@ -56,7 +56,7 @@
                                             <span class="flex justify-center text-lg font-semibold min-w-clickable text-primary-600" aria-hidden="true">
                                                 {{ index + 1 }}.
                                             </span>
-                                            <BaseMarkdown :text="instructionStep.text" />
+                                            <CoreMarkdown :text="instructionStep.text" />
                                         </div>
                                     </li>
                                 </ol>

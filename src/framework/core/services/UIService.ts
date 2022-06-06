@@ -2,6 +2,8 @@ import { after, arrayFirst, arrayReplace, arrayWithoutIndex, uuid } from '@noeld
 import { markRaw, nextTick } from 'vue';
 import type { Component } from 'vue';
 
+import ConfirmModal from '@/framework/components/ConfirmModal.vue';
+import Errors from '@/framework/core/facades/Errors';
 import LoadingModal from '@/framework/components/LoadingModal.vue';
 import MarkdownModal from '@/framework/components/MarkdownModal.vue';
 import NotFound from '@/framework/components/NotFound.vue';
@@ -52,9 +54,22 @@ export interface ModalComponent<
     Result = unknown
 > {}
 
+export interface ConfirmOptions {
+    message: string;
+    acceptText: string;
+    cancelText: string;
+}
+
+export interface RunOperationOptions {
+    blocking: boolean;
+    loadingMessage: string;
+    successMessage: string;
+}
+
 export type ModalCloseCallback<Result = unknown> = (result: Result) => void;
 
 export const enum ApplicationComponent {
+    ConfirmModal = 'confirm-modal',
     ErrorReportModal = 'error-report-modal',
     LoadingModal = 'loading-modal',
     MarkdownModal = 'markdown-modal',
@@ -65,11 +80,19 @@ export default class UIService extends Service<State> {
 
     private modalCallbacks: Record<string, Partial<ModalCallbacks>> = {};
     private components: Record<ApplicationComponent, Component> = {
+        [ApplicationComponent.ConfirmModal]: markRaw(ConfirmModal),
         [ApplicationComponent.ErrorReportModal]: markRaw(ErrorReportModal),
         [ApplicationComponent.LoadingModal]: markRaw(LoadingModal),
         [ApplicationComponent.MarkdownModal]: markRaw(MarkdownModal),
         [ApplicationComponent.NotFound]: markRaw(NotFound),
     };
+
+    public async confirm(options: Partial<ConfirmOptions> = {}): Promise<boolean> {
+        const modal = await this.openModal(this.components[ApplicationComponent.ConfirmModal], options);
+        const result = await modal.afterClose;
+
+        return !!result;
+    }
 
     public async openModal<MC extends ModalComponent>(
         component: MC,
@@ -134,6 +157,23 @@ export default class UIService extends Service<State> {
         this.setState({ modals: this.modals.filter(m => m.id !== modal.id) });
 
         callbacks?.closed && callbacks.closed(result);
+    }
+
+    public async runOperation(
+        operation: () => Promise<unknown>,
+        options: Partial<RunOperationOptions> = {},
+    ): Promise<void> {
+        try {
+            options.blocking && this.showLoading(options.loadingMessage);
+
+            await operation();
+
+            options.successMessage && this.showSnackbar(options.successMessage);
+        } catch (error) {
+            Errors.report(error);
+        } finally {
+            options.blocking && this.hideLoading();
+        }
     }
 
     public async showMarkdown(content: string): Promise<void>;

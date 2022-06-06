@@ -234,6 +234,7 @@ import type { Attributes } from 'soukai';
 
 import Cloud from '@/framework/core/facades/Cloud';
 import Files from '@/framework/core/facades/Files';
+import Router from '@/framework/core/facades/Router';
 import UI from '@/framework/core/facades/UI';
 import { requireChildElement } from '@/framework/utils/dom';
 import { defineEnterTransition, defineLeaveTransition } from '@/framework/core/services/ElementTransitionsService';
@@ -406,7 +407,21 @@ async function deleteRecipe() {
     if (!recipe)
         return;
 
-    // TODO
+    const confirmed = await UI.confirm({
+        message: translate('recipes.delete_confirm'),
+        acceptText: translate('recipes.delete_confirm_accept'),
+    });
+
+    if (!confirmed)
+        return;
+
+    Router.push({ name: 'home' });
+
+    await UI.runOperation(() => recipe.delete(), {
+        blocking: true,
+        loadingMessage: translate('recipes.delete_ongoing', { name: recipe.name }),
+        successMessage: translate('recipes.delete_success', { name: recipe.name }),
+    });
 }
 
 async function submit() {

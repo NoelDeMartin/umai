@@ -1,6 +1,6 @@
 <template>
     <AppModal :title="title">
-        <BaseMarkdown :text="content" />
+        <CoreMarkdown :text="content" />
     </AppModal>
 </template>
 
