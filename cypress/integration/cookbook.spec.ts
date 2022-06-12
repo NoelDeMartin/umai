@@ -421,6 +421,84 @@ describe('Cookbook', () => {
         });
     });
 
+    it('Deletes local recipes', () => {
+        // Arrange
+        cy.createRecipe({ name: 'Ramen' }).as('ramen');
+
+        // Act
+        cy.press('Ramen');
+        cy.press('Edit');
+        cy.press('Delete');
+        cy.press('Yes, delete recipe');
+
+        // Assert
+        cy.see('Ramen has been deleted');
+        cy.assertLocalDocumentDoesNotExist('solid://recipes/ramen');
+    });
+
+    it('Deletes remotes recipes', () => {
+        // Arrange
+        cy.createRecipe({ name: 'Ramen' });
+        cy.login({ hasCookbook: true });
+        cy.request('http://localhost:4000/cookbook/ramen')
+            .then(response => cy.wrap(response.body).as('ramenTurtle'));
+
+        cy.intercept('PATCH', 'http://localhost:4000/cookbook/ramen').as('patchRamen');
+
+        // Act
+        cy.press('Ramen');
+        cy.press('Edit');
+        cy.press('Delete');
+        cy.press('Yes, delete recipe');
+
+        // Assert
+        cy.see('Ramen has been deleted');
+        cy.get('@ramenTurtle').then(ramenTurtle => {
+            cy.get('@patchRamen').its('request.body').should('be.sparql', `
+                DELETE DATA { ${ramenTurtle} } ;
+                INSERT DATA {
+                    @prefix soukai: <https://soukai.noeldemartin.com/vocab/> .
+                    @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+                    <#it>
+                        a soukai:Tombstone ;
+                        soukai:deletedAt  "[[.*]]"^^xsd:dateTime .
+                } .
+            `);
+        });
+        cy.assertLocalDocumentDoesNotExist('http://localhost:4000/cookbook/ramen');
+    });
+
+    it('Deletes recipes deleted remotely', () => {
+        // Arrange
+        cy.createRecipe({ name: 'Ramen' });
+        cy.login({ hasCookbook: true });
+
+        cy.request({
+            method: 'PUT',
+            url: 'http://localhost:4000/cookbook/ramen',
+            headers: { 'Content-Type': 'text/turtle' },
+            body: `
+                @prefix soukai: <https://soukai.noeldemartin.com/vocab/> .
+                @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+                <#it>
+                    a soukai:Tombstone ;
+                    soukai:deletedAt "2022-06-12T00:00:00.000Z"^^xsd:dateTime .
+            `,
+        });
+
+        // Act
+        cy.press('online');
+        cy.press('Synchronize now');
+        cy.see('Syncing in progress');
+        cy.see('Syncing is up to date');
+
+        // Assert
+        cy.dontSee('Ramen');
+        cy.assertLocalDocumentDoesNotExist('http://localhost:4000/cookbook/ramen');
+    });
+
     it('Downloads recipes', () => {
         // Arrange
         const downloadsFolder = Cypress.config('downloadsFolder');

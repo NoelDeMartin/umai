@@ -24,7 +24,7 @@ declare module '@/framework/core' {
 export function registerServices(): void {
     Cloud.registerHandler(Recipe, {
         isReady: () => !!Cookbook.cookbook.value,
-        getLocalModels: () => Cookbook.recipes.toArray(),
+        getLocalModels: () => Cookbook.allRecipes.toArray(),
     });
 
     UI.registerComponent(ApplicationComponent.LoadingModal, AppLoadingModal);

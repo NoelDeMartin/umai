@@ -13,9 +13,9 @@ import Cloud from '@/framework/core/facades/Cloud';
 import Network from '@/framework/core/facades/Network';
 import Router from '@/framework/core/facades/Router';
 
-function onCreated() {
-    Network.online && Cloud.sync();
-
+async function onCreated() {
     Router.push({ name: 'home' });
+
+    await (Network.online && Cloud.sync());
 }
 </script>

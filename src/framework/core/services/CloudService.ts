@@ -1,5 +1,5 @@
 import { Semaphore, after, arrayChunk, isSuccessfulResponse, map, tap } from '@noeldemartin/utils';
-import { SolidContainerModel, SolidModel, SolidModelMetadata, SolidModelOperation } from 'soukai-solid';
+import { Metadata, Operation, SolidContainerModel, SolidModel, Tombstone } from 'soukai-solid';
 import type { Engine } from 'soukai';
 import type { ObjectsMap } from '@noeldemartin/utils';
 import type { SolidModelConstructor } from 'soukai-solid';
@@ -36,7 +36,7 @@ interface ComputedState {
     offline: boolean;
     syncing: boolean;
     disconnected: boolean;
-    pendingUpdates: ([SolidModel, SolidModelOperation[]] | string)[];
+    pendingUpdates: ([SolidModel, Operation[]] | string)[];
 }
 
 export interface CloudHandler<T extends SolidModel = SolidModel> {
@@ -83,6 +83,7 @@ export default class CloudService extends Service<State, ComputedState> {
 
         modelClass.on('created', model => Auth.isLoggedIn() && handler.isReady() && this.createRemoteModel(model));
         modelClass.on('updated', model => Auth.isLoggedIn() && handler.isReady() && this.updateRemoteModel(model));
+        modelClass.on('deleted', model => Auth.isLoggedIn() && handler.isReady() && this.updateRemoteModel(model));
     }
 
     public enqueueFileUpload(url: string): void {
@@ -135,7 +136,7 @@ export default class CloudService extends Service<State, ComputedState> {
             syncing: ({ status }) => status === CloudStatus.Syncing,
             disconnected: ({ status }) => status === CloudStatus.Disconnected,
             pendingUpdates: ({ dirtyFileUrls, dirtyRemoteModels }) => {
-                const pendingUpdates: Record<string, SolidModelOperation[]> = {};
+                const pendingUpdates: Record<string, Operation[]> = {};
 
                 for (const remoteModel of dirtyRemoteModels.items()) {
                     const modelPendingUpdates =
@@ -151,7 +152,7 @@ export default class CloudService extends Service<State, ComputedState> {
 
                 const pendingModelUpdates = Object.entries(pendingUpdates).reduce(
                     (pendingUpdates, [url, operations]) => {
-                        const operationsMap: Record<string, SolidModelOperation[]> = {};
+                        const operationsMap: Record<string, Operation[]> = {};
 
                         if (operations.length === 0) {
                             pendingUpdates.push([dirtyRemoteModels.get(url) as SolidModel, []]);
@@ -174,7 +175,7 @@ export default class CloudService extends Service<State, ComputedState> {
 
                         return pendingUpdates;
                     },
-                    [] as [SolidModel, SolidModelOperation[]][],
+                    [] as [SolidModel, Operation[]][],
                 );
 
                 return [
@@ -195,9 +196,15 @@ export default class CloudService extends Service<State, ComputedState> {
     protected initializeEngine(authenticator: Authenticator): void {
         this.engine = authenticator.engine;
 
+        getRemoteClass(Tombstone).setEngine(this.requireEngine());
+
         for (const handler of this.handlers) {
             getRemoteClass(handler.modelClass).setEngine(this.engine);
         }
+    }
+
+    protected requireEngine(): Engine {
+        return this.engine ?? fail('Could not get required Engine');
     }
 
     protected updateSyncInterval(autoSync: number | false): void {
@@ -210,9 +217,9 @@ export default class CloudService extends Service<State, ComputedState> {
     }
 
     protected async pullChanges(): Promise<void> {
-        const remoteModelsArray = await this.fetchRemoteModels();
-        const remoteModels = map(remoteModelsArray, 'url');
         const localModels = map(this.getLocalModels(), 'url');
+        const remoteModelsArray = await this.fetchRemoteModels(localModels.getKeys());
+        const remoteModels = map(remoteModelsArray, 'url');
 
         await this.synchronizeModels(localModels, remoteModels);
 
@@ -232,8 +239,25 @@ export default class CloudService extends Service<State, ComputedState> {
 
     protected async pushChanges(): Promise<void> {
         const remoteModels = this.dirtyRemoteModels.getItems();
+        const localModels = map(this.getLocalModels(), 'url');
 
-        await Promise.all(remoteModels.map(model => model.save()));
+        await Promise.all(
+            remoteModels.map(async remoteModel => {
+                if (remoteModel.isSoftDeleted()) {
+                    const localModel = localModels.get(remoteModel.url);
+
+                    remoteModel.enableHistory();
+                    remoteModel.enableTombstone();
+                    await remoteModel.delete();
+
+                    await localModel?.delete();
+
+                    return;
+                }
+
+                await remoteModel.save();
+            }),
+        );
 
         this.setState({
             dirtyRemoteModels: map([], 'url'),
@@ -282,6 +306,14 @@ export default class CloudService extends Service<State, ComputedState> {
 
         for (const remoteModel of remoteModels.items()) {
             const localModel = this.getLocalModel(remoteModel, localModels);
+
+            if (remoteModel instanceof Tombstone) {
+                await localModel.delete();
+
+                synchronizedModelUrls.add(remoteModel.url);
+
+                continue;
+            }
 
             await SolidModel.synchronize(localModel, remoteModel);
             await localModel.save();
@@ -349,15 +381,16 @@ export default class CloudService extends Service<State, ComputedState> {
         return remoteModel.clone({ constructors: [[remoteClass, localClass]] });
     }
 
-    protected async fetchRemoteModels(): Promise<SolidModel[]> {
-        const models = await Promise.all(
+    protected async fetchRemoteModels(localModelUrls: string[]): Promise<SolidModel[]> {
+        const RemoteTombstone = getRemoteClass(Tombstone);
+        const handlersModels = await Promise.all(
             this.handlers.map(async handler => {
                 if (!handler.isReady())
                     return [];
 
                 const remoteClass = getRemoteClass(handler.modelClass);
                 const container = await SolidContainerModel.withEngine(
-                    this.engine as Engine,
+                    this.requireEngine(),
                     () => SolidContainerModel.find(remoteClass.collection),
                 );
 
@@ -379,8 +412,12 @@ export default class CloudService extends Service<State, ComputedState> {
                 return remoteModels;
             }),
         );
+        const remoteModels = handlersModels.flat();
+        const remoteModelUrls = remoteModels.map(remoteModel => remoteModel.url);
+        const missingModelUrls = localModelUrls.filter(url => !remoteModelUrls.includes(url));
+        const tombstones = await RemoteTombstone.all({ $in: missingModelUrls });
 
-        return models.flat();
+        return remoteModels.concat(tombstones);
     }
 
     protected getLocalModels(): Iterable<SolidModel> {
@@ -397,8 +434,8 @@ export default class CloudService extends Service<State, ComputedState> {
             .getRelatedModels()
             .filter(
                 model =>
-                    !(model instanceof SolidModelMetadata) &&
-                    !(model instanceof SolidModelOperation),
+                    !(model instanceof Metadata) &&
+                    !(model instanceof Operation),
             );
 
         for (const relatedModel of relatedModels) {

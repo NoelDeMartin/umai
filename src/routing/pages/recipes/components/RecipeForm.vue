@@ -417,7 +417,7 @@ async function deleteRecipe() {
 
     Router.push({ name: 'home' });
 
-    await UI.runOperation(() => recipe.delete(), {
+    await UI.runOperation(() => Cookbook.deleteRecipe(recipe), {
         blocking: true,
         loadingMessage: translate('recipes.delete_ongoing', { name: recipe.name }),
         successMessage: translate('recipes.delete_success', { name: recipe.name }),
@@ -435,7 +435,9 @@ async function submit() {
         ingredients: arrayFilter(form.ingredients.map(({ value }) => value)),
         externalUrls: arrayFilter(form.externalUrls.map(({ value }) => value)),
     };
-    const updatedRecipe = recipe ?? new Recipe(updatedAttributes);
+    const updatedRecipe = recipe
+        ? tap(recipe, recipe => recipe.setAttributes(updatedAttributes))
+        : new Recipe(updatedAttributes);
     const updatedInstructionUrls = form.instructions.map(({ id }) => instructionUrls[id] ?? null);
     const updateInstructionAttributes = form.instructions
         .filter(({ value }) => !!value)
@@ -443,8 +445,6 @@ async function submit() {
             url: instructionUrls[id],
             text: value,
         } as Attributes));
-
-    updatedRecipe.setAttributes(updatedAttributes);
 
     let position = 1;
     for (const instructionStepAttributes of updateInstructionAttributes) {

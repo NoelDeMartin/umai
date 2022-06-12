@@ -11,17 +11,19 @@ import { setRemoteCollection } from '@/framework/cloud/remote_helpers';
 import type { ComputedStateDefinitions, IService } from '@/framework/core/Service';
 
 import Recipe from '@/models/Recipe';
+import Network from '@/framework/core/facades/Network';
 
 interface State {
     localCookbookUrl: string;
     remoteCookbookUrl: string | null;
     cookbook: PromisedValue<SolidContainerModel>;
-    recipes: FluentArray<Recipe>;
+    allRecipes: FluentArray<Recipe>;
 }
 
 interface ComputedState {
     isLocal: boolean;
     isRemote: boolean;
+    recipes: FluentArray<Recipe>;
 }
 
 export default class CookbookService extends Service<State, ComputedState> {
@@ -45,6 +47,17 @@ export default class CookbookService extends Service<State, ComputedState> {
         await this.reloadRecipes();
     }
 
+    public async deleteRecipe(recipe: Recipe): Promise<void> {
+        if (this.isRemote) {
+            await recipe.softDelete();
+            await (Network.online && Cloud.sync());
+
+            return;
+        }
+
+        await recipe.delete();
+    }
+
     protected async boot(): Promise<void> {
         await super.boot();
         await Auth.ready;
@@ -62,7 +75,7 @@ export default class CookbookService extends Service<State, ComputedState> {
         Events.on('logout', async () => {
             Recipe.collection = this.localCookbookUrl;
 
-            await Promise.all(this.recipes.map(async recipe => {
+            await Promise.all(this.allRecipes.map(async recipe => {
                 if (recipe.imageUrl?.startsWith(this.localCookbookUrl))
                     await Files.delete(recipe.imageUrl);
 
@@ -72,15 +85,15 @@ export default class CookbookService extends Service<State, ComputedState> {
             this.setState({
                 remoteCookbookUrl: null,
                 cookbook: new PromisedValue,
-                recipes: arr<Recipe>(),
+                allRecipes: arr<Recipe>(),
             });
         });
 
-        Recipe.on('created', recipe => this.recipes.push(recipe));
-        Recipe.on('deleted', recipe => this.recipes.remove(recipe));
+        Recipe.on('deleted', recipe => this.setState({ allRecipes: this.allRecipes.without([recipe]) }));
+        Recipe.on('created', recipe => this.setState({ allRecipes: this.allRecipes.concat([recipe]) }));
 
         // TODO investigate a different way to work around reactivity issues
-        Recipe.on('updated', () => this.setState({ recipes: this.recipes.slice(0) }));
+        Recipe.on('updated', () => this.setState({ allRecipes: this.allRecipes.slice(0) }));
     }
 
     protected getInitialState(): State {
@@ -88,7 +101,7 @@ export default class CookbookService extends Service<State, ComputedState> {
             localCookbookUrl: Recipe.collection,
             remoteCookbookUrl: null,
             cookbook: new PromisedValue,
-            recipes: arr<Recipe>([]),
+            allRecipes: arr<Recipe>([]),
         };
     }
 
@@ -96,13 +109,14 @@ export default class CookbookService extends Service<State, ComputedState> {
         return {
             isLocal: ({ remoteCookbookUrl }) => !remoteCookbookUrl,
             isRemote: ({ remoteCookbookUrl }) => !!remoteCookbookUrl,
+            recipes: ({ allRecipes }) => allRecipes.filter(recipe => !recipe.isSoftDeleted()),
         };
     }
 
     private async loadRecipes(): Promise<void> {
         const recipes = await Recipe.all();
 
-        this.recipes = arr(recipes);
+        this.allRecipes = arr(recipes);
     }
 
     protected async reloadRecipes(): Promise<void> {

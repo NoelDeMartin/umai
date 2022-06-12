@@ -11,6 +11,7 @@ import Model from './Recipe.schema';
 export default class Recipe extends Model {
 
     public static history = true;
+    public static tombstone = false;
     public static rdfContexts = { schema: 'https://schema.org/' };
 
     declare public instructions?: RecipeInstructionsStep[];

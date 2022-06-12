@@ -25,46 +25,44 @@ INSERT DATA {
         soukai:updatedAt "[[.*]]"^^xsd:dateTime .
 
     <#it-operation-[[%uuid%]]>
-        a soukai:Operation ;
+        a soukai:SetPropertyOperation ;
         soukai:resource <#it> ;
         soukai:date "[[.*]]"^^xsd:dateTime ;
         soukai:property schema:name ;
         soukai:value "Ramen" .
 
     <#it-operation-[[%uuid%]]>
-        a soukai:Operation ;
+        a soukai:SetPropertyOperation ;
         soukai:resource <#it> ;
         soukai:date "[[.*]]"^^xsd:dateTime ;
         soukai:property schema:recipeIngredient ;
         soukai:value "Broth", "Noodles" .
 
     <#it-operation-[[%uuid%]]>
-        a soukai:Operation ;
+        a soukai:SetPropertyOperation ;
         soukai:resource <#it> ;
         soukai:date "[[.*]]"^^xsd:dateTime ;
         soukai:property schema:name ;
         soukai:value "Ramen!" .
 
     <#it-operation-[[%uuid%]]>
-        a soukai:Operation ;
+        a soukai:SetPropertyOperation ;
         soukai:resource <#it> ;
         soukai:date "[[.*]]"^^xsd:dateTime ;
         soukai:property schema:description ;
         soukai:value "is life" .
 
     <#it-operation-[[%uuid%]]>
-        a soukai:Operation ;
+        a soukai:AddPropertyOperation ;
         soukai:resource <#it> ;
-        soukai:type soukai:AddOperation ;
         soukai:date "[[.*]]"^^xsd:dateTime ;
         soukai:property schema:recipeIngredient ;
         soukai:value "Toppings" .
 
     <#it-operation-[[%uuid%]]>
-        a soukai:Operation ;
+        a soukai:AddPropertyOperation ;
         soukai:resource <#it> ;
         soukai:date "[[.*]]"^^xsd:dateTime ;
-        soukai:type soukai:AddOperation ;
         soukai:property schema:recipeInstructions ;
         soukai:value <#[[instruction-step-1][%uuid%]]>, <#[[instruction-step-2][%uuid%]]> .
 
