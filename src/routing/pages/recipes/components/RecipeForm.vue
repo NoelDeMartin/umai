@@ -9,6 +9,7 @@
                 'recipe-card': transitionToCard,
             },
         }"
+        :data-was-onboarding="wasOnboarding"
         :form="form"
         class="flex-grow"
         @submit="submit()"
@@ -234,6 +235,7 @@ import { arrayFilter, objectWithoutEmpty, tap } from '@noeldemartin/utils';
 import { nextTick, onMounted } from 'vue';
 import type { Attributes } from 'soukai';
 
+import App from '@/framework/core/facades/App';
 import Cloud from '@/framework/core/facades/Cloud';
 import Files from '@/framework/core/facades/Files';
 import Router from '@/framework/core/facades/Router';
@@ -258,6 +260,7 @@ const { recipe } = defineProps({
 const emit = defineEmits(['done', 'cancel']);
 
 let writingDescription = $ref<boolean>(false);
+let wasOnboarding = $ref<boolean>(App.isOnboarding);
 const instructionUrls: Record<string, string> = {};
 
 const form = reactiveForm({
@@ -449,7 +452,10 @@ async function submit() {
     emit('done', updatedRecipe);
 }
 
-onMounted(() => $name?.focus());
+onMounted(() => {
+    $name?.focus();
+    wasOnboarding = App.isOnboarding;
+});
 </script>
 
 <style>

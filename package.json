@@ -24,7 +24,7 @@
     "@headlessui/vue": "^0.0.0-insiders.ab6310c",
     "@inrupt/solid-client-authn-browser": "^1.11.6",
     "@noeldemartin/solid-utils": "^0.1.1-next.58b73c94b4d8c9b5b8fe26c1f1eb97095f1af84a",
-    "@noeldemartin/utils": "^0.2.1-next.7b6af1fba694005d843c282db078c54050cc1549",
+    "@noeldemartin/utils": "^0.2.1-next.b6edf25b5044293ad93dff2fce61ed24b32f2737",
     "@tailwindcss/forms": "^0.4.0",
     "@tailwindcss/typography": "^0.5.0",
     "buffer": "^6.0.3",

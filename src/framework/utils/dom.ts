@@ -78,6 +78,10 @@ export function measureHTMLDimensions(html: string): { width: number; height: nu
     return tap({ width: ruler.clientWidth, height: ruler.clientHeight }, () => ruler.remove());
 }
 
+export async function afterAnimationTime(duration: number): Promise<void> {
+    await animateElement(document.createElement('div'), { duration });
+}
+
 export async function animateElement(element: HTMLElement, config: Partial<AnimateElementConfig>): Promise<void> {
     config.before?.addClasses?.split(' ').forEach(addedClass => element.classList.add(addedClass));
     config.before?.removeClasses?.split(' ').forEach(removedClass => element.classList.remove(removedClass));

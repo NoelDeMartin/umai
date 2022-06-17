@@ -91,12 +91,23 @@ export async function headerSlideUp($root: HTMLElement, duration: number): Promi
     ]);
 }
 
+interface HeaderToCardOptions {
+    $headerTitle: HTMLElement;
+    $headerTitleText: HTMLElement;
+    $card: HTMLElement;
+    duration: number;
+    withoutHeaderOverlay?: boolean;
+}
+
 export async function headerToCard(
     $root: HTMLElement,
-    $headerTitle: HTMLElement,
-    $headerTitleText: HTMLElement,
-    $card: HTMLElement,
-    duration: number,
+    {
+        duration,
+        withoutHeaderOverlay,
+        $headerTitle,
+        $headerTitleText,
+        $card,
+    }: HeaderToCardOptions,
 ): Promise<void>{
     const $header = requireChildElement($root, '.recipe-page--header');
     const $headerWrapper = requireChildElement($root, '.recipe-page--header-wrapper');
@@ -106,6 +117,8 @@ export async function headerToCard(
     const headerBoundingRect = $header.getBoundingClientRect();
     const headerTitleBoundingRect = $headerTitle.getBoundingClientRect();
     const cardBoundingRect = $card.getBoundingClientRect();
+
+    withoutHeaderOverlay && $headerOverlay.remove();
 
     $root.classList.remove('overflow-hidden');
 
@@ -119,7 +132,9 @@ export async function headerToCard(
             classes: { borderRadius: ['rounded-none', 'rounded-lg'] },
             boundingRects: [headerBoundingRect, cardBoundingRect],
         },
-        { element: $headerOverlay, styles: { opacity: [1, 0] } },
+        withoutHeaderOverlay
+            ? null
+            : { element: $headerOverlay, styles: { opacity: [1, 0] } },
         {
             element: $headerWrapper,
             before: {

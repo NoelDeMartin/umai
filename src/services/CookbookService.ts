@@ -13,6 +13,15 @@ import type { ComputedStateDefinitions, IService } from '@/framework/core/Servic
 import Recipe from '@/models/Recipe';
 import Network from '@/framework/core/facades/Network';
 
+declare module '@/framework/core/services/EventsService' {
+
+    export interface EventsPayload {
+        'recipe-created': void;
+        'recipe-deleted': void;
+    }
+
+}
+
 interface State {
     localCookbookUrl: string;
     remoteCookbookUrl: string | null;
@@ -89,8 +98,16 @@ export default class CookbookService extends Service<State, ComputedState> {
             });
         });
 
-        Recipe.on('deleted', recipe => this.setState({ allRecipes: this.allRecipes.without([recipe]) }));
-        Recipe.on('created', recipe => this.setState({ allRecipes: this.allRecipes.concat([recipe]) }));
+        Recipe.on('deleted', recipe => {
+            this.setState({ allRecipes: this.allRecipes.without([recipe]) });
+
+            Events.emit('recipe-deleted');
+        });
+        Recipe.on('created', recipe => {
+            this.setState({ allRecipes: this.allRecipes.concat([recipe]) });
+
+            Events.emit('recipe-created');
+        });
 
         // TODO investigate a different way to work around reactivity issues
         Recipe.on('updated', () => this.setState({ allRecipes: this.allRecipes.slice(0) }));

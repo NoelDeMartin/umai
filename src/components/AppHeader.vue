@@ -1,8 +1,12 @@
 <template>
     <header
-        ref="header"
+        ref="$header"
         class="flex relative z-40 flex-col items-center self-stretch p-8 h-24 transition-colors duration-700 shrink-0"
-        :class="{ 'text-white': $route.meta.fullBleedHeader }"
+        :class="{
+            'text-white': $route.meta.fullBleedHeader && !$app.onboardingCompleting,
+            'opacity-0 pointer-events-none': $app.isOnboarding,
+            'transition-opacity opacity-100 duration-500': $app.onboardingCompleting,
+        }"
     >
         <div class="flex relative z-10 justify-between items-center w-full max-w-content">
             <div class="relative flex-grow h-full">
@@ -14,7 +18,10 @@
                     leave-from-class="opacity-100"
                     :leave-to-class="leaveToClasses"
                 >
-                    <div v-if="!$route.meta.fullBleedHeader && !$app.isOnboarding" class="flex absolute left-0 top-1/2 w-full text-gray-900 -translate-y-1/2">
+                    <div
+                        v-if="!$route.meta.fullBleedHeader || $app.onboardingCompleting"
+                        class="flex absolute left-0 top-1/2 w-full text-gray-900 -translate-y-1/2"
+                    >
                         <router-link
                             :to="{ name: 'home' }"
                             title="Umai"
@@ -25,7 +32,7 @@
                     </div>
                     <!-- TODO investigate inferring previous route after a reload, instead of defaulting to home -->
                     <button
-                        v-else-if="!$app.isOnboarding"
+                        v-else
                         type="button"
                         class="flex absolute left-0 top-1/2 items-center w-full text-white -translate-y-1/2"
                         @click="$router.previousRoute ? $router.back() : $router.push({ name: 'recipes.index' })"
@@ -36,7 +43,7 @@
                     </button>
                 </transition>
             </div>
-            <div v-if="!$app.isOnboarding" class="flex space-x-2">
+            <div class="flex space-x-2">
                 <CloudStatus v-if="!$auth.dismissed" />
                 <UserMenu />
             </div>
@@ -45,20 +52,12 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue';
-
 import Router from '@/framework/core/facades/Router';
 import UI from '@/framework/core/facades/UI';
 
-function updateHeaderSize() {
-    if (!header)
-        return;
+import { useResizeObserver } from '@/framework/utils/composition/observers';
 
-    UI.updateHeaderHeight(header.clientHeight);
-}
-
-const header = $ref<HTMLElement>();
-const resizeObserver = new ResizeObserver(() => updateHeaderSize());
+const $header = $ref<HTMLElement | null>(null);
 const enterFromClasses = $computed(() => [
     'opacity-0',
     Router.currentRouteIs('recipes.show') ? 'translate-x-full' : '-translate-x-full',
@@ -68,12 +67,5 @@ const leaveToClasses = $computed(() => [
     Router.currentRouteIs('recipes.show') ? '-translate-x-full' : 'translate-x-full',
 ].join(' '));
 
-onMounted(() => {
-    if (!header)
-        return;
-
-    updateHeaderSize();
-    resizeObserver.observe(header);
-});
-onUnmounted(() => resizeObserver.disconnect());
+useResizeObserver($$($header), $header => UI.updateHeaderHeight($header.clientHeight));
 </script>

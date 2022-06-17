@@ -30,7 +30,7 @@ export const transitionToCard = defineElementTransition(async ($wrapper, $root, 
     $wrapper.classList.add('z-20');
 
     await Promise.all([
-        headerToCard($root, $headerTitle, $headerTitleText, $card, duration),
+        headerToCard($root, { duration, $headerTitle, $headerTitleText, $card }),
         bodySlideDown($root, duration),
     ]);
 });

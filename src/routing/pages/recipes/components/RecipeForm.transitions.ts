@@ -1,3 +1,5 @@
+import { parseBoolean } from '@noeldemartin/utils';
+
 import {
     defineElementTransition,
     defineEnterTransition,
@@ -68,7 +70,16 @@ export const transitionToCard = defineElementTransition(async ($wrapper, $root, 
     $footer.classList.add('z-20');
 
     await Promise.all([
-        headerToCard($recipePage, $headerTitle, $headerTitleText, $card, duration),
+        headerToCard(
+            $recipePage,
+            {
+                duration,
+                withoutHeaderOverlay: parseBoolean($root.dataset.wasOnboarding),
+                $headerTitle,
+                $headerTitleText,
+                $card,
+            },
+        ),
         bodySlideDown($recipePage, duration),
         slideDown($footer, duration),
     ]);
