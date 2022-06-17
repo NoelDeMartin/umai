@@ -35,7 +35,7 @@ const fadeInCookbookLink = defineEnterTransition(async home => {
     if (!cookbookLink)
         return;
 
-    await fadeIn(cookbookLink as HTMLElement);
+    await fadeIn(cookbookLink as HTMLElement, 700);
 });
 
 const fadeOutCookbookLink = defineLeaveTransition(async wrapper => {
@@ -44,6 +44,6 @@ const fadeOutCookbookLink = defineLeaveTransition(async wrapper => {
     if (!cookbookLink)
         return;
 
-    await fadeOut(cookbookLink as HTMLElement);
+    await fadeOut(cookbookLink as HTMLElement, 700);
 });
 </script>

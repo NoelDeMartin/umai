@@ -63,13 +63,13 @@ function setVisibleFocus(value: boolean) {
 const enterTransition = defineEnterTransition(async (card, existed) => {
     if (existed || Router.previousRouteWas('recipes.show')) return;
 
-    await fadeIn(card);
+    await fadeIn(card, 700);
 });
 
 const leaveTransition = defineLeaveTransition(async wrapper => {
     Router.currentRouteIs('recipes.show')
         ? await ElementTransitions.waitElementsReady('recipe-details')
-        : await fadeOut(wrapper);
+        : await fadeOut(wrapper, 700);
 });
 
 const transitionToCard = defineElementTransition(async ($wrapper, $card, { element: $nextCard }) => {

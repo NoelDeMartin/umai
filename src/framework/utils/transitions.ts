@@ -1,6 +1,14 @@
 import { animateElement } from '@/framework/utils/dom';
 
-export async function slideUp(el: HTMLElement, duration: number = 500): Promise<void> {
+export async function delay($element: HTMLElement, duration: number): Promise<void> {
+    await animateElement($element, {
+        duration,
+        before: { styles: { opacity: '0' } },
+        after: { resetStyles: true },
+    });
+}
+
+export async function slideUp(el: HTMLElement, duration: number): Promise<void> {
     await animateElement(el, {
         duration,
         styles: {
@@ -12,8 +20,8 @@ export async function slideUp(el: HTMLElement, duration: number = 500): Promise<
     });
 }
 
-export async function slideDown(el: HTMLElement, duration: number = 500): Promise<void> {
-    await animateElement(el, {
+export async function slideDown($element: HTMLElement, duration: number): Promise<void> {
+    await animateElement($element, {
         duration,
         styles: {
             transform: [
@@ -24,16 +32,16 @@ export async function slideDown(el: HTMLElement, duration: number = 500): Promis
     });
 }
 
-export async function fadeIn(el: HTMLElement, duration: number = 700): Promise<void> {
-    await animateElement(el, {
+export async function fadeIn($element: HTMLElement, duration: number): Promise<void> {
+    await animateElement($element, {
         duration,
-        styles: { opacity: [0, 1] },
+        styles: { opacity: ['0', '1'] },
     });
 }
 
-export async function fadeOut(el: HTMLElement, duration: number = 700): Promise<void> {
-    await animateElement(el, {
+export async function fadeOut($element: HTMLElement, duration: number): Promise<void> {
+    await animateElement($element, {
         duration,
-        styles: { opacity: [1, 0] },
+        styles: { opacity: ['1', '0'] },
     });
 }

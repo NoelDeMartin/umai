@@ -5,10 +5,6 @@ import Router from '@/framework/core/facades/Router';
 import Service from '@/framework/core/Service';
 import { fadeIn, fadeOut } from '@/framework/utils/transitions';
 
-type EnterTransition = (element: HTMLElement, previous?: ElementData) => Promise<void>;
-type LeaveTransition = (wrapper: HTMLElement, element: HTMLElement) => Promise<void>;
-type ElementTransition = (wrapper: HTMLElement, source: HTMLElement, target: ElementData) => Promise<void>;
-
 interface ElementData {
     element: HTMLElement;
     config: TransitionalElementConfig;
@@ -18,7 +14,15 @@ interface ElementTransitionData extends ElementData {
     transition: ElementTransition;
 }
 
-interface TransitionalElementConfig {
+export const defineEnterTransition = (transition: EnterTransition): EnterTransition => transition;
+export const defineLeaveTransition = (transition: LeaveTransition): LeaveTransition => transition;
+export const defineElementTransition = (transition: ElementTransition): ElementTransition => transition;
+
+export type EnterTransition = (element: HTMLElement, previous?: ElementData) => Promise<void>;
+export type LeaveTransition = (wrapper: HTMLElement, element: HTMLElement) => Promise<void>;
+export type ElementTransition = (wrapper: HTMLElement, source: HTMLElement, target: ElementData) => Promise<void>;
+
+export interface TransitionalElementConfig {
     id?: string;
     name?: string;
     blocking?: boolean | ((targetConfig: TransitionalElementConfig, target: HTMLElement) => boolean);
@@ -27,10 +31,6 @@ interface TransitionalElementConfig {
         leave?: Record<string, LeaveTransition>;
     };
 }
-
-export const defineEnterTransition = (transition: EnterTransition): EnterTransition => transition;
-export const defineLeaveTransition = (transition: LeaveTransition): LeaveTransition => transition;
-export const defineElementTransition = (transition: ElementTransition): ElementTransition => transition;
 
 export interface GlobalElementTransitions {
     fadeIn: EnterTransition;
@@ -68,12 +68,16 @@ export default class ElementTransitionsService extends Service {
         this.elementsFreezingInPlace.set(element);
     }
 
-    public beforeElementMounted(element: HTMLElement, config: TransitionalElementConfig): void {
+    public registerElementConfig(element: HTMLElement, config: TransitionalElementConfig): void {
         this.elementsConfig.set(element, config);
         this.elementsChildren.set(element, []);
     }
 
-    public async elementMounted(element: HTMLElement): Promise<void> {
+    public updateElementConfig(element: HTMLElement, config: TransitionalElementConfig): void {
+        this.elementsConfig.set(element, config);
+    }
+
+    public async showElement(element: HTMLElement): Promise<void> {
         const config = this.elementsConfig.get(element);
 
         if (!config)
@@ -85,7 +89,7 @@ export default class ElementTransitionsService extends Service {
         await tap(this.addElement(element), enterPromise => this.elementsReady.set(element, enterPromise));
     }
 
-    public async beforeElementUnmounted(element: HTMLElement): Promise<void> {
+    public async hideElement(element: HTMLElement): Promise<void> {
         if (!this.activeElements.has(element))
             return;
 
@@ -107,8 +111,8 @@ export default class ElementTransitionsService extends Service {
     protected async initialize(): Promise<void> {
         await super.initialize();
 
-        this.defineGlobalEnterTransition('fadeIn', element => fadeIn(element));
-        this.defineGlobalLeaveTransition('fadeOut', wrapper => fadeOut(wrapper));
+        this.defineGlobalEnterTransition('fadeIn', element => fadeIn(element, 700));
+        this.defineGlobalLeaveTransition('fadeOut', wrapper => fadeOut(wrapper, 700));
         this.defineGlobalLeaveTransition('waitChildrenTransitions', async (_, element) => {
             const children = this.elementsChildren.get(element) ?? [];
 

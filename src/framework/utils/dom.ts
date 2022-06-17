@@ -1,4 +1,4 @@
-import { objectWithoutEmpty, tap } from '@noeldemartin/utils';
+import { fail, objectWithoutEmpty, tap } from '@noeldemartin/utils';
 
 interface AnimateElementConfig {
     duration: number;

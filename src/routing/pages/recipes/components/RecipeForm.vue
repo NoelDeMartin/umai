@@ -2,9 +2,11 @@
     <CoreForm
         v-element-transitions="{
             name: 'recipe-form',
+            id: recipe?.url ?? recipeUrl,
             transitions: {
                 enter: enterTransition,
                 leave: leaveTransition,
+                'recipe-card': transitionToCard,
             },
         }"
         :form="form"
@@ -14,7 +16,7 @@
         <h1 id="recipe-form-title" class="sr-only">
             {{ a11yTitle }}
         </h1>
-        <RecipePage class="recipe-form--recipe">
+        <RecipePage class="recipe-form--recipe-page">
             <template #image>
                 <div class="absolute inset-0 group">
                     <RecipeImage :url="form.imageUrl" class="w-full h-full" />
@@ -36,7 +38,7 @@
             </template>
 
             <template #title>
-                <label class="flex">
+                <label class="flex recipe-form--title-label">
                     <span class="sr-only">{{ $t('recipes.name_label') }}</span>
 
                     <CoreFluidInput
@@ -236,11 +238,8 @@ import Cloud from '@/framework/core/facades/Cloud';
 import Files from '@/framework/core/facades/Files';
 import Router from '@/framework/core/facades/Router';
 import UI from '@/framework/core/facades/UI';
-import { requireChildElement } from '@/framework/utils/dom';
-import { defineEnterTransition, defineLeaveTransition } from '@/framework/core/services/ElementTransitionsService';
 import { FormInputType, reactiveForm } from '@/framework/forms';
 import { objectProp } from '@/framework/utils/vue';
-import { slideDown, slideUp } from '@/framework/utils/transitions';
 import { translate } from '@/framework/utils/translate';
 import type { FormObjectInput } from '@/framework/forms';
 import type { IFocusable } from '@/framework/components/headless';
@@ -248,9 +247,9 @@ import type { IFocusable } from '@/framework/components/headless';
 import Cookbook from '@/services/facades/Cookbook';
 import Recipe from '@/models/Recipe';
 import CoreListItemValue from '@/components/core/lists/CoreListItemValue';
-import { bodySlideDown, bodySlideUp, headerSlideDown, headerSlideUp } from '@/components/recipe/RecipePage.transitions';
 
 import RecipeImageModal from './modals/RecipeImageFormModal.vue';
+import { enterTransition, leaveTransition, transitionToCard } from './RecipeForm.transitions';
 import type { IRecipeImageFormModal } from './modals/RecipeImageFormModal';
 
 const { recipe } = defineProps({
@@ -309,6 +308,7 @@ const form = reactiveForm({
     },
 });
 
+let recipeUrl = $ref<string | null>(null);
 const $name = $ref<IFocusable | null>(null);
 const $description = $ref<IFocusable | null>(null);
 const $ingredients = $ref<IFocusable | null>(null);
@@ -319,42 +319,6 @@ const a11yTitle = $computed(
         ? translate('recipes.edit_a11y_title', { recipe: recipe.name })
         : translate('recipes.create_a11y_title'),
 );
-
-const enterTransition = defineEnterTransition(async ($root) => {
-    const duration = 500;
-    const $recipe = requireChildElement($root, '.recipe-form--recipe');
-    const $footer = requireChildElement($root, '.recipe-form--footer');
-
-    $root.classList.add('z-20');
-    $root.classList.add('relative');
-    $footer.classList.add('z-30');
-
-    await Promise.all([
-        bodySlideUp($recipe, duration),
-        headerSlideDown($recipe, duration),
-        slideUp($footer, duration),
-    ]);
-
-    $root.classList.remove('z-20');
-    $root.classList.remove('relative');
-    $footer.classList.remove('z-30');
-});
-
-const leaveTransition = defineLeaveTransition(async ($wrapper, $root) => {
-    const duration = 500;
-    const $recipe = requireChildElement($root, '.recipe-form--recipe');
-    const $footer = requireChildElement($root, '.recipe-form--footer');
-
-    $wrapper.classList.add('z-10');
-    $root.classList.add('z-20');
-    $root.classList.add('relative');
-
-    await Promise.all([
-        bodySlideDown($recipe, duration),
-        headerSlideUp($recipe, duration),
-        slideDown($footer, duration),
-    ]);
-});
 
 async function editImage() {
     const modal = await UI.openModal<IRecipeImageFormModal>(RecipeImageModal, { imageUrl: form.imageUrl });
@@ -480,6 +444,8 @@ async function submit() {
 
     await updatedRecipe.save();
 
+    recipeUrl = updatedRecipe.url;
+
     emit('done', updatedRecipe);
 }
 
@@ -487,7 +453,7 @@ onMounted(() => $name?.focus());
 </script>
 
 <style>
-.recipe-form--recipe .recipe-page--body {
+.recipe-form--recipe-page .recipe-page--body {
     /* Footer height + p-4 */
     padding-bottom: calc(66px + 1rem);
 }
