@@ -73,6 +73,7 @@ module.exports = {
         },
         extend: {
             margin: theme => ({
+                13: `calc(${theme('spacing.12')} + ${theme('spacing.1')})`,
                 edge: theme('spacing.8'),
             }),
             typography: ({ theme }) => ({

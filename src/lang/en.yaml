@@ -98,7 +98,9 @@ footer:
   version_title: View release notes
 
 home:
-  title: What will you cook today?
+  title:
+    - What will you cook today?
+    - Are you hungry?
   cookbook_link: View all recipes
   shuffle: Shuffle
   back: back home
@@ -140,6 +142,7 @@ recipes:
   servings: Servings
   externalUrl: recipe on {domain}
 
+  create: New recipe
   edit: Edit
   delete: Delete
   delete_confirm: |
@@ -226,7 +229,7 @@ recipes:
     add: add recipe
     back: back to cookbook
     search_label: Filter recipes
-    search_placeholder: Search...
+    search_placeholder: Find recipes
 
   new:
     title: Add a new recipe

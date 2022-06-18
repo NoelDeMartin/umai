@@ -7,6 +7,7 @@ export interface IFocusable {
     getRootElement(): HTMLElement | null;
     focus(options?: Partial<FocusOptions>): void;
     isFocused(): boolean;
+    blur(): void;
     scrollIntoView(): void;
 }
 
@@ -19,6 +20,7 @@ export function focusable(element: Ref<IFocusable | null>): IFocusable {
         getRootElement: () => element.value?.getRootElement() ?? null,
         focus: options => element.value?.focus(options),
         isFocused: () => !!element.value?.isFocused(),
+        blur: () => element.value?.blur(),
         scrollIntoView: () => element.value?.scrollIntoView(),
     };
 }
@@ -41,6 +43,14 @@ export function focusableElement(element: Ref<HTMLElement | null> | (() => HTMLE
             element.focus();
         },
         isFocused: () => !!getElement()?.matches(':focus'),
+        blur() {
+            const element = getElement();
+
+            if (!element)
+                return;
+
+            element.blur();
+        },
         scrollIntoView: () => getElement()?.scrollIntoView(),
     };
 }

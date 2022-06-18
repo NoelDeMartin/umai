@@ -1,7 +1,7 @@
 <template>
-    <BaseHeading id="home-title">
+    <HomeHeading>
         {{ $t('home.createCookbook.title') }}
-    </BaseHeading>
+    </HomeHeading>
     <CoreForm class="flex flex-col space-y-2" :form="form" @submit="submit()">
         <p class="prose">
             {{ $t('home.createCookbook.message') }}

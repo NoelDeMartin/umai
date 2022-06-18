@@ -155,7 +155,7 @@ describe('Authentication', () => {
         cy.currentElement().type('Broth{enter}');
         cy.currentElement().type('Noodles');
         cy.press('Create recipe');
-        cy.see('What will you cook today?');
+        cy.see('New recipe');
 
         // Act - First edit
         cy.press('Ramen');

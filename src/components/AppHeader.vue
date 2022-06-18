@@ -23,9 +23,10 @@
                         class="flex absolute left-0 top-1/2 w-full text-gray-900 -translate-y-1/2"
                     >
                         <router-link
+                            v-wobbly-border
                             :to="{ name: 'home' }"
                             title="Umai"
-                            class="flex justify-center items-center space-x-2"
+                            class="flex ring-primary-100 justify-center items-center space-x-2 focus-visible:outline-none focus-visible:bg-primary-100 focus-visible:ring-8"
                         >
                             <i-app-umai class="mr-2 w-36 h-12 fill-primary-600" />
                         </router-link>

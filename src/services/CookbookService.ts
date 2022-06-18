@@ -39,6 +39,10 @@ export default class CookbookService extends Service<State, ComputedState> {
 
     public static persist: Array<keyof State> = ['remoteCookbookUrl'];
 
+    public get isReady(): boolean {
+        return this.cookbook.isResolved();
+    }
+
     public async createRemote(name: string, storageUrl: string): Promise<void> {
         const user = Auth.requireUser();
         const engine = Auth.requireAuthenticator().engine;

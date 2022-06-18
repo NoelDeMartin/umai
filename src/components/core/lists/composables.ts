@@ -121,6 +121,9 @@ export function useList(
         isFocused() {
             return !!$root.value?.querySelector(':focus');
         },
+        blur() {
+            $root.value?.querySelector<HTMLElement>(':focus')?.blur();
+        },
         scrollIntoView() {
             $addButton.value?.scrollIntoView();
         },

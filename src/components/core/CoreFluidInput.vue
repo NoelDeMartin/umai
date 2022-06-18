@@ -37,7 +37,8 @@ import { measureHTMLDimensions } from '@/framework/utils/dom';
 import { mixedProp, stringProp } from '@/framework/utils/vue';
 import { focusable } from '@/framework/components/headless/';
 import type IHeadlessInput from '@/framework/components/headless/HeadlessInput';
-import type { IFocusable } from '@/framework/components/headless/';
+
+import type ICoreFluidInput from './CoreFluidInput';
 
 export default defineComponent({ inheritAttrs: false });
 </script>
@@ -66,15 +67,18 @@ const fillerClasses = $computed(
 );
 const fillerContent = $computed(() => $root?.value || placeholder || ' ');
 const minWidth = $computed(() => {
-    if (!attrs.placeholder)
+    if (!placeholder)
         return 60;
 
-    return measureHTMLDimensions(`<span class="${fillerClasses}">${attrs.placeholder}</span>`).width;
+    return measureHTMLDimensions(`<span class="${fillerClasses}">${placeholder}</span>`).width;
 });
 
-defineExpose<IFocusable>({
+defineExpose<ICoreFluidInput>({
     ...focusable($$($root)),
 
+    get minWidth() {
+        return minWidth;
+    },
     getRootElement() {
         return $wrapper;
     },

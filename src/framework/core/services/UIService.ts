@@ -8,7 +8,7 @@ import LoadingModal from '@/framework/components/LoadingModal.vue';
 import MarkdownModal from '@/framework/components/MarkdownModal.vue';
 import NotFound from '@/framework/components/NotFound.vue';
 import Service from '@/framework/core/Service';
-import type { IService } from '@/framework/core/Service';
+import type { ComputedStateDefinitions, IService } from '@/framework/core/Service';
 
 import ErrorReportModal from '@/components/modals/ErrorReportModal.vue';
 
@@ -17,14 +17,27 @@ interface State {
     loadingModal: Modal | null;
     modals: Modal[];
     snackbars: Snackbar[];
+    layout: Layout;
+}
+
+interface ComputedState {
+    isMobile: boolean;
+    isDesktop: boolean;
+}
+
+interface ModalCallbacks<T=unknown> {
+    willClose(result: T | undefined): void;
+    closed(result: T | undefined): void;
 }
 
 type ModalProps<MC> = MC extends ModalComponent<infer P, unknown> ? P : never;
 type ModalResult<MC> = MC extends ModalComponent<Record<string, unknown>, infer R> ? R : never;
 
-interface ModalCallbacks<T=unknown> {
-    willClose(result: T | undefined): void;
-    closed(result: T | undefined): void;
+const MOBILE_BREAKPOINT = 768;
+
+const enum Layout {
+    Mobile = 'mobile',
+    Desktop = 'desktop'
 }
 
 export interface Modal<T = unknown> {
@@ -76,7 +89,7 @@ export const enum ApplicationComponent {
     NotFound = 'not-found',
 }
 
-export default class UIService extends Service<State> {
+export default class UIService extends Service<State, ComputedState> {
 
     private modalCallbacks: Record<string, Partial<ModalCallbacks>> = {};
     private components: Record<ApplicationComponent, Component> = {
@@ -247,15 +260,46 @@ export default class UIService extends Service<State> {
         this.setState({ headerHeight: height });
     }
 
+    protected async boot(): Promise<void> {
+        await super.boot();
+
+        this.watchWindowMedia();
+    }
+
     protected getInitialState(): State {
         return {
             headerHeight: 0,
             loadingModal: null,
             modals: [],
             snackbars: [],
+            layout: this.getCurrentLayout(),
         };
+    }
+
+    protected getComputedStateDefinitions(): ComputedStateDefinitions<State, ComputedState> {
+        return {
+            isMobile: ({ layout }) => layout === Layout.Mobile,
+            isDesktop: ({ layout }) => layout === Layout.Desktop,
+        };
+    }
+
+    protected getCurrentLayout(): Layout {
+        if (window.innerWidth > MOBILE_BREAKPOINT) {
+            return Layout.Desktop;
+        }
+
+        return Layout.Mobile;
+    }
+
+    protected watchWindowMedia(): void {
+        const media = window.matchMedia(`(min-width: ${MOBILE_BREAKPOINT}px)`);
+        const updateState = () => this.setState({ layout: this.getCurrentLayout() });
+
+        media.addEventListener('change', updateState);
+
+        updateState();
     }
 
 }
 
-export default interface UIService extends IService<State> {}
+export default interface UIService extends IService<State, ComputedState> {}

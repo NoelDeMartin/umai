@@ -21,7 +21,7 @@
                     </div>
                 </div>
                 <div v-else aria-hidden="true">
-                    <i-zondicons-cog class="w-6 h-6" />
+                    <i-pepicons-gear class="w-6 h-6" />
                 </div>
             </MenuButton>
         </div>

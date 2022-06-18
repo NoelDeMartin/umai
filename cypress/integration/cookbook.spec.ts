@@ -29,7 +29,7 @@ describe('Cookbook', () => {
         cy.currentElement().type('Boil the noodles{enter}');
         cy.currentElement().type('Dip them into the broth');
         cy.press('Create recipe');
-        cy.see('What will you cook today?');
+        cy.see('New recipe');
         cy.see('Ramen');
         cy.reload();
 

@@ -2,17 +2,13 @@
     <main
         v-element-transitions="{
             enter: {
-                'recipes.show': fadeInCookbookLink,
-                'recipes.create': () => $elementTransitions.waitElementsReady('recipe-form'),
+                'recipes.show': () => $elementTransitions.waitElementsGone('recipe-details'),
+                'recipes.create': () => $elementTransitions.waitElementsGone('recipe-form'),
                 '*': $elementTransitions.fadeIn,
             },
             leave: {
-                'recipes.show': fadeOutCookbookLink,
-                'recipes.create': async ($wrapper: HTMLElement) => {
-                    $wrapper.classList.add('flex');
-
-                    await $elementTransitions.waitElementsReady('recipe-form');
-                },
+                'recipes.show': () => $elementTransitions.waitElementsReady('recipe-details'),
+                'recipes.create':() => $elementTransitions.waitElementsReady('recipe-form'),
                 '*': $elementTransitions.fadeOut,
             },
         }"
@@ -20,30 +16,9 @@
         aria-labelledby="#home-title"
     >
         <HomeOnboarding v-if="$app.isOnboarding" />
-        <HomeCreateCookbook v-else-if="$auth.loggedIn && !$cookbook.cookbook.isResolved()" />
+        <HomeCreateCookbook v-else-if="$auth.loggedIn && !$cookbook.isReady" />
         <HomeLanding v-else />
     </main>
 </template>
 
-<script setup lang="ts">
-import { defineEnterTransition, defineLeaveTransition } from '@/framework/core/services/ElementTransitionsService';
-import { fadeIn, fadeOut } from '@/framework/utils/transitions';
-
-const fadeInCookbookLink = defineEnterTransition(async home => {
-    const cookbookLink = home.querySelector('#home--cookbook-link');
-
-    if (!cookbookLink)
-        return;
-
-    await fadeIn(cookbookLink as HTMLElement, 700);
-});
-
-const fadeOutCookbookLink = defineLeaveTransition(async wrapper => {
-    const cookbookLink = wrapper.querySelector('#home--cookbook-link');
-
-    if (!cookbookLink)
-        return;
-
-    await fadeOut(cookbookLink as HTMLElement, 700);
-});
-</script>
+<script setup lang="ts"></script>

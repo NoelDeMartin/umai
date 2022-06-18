@@ -100,6 +100,12 @@ export default class ElementTransitionsService extends Service {
         });
     }
 
+    public async waitElementsGone(name: string): Promise<void> {
+        name;
+
+        // TODO
+    }
+
     public async waitElementsReady(name: string): Promise<void> {
         await Promise.all(
             arr(this.activeElements)
