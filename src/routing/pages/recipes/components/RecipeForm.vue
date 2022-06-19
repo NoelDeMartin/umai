@@ -4,8 +4,14 @@
             name: 'recipe-form',
             id: recipe?.url ?? recipeUrl,
             transitions: {
-                enter: enterTransition,
-                leave: leaveTransition,
+                enter: {
+                    'recipes.show': enterFromDetails,
+                    '*': enterTransition,
+                },
+                leave: {
+                    'recipes.show': leaveToDetails,
+                    '*': leaveTransition,
+                },
                 'recipe-card': transitionToCard,
             },
         }"
@@ -90,7 +96,7 @@
                         tinted
                         @click="initializeIngredients()"
                     >
-                        <i-pepicons-plus class="w-4 h-4" aria-hidden="true" />
+                        <i-pepicons-cart class="w-4 h-4" aria-hidden="true" />
                         <span class="ml-1">{{ $t('recipes.ingredients_set') }}</span>
                     </CoreButton>
                     <CoreButton
@@ -99,7 +105,7 @@
                         tinted
                         @click="initializeInstructions()"
                     >
-                        <i-pepicons-plus class="w-4 h-4" aria-hidden="true" />
+                        <i-pepicons-file class="w-4 h-4" aria-hidden="true" />
                         <span class="ml-1">{{ $t('recipes.instructions_set') }}</span>
                     </CoreButton>
                 </div>
@@ -133,38 +139,29 @@
             </template>
 
             <template #metadata>
-                <ul class="hidden mb-2 space-y-2 text-gray-700 md:block">
-                    <li class="flex items-center space-x-1">
-                        <i-pepicons-knive-fork class="w-4 h-4 mt-0.5" aria-hidden="true" />
-                        <strong>{{ $t('recipes.servings') }}</strong>
-                        <div class="flex-grow" />
+                <RecipePageMetadata class="w-full">
+                    <template #servings>
                         <CoreFluidInput
                             name="servings"
                             class="text-right bg-transparent"
                             :placeholder="$t('recipes.servings_placeholder')"
                         />
-                    </li>
-                    <li class="flex items-center space-x-1">
-                        <i-pepicons-clock class="w-4 h-4 mt-0.5" aria-hidden="true" />
-                        <strong>{{ $t('recipes.prepTime') }}</strong>
-                        <div class="flex-grow" />
+                    </template>
+                    <template #prepTime>
                         <CoreFluidInput
                             name="prepTime"
                             class="text-right bg-transparent"
                             :placeholder="$t('recipes.prepTime_placeholder')"
                         />
-                    </li>
-                    <li class="flex items-center space-x-1">
-                        <i-pepicons-clock class="w-4 h-4 mt-0.5" aria-hidden="true" />
-                        <strong>{{ $t('recipes.cookTime') }}</strong>
-                        <div class="flex-grow" />
+                    </template>
+                    <template #cookTime>
                         <CoreFluidInput
                             name="cookTime"
                             class="text-right bg-transparent"
                             :placeholder="$t('recipes.cookTime_placeholder')"
                         />
-                    </li>
-                </ul>
+                    </template>
+                </RecipePageMetadata>
             </template>
 
             <template #urls>
@@ -174,23 +171,28 @@
                     tinted
                     @click="initializeExternalUrls()"
                 >
-                    <i-pepicons-plus class="w-4 h-4" aria-hidden="true" />
+                    <i-pepicons-chain class="w-4 h-4" aria-hidden="true" />
                     <span class="ml-1">{{ $t('recipes.externalUrls_set') }}</span>
                 </CoreButton>
                 <CoreFluidInputList
                     v-else
                     ref="$externalUrls"
                     name="externalUrls"
+                    inputs-class="w-full"
                     :add-label="$t('recipes.externalUrl_add')"
                     :item-label="$t('recipes.externalUrl_label')"
                     :item-placeholder="$t('recipes.externalUrl_placeholder')"
                     :item-remove-label="$t('recipes.externalUrl_remove')"
                     :item-remove-a11y-label="$t('recipes.externalUrl_remove_a11y', { url: ':value' })"
-                />
+                >
+                    <template #marker>
+                        <i-pepicons-chain class="w-4 h-4" aria-hidden="true" />
+                    </template>
+                </CoreFluidInputList>
             </template>
         </RecipePage>
 
-        <div class="fixed flex justify-center inset-x-0 bottom-0 z-10 bg-primary-gray-300 recipe-form--footer">
+        <div class="fixed flex justify-center inset-x-0 bottom-0 z-30 bg-primary-gray-300 recipe-form--footer">
             <div class="mx-edge">
                 <div class="flex">
                     <div class="prose mr-8">
@@ -251,7 +253,13 @@ import Recipe from '@/models/Recipe';
 import CoreListItemValue from '@/components/core/lists/CoreListItemValue';
 
 import RecipeImageModal from './modals/RecipeImageFormModal.vue';
-import { enterTransition, leaveTransition, transitionToCard } from './RecipeForm.transitions';
+import {
+    enterFromDetails,
+    enterTransition,
+    leaveToDetails,
+    leaveTransition,
+    transitionToCard,
+} from './RecipeForm.transitions';
 import type { IRecipeImageFormModal } from './modals/RecipeImageFormModal';
 
 const { recipe } = defineProps({

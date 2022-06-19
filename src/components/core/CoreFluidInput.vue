@@ -8,7 +8,7 @@
         :error="error"
         @update:modelValue="$emit('update:modelValue', $event)"
     >
-        <div ref="$wrapper" class="relative">
+        <div ref="$wrapper" class="relative overflow-hidden" :class="wrapperClass">
             <HeadlessInputLabel v-if="label" class="sr-only">
                 {{ label }}
             </HeadlessInputLabel>
@@ -50,6 +50,7 @@ const { placeholder } = defineProps({
     placeholder: stringProp(),
     modelValue: mixedProp<string | number>([String, Number]),
     error: stringProp(),
+    wrapperClass: stringProp(),
 });
 
 defineEmits(['update:modelValue']);

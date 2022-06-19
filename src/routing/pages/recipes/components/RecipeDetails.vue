@@ -5,6 +5,9 @@
             id: recipe.url,
             transitions: {
                 enter: enterTransition,
+                leave: {
+                    'recipes.edit': $elementTransitions.fadeOut,
+                },
                 'recipe-card': transitionToCard,
             },
         }"
@@ -17,12 +20,25 @@
         </template>
 
         <template #actions>
-            <StrokeButton class="w-full" route="recipes.edit" :route-params="{ recipe: recipe.uuid }">
-                <i-zondicons-edit-pencil class="mr-2 w-4 h-4" /> {{ $t('recipes.edit') }}
-            </StrokeButton>
-            <StrokeButton class="mt-2 w-full" @click="$ui.openModal(ShareRecipeModal, { recipe })">
-                <i-zondicons-share class="mr-2 w-4 h-4" /> {{ $t('recipes.share') }}
-            </StrokeButton>
+            <div class="space-x-2 space-x-reverse flex flex-row-reverse justify-start w-full">
+                <CoreButton
+                    secondary
+                    class="h-12"
+                    route="recipes.edit"
+                    :route-params="{ recipe: recipe.uuid }"
+                >
+                    <i-pepicons-pen class="ml-2 w-4 h-4" aria-hidden="true" />
+                    <span class="mx-2 uppercase tracking-wider font-semibold text-sm">{{ $t('recipes.edit') }}</span>
+                </CoreButton>
+                <CoreButton
+                    secondary
+                    class="h-12"
+                    @click="$ui.openModal(ShareRecipeModal, { recipe })"
+                >
+                    <i-pepicons-share-android class="w-5 h-5 ml-2" aria-hidden="true" />
+                    <span class="mx-2 uppercase tracking-wider font-semibold text-sm">{{ $t('recipes.share') }}</span>
+                </CoreButton>
+            </div>
         </template>
     </RecipePage>
 </template>

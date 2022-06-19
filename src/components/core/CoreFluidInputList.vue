@@ -8,9 +8,15 @@
                 <li v-for="(item, index) of items" :key="item.id">
                     <CoreFluidInputListItem
                         :ref="el => el && ($inputs[index] = el as unknown as IFocusable)"
+                        class="w-full"
+                        :input-class="inputsClass"
                         v-bind="itemsProps[index]"
                         v-on="itemsEvents[index]"
-                    />
+                    >
+                        <template v-if="$slots.marker" #marker>
+                            <slot name="marker" />
+                        </template>
+                    </CoreFluidInputListItem>
                 </li>
             </transition-group>
         </ul>
@@ -28,12 +34,16 @@
 <script setup lang="ts">
 import { onBeforeUpdate } from 'vue';
 
+import { stringProp } from '@/framework/utils/vue';
 import type { IFocusable } from '@/framework/components/headless';
 
 import { animateItemEntrance } from '@/components/core/lists/animations';
 import { useList, useListEmits, useListProps } from '@/components/core/lists/composables';
 
-const props = defineProps(useListProps());
+const props = defineProps({
+    ...useListProps(),
+    inputsClass: stringProp(),
+});
 const emit = defineEmits(useListEmits());
 
 let $inputs = $ref<IFocusable[]>([]);

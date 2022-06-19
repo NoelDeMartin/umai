@@ -79,51 +79,32 @@
                             </svg>
                             <div class="relative">
                                 <slot name="metadata">
-                                    <table v-if="recipe?.servings || recipe?.prepTime || recipe?.cookTime" class="w-full">
-                                        <tr v-if="recipe.servings" class="h-10">
-                                            <th>
-                                                <div class="flex items-center space-x-2">
-                                                    <i-pepicons-knive-fork class="w-3 h-3" aria-hidden="true" />
-                                                    <span>{{ $t('recipes.servings') }}</span>
-                                                </div>
-                                            </th>
-                                            <td>{{ recipe.servings }}</td>
-                                        </tr>
-                                        <tr v-if="recipe.prepTime" class="h-10">
-                                            <th>
-                                                <div class="flex items-center space-x-2">
-                                                    <i-pepicons-clock class="w-3 h-3" aria-hidden="true" />
-                                                    <span>{{ $t('recipes.prepTime') }}</span>
-                                                </div>
-                                            </th>
-                                            <td>{{ recipe.prepTime }}</td>
-                                        </tr>
-                                        <tr v-if="recipe.cookTime" class="h-10">
-                                            <th>
-                                                <div class="flex items-center space-x-2">
-                                                    <i-pepicons-clock class="w-3 h-3" aria-hidden="true" />
-                                                    <span>{{ $t('recipes.cookTime') }}</span>
-                                                </div>
-                                            </th>
-                                            <td>{{ recipe.cookTime }}</td>
-                                        </tr>
-                                    </table>
+                                    <RecipePageMetadata v-if="recipe?.servings || recipe?.prepTime || recipe?.cookTime" class="w-full">
+                                        <template v-if="recipe.servings" #servings>
+                                            {{ recipe.servings }}
+                                        </template>
+                                        <template v-if="recipe.prepTime" #prepTime>
+                                            {{ recipe.prepTime }}
+                                        </template>
+                                        <template v-if="recipe.cookTime" #cookTime>
+                                            {{ recipe.cookTime }}
+                                        </template>
+                                    </RecipePageMetadata>
                                 </slot>
                             </div>
                         </div>
-                        <div class="mt-12">
-                            <slot name="urls">
-                                <ul v-if="externalUrls.length > 0" class="mb-4">
-                                    <li v-for="(externalUrl, index) of externalUrls" :key="index">
-                                        <BaseLink :url="externalUrl.url" class="flex items-center space-x-1 underline">
-                                            <i-zondicons-link class="w-4 h-4" aria-hidden="true" />
-                                            <span>{{ $t('recipes.externalUrl', { domain: externalUrl.domain }) }}</span>
-                                        </BaseLink>
-                                    </li>
-                                </ul>
-                            </slot>
-                            <slot name="actions" />
-                        </div>
+                        <div :class="metadataRows > 0 && 'mt-6'" />
+                        <slot name="urls">
+                            <ul v-if="externalUrls.length > 0" class="mb-4">
+                                <li v-for="(externalUrl, index) of externalUrls" :key="index">
+                                    <CoreLink :url="externalUrl.url" class="flex items-center space-x-1">
+                                        <i-pepicons-chain class="w-4 h-4" aria-hidden="true" />
+                                        <span>{{ $t('recipes.externalUrl', { domain: externalUrl.domain }) }}</span>
+                                    </CoreLink>
+                                </li>
+                            </ul>
+                        </slot>
+                        <slot name="actions" />
                     </div>
                 </div>
             </div>

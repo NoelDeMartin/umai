@@ -17,7 +17,7 @@
     >
         <HomeOnboarding v-if="$app.isOnboarding" />
         <HomeCreateCookbook v-else-if="$auth.loggedIn && !$cookbook.isReady" />
-        <HomeLanding v-else />
+        <HomeRecipes v-else />
     </main>
 </template>
 

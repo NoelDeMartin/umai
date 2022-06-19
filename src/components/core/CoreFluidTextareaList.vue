@@ -1,12 +1,12 @@
 <template>
     <div ref="$root">
         <span class="sr-only">{{ instructionsA11y }}</span>
-        <SortableList class="pl-0" @swapItems="swapItems">
+        <CoreSortableList class="pl-0" @swapItems="swapItems">
             <transition-group
                 move-class="transition-all duration-300"
                 @enter="animateItemEntrance($event as HTMLElement)"
             >
-                <SortableListItem
+                <CoreSortableListItem
                     v-for="(item, index) of items"
                     :key="item.id"
                     class="mt-4"
@@ -24,9 +24,9 @@
                         @swapUp="swapItems(index, index - 1, true)"
                         @swapDown="swapItems(index, index + 1, true)"
                     />
-                </SortableListItem>
+                </CoreSortableListItem>
             </transition-group>
-        </SortableList>
+        </CoreSortableList>
         <CoreButton
             ref="$addButton"
             class="mt-4"
