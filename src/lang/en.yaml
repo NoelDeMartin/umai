@@ -85,6 +85,7 @@ menu:
   log_in: Log in
   log_out: Log out
   settings: Settings
+  back: back to cookbook
 
 footer:
   about: about
@@ -98,12 +99,6 @@ footer:
   version_title: View release notes
 
 home:
-  title:
-    - What will you cook today?
-    - Are you hungry?
-  cookbook_link: View all recipes
-  shuffle: Shuffle
-  back: back home
 
   onboarding:
     welcome: With {umai}, you'll be able to manage all your recipes and share them with others. Take control of your diet, and start your culinary adventure!
@@ -136,13 +131,21 @@ home:
     info: The container will be created on {url}.
     submit: Go ahead!
 
+  recipes:
+    title:
+      - What will you cook today?
+      - Are you hungry?
+      - Here's your cookbook
+    create: New recipe
+    search_label: Filter recipes
+    search_placeholder: Find recipes
+
 recipes:
   cookTime: Cooking time
   prepTime: Preparation time
   servings: Servings
   externalUrl: recipe on {domain}
 
-  create: New recipe
   edit: Edit
   delete: Delete
   delete_confirm: |
@@ -223,13 +226,6 @@ recipes:
     updating: updating permissions
     error: error reading permissions
     warning: This recipe is private, remember to make it public before sharing it with someone else.
-
-  index:
-    title: Your cookbook
-    add: add recipe
-    back: back to cookbook
-    search_label: Filter recipes
-    search_placeholder: Find recipes
 
   new:
     title: Add a new recipe

@@ -12,14 +12,14 @@
             <div class="relative flex-grow h-full">
                 <transition
                     enter-active-class="transition duration-700"
-                    :enter-from-class="enterFromClasses"
+                    :enter-from-class="navigationButtonClasses.enterFrom"
                     enter-to-class="opacity-100"
                     leave-active-class="transition duration-700"
                     leave-from-class="opacity-100"
-                    :leave-to-class="leaveToClasses"
+                    :leave-to-class="navigationButtonClasses.leaveTo"
                 >
                     <div
-                        v-if="!$route.meta.fullBleedHeader || $app.onboardingCompleting"
+                        v-if="navigationButton === 'logo'"
                         class="flex absolute left-0 top-1/2 w-full text-gray-900 -translate-y-1/2"
                     >
                         <router-link
@@ -31,16 +31,14 @@
                             <i-app-umai class="mr-2 w-36 h-12 fill-primary-600" />
                         </router-link>
                     </div>
-                    <!-- TODO investigate inferring previous route after a reload, instead of defaulting to home -->
                     <button
-                        v-else
+                        v-else-if="navigationButton === 'back-arrow'"
                         type="button"
                         class="flex absolute left-0 top-1/2 items-center w-full text-white -translate-y-1/2"
-                        @click="$router.previousRoute ? $router.back() : $router.push({ name: 'recipes.index' })"
+                        @click="$router.previousRouteWas('home') ? $router.back() : $router.push({ name: 'home' })"
                     >
                         <span aria-hidden="true" class="mr-2">&larr; </span>
-                        <span v-if="$router.previousRouteWas('recipes.index')">{{ $t('home.back') }}</span>
-                        <span v-else>{{ $t('recipes.index.back') }}</span>
+                        <span>{{ $t('menu.back') }}</span>
                     </button>
                 </transition>
             </div>
@@ -53,20 +51,53 @@
 </template>
 
 <script setup lang="ts">
+import { watch } from 'vue';
+
+import App from '@/framework/core/facades/App';
 import Router from '@/framework/core/facades/Router';
 import UI from '@/framework/core/facades/UI';
-
 import { useResizeObserver } from '@/framework/utils/composition/observers';
 
+let navigationButtonClasses = $ref({ enterFrom: 'opacity-0', leaveTo: 'opacity-0' });
 const $header = $ref<HTMLElement | null>(null);
-const enterFromClasses = $computed(() => [
-    'opacity-0',
-    Router.currentRouteIs('recipes.show') ? 'translate-x-full' : '-translate-x-full',
-].join(' '));
-const leaveToClasses = $computed(() => [
-    'opacity-0',
-    Router.currentRouteIs('recipes.show') ? '-translate-x-full' : 'translate-x-full',
-].join(' '));
+const navigationButton = $computed(() => {
+    if (
+        App.isOnboarding ||
+        App.onboardingCompleting ||
+        Router.currentRouteIs(/recipes\.(edit|create)/)
+    ) {
+        return null;
+    }
+
+    if (!Router.currentRouteIs('home')) {
+        return 'back-arrow';
+    }
+
+    return 'logo';
+});
+
+watch($$(navigationButton), (newValue, oldValue) => {
+    navigationButtonClasses = (() => {
+        if (!oldValue) {
+            return {
+                enterFrom: 'opacity-0 -translate-x-full',
+                leaveTo: 'opacity-0 -translate-x-full',
+            };
+        }
+
+        if (newValue === 'logo') {
+            return {
+                enterFrom: 'opacity-0 -translate-x-full',
+                leaveTo: 'opacity-0 translate-x-full',
+            };
+        }
+
+        return {
+            enterFrom: 'opacity-0 translate-x-full',
+            leaveTo: 'opacity-0 -translate-x-full',
+        };
+    })();
+});
 
 useResizeObserver($$($header), $header => UI.updateHeaderHeight($header.clientHeight));
 </script>

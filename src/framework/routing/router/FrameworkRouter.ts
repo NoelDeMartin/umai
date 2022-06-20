@@ -1,4 +1,4 @@
-import { Storage, once } from '@noeldemartin/utils';
+import { Storage, once, toString } from '@noeldemartin/utils';
 import type { RouteLocationNormalized, RouteLocationRaw, Router } from 'vue-router';
 import type { SolidModel } from 'soukai-solid';
 
@@ -41,8 +41,12 @@ export default class FrameworkRouter {
         return this.previousRoute?.name === name;
     }
 
-    public currentRouteIs(this: Router, name: string): boolean {
-        return this.currentRoute.value.name === name;
+    public currentRouteIs(this: Router, name: string | RegExp): boolean {
+        if (typeof name === 'string') {
+            return this.currentRoute.value.name === name;
+        }
+
+        return name.test(toString(this.currentRoute.value.name));
     }
 
     private onCurrentRouteChanged(route: RouteLocationNormalized): void {

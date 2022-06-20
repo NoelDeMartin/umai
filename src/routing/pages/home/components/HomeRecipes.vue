@@ -4,14 +4,6 @@
             {{ title }}
         </HomeHeading>
         <div class="flex-grow" />
-        <CoreSearchBox
-            v-model="search"
-            class="!absolute right-0 top-1/2 -translate-y-1/2"
-            :label="$t('recipes.index.search_label')"
-            :placeholder="$t('recipes.index.search_placeholder')"
-            @focus="searching = true"
-            @blur="searching = false"
-        />
         <transition
             enter-active-class="transition duration-300"
             enter-from-class="opacity-0"
@@ -26,9 +18,17 @@
                 @click="$ui.openModal(CreateRecipeModal)"
             >
                 <i-pepicons-plus class="w-5 h-5" aria-hidden="true" />
-                <span class="ml-1 font-semibold uppercase text-xs tracking-wider">{{ $t('recipes.create') }}</span>
+                <span class="ml-1 font-semibold uppercase text-xs tracking-wider">{{ $t('home.recipes.create') }}</span>
             </CoreButton>
         </transition>
+        <CoreSearchBox
+            v-model="search"
+            class="!absolute right-0 top-1/2 -translate-y-1/2"
+            :label="$t('home.recipes.search_label')"
+            :placeholder="$t('home.recipes.search_placeholder')"
+            @focus="searching = true"
+            @blur="searching = false"
+        />
     </div>
     <RecipeCreateOptions v-if="$cookbook.recipes.isEmpty()" />
     <template v-else>
@@ -42,7 +42,7 @@
                 <div class="mx-4 w-full max-w-content" />
                 <BaseFloatingActionButton
                     class="pointer-events-auto"
-                    :label="$t('recipes.index.add')"
+                    :label="$t('home.recipes.create')"
                     @click="$ui.openModal(CreateRecipeModal)"
                 />
             </div>
@@ -79,7 +79,7 @@ function getTitle(): string {
     const titles = [];
 
     for (let i = 0; ; i++) {
-        const key = `home.title.${i}`;
+        const key = `home.recipes.title.${i}`;
 
         if (!I18n.hasMessage(key)) {
             break;
