@@ -85,28 +85,31 @@
                         v-if="!form.description && !writingDescription"
                         secondary
                         tinted
+                        class="px-4 space-x-2"
                         @click="focusDescription()"
                     >
                         <i-pepicons-pen class="w-4 h-4" aria-hidden="true" />
-                        <span class="ml-1">{{ $t('recipes.description_set') }}</span>
+                        <span>{{ $t('recipes.description_set') }}</span>
                     </CoreButton>
                     <CoreButton
                         v-if="form.ingredients.length === 0"
                         secondary
                         tinted
+                        class="px-4 space-x-2"
                         @click="initializeIngredients()"
                     >
                         <i-pepicons-cart class="w-4 h-4" aria-hidden="true" />
-                        <span class="ml-1">{{ $t('recipes.ingredients_set') }}</span>
+                        <span>{{ $t('recipes.ingredients_set') }}</span>
                     </CoreButton>
                     <CoreButton
                         v-if="form.instructions.length === 0"
                         secondary
                         tinted
+                        class="px-4 space-x-2"
                         @click="initializeInstructions()"
                     >
                         <i-pepicons-file class="w-4 h-4" aria-hidden="true" />
-                        <span class="ml-1">{{ $t('recipes.instructions_set') }}</span>
+                        <span>{{ $t('recipes.instructions_set') }}</span>
                     </CoreButton>
                 </div>
             </template>
@@ -223,7 +226,7 @@
                         class="focus:ring-offset-primary-gray-300"
                         @click="deleteRecipe()"
                     >
-                        <i-pepicons-trash class="w-4 h-4" />
+                        <i-pepicons-trash class="w-4 h-4" aria-hidden="true" />
                         <span class="ml-1">{{ $t('recipes.delete') }}</span>
                     </CoreButton>
                 </div>

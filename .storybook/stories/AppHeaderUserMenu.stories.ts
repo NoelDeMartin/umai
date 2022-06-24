@@ -3,7 +3,7 @@ import type { SolidUserProfile } from '@noeldemartin/solid-utils';
 import LocalStorageAuthenticator from '@/framework/auth/authenticators/LocalStorageAuthenticator';
 import { meta, story, template } from '@sb/support/helpers';
 
-import UserMenu from '@/components/UserMenu.vue';
+import AppHeaderUserMenu from '@/components/AppHeaderUserMenu.vue';
 
 enum User {
     Alice = 'alice',
@@ -45,8 +45,8 @@ const Template = template<Args>(({ user }) => {
     });
 
     return {
-        components: { UserMenu },
-        template: '<div class="flex justify-end"><UserMenu /></div>',
+        components: { AppHeaderUserMenu },
+        template: '<div class="flex justify-end"><AppHeaderUserMenu /></div>',
     };
 });
 
@@ -56,8 +56,8 @@ export const Anonymous = story(Template, { user: User.Anonymous });
 export const Guest = story(Template);
 
 export default meta<Args>({
-    component: UserMenu,
-    title: 'WIP/UserMenu',
+    component: AppHeaderUserMenu,
+    title: 'AppHeader/UserMenu',
     argTypes: {
         user: {
             control: { type: 'select' },

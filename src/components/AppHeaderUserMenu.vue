@@ -1,28 +1,13 @@
 <template>
     <Menu as="div" class="flex relative items-center">
         <div>
-            <MenuButton
-                :class="[
-                    'flex text-sm rounded-full',
-                    'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-indigo-600',
-                    'hover:outline-none hover:ring-2 hover:ring-offset-2 hover:ring-offset-white hover:ring-indigo-600',
-                ]"
-            >
-                <span class="sr-only">{{ $t('menu.open') }}</span>
-                <div v-if="$auth.isLoggedIn()" class="w-8 h-8 bg-gray-800 rounded-full" aria-hidden="true">
-                    <img
-                        v-if="$auth.user.avatarUrl"
-                        :src="$auth.user.avatarUrl"
-                        class="w-full h-full rounded-full"
-                        alt=""
-                    >
-                    <div v-else class="flex justify-center items-center w-full h-full font-bold text-white bg-indigo-400 rounded-full">
-                        {{ $auth.user.name?.[0]?.toUpperCase() ?? '?' }}
-                    </div>
-                </div>
-                <div v-else aria-hidden="true">
-                    <i-pepicons-gear class="w-6 h-6" />
-                </div>
+            <MenuButton as="template">
+                <AppHeaderButton
+                    :aria-label="$t('menu.open')"
+                    :title="$t('menu.open')"
+                >
+                    <i-pepicons-gear class="w-7 h-7" aria-hidden="true" />
+                </AppHeaderButton>
             </MenuButton>
         </div>
         <transition

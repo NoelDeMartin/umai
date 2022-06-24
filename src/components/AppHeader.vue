@@ -31,20 +31,24 @@
                             <i-app-umai class="mr-2 w-36 h-12 fill-primary-600" />
                         </router-link>
                     </div>
-                    <button
+                    <div
                         v-else-if="navigationButton === 'back-arrow'"
-                        type="button"
-                        class="flex absolute left-0 top-1/2 items-center w-full text-white -translate-y-1/2"
-                        @click="$router.previousRouteWas('home') ? $router.back() : $router.push({ name: 'home' })"
+                        class="flex absolute left-0 top-1/2 items-center -translate-y-1/2 w-full"
                     >
-                        <span aria-hidden="true" class="mr-2">&larr; </span>
-                        <span>{{ $t('menu.back') }}</span>
-                    </button>
+                        <CoreButton
+                            clear
+                            class="text-white hover:bg-transparent focus:bg-transparent focus:ring-0 focus:ring-offset-0 focus-visible:bg-black/20 focus:hover:bg-transparent"
+                            @click="$router.previousRouteWas('home') ? $router.back() : $router.push({ name: 'home' })"
+                        >
+                            <span aria-hidden="true" class="mr-2">&larr; </span>
+                            <span>{{ $t('menu.back') }}</span>
+                        </CoreButton>
+                    </div>
                 </transition>
             </div>
             <div class="flex space-x-2">
-                <CloudStatus v-if="!$auth.dismissed" />
-                <UserMenu />
+                <AppHeaderCloudStatus v-if="!$auth.dismissed" />
+                <AppHeaderUserMenu />
             </div>
         </div>
     </header>

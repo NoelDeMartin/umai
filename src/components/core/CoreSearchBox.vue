@@ -31,7 +31,7 @@
                 :title="label"
                 @click="activate"
             >
-                <i-pepicons-loop class="w-6 h-6" />
+                <i-pepicons-loop class="w-7 h-7" aria-hidden="true" />
             </CoreButton>
         </transition>
     </div>

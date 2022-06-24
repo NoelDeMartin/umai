@@ -42,7 +42,7 @@ const frameworkHandler: ErrorHandler = error => {
 
 function setUpErrorHandler(baseHandler: ErrorHandler = (() => false)): ErrorHandler {
     return tap(error => baseHandler(error) || frameworkHandler(error), errorHandler => {
-        window.onerror = errorHandler;
+        window.onerror = (message, _, __, ___, error) => errorHandler(error ?? message);
         window.onunhandledrejection = event => errorHandler(event.reason);
     });
 }

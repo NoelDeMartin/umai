@@ -2,7 +2,6 @@
     <HeadlessButton
         ref="$root"
         v-wobbly-border="wobblyBorder"
-        class="inline-flex items-center px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2"
         :class="computedClasses"
     >
         <slot />
@@ -10,7 +9,8 @@
 </template>
 
 <script setup lang="ts">
-import { booleanProp, enumProp, objectProp } from '@/framework/utils/vue';
+import TailwindCSS from '@/framework/utils/tailwindcss';
+import { booleanProp, enumProp, objectProp, stringProp } from '@/framework/utils/vue';
 import { focusable } from '@/framework/components/headless';
 import type { IFocusable } from '@/framework/components/headless';
 
@@ -18,8 +18,9 @@ import type { WobblyBorderOptions } from '@/directives/wobbly-border';
 
 import { CoreAlignment, CoreColor } from './index';
 
-const { color, alignment, secondary, tinted, clear } = defineProps({
+const { color, class: customClasses, alignment, secondary, tinted, clear } = defineProps({
     color: enumProp(CoreColor),
+    class: stringProp(''),
     alignment: enumProp(CoreAlignment),
     secondary: booleanProp(),
     tinted: booleanProp(),
@@ -112,7 +113,17 @@ const style: Style = $computed(() => {
 
     return Style.Primary;
 });
-const computedClasses: string = $computed(() => `${alignmentClasses[alignment]} ${getColorClasses(color)}`);
+const computedClasses: string = $computed(() => {
+    const defaultClasses = [
+        'inline-flex items-center px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2',
+        alignmentClasses[alignment],
+        getColorClasses(color),
+    ].join(' ');
+
+    return customClasses
+        ? TailwindCSS.mergeClasses(defaultClasses, customClasses)
+        : defaultClasses;
+});
 
 defineExpose<IFocusable>(focusable($$($root)));
 </script>

@@ -4,7 +4,7 @@ import { CloudStatus as CloudStatusEnum } from '@/framework/core/services/CloudS
 import { fakeRemoteModel } from '@/framework/testing/model-helpers';
 import { meta, story, template } from '@sb/support/helpers';
 
-import CloudStatus from '@/components/CloudStatus.vue';
+import AppHeaderCloudStatus from '@/components/AppHeaderCloudStatus.vue';
 
 interface Args {
     status: CloudStatusEnum;
@@ -18,7 +18,7 @@ const Template = template<Args>(({ status, dirtyRemoteModels }) => {
     });
 
     return {
-        components: { CloudStatus },
+        components: { CloudStatus: AppHeaderCloudStatus },
         template: '<CloudStatus />',
     };
 });
@@ -31,8 +31,8 @@ export const Offline = story(Template, { status: CloudStatusEnum.Offline });
 export const Disconnected = story(Template, { status: CloudStatusEnum.Disconnected });
 
 export default meta<Args>({
-    component: CloudStatus,
-    title: 'WIP/CloudStatus',
+    component: AppHeaderCloudStatus,
+    title: 'AppHeader/CloudStatus',
     argTypes: {
         status: {
             control: { type: 'select' },

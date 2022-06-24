@@ -26,6 +26,18 @@ function measurePixels(css: string): number {
     return tap(ruler.clientWidth, () => ruler.remove());
 }
 
+function classifyClasses(classes: string[]): Record<string, string[]> {
+    return classes.reduce((classified, className) => {
+        const group = className.match(
+            /((hover|focus):)*(px-|text-(xs|md|lg|(\d)*xl)|text-|bg-|ring-offset-(\d)+|ring-offset-|ring-(\d)+|ring-)/,
+        )?.[0]?.replace(/\d+/, '[digits]')?.replace(/xs|md|lg|(\d)*xl/, '[size]') ?? 'others';
+
+        (classified[group] ??= []).push(className);
+
+        return classified;
+    }, {} as Record<string, string[]>);
+}
+
 export default {
     css(key: string): string {
         if (/^spacing\.\d+$/.test(key))
@@ -35,6 +47,19 @@ export default {
         const value = key.split('.').reduce((value, part) => value?.[part], config as any);
 
         return typeof value === 'string' ? value : '0px';
+    },
+    mergeClasses(...classes: string[]): string {
+        const mergedClasses = classes.reduce((merged, classes) => {
+            const classified = classifyClasses(classes.split(' '));
+
+            classified.others?.push(...merged.others ?? []);
+
+            Object.assign(merged, classified);
+
+            return merged;
+        }, {} as Record<string, string[]>);
+
+        return Object.values(mergedClasses).map(classes => classes.join(' ')).join(' ');
     },
     pixels(key: string): number {
         return memoizedPixels[key] ??= measurePixels(this.css(key));

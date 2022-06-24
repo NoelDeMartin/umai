@@ -14,7 +14,7 @@
         >
             <CoreButton
                 v-if="$ui.isDesktop && !searching"
-                class="mr-13 h-9"
+                class="mr-14 h-9"
                 @click="$ui.openModal(CreateRecipeModal)"
             >
                 <i-pepicons-plus class="w-5 h-5" aria-hidden="true" />
