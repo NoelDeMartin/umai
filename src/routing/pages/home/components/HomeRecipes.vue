@@ -13,7 +13,7 @@
             leave-to-class="opacity-0"
         >
             <CoreButton
-                v-if="$ui.isDesktop && !searching"
+                v-if="$ui.isDesktop && !searching && !search"
                 class="mr-14 h-9"
                 @click="$ui.openModal(CreateRecipeModal)"
             >
@@ -33,6 +33,26 @@
     <RecipeCreateOptions v-if="$cookbook.recipes.isEmpty()" />
     <template v-else>
         <RecipesGrid :recipes="filteredRecipes" class="w-full" />
+        <transition
+            enter-to-class="opacity-100"
+            enter-active-class="transition-opacity duration-500"
+            enter-from-class="opacity-0"
+            leave-to-class="opacity-0"
+            leave-active-class="transition-opacity duration-500"
+            leave-from-class="opacity-100"
+        >
+            <div
+                v-if="filteredRecipes.length === 0"
+                class="absolute top-12 bottom-0 inset-x-0 flex-grow items-center justify-center flex"
+            >
+                <div class="prose">
+                    <CoreMarkdown
+                        class="text-2xl font-medium tracking-wide leading-snug text-center"
+                        :text="$t('home.recipes.empty', { search: trimmedSearch })"
+                    />
+                </div>
+            </div>
+        </transition>
         <div
             v-if="$ui.isMobile"
             class="flex fixed right-0 bottom-0 z-40 justify-center p-5 w-screen pointer-events-none recipes-index--fab"
@@ -66,8 +86,9 @@ const searchIndex = $computed(() => Cookbook.recipes.map(recipe => ({
     recipe,
     searchableText: stringToSlug(recipe.name).replaceAll('-', ''),
 })));
+const trimmedSearch = $computed(() => search.trim());
 const filteredRecipes = $computed(() => {
-    const searchQuery = search.trim();
+    const searchQuery = trimmedSearch;
     const filteredSearchIndex = searchQuery.length
         ? searchIndex.filter(({ searchableText }) => searchableText.includes(searchQuery))
         : searchIndex;

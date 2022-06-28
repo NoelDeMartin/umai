@@ -139,6 +139,7 @@ home:
     create: New recipe
     search_label: Filter recipes
     search_placeholder: Find recipes
+    empty: You don't have any recipes called **{search}**, try with something else
 
 recipes:
   cookTime: Cooking time

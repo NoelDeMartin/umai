@@ -11,7 +11,7 @@
                     type="search"
                     :placeholder="placeholder"
                     :model-value="modelValue"
-                    @blur="active = !!modelValue, $emit('blur')"
+                    @blur="onBlur"
                     @focus="$emit('focus')"
                     @keyup.prevent.esc="clear"
                     @update:modelValue="$emit('update:modelValue', $event)"
@@ -46,7 +46,7 @@ import type { IFocusable } from '@/framework/components/headless';
 
 import type ICoreFluidInput from '@/components/core/CoreFluidInput';
 
-defineProps({
+const { modelValue } = defineProps({
     modelValue: requiredStringProp(),
     label: stringProp('Search'),
     placeholder: stringProp('Search...'),
@@ -67,7 +67,10 @@ async function activate() {
 }
 
 async function clear() {
+    active = false;
+
     emit('update:modelValue', '');
+    emit('blur');
 
     await nextTick();
 
@@ -140,5 +143,13 @@ async function hideButton($element: HTMLElement) {
             opacity: ['1', '0'],
         },
     });
+}
+
+function onBlur() {
+    active = !!modelValue;
+
+    modelValue.trim().length === 0
+        ? clear()
+        : emit('blur');
 }
 </script>
