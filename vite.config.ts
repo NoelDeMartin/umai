@@ -41,6 +41,7 @@ export default defineConfig({
                 'src/components',
                 'src/routing/pages',
             ],
+            dts: false,
             deep: true,
         }),
         {

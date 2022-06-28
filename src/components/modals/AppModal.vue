@@ -1,66 +1,42 @@
 <template>
-    <TransitionRoot as="template" :show="modal.open">
-        <Dialog
-            as="div"
-            class="flex overflow-y-auto fixed inset-0 z-40 justify-center items-center"
-            @close="cancellable && $ui.closeModal(modal.id)"
-        >
-            <Portal v-if="$ui.snackbars.length > 0 && !childModal">
-                <AppSnackbars />
-            </Portal>
-            <TransitionChild
-                as="template"
-                enter="ease-out duration-300"
-                enter-from="opacity-0"
-                enter-to="opacity-100"
-                leave="ease-in duration-200"
-                leave-from="opacity-100"
-                leave-to="opacity-0"
-            >
-                <DialogOverlay class="fixed inset-0 bg-black bg-opacity-30 transition-opacity" />
-            </TransitionChild>
-
-            <!-- TODO close button (focusable element!) -->
-
-            <TransitionChild
-                as="template"
-                enter="ease-out duration-300"
-                enter-from="opacity-0 scale-90"
-                enter-to="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leave-from="opacity-100 scale-100"
-                leave-to="opacity-0 scale-90"
-            >
-                <div
-                    class="flex flex-col overflow-hidden relative max-h-[90vh] bg-white shadow-xl transition-all m-edge rounded-md"
-                    v-bind="$attrs"
-                >
-                    <DialogTitle v-if="title || $slots.title" as="h2" class="px-4 pt-4 text-lg font-medium leading-6 text-gray-900">
-                        <slot name="title">
-                            {{ title }}
-                        </slot>
-                    </DialogTitle>
-                    <div ref="content" :class="['flex overflow-auto flex-col mt-2 max-h-full', noPadding || 'px-4 pb-4']">
-                        <slot :close="(result?: unknown) => $ui.closeModal(modal.id, result)" />
-                    </div>
+    <Dialog
+        ref="$root"
+        :open="true"
+        class="relative z-50 opacity-0 pointer-events-none"
+        @close="cancellable && close()"
+    >
+        <div class="fixed inset-0 flex items-center justify-center m-edge">
+            <DialogPanel class="app-modal--panel max-w-full rounded-md shadow-xl bg-white">
+                <!-- TODO close button (focusable element!) -->
+                <DialogTitle v-if="title || $slots.title" as="h2" class="px-4 pt-4 text-lg font-medium leading-6 text-gray-900">
+                    <slot name="title">
+                        {{ title }}
+                    </slot>
+                </DialogTitle>
+                <div ref="content" :class="['flex overflow-auto flex-col mt-2 max-h-full', noPadding || 'px-4 pb-4']">
+                    <slot :close="close" />
                 </div>
-            </TransitionChild>
-            <component
-                :is="childModal.component"
-                v-if="childModal"
-                :child-index="childIndex + 1"
-                :modal="childModal"
-                v-bind="childModal.props"
-            />
-        </Dialog>
-    </TransitionRoot>
+                <component
+                    :is="childModal.component"
+                    v-if="childModal"
+                    :child-index="childIndex + 1"
+                    :modal="childModal"
+                    v-bind="childModal.props"
+                />
+            </DialogPanel>
+        </div>
+    </Dialog>
 </template>
 
 <script setup lang="ts">
 import type { PropType } from 'vue';
 
+import Events from '@/framework/core/facades/Events';
 import UI from '@/framework/core/facades/UI';
+import { useEvent } from '@/framework/utils/composition/events';
 import type { Modal } from '@/framework/core/services/UIService';
+
+import { hideModal, showModal } from './AppModal.transitions';
 
 const { modal, childIndex } = defineProps({
     modal: {
@@ -85,5 +61,66 @@ const { modal, childIndex } = defineProps({
     },
 });
 
+let hidden = $ref(true);
+let closed = $ref(false);
+const $root = $ref<{ $el?: HTMLElement } | null>(null);
 const childModal = $computed(() => UI.modals[childIndex] ?? null);
+
+async function hide(): Promise<void> {
+    if (!$root?.$el) {
+        return;
+    }
+
+    hidden || await hideModal($root.$el, 300);
+
+    hidden = true;
+}
+
+async function show(): Promise<void> {
+    if (!$root?.$el) {
+        return;
+    }
+
+    hidden && await showModal($root.$el, 200);
+
+    hidden = false;
+}
+
+async function close(result?: unknown) {
+    if (closed) {
+        return;
+    }
+
+    Events.emit('modal-will-close', { modal, result });
+
+    await hide();
+
+    closed = true;
+
+    Events.emit('modal-closed', { modal, result });
+}
+
+useEvent('close-modal', async ({ id, result }) => {
+    if (id !== modal.id) {
+        return;
+    }
+
+    await close(result);
+});
+
+useEvent('hide-modal', async ({ id }) => {
+    if (id !== modal.id) {
+        return;
+    }
+
+    await hide();
+});
+
+useEvent('show-modal', async ({ id }) => {
+    if (id !== modal.id) {
+        return;
+    }
+
+    await show();
+});
 </script>

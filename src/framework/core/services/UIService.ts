@@ -1,9 +1,10 @@
-import { after, arrayFirst, arrayReplace, arrayWithoutIndex, uuid } from '@noeldemartin/utils';
+import { PromisedValue, arrayWithoutIndex, uuid } from '@noeldemartin/utils';
 import { markRaw, nextTick } from 'vue';
 import type { Component } from 'vue';
 
 import ConfirmModal from '@/framework/components/ConfirmModal.vue';
 import Errors from '@/framework/core/facades/Errors';
+import Events from '@/framework/core/facades/Events';
 import LoadingModal from '@/framework/components/LoadingModal.vue';
 import MarkdownModal from '@/framework/components/MarkdownModal.vue';
 import NotFound from '@/framework/components/NotFound.vue';
@@ -14,7 +15,7 @@ import ErrorReportModal from '@/components/modals/ErrorReportModal.vue';
 
 interface State {
     headerHeight: number;
-    loadingModal: Modal | null;
+    loadingModal: PromisedValue<Modal> | null;
     modals: Modal[];
     snackbars: Snackbar[];
     layout: Layout;
@@ -40,11 +41,24 @@ const enum Layout {
     Desktop = 'desktop'
 }
 
+declare module '@/framework/core/services/EventsService' {
+
+    export interface EventsPayload {
+        'modal-will-close': { modal: Modal; result?: unknown };
+        'modal-closed': { modal: Modal; result?: unknown };
+        'close-modal': { id: string; result?: unknown };
+        'hide-modal': { id: string };
+        'show-modal': { id: string };
+        'show-overlays-backdrop': void;
+        'hide-overlays-backdrop': void;
+    }
+
+}
+
 export interface Modal<T = unknown> {
     id: string;
     props: Record<string, unknown>;
     component: Component;
-    open: boolean;
     beforeClose: Promise<T | undefined>;
     afterClose: Promise<T | undefined>;
 }
@@ -116,60 +130,29 @@ export default class UIService extends Service<State, ComputedState> {
         const modal: Modal<ModalResult<MC>> = {
             id,
             props: props ?? {},
-            open: false,
             component: markRaw(component),
             beforeClose: new Promise(resolve => callbacks.willClose = resolve),
             afterClose: new Promise(resolve => callbacks.closed = resolve),
         };
+        const activeModal = this.modals.at(-1);
+        const modals = this.modals.concat(modal);
 
-        this.modalCallbacks[id] = callbacks;
-
-        this.setState({ modals: this.modals.concat(modal) });
-
-        await nextTick();
-
-        const modals = this.modals.slice(0);
-        const modalProxy = modals.find(m => m.id === modal.id);
-
-        arrayReplace(modals, modalProxy, {
-            ...modal,
-            open: true,
-        });
+        this.modalCallbacks[modal.id] = callbacks;
 
         this.setState({ modals });
+
+        await nextTick();
+        await (activeModal && Events.emit('hide-modal', { id: activeModal.id }));
+        await Promise.all([
+            activeModal || Events.emit('show-overlays-backdrop'),
+            Events.emit('show-modal', { id: modal.id }),
+        ]);
 
         return modal;
     }
 
-    public async closeModal(id: string, result?: unknown, animate: boolean = true): Promise<void> {
-        const modal = arrayFirst(this.modals, modal => modal.id === id);
-
-        if (!modal)
-            return;
-
-        const callbacks = this.modalCallbacks[id];
-
-        delete this.modalCallbacks[id];
-
-        callbacks?.willClose && callbacks.willClose(result);
-
-        if (animate) {
-            const modals = this.modals.slice(0);
-            const modalProxy = modals.find(m => m.id === modal.id);
-
-            arrayReplace(modals, modalProxy, {
-                ...modal,
-                open: false,
-            });
-
-            this.setState({ modals });
-
-            await after({ milliseconds: 1000 });
-        }
-
-        this.setState({ modals: this.modals.filter(m => m.id !== modal.id) });
-
-        callbacks?.closed && callbacks.closed(result);
+    public async closeModal(id: string, result?: unknown): Promise<void> {
+        await Events.emit('close-modal', { id, result });
     }
 
     public async runOperation(
@@ -229,19 +212,26 @@ export default class UIService extends Service<State, ComputedState> {
 
     public async showLoading(text?: string): Promise<void> {
         if (this.loadingModal) {
-            this.loadingModal.props.text = text;
+            const loadingModal = await this.loadingModal;
+
+            loadingModal.props.text = text;
 
             return;
         }
 
-        this.loadingModal = await this.openModal(this.components[ApplicationComponent.LoadingModal], { text });
+        this.loadingModal = new PromisedValue();
+
+        this.loadingModal.resolve(
+            await this.openModal(this.components[ApplicationComponent.LoadingModal], { text }),
+        );
     }
 
     public async hideLoading(): Promise<void> {
-        const loadingModal = this.loadingModal;
-
-        if (!loadingModal)
+        if (!this.loadingModal) {
             return;
+        }
+
+        const loadingModal = await this.loadingModal;
 
         this.loadingModal = null;
 
@@ -264,6 +254,7 @@ export default class UIService extends Service<State, ComputedState> {
         await super.boot();
 
         this.watchWindowMedia();
+        this.watchModalEvents();
     }
 
     protected getInitialState(): State {
@@ -298,6 +289,28 @@ export default class UIService extends Service<State, ComputedState> {
         media.addEventListener('change', updateState);
 
         updateState();
+    }
+
+    private watchModalEvents(): void {
+        Events.on('modal-will-close', ({ modal, result }) => {
+            this.modalCallbacks[modal.id]?.willClose?.(result);
+
+            if (this.modals.length === 1) {
+                Events.emit('hide-overlays-backdrop');
+            }
+        });
+
+        Events.on('modal-closed', async ({ modal, result }) => {
+            this.setState({ modals: this.modals.filter(m => m.id !== modal.id) });
+
+            this.modalCallbacks[modal.id]?.closed?.(result);
+
+            delete this.modalCallbacks[modal.id];
+
+            const activeModal = this.modals.at(-1);
+
+            await (activeModal && Events.emit('show-modal', { id: activeModal.id }));
+        });
     }
 
 }

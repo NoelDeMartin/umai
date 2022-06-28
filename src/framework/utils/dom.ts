@@ -2,6 +2,7 @@ import { fail, objectWithoutEmpty, tap } from '@noeldemartin/utils';
 
 interface AnimateElementConfig {
     duration: number;
+    easing: 'ease-in' | 'ease-out';
     fill: FillMode;
     styles: PropertyIndexedKeyframes;
     classes: Partial<Record<keyof CSSStyleDeclaration, string[]>>;
@@ -102,7 +103,11 @@ export async function animateElement(element: HTMLElement, config: Partial<Anima
             }, {} as PropertyIndexedKeyframes),
             ...config.styles,
         }),
-        { duration: config.duration, fill: config.fill },
+        {
+            duration: config.duration,
+            fill: config.fill,
+            easing: config.easing,
+        },
     );
 
     await animation.finished;

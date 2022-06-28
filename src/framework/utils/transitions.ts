@@ -1,47 +1,87 @@
 import { animateElement } from '@/framework/utils/dom';
 
-export async function delay($element: HTMLElement, duration: number): Promise<void> {
+type TransitionOptions = {
+    duration: number;
+    easing?: 'ease-in' | 'ease-out';
+    fill?: FillMode;
+};
+type TransitionConfig = number | TransitionOptions;
+
+function animationOptions(config: TransitionConfig): TransitionOptions {
+    if (typeof config !== 'number') {
+        return config;
+    }
+
+    return { duration: config };
+}
+
+export async function delay($element: HTMLElement, config: TransitionConfig): Promise<void> {
     await animateElement($element, {
-        duration,
+        ...animationOptions(config),
         before: { styles: { opacity: '0' } },
         after: { resetStyles: true },
     });
 }
 
-export async function slideUp(el: HTMLElement, duration: number): Promise<void> {
-    await animateElement(el, {
-        duration,
-        styles: {
-            transform: [
-                'translateY(100%)',
-                'translateY(0)',
-            ],
-        },
-    });
-}
-
-export async function slideDown($element: HTMLElement, duration: number): Promise<void> {
+export async function fadeIn($element: HTMLElement, config: TransitionConfig): Promise<void> {
     await animateElement($element, {
-        duration,
-        styles: {
-            transform: [
-                'translateY(0)',
-                'translateY(100%)',
-            ],
-        },
-    });
-}
-
-export async function fadeIn($element: HTMLElement, duration: number): Promise<void> {
-    await animateElement($element, {
-        duration,
+        ...animationOptions(config),
         styles: { opacity: ['0', '1'] },
     });
 }
 
-export async function fadeOut($element: HTMLElement, duration: number): Promise<void> {
+export async function fadeOut($element: HTMLElement, config: TransitionConfig): Promise<void> {
     await animateElement($element, {
-        duration,
+        ...animationOptions(config),
         styles: { opacity: ['1', '0'] },
+    });
+}
+
+
+export async function scaleDown($element: HTMLElement, config: TransitionConfig): Promise<void> {
+    await animateElement($element, {
+        ...animationOptions(config),
+        styles: {
+            transform: [
+                'scale(1)',
+                'scale(.95)',
+            ],
+        },
+    });
+}
+
+export async function scaleUp($element: HTMLElement, config: TransitionConfig): Promise<void> {
+    await animateElement($element, {
+        ...animationOptions(config),
+        styles: {
+            transform: [
+                'scale(.95)',
+                'scale(1)',
+            ],
+        },
+    });
+}
+
+export async function slideUp($element: HTMLElement, config: TransitionConfig): Promise<void> {
+    await animateElement($element, {
+        ...animationOptions(config),
+        styles: {
+            transform: [
+                'translateY(100%)',
+                'translateY(0)',
+            ],
+        },
+    });
+}
+
+export async function slideDown($element: HTMLElement, config: TransitionConfig): Promise<void> {
+    await animateElement($element, {
+        ...animationOptions(config),
+        styles: {
+            transform: [
+                'translateY(0)',
+                'translateY(100%)',
+            ],
+        },
     });
 }
