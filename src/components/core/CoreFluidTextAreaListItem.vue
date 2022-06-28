@@ -1,6 +1,6 @@
 <template>
     <div ref="$root" class="relative group">
-        <CoreFluidTextarea
+        <CoreFluidTextArea
             ref="$textarea"
             v-bind="inputProps"
             v-on="inputEvents"

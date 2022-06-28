@@ -1,17 +1,17 @@
 import { meta, story } from '@sb/support/helpers';
 
-import CoreFluidTextareaList from '@/components/core/CoreFluidTextareaList.vue';
+import CoreFluidTextAreaList from '@/components/core/CoreFluidTextAreaList.vue';
 import CoreListItemValue from '@/components/core/lists/CoreListItemValue';
 
 const Meta = meta({
-    component: CoreFluidTextareaList,
-    title: 'Core/Fluid Textarea List',
+    component: CoreFluidTextAreaList,
+    title: 'Core/Fluid TextArea List',
 });
 
 export default Meta;
 
 export const Playground = story(() => ({
-    components: { CoreFluidTextareaList },
+    components: { CoreFluidTextAreaList },
     data: () => ({
         items: [
             new CoreListItemValue([
@@ -30,7 +30,7 @@ export const Playground = story(() => ({
     template: `
         <div class="w-full h-full p-8 overflow-scroll">
             <div class="prose mx-auto">
-                <CoreFluidTextareaList
+                <CoreFluidTextAreaList
                     ref="$root"
                     v-model="items"
                     add-label="Add Item"

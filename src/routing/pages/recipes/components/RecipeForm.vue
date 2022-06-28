@@ -50,7 +50,7 @@
 
                     <!-- TODO ideally, we wouldn't need to add padding and negative margin, but div height
                     is not calculated properly in the textarea (because of line-height shenanigans) -->
-                    <CoreFluidTextarea
+                    <CoreFluidTextArea
                         ref="$name"
                         name="name"
                         :placeholder="recipe ? '-' : $t('recipes.name_placeholder')"
@@ -62,7 +62,7 @@
             <template #description>
                 <div class="flex flex-col items-start space-y-3">
                     <div v-if="form.description || writingDescription" class="group relative w-full">
-                        <CoreFluidTextarea
+                        <CoreFluidTextArea
                             ref="$description"
                             name="description"
                             :label="$t('recipes.description_label')"
@@ -128,7 +128,7 @@
             </template>
 
             <template v-if="form.instructions.length > 0" #instructions>
-                <CoreFluidTextareaList
+                <CoreFluidTextAreaList
                     ref="$instructions"
                     name="instructions"
                     :instructions-a11y="$t('recipes.drag_instructions_a11y')"

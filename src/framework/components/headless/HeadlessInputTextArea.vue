@@ -18,6 +18,6 @@ import type { HeadlessInputController } from './HeadlessInput';
 
 const input = injectOrFail<HeadlessInputController>(
     'input',
-    '<HeadlessInputTextarea> must be a child of a <HeadlessInput>',
+    '<HeadlessInputTextArea> must be a child of a <HeadlessInput>',
 );
 </script>

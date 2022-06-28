@@ -2,7 +2,7 @@ import { defineComponent } from 'vue';
 
 import { meta, story } from '@sb/support/helpers';
 
-import CoreFluidTextarea from '@/components/core/CoreFluidTextarea.vue';
+import CoreFluidTextArea from '@/components/core/CoreFluidTextArea.vue';
 
 interface Args {
     value: string;
@@ -11,8 +11,8 @@ interface Args {
 }
 
 const Meta = meta<Args>({
-    component: CoreFluidTextarea,
-    title: 'Core/Fluid Textarea',
+    component: CoreFluidTextArea,
+    title: 'Core/Fluid TextArea',
     args: {
         value: [
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -30,11 +30,11 @@ const Meta = meta<Args>({
 });
 
 const UseCase = defineComponent({
-    components: { CoreFluidTextarea },
+    components: { CoreFluidTextArea },
     emits: ['update:modelValue'],
     props: Object.keys(Meta.argTypes ?? Meta.args ?? {}),
     template: `
-        <CoreFluidTextarea
+        <CoreFluidTextArea
             :placeholder="placeholder"
             :error="error"
             :modelValue="value"

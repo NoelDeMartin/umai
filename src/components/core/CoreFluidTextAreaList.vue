@@ -16,7 +16,7 @@
                             {{ index + 1 }}.
                         </span>
                     </template>
-                    <CoreFluidTextareaListItem
+                    <CoreFluidTextAreaListItem
                         :ref="el => el && ($textareas[index] = el as unknown as IFocusable)"
                         class="w-full"
                         v-bind="itemsProps[index]"

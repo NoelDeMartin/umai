@@ -106,17 +106,17 @@ export function useList(
             return $root.value ?? null;
         },
         focus(options = {}) {
-            const $lastTextarea = $itemInputs.value?.[$itemInputs.value.length - 1];
+            const $lastTextArea = $itemInputs.value?.[$itemInputs.value.length - 1];
             const $addButtonRoot = $addButton.value?.getRootElement();
             const scrollIntoView = options.scrollIntoView ?? true;
 
-            if (!$lastTextarea || !$addButtonRoot)
+            if (!$lastTextArea || !$addButtonRoot)
                 return;
 
             if (scrollIntoView && !elementIsInViewport($addButtonRoot))
                 this.scrollIntoView();
 
-            $lastTextarea.focus({ scrollIntoView: false });
+            $lastTextArea.focus({ scrollIntoView: false });
         },
         isFocused() {
             return !!$root.value?.querySelector(':focus');

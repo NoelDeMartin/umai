@@ -15,7 +15,7 @@
             <span ref="$filler" :class="fillerClasses">
                 {{ fillerContent }}
             </span>
-            <HeadlessInputTextarea
+            <HeadlessInputTextArea
                 v-bind="$attrs"
                 :rows="rows"
                 class="block w-full resize-none border-b-2 border-transparent caret-primary-500 focus:outline-none"

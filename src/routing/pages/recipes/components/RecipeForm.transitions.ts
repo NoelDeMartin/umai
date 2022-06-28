@@ -75,13 +75,13 @@ export const transitionToCard = defineElementTransition(async ($wrapper, $root, 
     const $headerTitle = document.createElement('div');
     const $headerTitleText = document.createElement('span');
     const $headerTitleLabel = requireChildElement($root, '.recipe-form--title-label');
-    const $headerTitleTextarea = requireChildElement<HTMLTextAreaElement>($headerTitleLabel, 'textarea');
+    const $headerTitleTextArea = requireChildElement<HTMLTextAreaElement>($headerTitleLabel, 'textarea');
     const $footer = requireChildElement($root, '.recipe-form--footer');
 
     $wrapper.classList.add('z-20');
     $headerTitle.setAttribute('class', 'text-4xl font-semibold text-white text-shadow');
     $headerTitle.append($headerTitleText);
-    $headerTitleText.innerText = $headerTitleTextarea.value;
+    $headerTitleText.innerText = $headerTitleTextArea.value;
     $headerTitleLabel.replaceWith($headerTitle);
     $footer.classList.add('z-20');
 
