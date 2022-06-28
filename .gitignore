@@ -1,9 +1,6 @@
+.env
+cypress/downloads
 cypress/screenshots
 dist/
 node_modules/
 pod/
-.env
-
-# Test generated files
-cypress/screenshots
-cypress/downloads
