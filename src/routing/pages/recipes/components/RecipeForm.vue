@@ -48,14 +48,13 @@
                 <label class="flex recipe-form--title-label">
                     <span class="sr-only">{{ $t('recipes.name_label') }}</span>
 
-                    <CoreFluidInput
+                    <!-- TODO ideally, we wouldn't need to add padding and negative margin, but div height
+                    is not calculated properly in the textarea (because of line-height shenanigans) -->
+                    <CoreFluidTextarea
                         ref="$name"
                         name="name"
-                        :placeholder="$t('recipes.name_placeholder')"
-                        :class="[
-                            'text-4xl text-white bg-transparent caret-primary-500',
-                            form.name && 'text-shadow font-semibold',
-                        ]"
+                        :placeholder="recipe ? '-' : $t('recipes.name_placeholder')"
+                        class="pb-2 -mb-2.5 text-4xl text-white placeholder:text-white placeholder:opacity-50 bg-transparent caret-primary-500 text-shadow font-semibold"
                     />
                 </label>
             </template>
