@@ -1,21 +1,16 @@
 <template>
-    <div v-safe-html="html" class="prose" @click="onClick($event)" />
+    <div v-safe-html="html" :class="raw || 'prose'" @click="onClick($event)" />
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue';
+import { booleanProp, objectProp, requiredStringProp } from '@/framework/utils/vue';
 
 import { renderMarkdown } from '@/utils/markdown';
 
 const { text, actions } = defineProps({
-    text: {
-        type: String,
-        default: null,
-    },
-    actions: {
-        type: Object as PropType<Record<string, () => unknown>>,
-        default: () => ({}),
-    },
+    text: requiredStringProp(),
+    actions: objectProp<Record<string, () => unknown>>(() => ({})),
+    raw: booleanProp(),
 });
 
 const html = $computed(() => renderMarkdown(text));

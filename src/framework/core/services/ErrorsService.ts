@@ -1,7 +1,7 @@
 import Service from '@/framework/core/Service';
 import UI from '@/framework/core/facades/UI';
 import { translate } from '@/framework/utils/translate';
-import { ApplicationComponent } from '@/framework/core/services/UIService';
+import { ApplicationComponent, SnackbarStyle } from '@/framework/core/services/UIService';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ErrorReason = string | Error | any;
@@ -34,15 +34,18 @@ export default class ErrorsService extends Service {
 
         const report = this.getErrorReport(error);
 
-        const snackbarId = UI.showSnackbar(translate('errors.notice'), [
-            {
-                text: translate('errors.viewDetails'),
-                handler: () => {
-                    UI.hideSnackbar(snackbarId);
-                    UI.openModal(UI.resolveComponent(ApplicationComponent.ErrorReportModal), { report });
+        const snackbarId = UI.showSnackbar(translate('errors.notice'), {
+            style: SnackbarStyle.Error,
+            actions: [
+                {
+                    text: translate('errors.viewDetails'),
+                    handler: () => {
+                        UI.hideSnackbar(snackbarId);
+                        UI.openModal(UI.resolveComponent(ApplicationComponent.ErrorReportModal), { report });
+                    },
                 },
-            },
-        ]);
+            ],
+        });
     }
 
     private getErrorReport(reason: ErrorReason): ErrorReport {

@@ -67,6 +67,7 @@ export interface Snackbar {
     id: string;
     message: string;
     actions: SnackbarAction[];
+    style: SnackbarStyle;
 }
 
 export interface SnackbarAction {
@@ -93,6 +94,11 @@ export interface RunOperationOptions {
     successMessage: string;
 }
 
+export interface SnackbarOptions {
+    actions: SnackbarAction[];
+    style: SnackbarStyle;
+}
+
 export type ModalCloseCallback<Result = unknown> = (result: Result) => void;
 
 export const enum ApplicationComponent {
@@ -101,6 +107,11 @@ export const enum ApplicationComponent {
     LoadingModal = 'loading-modal',
     MarkdownModal = 'markdown-modal',
     NotFound = 'not-found',
+}
+
+export enum SnackbarStyle {
+    Error = 'error',
+    Info = 'info',
 }
 
 export default class UIService extends Service<State, ComputedState> {
@@ -182,11 +193,12 @@ export default class UIService extends Service<State, ComputedState> {
         await this.openModal(this.components[ApplicationComponent.MarkdownModal], { title, content });
     }
 
-    public showSnackbar(message: string, actions: SnackbarAction[] = []): string {
+    public showSnackbar(message: string, options: Partial<SnackbarOptions> = {}): string {
         const snackbar: Snackbar = {
             id: uuid(),
             message,
-            actions,
+            actions: options.actions ?? [],
+            style: options.style ?? SnackbarStyle.Info,
         };
 
         this.setState({

@@ -37,6 +37,19 @@ export async function fadeOut($element: HTMLElement, config: TransitionConfig): 
     });
 }
 
+export async function grow($element: HTMLElement, config: TransitionConfig): Promise<void> {
+    const height = $element.clientHeight;
+
+    await animateElement($element, {
+        ...animationOptions(config),
+        styles: {
+            height: [
+                '0px',
+                `${height}px`,
+            ],
+        },
+    });
+}
 
 export async function scaleDown($element: HTMLElement, config: TransitionConfig): Promise<void> {
     await animateElement($element, {
@@ -57,6 +70,20 @@ export async function scaleUp($element: HTMLElement, config: TransitionConfig): 
             transform: [
                 'scale(.95)',
                 'scale(1)',
+            ],
+        },
+    });
+}
+
+export async function shrink($element: HTMLElement, config: TransitionConfig): Promise<void> {
+    const height = $element.clientHeight;
+
+    await animateElement($element, {
+        ...animationOptions(config),
+        styles: {
+            height: [
+                `${height}px`,
+                '0px',
             ],
         },
     });

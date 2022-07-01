@@ -6,7 +6,7 @@
         @close="cancellable && close()"
     >
         <div class="fixed inset-0 flex items-center justify-center m-edge">
-            <DialogPanel class="app-modal--panel max-w-full rounded-md shadow-xl bg-white">
+            <DialogPanel class="app-modal--panel max-w-full max-h-full overflow-hidden flex flex-col rounded-md shadow-xl bg-white">
                 <!-- TODO close button (focusable element!) -->
                 <DialogTitle v-if="title || $slots.title" as="h2" class="px-4 pt-4 text-lg font-medium leading-6 text-gray-900">
                     <slot name="title">

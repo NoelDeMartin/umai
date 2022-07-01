@@ -3,31 +3,37 @@
         <div class="p-4">
             <div class="flex justify-between">
                 <h2>{{ title }}</h2>
-                <div v-if="details" class="flex flex-row space-x-2">
-                    <button
-                        type="button"
-                        class="flex justify-center items-center rounded-full w-clickable h-clickable hover:bg-dark-overlay"
-                        @click="inspectInConsole"
+                <div v-if="details" class="flex flex-row-reverse space-x-reverse space-x-2">
+                    <CoreButton
+                        clear
+                        class="group"
+                        :title="$t('errors.reportToGithub')"
+                        :aria-label="$t('errors.reportToGithub')"
+                        :url="githubReportUrl"
                     >
-                        <i-ic-baseline-terminal class="w-4 h-4" aria-hidden="true" />
-                        <span class="hidden">{{ $t('errors.inspectInConsole') }}</span>
-                    </button>
-                    <button
-                        type="button"
-                        class="flex justify-center items-center rounded-full w-clickable h-clickable hover:bg-dark-overlay"
+                        <i-mdi-github class="w-6 h-6" aria-hidden="true" />
+                        <span class="hidden group-hover:block group-hover:ml-2 group-focus:block group-focus:ml-2">{{ $t('errors.reportToGithub') }}</span>
+                    </CoreButton>
+                    <CoreButton
+                        clear
+                        class="group"
+                        :title="$t('errors.copyToClipboard')"
+                        :aria-label="$t('errors.copyToClipboard')"
                         @click="copyToClipboard"
                     >
-                        <i-zondicons-copy class="w-4 h-4" aria-hidden="true" />
-                        <span class="hidden">{{ $t('errors.copyToClipboard') }}</span>
-                    </button>
-                    <a
-                        target="_blank"
-                        :href="githubReportUrl"
-                        class="flex justify-center items-center rounded-full w-clickable h-clickable hover:bg-dark-overlay"
+                        <i-pepicons-duplicate class="w-6 h-6" aria-hidden="true" />
+                        <span class="hidden group-hover:block group-hover:ml-2 group-focus:block group-focus:ml-2">{{ $t('errors.copyToClipboard') }}</span>
+                    </CoreButton>
+                    <CoreButton
+                        clear
+                        class="group"
+                        :title="$t('errors.inspectInConsole')"
+                        :aria-label="$t('errors.inspectInConsole')"
+                        @click="inspectInConsole"
                     >
-                        <i-mdi-github class="w-4 h-4" aria-hidden="true" />
-                        <span class="hidden">{{ $t('errors.reportToGithub') }}</span>
-                    </a>
+                        <i-ic-baseline-terminal class="w-6 h-6" aria-hidden="true" />
+                        <span class="hidden group-hover:block group-hover:ml-2 group-focus:block group-focus:ml-2">{{ $t('errors.inspectInConsole') }}</span>
+                    </CoreButton>
                 </div>
             </div>
             <p v-if="description">
@@ -43,18 +49,16 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue';
+import { stringExcerpt } from '@noeldemartin/utils';
 
 import App from '@/framework/core/facades/App';
-import I18n from '@/framework/core/facades/I18n';
 import UI from '@/framework/core/facades/UI';
+import { translate } from '@/framework/utils/translate';
+import { requiredObjectProp } from '@/framework/utils/vue';
 import type { ErrorReport } from '@/framework/core/services/ErrorsService';
 
 const { report } = defineProps({
-    report: {
-        type: Object as PropType<ErrorReport>,
-        required: true,
-    },
+    report: requiredObjectProp<ErrorReport>(),
 });
 
 const title = $computed(() => report.error?.name ?? report.title);
@@ -62,10 +66,16 @@ const description = $computed(() => report.error ? report.error.message : null);
 const summary = $computed(() => description ? `${title}: ${description}` : title);
 const details = $computed(() => report.error?.stack || null);
 const githubReportUrl = $computed(() => {
+    const issueBodyTemplate = translate('errors.githubIssueBody');
     const issueTitle = encodeURIComponent(summary);
     const issueBody = encodeURIComponent(
-        I18n
-            .translate('errors.githubIssueBody', { stackTrace: details }),
+        issueBodyTemplate.replace(
+            '%STACKTRACE%',
+            stringExcerpt(
+                details ?? 'Stack trace missing',
+                1900 - issueBodyTemplate.length - issueTitle.length - App.sourceUrl.length,
+            ).trim(),
+        ),
     );
 
     return `${App.sourceUrl}/issues/new?title=${issueTitle}&body=${issueBody}`;
@@ -74,12 +84,12 @@ const githubReportUrl = $computed(() => {
 function inspectInConsole() {
     (window as { error?: Error }).error = report.error;
 
-    UI.showSnackbar(I18n.translate('errors.addedToConsole'));
+    UI.showSnackbar(translate('errors.addedToConsole'));
 }
 
 async function copyToClipboard() {
     await navigator.clipboard.writeText(`${summary}\n\n${details}`);
 
-    UI.showSnackbar(I18n.translate('errors.copiedToClipboard'));
+    UI.showSnackbar(translate('errors.copiedToClipboard'));
 }
 </script>

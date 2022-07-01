@@ -1,5 +1,5 @@
 <template>
-    <component :is="buttonComponent" ref="$root" v-bind="buttonProps">
+    <component :is="component.tag" ref="$root" v-bind="component.props">
         <slot />
     </component>
 </template>
@@ -12,24 +12,43 @@ import { objectProp, stringProp } from '@/framework/utils/vue';
 import { focusableElement } from '@/framework/components/headless';
 import type { IFocusable } from '@/framework/components/headless';
 
-const { route, routeParams, queryParams } = defineProps({
+const { url, route, routeParams, queryParams } = defineProps({
+    url: stringProp(),
     route: stringProp(),
     routeParams: objectProp<RouteParams>(() => ({})),
     queryParams: objectProp<LocationQuery>(() => ({})),
 });
 
 const $root = $ref<HTMLElement | null>(null);
-const buttonComponent = $computed(() => (route ? 'router-link' : 'button'));
-const buttonProps = $computed(() =>
-    buttonComponent === 'button'
-        ? { type: 'button' }
-        : {
-            to: objectWithoutEmpty<Partial<RouteLocation>>({
-                name: route,
-                params: routeParams,
-                query: queryParams,
-            }),
-        });
+const component = $computed(() => {
+    if (route) {
+        return {
+            tag: 'router-link',
+            props: {
+                to: objectWithoutEmpty<Partial<RouteLocation>>({
+                    name: route,
+                    params: routeParams,
+                    query: queryParams,
+                }),
+            },
+        };
+    }
+
+    if (url) {
+        return {
+            tag: 'a',
+            props: {
+                target: '_blank',
+                href: url,
+            },
+        };
+    }
+
+    return {
+        tag: 'button',
+        props: { type: 'button' },
+    };
+});
 
 defineExpose<IFocusable>(focusableElement($$($root)));
 </script>
