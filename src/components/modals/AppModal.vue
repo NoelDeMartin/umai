@@ -6,13 +6,22 @@
         @close="cancellable && close()"
     >
         <div class="fixed inset-0 flex items-center justify-center m-edge">
-            <DialogPanel class="app-modal--panel max-w-full max-h-full overflow-hidden flex flex-col rounded-md shadow-xl bg-white">
-                <!-- TODO close button (focusable element!) -->
+            <DialogPanel class="app-modal--panel relative max-w-full max-h-full overflow-hidden flex flex-col rounded-md shadow-xl bg-white">
                 <DialogTitle v-if="title || $slots.title" as="h2" class="px-4 pt-4 text-lg font-medium leading-6 text-gray-900">
                     <slot name="title">
                         {{ title }}
                     </slot>
                 </DialogTitle>
+                <CoreButton
+                    v-if="cancellable"
+                    clear
+                    :aria-label="$t('ui.close')"
+                    :label="$t($t('ui.close'))"
+                    class="absolute w-clickable h-clickable top-2 right-2"
+                    @click="close()"
+                >
+                    <i-pepicons-times class="w-6 h-6" aria-hidden="true" />
+                </CoreButton>
                 <div ref="content" :class="['flex overflow-auto flex-col mt-2 max-h-full', noPadding || 'px-4 pb-4']">
                     <slot :close="close" />
                 </div>

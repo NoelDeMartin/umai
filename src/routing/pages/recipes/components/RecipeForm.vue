@@ -55,6 +55,7 @@
                         name="name"
                         :placeholder="recipe ? '-' : $t('recipes.name_placeholder')"
                         class="pb-2 -mb-2.5 text-4xl text-white placeholder:text-white placeholder:opacity-50 bg-transparent caret-primary-500 text-shadow font-semibold"
+                        @keydown.enter.prevent="submit"
                     />
                 </label>
             </template>
@@ -253,6 +254,7 @@ import type { IFocusable } from '@/framework/components/headless';
 import Cookbook from '@/services/facades/Cookbook';
 import Recipe from '@/models/Recipe';
 import CoreListItemValue from '@/components/core/lists/CoreListItemValue';
+import { CoreColor } from '@/components/core';
 
 import RecipeImageModal from './modals/RecipeImageFormModal.vue';
 import {
@@ -387,6 +389,7 @@ async function deleteRecipe() {
     const confirmed = await UI.confirm({
         message: translate('recipes.delete_confirm'),
         acceptText: translate('recipes.delete_confirm_accept'),
+        acceptColor: CoreColor.Danger,
     });
 
     if (!confirmed)

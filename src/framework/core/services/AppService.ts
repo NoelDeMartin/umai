@@ -50,7 +50,7 @@ export default class AppService extends Service<State> {
         });
 
         Events.on('recipe-deleted', async () => {
-            if (Auth.isLoggedIn() || Auth.previousSession !== null) {
+            if (Auth.isLoggedIn() || Auth.previousSession !== null || Cookbook.recipes.length > 0) {
                 return;
             }
 

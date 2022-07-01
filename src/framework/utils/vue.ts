@@ -25,12 +25,12 @@ export function defineDirective(directive: Directive): Directive {
     return directive;
 }
 
-export function enumProp<Enum>(enumeration: Enum): Prop<Enum[keyof Enum]> {
+export function enumProp<Enum>(enumeration: Enum, defaultValue?: Enum[keyof Enum]): Prop<Enum[keyof Enum]> {
     const values = Object.values(enumeration);
 
     return {
         type: String as unknown as PropType<Enum[keyof Enum]>,
-        default: values[0] ?? null,
+        default: defaultValue ?? values[0] ?? null,
         validator: (value) => values.includes(value),
     };
 }

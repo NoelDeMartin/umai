@@ -100,7 +100,7 @@ export default {
 
         cy.see('Syncing in progress');
         cy.see('Syncing is up to date');
-        cy.press('Go ahead');
+        cy.press('Continue');
         cy.see('Syncing in progress');
         cy.see('Syncing is up to date');
     },

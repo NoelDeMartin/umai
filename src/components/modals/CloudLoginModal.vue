@@ -1,6 +1,6 @@
 <template>
     <AppModal v-slot="{ close }" :title="$t('cloud.login.title')">
-        <div v-if="$auth.previousSession?.loginUrl" class="flex flex-col">
+        <div v-if="$auth.hasLoggedIn" class="flex flex-col">
             <div class="prose">
                 <p v-safe-html="$t('cloud.login.info_reconnect', { url: $auth.previousSession?.loginUrl })" />
             </div>

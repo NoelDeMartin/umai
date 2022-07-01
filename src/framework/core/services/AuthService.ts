@@ -31,6 +31,8 @@ interface ComputedState {
     authenticator: Authenticator | null;
     fetch: Fetch;
     loggedIn: boolean;
+    wasLoggedIn: boolean;
+    hasLoggedIn: boolean;
     user: SolidUserProfile | null;
 }
 
@@ -137,15 +139,6 @@ export default class AuthService extends Service<State, ComputedState> {
         if (!this.previousSession)
             return;
 
-        if (
-            // TODO show a different message if there are pending local modifications
-            !confirm(
-                'Logging out will remove all your local recipes, are you sure? ' +
-                '(You still have them in your Solid POD!)',
-            )
-        )
-            return;
-
         this.setState({ previousSession: null });
 
         if (this.isLoggedIn())
@@ -201,7 +194,9 @@ export default class AuthService extends Service<State, ComputedState> {
         return {
             authenticator: state => state.session?.authenticator ?? null,
             fetch: (_, { authenticator }) => authenticator?.getAuthenticatedFetch() ?? window.fetch.bind(window),
-            loggedIn: state => state.session !== null,
+            loggedIn: state => !!state.session,
+            wasLoggedIn: state => !!state.previousSession?.loginUrl,
+            hasLoggedIn: (_, state) => state.loggedIn || state.wasLoggedIn,
             user: state => state.session?.user ?? null,
         };
     }

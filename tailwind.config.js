@@ -79,8 +79,15 @@ module.exports = {
             typography: ({ theme }) => ({
                 DEFAULT: {
                     css: {
-                        fontSize: theme('fontSize.base'),
+                        'fontSize': theme('fontSize.base'),
+                        'code::before': {
+                            content: '""',
+                        },
+                        'code::after': {
+                            content: '""',
+                        },
                     },
+
                 },
             }),
             width: {

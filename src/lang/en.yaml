@@ -82,8 +82,10 @@ webImport:
 
 menu:
   open: Open user menu
-  log_in: Log in
-  log_out: Log out
+  logIn: Log in
+  logOut: Log out
+  logOut_confirmTitle: Are you sure?
+  logOut_confirmMessage: Logging out will remove all the recipes from this device, but you'll still have them in your Solid POD.
   settings: Settings
   back: back to cookbook
 
@@ -125,11 +127,27 @@ home:
 
   createCookbook:
     title: Create your cookbook
-    message: We need to create a cookbook to store your recipes, where do you want to store it?
-    nameLabel: Cookbook name
-    storageUrlLabel: Storage url
-    info: The container will be created on {url}.
-    submit: Go ahead!
+    message: In order to store recipes in your Solid POD, we need to create a container.
+    advancedOptions: Advanced options
+    nameLabel: "Name:"
+    storageUrlLabel: "Location:"
+    urlPreview: The url for the new container will be `{url}`.
+    help: What will this do?
+    help_detailsTitle: Creating a cookbook
+    help_detailsContent: |
+      This will create a container and register it into your [private type index](https://github.com/solid/webid-profile/blob/main/notes/typeIndex.md).
+
+      If you don't want to do this, you can create a container yourself (or use an existing one) and register it into the type index as a container for `https://schema.org/Recipe`
+      resources.
+
+      If you're feeling adventurous, you're also welcome to look at the [source code](https://github.com/NoelDeMartin/umai/blob/main/src/services/CookbookService.ts#L46) to see how
+      this app does it.
+    submit: Continue
+    processing: Your cookbook is being created at<br>`{url}`...
+
+  createRecipe:
+    title: Create your first recipe
+    message: How do you want to create your recipe?
 
   recipes:
     title:
@@ -257,6 +275,7 @@ ui:
   confirm: Are you sure?
   confirm_accept: "OK"
   confirm_cancel: "Cancel"
+  close: Close
 
 errors:
   notice: Something went wrong, but it's not your fault. Try again!

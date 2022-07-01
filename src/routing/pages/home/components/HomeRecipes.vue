@@ -30,44 +30,41 @@
             @blur="searching = false"
         />
     </div>
-    <RecipeCreateOptions v-if="$cookbook.recipes.isEmpty()" />
-    <template v-else>
-        <RecipesGrid :recipes="filteredRecipes" class="w-full" />
-        <transition
-            enter-to-class="opacity-100"
-            enter-active-class="transition-opacity duration-500"
-            enter-from-class="opacity-0"
-            leave-to-class="opacity-0"
-            leave-active-class="transition-opacity duration-500"
-            leave-from-class="opacity-100"
-        >
-            <div
-                v-if="filteredRecipes.length === 0"
-                class="absolute top-12 bottom-0 inset-x-0 flex-grow items-center justify-center flex"
-            >
-                <div class="prose">
-                    <CoreMarkdown
-                        class="text-2xl font-medium tracking-wide leading-snug text-center"
-                        :text="$t('home.recipes.empty', { search: trimmedSearch })"
-                    />
-                </div>
-            </div>
-        </transition>
+    <RecipesGrid :recipes="filteredRecipes" class="w-full" />
+    <transition
+        enter-to-class="opacity-100"
+        enter-active-class="transition-opacity duration-500"
+        enter-from-class="opacity-0"
+        leave-to-class="opacity-0"
+        leave-active-class="transition-opacity duration-500"
+        leave-from-class="opacity-100"
+    >
         <div
-            v-if="$ui.isMobile"
-            class="flex fixed right-0 bottom-0 z-40 justify-center p-5 w-screen pointer-events-none recipes-index--fab"
+            v-if="filteredRecipes.length === 0"
+            class="absolute top-12 bottom-0 inset-x-0 flex-grow items-center justify-center flex"
         >
-            <div class="flex justify-center w-full">
-                <div class="w-clickable" />
-                <div class="mx-4 w-full max-w-content" />
-                <BaseFloatingActionButton
-                    class="pointer-events-auto"
-                    :label="$t('home.recipes.create')"
-                    @click="$ui.openModal(CreateRecipeModal)"
+            <div class="prose">
+                <CoreMarkdown
+                    class="text-2xl font-medium tracking-wide leading-snug text-center"
+                    :text="$t('home.recipes.empty', { search: trimmedSearch })"
                 />
             </div>
         </div>
-    </template>
+    </transition>
+    <div
+        v-if="$ui.isMobile"
+        class="flex fixed right-0 bottom-0 z-40 justify-center p-5 w-screen pointer-events-none recipes-index--fab"
+    >
+        <div class="flex justify-center w-full">
+            <div class="w-clickable" />
+            <div class="mx-4 w-full max-w-content" />
+            <BaseFloatingActionButton
+                class="pointer-events-auto"
+                :label="$t('home.recipes.create')"
+                @click="$ui.openModal(CreateRecipeModal)"
+            />
+        </div>
+    </div>
 </template>
 
 <script setup lang="ts">

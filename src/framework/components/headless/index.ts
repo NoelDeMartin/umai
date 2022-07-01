@@ -3,8 +3,11 @@ import type { Component, Ref } from 'vue';
 import { importModules } from '@/framework/utils/vite';
 import { elementIsInViewport } from '@/framework/utils/dom';
 
-export interface IFocusable {
+export interface IElement {
     getRootElement(): HTMLElement | null;
+}
+
+export interface IFocusable extends IElement {
     focus(options?: Partial<FocusOptions>): void;
     isFocused(): boolean;
     blur(): void;
@@ -13,6 +16,12 @@ export interface IFocusable {
 
 export interface FocusOptions {
     scrollIntoView: boolean;
+}
+
+export function element(element: Ref<HTMLElement | null>): IElement {
+    return {
+        getRootElement: () => element.value,
+    };
 }
 
 export function focusable(element: Ref<IFocusable | null>): IFocusable {

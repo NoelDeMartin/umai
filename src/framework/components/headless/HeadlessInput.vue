@@ -16,12 +16,14 @@ import type IHeadlessInput from './HeadlessInput';
 import type { HeadlessInputController } from './HeadlessInput';
 
 const {
+    id,
     name,
     placeholder,
     modelValue,
     type,
     error: errorProp,
 } = defineProps({
+    id: stringProp(),
     name: stringProp(),
     placeholder: stringProp(),
     modelValue: mixedProp<string | number>([String, Number]),
@@ -68,7 +70,7 @@ const formInput = $computed(() => {
 const inputValue = $computed(() => formInput?.value ?? modelValue);
 const error = $computed(() => formInput?.error ?? errorProp);
 const controller: HeadlessInputController = {
-    id: uuid(),
+    id: id ?? uuid(),
     type,
     name: name ?? undefined,
     placeholder: placeholder ?? undefined,

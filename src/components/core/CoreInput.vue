@@ -1,5 +1,6 @@
 <template>
     <HeadlessInput
+        :id="id"
         v-slot="{ hasErrors }"
         ref="$root"
         :name="name"
@@ -25,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, inject } from 'vue';
 
 import { booleanProp, enumProp, mixedProp, objectProp, stringProp } from '@/framework/utils/vue';
 import { focusable } from '@/framework/components/headless';
@@ -39,7 +40,6 @@ export default defineComponent({ inheritAttrs: false });
 </script>
 
 <script setup lang="ts">
-
 const { color } = defineProps({
     name: stringProp(),
     label: stringProp(),
@@ -52,13 +52,13 @@ const { color } = defineProps({
 });
 defineEmits(['update:modelValue']);
 
-const $root = $ref<IFocusable | null>(null);
 const colorsClasses: Record<CoreColor, string> = {
     [CoreColor.Primary]: 'focus:placeholder:text-primary-500 focus:bg-primary-200',
     [CoreColor.Solid]: 'focus:placeholder:text-brand-solid-400 focus:bg-brand-solid-100',
     [CoreColor.Danger]: 'focus:placeholder:text-red-400 focus:bg-red-100',
 };
-
+const $root = $ref<IFocusable | null>(null);
+const id = inject<string>('input-wrapper-id');
 const computedClasses = $computed(() => colorsClasses[color]);
 
 defineExpose<IFocusable>(focusable($$($root)));

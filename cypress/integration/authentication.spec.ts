@@ -36,7 +36,7 @@ describe('Authentication', () => {
         cy.waitForReload({ resetProfiles: true });
 
         // Act - Create cookbook
-        cy.press('Go ahead');
+        cy.press('Continue');
 
         // Act - Create recipe
         cy.goOffline();
@@ -100,8 +100,9 @@ describe('Authentication', () => {
         cy.cssAuthorize({ reset: true });
         cy.waitForReload({ resetProfiles: true });
         cy.press('online');
-        cy.see('You are logged in');
-        cy.toggleDetails('Advanced options');
+        cy.contains('[role="dialog"]', 'You are logged in').within(() => {
+            cy.toggleDetails('Advanced options');
+        });
         cy.press('Reconnect on startup');
         cy.reload();
 
@@ -203,7 +204,7 @@ describe('Authentication', () => {
         cy.ariaInput('Login url').type('http://localhost:4000/alice/{enter}');
         cy.cssAuthorize({ reset: true });
         cy.waitForReload({ resetProfiles: true });
-        cy.press('Go ahead');
+        cy.press('Continue');
 
         // Assert
         cy.wait('@patchRamen');

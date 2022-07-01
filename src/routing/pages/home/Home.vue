@@ -12,11 +12,12 @@
                 '*': $elementTransitions.fadeOut,
             },
         }"
-        class="relative flex flex-col w-full max-w-content mx-edge"
+        class="relative flex flex-col w-full h-full max-w-content mx-edge "
         aria-labelledby="#home-title"
     >
         <HomeOnboarding v-if="$app.isOnboarding" />
         <HomeCreateCookbook v-else-if="$auth.loggedIn && !$cookbook.isReady" />
+        <HomeCreateRecipe v-else-if="$cookbook.recipes.isEmpty()" />
         <HomeRecipes v-else />
     </main>
 </template>

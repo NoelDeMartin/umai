@@ -19,7 +19,8 @@
             leave-to-class="opacity-0 scale-95"
         >
             <MenuItems class="absolute right-0 py-1 mt-2 w-48 bg-white rounded-md ring-1 ring-black ring-opacity-5 shadow-lg origin-top-right focus:outline-none">
-                <MenuItem v-slot="{ active }">
+                <!-- TODO -->
+                <!-- <MenuItem v-slot="{ active }">
                     <button
                         type="button"
                         :class="[
@@ -30,7 +31,7 @@
                     >
                         {{ $t('menu.settings') }}
                     </button>
-                </MenuItem>
+                </MenuItem> -->
                 <MenuItem v-slot="{ active }">
                     <button
                         type="button"
@@ -38,9 +39,9 @@
                             'flex items-center px-4 py-2 w-full text-sm text-gray-700',
                             active && 'bg-gray-100',
                         ]"
-                        @click="$auth.loggedIn ? $auth.logout() : $ui.openModal(CloudStatusModal)"
+                        @click="$auth.hasLoggedIn ? logout() : $ui.openModal(CloudStatusModal)"
                     >
-                        {{ $auth.loggedIn ? $t('menu.log_out') : $t('menu.log_in') }}
+                        {{ $auth.hasLoggedIn ? $t('menu.logOut') : $t('menu.logIn') }}
                     </button>
                 </MenuItem>
             </MenuItems>
@@ -49,9 +50,24 @@
 </template>
 
 <script setup lang="ts">
+import Auth from '@/framework/core/facades/Auth';
+import UI from '@/framework/core/facades/UI';
+import { translate } from '@/framework/utils/translate';
+
 import CloudStatusModal from '@/components/modals/CloudStatusModal.vue';
 
-function openSettings() {
-    // TODO
+async function logout() {
+    // TODO show a different message if there are pending local modifications
+    const confirmLogout = await UI.confirm({
+        title: translate('menu.logOut_confirmTitle'),
+        message: translate('menu.logOut_confirmMessage'),
+        acceptText: translate('menu.logOut'),
+    });
+
+    if (!confirmLogout) {
+        return;
+    }
+
+    await Auth.logout();
 }
 </script>

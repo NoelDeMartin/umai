@@ -12,6 +12,7 @@ import Service from '@/framework/core/Service';
 import type { ComputedStateDefinitions, IService } from '@/framework/core/Service';
 
 import ErrorReportModal from '@/components/modals/ErrorReportModal.vue';
+import type { CoreColor } from '@/components/core';
 
 interface State {
     headerHeight: number;
@@ -83,8 +84,10 @@ export interface ModalComponent<
 > {}
 
 export interface ConfirmOptions {
+    title: string;
     message: string;
     acceptText: string;
+    acceptColor: CoreColor;
     cancelText: string;
 }
 

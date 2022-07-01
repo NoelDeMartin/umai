@@ -1,8 +1,11 @@
 <template>
     <AppModal v-slot="{ close }" :cancellable="false">
+        <h2 v-if="title" class="text-xl font-semibold">
+            {{ title }}
+        </h2>
         <CoreMarkdown :text="message || $t('ui.confirm')" />
-        <div class="flex flex-row-reverse items-end mt-4 space-x-2 space-x-reverse">
-            <CoreButton color="danger" @click="close(true)">
+        <div class="flex flex-row-reverse items-end space-x-2 space-x-reverse">
+            <CoreButton :color="acceptColor" @click="close(true)">
                 {{ acceptText || $t('ui.confirm_accept') }}
             </CoreButton>
             <CoreButton clear @click="close(false)">
@@ -13,11 +16,15 @@
 </template>
 
 <script setup lang="ts">
-import { stringProp } from '@/framework/utils/vue';
+import { enumProp, stringProp } from '@/framework/utils/vue';
+
+import { CoreColor } from '@/components/core';
 
 defineProps({
+    title: stringProp(),
     message: stringProp(),
     acceptText: stringProp(),
+    acceptColor: enumProp(CoreColor),
     cancelText: stringProp(),
 });
 </script>
