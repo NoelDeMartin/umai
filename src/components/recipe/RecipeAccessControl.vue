@@ -40,7 +40,7 @@
 
             <transition leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100" leave-to-class="opacity-0">
                 <ListboxOptions
-                    class="fixed z-10 mt-2 max-w-readable rounded-md shadow-lg overflow-hidden bg-white divide-y divide-gray-200 ring-1 ring-black ring-opacity-5 focus:outline-none"
+                    class="fixed z-10 mt-2 max-w-prose rounded-md shadow-lg overflow-hidden bg-white divide-y divide-gray-200 ring-1 ring-black ring-opacity-5 focus:outline-none"
                     :style="`top:${optionsPosition.top}px;right:${optionsPosition.right}px`"
                 >
                     <ListboxOption

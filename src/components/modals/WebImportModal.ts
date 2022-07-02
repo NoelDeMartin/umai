@@ -1,9 +1,8 @@
 import App from '@/framework/core/facades/App';
-import UI from '@/framework/core/facades/UI';
 import { FormInputType, reactiveForm } from '@/framework/forms';
+import type { MagicForm } from '@/framework/forms';
 
 import Config from '@/services/facades/Config';
-import ConfigureProxyModal from '@/components/modals/ConfigureProxyModal.vue';
 import type IAppModal from '@/components/modals/AppModal';
 
 export default interface IWebImportModal extends IAppModal<void> {
@@ -14,8 +13,16 @@ export default interface IWebImportModal extends IAppModal<void> {
     failed(url: string, error: Error): void;
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function useUrlForm(modal: IWebImportModal) {
+export type WebImportModalUrlForm = MagicForm<{
+    url: { type: FormInputType.String };
+    useProxy: { type: FormInputType.Boolean };
+    proxyUrl: { type: FormInputType.String };
+}>;
+
+export function useUrlForm(modal: IWebImportModal): {
+    form: WebImportModalUrlForm;
+    submit: () => Promise<void>;
+} {
     const form = reactiveForm({
         url: {
             type: FormInputType.String,
@@ -24,7 +31,7 @@ export function useUrlForm(modal: IWebImportModal) {
         },
         useProxy: {
             type: FormInputType.Boolean,
-            default: !!Config.proxyUrl,
+            default: Config.proxyUrl !== false,
         },
         proxyUrl: {
             type: FormInputType.String,
@@ -33,15 +40,6 @@ export function useUrlForm(modal: IWebImportModal) {
     });
 
     async function submit() {
-        if (Config.proxyUrl === null) {
-            const modal = await UI.openModal(ConfigureProxyModal);
-
-            await modal.afterClose;
-
-            form.useProxy = !!Config.proxyUrl;
-            form.proxyUrl = Config.proxyUrl || '';
-        }
-
         try {
             const url = form.url;
             const proxyUrl = form.useProxy ? form.proxyUrl : false;

@@ -32,19 +32,6 @@ cloud:
 
   logout: Log out
 
-proxyConfig:
-  title: Do you want to use a proxy?
-  info: |
-    This application runs entirely in the browser, so you will need a proxy in order to read content from other websites (or you will run into [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing) issues).
-
-    You can still import recipes without a proxy, but you'll have to copy & paste the source HTML into a text box.
-
-    [learn more]({url})
-  advancedOptions: Advanced options
-  proxyUrl: "Proxy url:"
-  accept: OK
-  reject: Continue without a proxy
-
 webImport:
   title: Import recipes from the Web
   info: |
@@ -55,6 +42,19 @@ webImport:
     look like a recipe, give it a try. You may be surprised to see what you get.
   url_label: Website URL
   url_placeholder: Website URL
+  useProxy: "Use a proxy:"
+  useProxy_urlLabel: Proxy url
+  useProxy_help: what does this mean?
+  useProxy_helpTitle: Using a proxy
+  useProxy_helpContent: |
+    This application runs entirely in the browser, so you will need a proxy in order to read content
+    from other websites or you will run into [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
+    issues.
+
+    If you want, you can still try importing recipes without a proxy, but if it fails you'll have to copy & paste
+    the source HTML into a text box.
+
+    [learn more]({url})
   submit: Scan
   scanning: Looking for recipes...
   defaultWebsiteTitle: Unknown
@@ -62,23 +62,12 @@ webImport:
 
   error_title: Oops! That didn't work
   error_info: |
-      It seems like it wasn't possible to get the contents from `{url}`.<br>
-      [view error details](action:view-error-details)
+      It was not possible to get the contents from `{url}`
 
-      Here's some things you can do:
-  error_retry: Try again
-  error_retry_info: "If you think this error was temporary, just try again. You can also configure a proxy:"
-  error_retry_useProxy: "Use a proxy:"
-  error_retry_submit: Retry
-  error_html: Copy & paste HTML
-  error_html_info: |
-    You can also view the source of the website and copy & paste it manually. If you don't know how to do that,
-    copy the following url in your browser and copy & paste the contents you get into the textarea below:
-  error_html_copyToClipboard: Copy source url to clipboard
-  error_html_copiedToClipboard: Source url copied to clipboard
-  error_html_placeholder: Paste the page source HTML here
-  error_html_label: Page source HTML
-  error_html_submit: Scan HTML
+      If this was temporary error, you can try again.
+      You can also look at the [error details](action:view-error-details).
+  error_submit: Retry
+  error_html: or [try copy & pasting HTML](action:open-html-form)
 
   success_title: Import from the Web
   success_infoSingle: We've found the recipe!
@@ -90,6 +79,17 @@ webImport:
   success_importMultiple: Import selected recipes
 
   done: '_ | The recipe has been added to your cookbook | The recipes have been added to your cookbook'
+
+webImportHtml:
+  title: Copy & paste HTML
+  info: |
+    If you're having trouble getting contents from another website, you can just copy & paste the raw HTML into
+    the text box below.
+
+    If you don't know how to do that, you can visit the following url:
+  placeholder: Paste the page source HTML here
+  label: Page source HTML
+  submit: Scan HTML
 
 menu:
   open: Open user menu

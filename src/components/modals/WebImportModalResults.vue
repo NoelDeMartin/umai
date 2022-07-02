@@ -52,7 +52,7 @@
             />
         </template>
         <CoreButton
-            class="self-end mt-4 py-3 px-6 text-lg font-medium"
+            class="self-end mt-4 py-3 px-6 text-md font-medium"
             type="submit"
             :disabled="recipes.length > 0 && form.recipes.length === 0"
         >

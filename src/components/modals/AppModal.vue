@@ -35,8 +35,8 @@
                     class="flex overflow-auto flex-col mt-2 max-h-full"
                     :class="{
                         'pl-4 pb-4': padding,
-                        'pr-4': (title || !cancellable) && padding,
-                        'pr-12': !title && cancellable,
+                        'pr-4': padding && (title || !cancellable),
+                        'pr-12': padding && (!title && cancellable),
                     }"
                 >
                     <slot :close="close" />

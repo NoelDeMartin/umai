@@ -37,8 +37,12 @@ export default {
             : cy.a11yGet(text).scrollIntoView().should('be.visible');
     },
 
+    details(text: string): Cypress.Chainable {
+        return cy.contains('summary', text).parent();
+    },
+
     toggleDetails(text: string): void {
-        cy.contains('summary', text).parent().then(element => {
+        cy.details(text).then(element => {
             const details = element.get(0);
 
             details.hasAttribute('open') ? details.removeAttribute('open') : details.setAttribute('open', '');

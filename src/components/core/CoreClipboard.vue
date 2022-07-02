@@ -8,37 +8,30 @@
         </div>
         <button
             type="button"
-            :aria-label="copyLabel"
+            :aria-label="copyLabel ?? $t('ui.copyToClipboard')"
+            :title="copyLabel ?? $t('ui.copyToClipboard')"
             class="flex opacity-75 absolute top-2 right-2 justify-center items-center bg-white rounded w-clickable h-clickable hover:bg-gray-100 hover:opacity-100"
             @click="copyToClipboard()"
         >
-            <i-zondicons-copy class="w-4 h-4" />
+            <i-pepicons-duplicate class="w-6 h-6" aria-hidden="true" />
         </button>
     </div>
 </template>
 
 <script setup lang="ts">
-import I18n from '@/framework/core/facades/I18n';
 import UI from '@/framework/core/facades/UI';
+import { requiredStringProp, stringProp } from '@/framework/utils/vue';
+import { translate } from '@/framework/utils/translate';
 
 const { text, successMessage } = defineProps({
-    text: {
-        type: String,
-        required: true,
-    },
-    copyLabel: {
-        type: String,
-        default: () => I18n.translate('ui.copyToClipboard'),
-    },
-    successMessage: {
-        type: String,
-        default: () => I18n.translate('ui.copiedToClipboard'),
-    },
+    text: requiredStringProp(),
+    copyLabel: stringProp(),
+    successMessage: stringProp(),
 });
 
 async function copyToClipboard() {
     await navigator.clipboard.writeText(text);
 
-    UI.showSnackbar(successMessage);
+    UI.showSnackbar(successMessage ?? translate('ui.copiedToClipboard'));
 }
 </script>

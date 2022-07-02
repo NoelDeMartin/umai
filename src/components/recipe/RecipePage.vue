@@ -10,7 +10,7 @@
                 :style="`height: ${$ui.headerHeight}px`"
             />
             <div class="flex relative justify-center pb-4 w-full mx-edge recipe-page--header-wrapper">
-                <div class="flex-grow pr-36 mr-8 max-w-readable recipe-page--header-title-wrapper">
+                <div class="flex-grow pr-36 mr-8 max-w-prose recipe-page--header-title-wrapper">
                     <slot name="title" />
                 </div>
                 <div class="w-72" />

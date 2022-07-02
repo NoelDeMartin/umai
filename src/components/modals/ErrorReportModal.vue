@@ -1,11 +1,11 @@
 <template>
     <AppModal :padding="false">
-        <div class="p-4">
+        <div class="px-4 pt-1 pb-4">
             <div class="flex justify-between">
                 <h2 class="font-medium text-lg">
                     {{ title }}
                 </h2>
-                <div v-if="details" class="flex flex-row-reverse space-x-reverse space-x-2">
+                <div v-if="details" class="flex flex-row-reverse space-x-reverse space-x-2 mr-10">
                     <CoreButton
                         clear
                         class="group"

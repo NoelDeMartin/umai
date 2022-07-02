@@ -288,9 +288,12 @@ describe('Cookbook', () => {
         // Act
         cy.press('Create your first recipe');
         cy.press('Import from the Web');
+        cy.toggleDetails('Advanced options');
+        cy.details('Advanced options').within(() => {
+            cy.get('input[type="checkbox"]').click();
+        });
         cy.ariaInput('Website URL').type('https://recipes.example.com/hummus');
         cy.press('Scan');
-        cy.press('Continue without a proxy');
         cy.see('We\'ve found the recipe!');
 
         // Workaround for https://github.com/cypress-io/cypress/issues/7306
@@ -319,11 +322,10 @@ describe('Cookbook', () => {
         // Act
         cy.press('Create your first recipe');
         cy.press('Import from the Web');
+        cy.toggleDetails('Advanced options');
+        cy.ariaLabel('Proxy url').clear().type('https://proxy.example.com');
         cy.ariaInput('Website URL').type('https://recipes.example.com/hummus');
         cy.press('Scan');
-        cy.toggleDetails('Advanced options');
-        cy.ariaInput('Proxy url').clear().type('https://proxy.example.com');
-        cy.press('OK');
         cy.see('We\'ve found the recipe!');
 
         // Workaround for https://github.com/cypress-io/cypress/issues/7306
@@ -354,14 +356,12 @@ describe('Cookbook', () => {
         cy.press('Import from the Web');
         cy.ariaInput('Website URL').type('https://recipes.example.com/ramen');
         cy.press('Scan');
-        cy.press('Continue without a proxy');
         cy.see('Oops! That didn\'t work');
 
         // Workaround for https://github.com/cypress-io/cypress/issues/7306
         cy.wait(200);
 
-        cy.toggleDetails('Try again');
-        cy.toggleDetails('Copy & paste HTML');
+        cy.press('try copy & pasting HTML');
         cy.fixture('html/juns-ramen.html').then(html => cy.ariaInput('Page source HTML').fill(html));
         cy.press('Scan HTML');
         cy.see('Homemade Ramen');

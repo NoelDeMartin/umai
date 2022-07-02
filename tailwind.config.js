@@ -106,7 +106,6 @@ module.exports = {
             },
             maxWidth: {
                 content: '1280px',
-                readable: '65ch',
             },
             zIndex: {
                 60: '60',

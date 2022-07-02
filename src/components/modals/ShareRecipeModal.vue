@@ -9,7 +9,7 @@
 
         <template #default="{ close }">
             <RecipeShareOptions v-model="shareOption" />
-            <BaseClipboard class="mt-4 max-w-readable" :text="clipboardContent" />
+            <CoreClipboard class="mt-4 max-w-prose" :text="clipboardContent" />
             <p v-if="shareOption === 'umai' && recipe.isPrivate" class="text-red-500 flex self-end mt-2">
                 <i-zondicons-exclamation-outline class="w-4 h-4 mt-1 mr-2 flex-shrink-0" />
                 {{ $t('recipes.accessControl.warning') }}

@@ -153,7 +153,7 @@ export async function headerToCard(
             element: $headerTitleWrapper,
             before: {
                 addClasses: 'w-full flex-shrink-0',
-                removeClasses: 'pr-36 max-w-readable',
+                removeClasses: 'pr-36 max-w-prose',
             },
         },
         {

@@ -5,11 +5,12 @@
         @submit="submit()"
     >
         <CoreMarkdown :text="$t('webImport.info')" />
+        <WebImportModalAdvancedOptions :form="form" class="mt-4" />
         <div class="flex mt-2 px-2 py-4">
             <CoreInput
                 ref="$input"
                 name="url"
-                class="z-10 h-14 text-lg font-medium pl-8 flex-grow min-w-[300px]"
+                class="z-10 h-12 text-md font-medium pl-6 flex-grow min-w-[300px]"
                 :label="$t('webImport.url_label')"
                 :show-errors="false"
                 :placeholder="$t('webImport.url_placeholder')"
@@ -17,7 +18,7 @@
             />
             <CoreButton
                 type="submit"
-                class="focus:z-20 px-6 text-lg font-medium"
+                class="focus:z-20 px-6 text-md font-medium"
                 alignment="center"
                 :wobbly-border="{ topLeft: false, bottomLeft: false }"
             >
