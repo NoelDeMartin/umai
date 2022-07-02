@@ -14,10 +14,10 @@ export function arrayProp<T>(defaultValue?: () => T[]): Prop<T[]> {
     };
 }
 
-export function booleanProp(): Prop<boolean> {
+export function booleanProp(defaultValue: boolean = false): Prop<boolean> {
     return {
         type: Boolean,
-        default: false,
+        default: defaultValue,
     };
 }
 
@@ -67,6 +67,13 @@ export function objectProp<T = Object>(defaultValue: (() => T) | null = null): P
     return {
         type: Object,
         default: defaultValue,
+    };
+}
+
+export function requiredArrayProp<T>(): Prop<T[]> {
+    return {
+        type: Array as PropType<T[]>,
+        required: true,
     };
 }
 

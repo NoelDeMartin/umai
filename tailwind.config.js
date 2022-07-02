@@ -1,5 +1,6 @@
 const colors = require('tailwindcss/colors');
 
+/** @type {import('tailwindcss').Config} */
 module.exports = {
     content: [
         './index.html',
@@ -106,6 +107,9 @@ module.exports = {
             maxWidth: {
                 content: '1280px',
                 readable: '65ch',
+            },
+            zIndex: {
+                60: '60',
             },
         },
     },

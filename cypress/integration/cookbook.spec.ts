@@ -289,7 +289,7 @@ describe('Cookbook', () => {
         cy.press('Create your first recipe');
         cy.press('Import from the Web');
         cy.ariaInput('Website URL').type('https://recipes.example.com/hummus');
-        cy.press('Scan website for recipes');
+        cy.press('Scan');
         cy.press('Continue without a proxy');
         cy.see('We\'ve found the recipe!');
 
@@ -320,7 +320,7 @@ describe('Cookbook', () => {
         cy.press('Create your first recipe');
         cy.press('Import from the Web');
         cy.ariaInput('Website URL').type('https://recipes.example.com/hummus');
-        cy.press('Scan website for recipes');
+        cy.press('Scan');
         cy.toggleDetails('Advanced options');
         cy.ariaInput('Proxy url').clear().type('https://proxy.example.com');
         cy.press('OK');
@@ -353,7 +353,7 @@ describe('Cookbook', () => {
         cy.press('Create your first recipe');
         cy.press('Import from the Web');
         cy.ariaInput('Website URL').type('https://recipes.example.com/ramen');
-        cy.press('Scan website for recipes');
+        cy.press('Scan');
         cy.press('Continue without a proxy');
         cy.see('Oops! That didn\'t work');
 

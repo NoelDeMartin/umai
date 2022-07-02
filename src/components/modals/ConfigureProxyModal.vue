@@ -1,26 +1,21 @@
 <template>
-    <AppModal v-slot="{ close }" :title="$t('proxyConfig.title')">
+    <AppModal v-slot="{ close }" :title="$t('proxyConfig.title')" :cancellable="false">
         <CoreMarkdown :text="$t('proxyConfig.info', { url: `${$app.sourceUrl}/blob/main/docs/using-a-proxy.md` })" />
-
         <CoreForm class="mt-4" :form="form" @submit="submit(close)">
-            <details>
-                <summary class="cursor-pointer">
-                    {{ $t('proxyConfig.advancedOptions') }}
-                </summary>
-
+            <CoreDetails :summary="$t('proxyConfig.advancedOptions')">
                 <label class="flex items-center">
-                    <span>{{ $t('proxyConfig.proxyUrl') }}:</span>
-                    <BaseFluidInput class="ml-2" placeholder="https://..." name="proxyUrl" />
+                    <span>{{ $t('proxyConfig.proxyUrl') }}</span>
+                    <CoreFluidInput class="ml-2" placeholder="https://..." name="proxyUrl" />
                 </label>
-            </details>
+            </CoreDetails>
 
             <div class="flex justify-end">
-                <BaseLink @click="reject(close)">
+                <CoreLink @click="reject(close)">
                     {{ $t('proxyConfig.reject') }}
-                </BaseLink>
-                <BaseButton class="ml-2" type="submit">
+                </CoreLink>
+                <CoreButton class="ml-2" type="submit">
                     {{ $t('proxyConfig.accept') }}
-                </BaseButton>
+                </CoreButton>
             </div>
         </CoreForm>
     </AppModal>

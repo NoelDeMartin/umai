@@ -15,18 +15,18 @@
                 @open="alignInputs(), $name?.focus()"
             >
                 <div class="pl-8 space-y-3">
-                    <CoreInputWrapper class="flex flex-row items-center w-full">
-                        <CoreInputLabel ref="$nameLabel" class="font-medium">
+                    <label class="flex flex-row items-center w-full">
+                        <span ref="$nameLabel" class="font-medium">
                             {{ $t('home.createCookbook.nameLabel') }}
-                        </CoreInputLabel>
+                        </span>
                         <CoreInput ref="$name" name="name" class="ml-2 flex-grow" />
-                    </CoreInputWrapper>
-                    <CoreInputWrapper class="flex flex-row items-center w-full">
-                        <CoreInputLabel ref="$storageUrlLabel" class="font-medium">
+                    </label>
+                    <label class="flex flex-row items-center w-full">
+                        <span ref="$storageUrlLabel" class="font-medium">
                             {{ $t('home.createCookbook.storageUrlLabel') }}
-                        </CoreInputLabel>
+                        </span>
                         <CoreInput name="storageUrl" class="ml-2 flex-grow" />
-                    </CoreInputWrapper>
+                    </label>
                     <CoreMarkdown :text="$t('home.createCookbook.urlPreview', {url})" class="text-sm" />
                 </div>
             </CoreDetails>
@@ -62,9 +62,8 @@ import { stringToSlug, urlResolveDirectory } from '@noeldemartin/utils';
 
 import Auth from '@/framework/core/facades/Auth';
 import Cloud from '@/framework/core/facades/Cloud';
-import Errors from '@/framework/core/facades/Errors';
 import { FormInputType, reactiveForm } from '@/framework/forms';
-import type { IElement, IFocusable } from '@/framework/components/headless';
+import type { IFocusable } from '@/framework/components/headless';
 
 import Cookbook from '@/services/facades/Cookbook';
 
@@ -82,8 +81,8 @@ const form = reactiveForm({
     },
 });
 const $name = $ref<IFocusable | null>(null);
-const $nameLabel = $ref<IElement | null>(null);
-const $storageUrlLabel = $ref<IElement | null>(null);
+const $nameLabel = $ref<HTMLElement | null>(null);
+const $storageUrlLabel = $ref<HTMLElement | null>(null);
 const url = $computed(() => urlResolveDirectory(form.storageUrl, stringToSlug(form.name)));
 
 async function submit() {
@@ -91,21 +90,17 @@ async function submit() {
         processing = true;
         await Cookbook.createRemote(form.name, form.storageUrl);
         await Cloud.sync();
-    } catch(error) {
-        Errors.report(error);
     } finally {
         processing = false;
     }
 }
 
 async function alignInputs() {
-    const $labels = [$nameLabel, $storageUrlLabel]
-        .map($label => $label?.getRootElement())
-        .filter(($label): $label is HTMLElement => !!$label);
-    const maxWidth = $labels.reduce((width, $label) => Math.max(width, $label.clientWidth), 0);
+    const $spans = [$nameLabel, $storageUrlLabel].filter(($label): $label is HTMLElement => !!$label);
+    const maxWidth = $spans.reduce((width, $label) => Math.max(width, $label.clientWidth), 0);
 
-    for (const $label of $labels) {
-        $label.style.width = `${maxWidth}px`;
+    for (const $span of $spans) {
+        $span.style.width = `${maxWidth}px`;
     }
 }
 </script>

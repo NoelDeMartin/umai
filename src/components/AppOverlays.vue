@@ -25,11 +25,11 @@ useEvent('show-overlays-backdrop', async () => {
         return;
     }
 
+    backdropHidden = false;
+
     $backdrop.classList.remove('opacity-0');
 
     await fadeIn($backdrop, { duration: 300, easing: 'ease-out' });
-
-    backdropHidden = false;
 });
 
 useEvent('hide-overlays-backdrop', async () => {
@@ -37,10 +37,10 @@ useEvent('hide-overlays-backdrop', async () => {
         return;
     }
 
+    backdropHidden = true;
+
     await fadeOut($backdrop, { duration: 200, easing: 'ease-in' });
 
     $backdrop.classList.add('opacity-0');
-
-    backdropHidden = true;
 });
 </script>

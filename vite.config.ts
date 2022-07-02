@@ -12,7 +12,8 @@ import { resolve } from 'path';
 import packageJson from './package.json';
 
 const version = packageJson.version;
-const isProduction = process.env.NODE_ENV === 'production';
+const env = process.env.NODE_ENV ?? 'development';
+const isProduction = env === 'production';
 const versionName = 'v' + version + (isProduction ? '' : ('-next-' + execSync('git rev-parse HEAD')));
 const sourceUrl = packageJson.repository.replace('github:', 'https://github.com/');
 
@@ -52,7 +53,7 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': resolve(__dirname, './src'),
-            '/src/main.ts': process.env.NODE_ENV === 'testing'
+            '/src/main.ts': env === 'testing'
                 ? '/src/main.testing.ts'
                 : '/src/main.ts',
         },
@@ -71,6 +72,7 @@ export default defineConfig({
     },
     define: {
         'process.env': {
+            VUE_APP_ENV: env,
             VUE_APP_VERSION: version,
             VUE_APP_VERSION_NAME: versionName,
             VUE_APP_SOURCE_URL: sourceUrl,

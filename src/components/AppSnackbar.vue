@@ -1,6 +1,6 @@
 <template>
     <div
-        class="flex z-50 flex-row rounded-md shadow pointer-events-auto"
+        class="flex flex-row rounded-md shadow pointer-events-auto"
         :class="{
             'bg-white text-gray-900': isInfo,
             'bg-red-200 text-red-800': isError,

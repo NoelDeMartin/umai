@@ -53,10 +53,18 @@ export function renderCoreLink({ url, text, title, color, classes }: CoreLinkAtt
     const borderRadius = randomWobblyBorderRadius();
     const extraClasses = `${getCoreLinkColorClasses(color)} ${classes ?? ''}`;
 
+    if (url.startsWith('action:')) {
+        return `<button
+            type="button"
+            style="border-radius:${borderRadius}" ${(title && `title="${title}"`) || ''}
+            class="no-underline hover:underline focus-visible:outline-none focus-visible:ring-2 ${extraClasses}"
+            data-markdown-action="${url.substring('action:'.length)}"
+        >${text}</button>`;
+    }
+
     return `<a
         href="${url}"
-        style="border-radius:${borderRadius}"
-        ${title && `title="${title}"`}
+        style="border-radius:${borderRadius}" ${(title && `title="${title}"`) || ''}
         target="_blank"
         class="no-underline hover:underline focus-visible:outline-none focus-visible:ring-2 ${extraClasses}"
     >${text}</a>`;

@@ -7,7 +7,15 @@
     >
         <div class="fixed inset-0 flex items-center justify-center m-edge">
             <DialogPanel class="app-modal--panel relative max-w-full max-h-full overflow-hidden flex flex-col rounded-md shadow-xl bg-white">
-                <DialogTitle v-if="title || $slots.title" as="h2" class="px-4 pt-4 text-lg font-medium leading-6 text-gray-900">
+                <DialogTitle
+                    v-if="title || $slots.title"
+                    as="h2"
+                    class="pt-4 pl-4 text-lg font-medium leading-6 text-gray-900"
+                    :class="{
+                        'pr-16': cancellable,
+                        'pr-4': !cancellable,
+                    }"
+                >
                     <slot name="title">
                         {{ title }}
                     </slot>
@@ -16,13 +24,21 @@
                     v-if="cancellable"
                     clear
                     :aria-label="$t('ui.close')"
-                    :label="$t($t('ui.close'))"
+                    :label="$t('ui.close')"
                     class="absolute w-clickable h-clickable top-2 right-2"
                     @click="close()"
                 >
                     <i-pepicons-times class="w-6 h-6" aria-hidden="true" />
                 </CoreButton>
-                <div ref="content" :class="['flex overflow-auto flex-col mt-2 max-h-full', noPadding || 'px-4 pb-4']">
+                <div
+                    ref="content"
+                    class="flex overflow-auto flex-col mt-2 max-h-full"
+                    :class="{
+                        'pl-4 pb-4': padding,
+                        'pr-4': (title || !cancellable) && padding,
+                        'pr-12': !title && cancellable,
+                    }"
+                >
                     <slot :close="close" />
                 </div>
                 <component
@@ -38,36 +54,23 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue';
+import { provide } from 'vue';
 
 import Events from '@/framework/core/facades/Events';
 import UI from '@/framework/core/facades/UI';
+import { booleanProp, requiredNumberProp, requiredObjectProp, stringProp } from '@/framework/utils/vue';
 import { useEvent } from '@/framework/utils/composition/events';
 import type { Modal } from '@/framework/core/services/UIService';
 
 import { hideModal, showModal } from './AppModal.transitions';
+import type IAppModal from './AppModal';
 
 const { modal, childIndex } = defineProps({
-    modal: {
-        type: Object as PropType<Modal>,
-        required: true,
-    },
-    title: {
-        type: String as PropType<string | null>,
-        default: null,
-    },
-    noPadding: {
-        type: Boolean,
-        default: false,
-    },
-    childIndex: {
-        type: Number,
-        required: true,
-    },
-    cancellable: {
-        type: Boolean,
-        default: true,
-    },
+    modal: requiredObjectProp<Modal>(),
+    title: stringProp(),
+    childIndex: requiredNumberProp(),
+    padding: booleanProp(true),
+    cancellable: booleanProp(true),
 });
 
 let hidden = $ref(true);
@@ -132,4 +135,9 @@ useEvent('show-modal', async ({ id }) => {
 
     await show();
 });
+
+const publicApi = { close };
+
+provide<IAppModal>('modal', publicApi);
+defineExpose<IAppModal>(publicApi);
 </script>

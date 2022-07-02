@@ -23,6 +23,10 @@ export default class AppService extends Service<State> {
         return `${this.sourceUrl}/releases/tag/${this.versionName}`;
     }
 
+    public get isDevelopment(): boolean {
+        return process.env.VUE_APP_ENV === 'development';
+    }
+
     public env<T = unknown>(property: string): T {
         return import.meta.env[`VITE_${property}`] as unknown as T;
     }

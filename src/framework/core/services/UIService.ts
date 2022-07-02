@@ -3,7 +3,6 @@ import { markRaw, nextTick } from 'vue';
 import type { Component } from 'vue';
 
 import ConfirmModal from '@/framework/components/ConfirmModal.vue';
-import Errors from '@/framework/core/facades/Errors';
 import Events from '@/framework/core/facades/Events';
 import LoadingModal from '@/framework/components/LoadingModal.vue';
 import MarkdownModal from '@/framework/components/MarkdownModal.vue';
@@ -102,8 +101,6 @@ export interface SnackbarOptions {
     style: SnackbarStyle;
 }
 
-export type ModalCloseCallback<Result = unknown> = (result: Result) => void;
-
 export const enum ApplicationComponent {
     ConfirmModal = 'confirm-modal',
     ErrorReportModal = 'error-report-modal',
@@ -179,8 +176,6 @@ export default class UIService extends Service<State, ComputedState> {
             await operation();
 
             options.successMessage && this.showSnackbar(options.successMessage);
-        } catch (error) {
-            Errors.report(error);
         } finally {
             options.blocking && this.hideLoading();
         }

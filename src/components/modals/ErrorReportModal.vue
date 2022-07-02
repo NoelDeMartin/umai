@@ -1,8 +1,10 @@
 <template>
-    <AppModal no-padding>
+    <AppModal :padding="false">
         <div class="p-4">
             <div class="flex justify-between">
-                <h2>{{ title }}</h2>
+                <h2 class="font-medium text-lg">
+                    {{ title }}
+                </h2>
                 <div v-if="details" class="flex flex-row-reverse space-x-reverse space-x-2">
                     <CoreButton
                         clear
@@ -36,7 +38,7 @@
                     </CoreButton>
                 </div>
             </div>
-            <p v-if="description">
+            <p v-if="description" class="mt-2">
                 {{ description }}
             </p>
         </div>

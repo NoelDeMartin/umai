@@ -1,3 +1,4 @@
+import App from '@/framework/core/facades/App';
 import Service from '@/framework/core/Service';
 import UI from '@/framework/core/facades/UI';
 import { translate } from '@/framework/utils/translate';
@@ -30,6 +31,11 @@ export default class ErrorsService extends Service {
     }
 
     public report(error: ErrorReason): void {
+        if (App.isDevelopment) {
+            // eslint-disable-next-line no-console
+            console.error(error);
+        }
+
         if (!this.enabled) throw error;
 
         const report = this.getErrorReport(error);

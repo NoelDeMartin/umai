@@ -41,39 +41,50 @@ proxyConfig:
 
     [learn more]({url})
   advancedOptions: Advanced options
-  proxyUrl: Proxy url
+  proxyUrl: "Proxy url:"
   accept: OK
   reject: Continue without a proxy
 
 webImport:
-  title: Import recipes from the Web!
-  info: Add a url from the internet and you'll get your recipe!
-  url_placeholder: Website URL
-  submit: Scan website for recipes
-  scanning: Looking for recipes...
+  title: Import recipes from the Web
+  info: |
+    If there is a recipe online that you want to save in your cookbook, just paste the url below. We will look into that page
+    and find all the relevant information like instructions and ingredients.
 
-  failure_title: Oops! That didn't work
-  failure_info: |
-      It seems like it wasn't possible to get the contents from {url}.<br>
+    If don't know where to start, just open your favorite search engine and type away! Even if the website you find doesn't
+    look like a recipe, give it a try. You may be surprised to see what you get.
+  url_label: Website URL
+  url_placeholder: Website URL
+  submit: Scan
+  scanning: Looking for recipes...
+  defaultWebsiteTitle: Unknown
+  advancedOptions: Advanced options
+
+  error_title: Oops! That didn't work
+  error_info: |
+      It seems like it wasn't possible to get the contents from `{url}`.<br>
       [view error details](action:view-error-details)
 
       Here's some things you can do:
-  failure_retry: Try again
-  failure_retry_info: "If you think this error was temporary, just try again. You can also configure a proxy:"
-  failure_retry_useProxy: "Use a proxy:"
-  failure_retry_submit: Retry
-  failure_html: Copy & paste HTML
-  failure_html_info: "You can also view the source of the website and copy & paste it manually. If you don't know how to do that, copy the following url in your browser and copy & paste the contents you get into the textarea below:"
-  failure_html_copyToClipboard: Copy source url to clipboard
-  failure_html_copiedToClipboard: Source url copied to clipboard
-  failure_html_placeholder: Paste the page source HTML here
-  failure_html_label: Page source HTML
-  failure_html_submit: Scan HTML
+  error_retry: Try again
+  error_retry_info: "If you think this error was temporary, just try again. You can also configure a proxy:"
+  error_retry_useProxy: "Use a proxy:"
+  error_retry_submit: Retry
+  error_html: Copy & paste HTML
+  error_html_info: |
+    You can also view the source of the website and copy & paste it manually. If you don't know how to do that,
+    copy the following url in your browser and copy & paste the contents you get into the textarea below:
+  error_html_copyToClipboard: Copy source url to clipboard
+  error_html_copiedToClipboard: Source url copied to clipboard
+  error_html_placeholder: Paste the page source HTML here
+  error_html_label: Page source HTML
+  error_html_submit: Scan HTML
 
   success_title: Import from the Web
   success_infoSingle: We've found the recipe!
   success_infoMultiple: We've found the following recipes!
-  success_infoFallback: "We couldn't find a recipe in this website, but you can still add this website to your cookbook and add the information that's missing:"
+  success_infoFallback: |
+    We couldn't find a recipe in this website, but you can still add this recipe to your cookbook and fill the information that's missing by hand.
   success_allRecipes: All recipes
   success_importSingle: Import to my cookbook
   success_importMultiple: Import selected recipes

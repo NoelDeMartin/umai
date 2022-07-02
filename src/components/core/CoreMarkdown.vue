@@ -15,15 +15,15 @@ const { text, actions } = defineProps({
 
 const html = $computed(() => renderMarkdown(text));
 
-function onClick(event: Event) {
-    if (!(event.target instanceof HTMLElement))
+function onClick({ target }: Event) {
+    if (!(target instanceof HTMLElement)) {
         return;
+    }
 
-    if (!(event.target instanceof HTMLAnchorElement) || !event.target.href.startsWith('action:'))
+    if (!target.dataset.markdownAction) {
         return;
+    }
 
-    event.preventDefault();
-
-    actions[event.target.href.slice(7)]?.();
+    actions[target.dataset.markdownAction]?.();
 }
 </script>

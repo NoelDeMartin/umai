@@ -1,6 +1,6 @@
 <template>
-    <AppModal v-slot="{ close }" :title="$t('recipes.image_edit_title')">
-        <CoreForm :form="form" class="flex flex-col" @submit="submit(close)">
+    <AppModal ref="$root" :title="$t('recipes.image_edit_title')">
+        <CoreForm :form="form" class="flex flex-col" @submit="submit()">
             <div v-if="url">
                 <RecipeImage :url="url" class="w-full aspect-[5/2] max-h-[60vh] min-w-modal-content" />
                 <div class="flex items-center mt-2" :title="isUploadPending ? $t('recipes.image_edit_localUrl') : ''">
@@ -60,7 +60,7 @@
                     {{ $t('recipes.image_edit_remove') }}
                 </BaseButton>
                 <div class="flex-grow" />
-                <BaseButton secondary @click="close()">
+                <BaseButton secondary @click="$root?.close(null)">
                     {{ $t('recipes.image_edit_discard') }}
                 </BaseButton>
                 <BaseButton type="submit">
@@ -79,7 +79,8 @@ import { watchEffect } from 'vue';
 import Files from '@/framework/core/facades/Files';
 import UI from '@/framework/core/facades/UI';
 import { FormInputType, reactiveForm } from '@/framework/forms';
-import type { ModalCloseCallback } from '@/framework/core/services/UIService';
+
+import type IAppModal from '@/components/modals/AppModal';
 
 import type { RecipeImageFormModalProps, RecipeImageFormModalResult } from './RecipeImageFormModal';
 
@@ -98,6 +99,7 @@ const form = reactiveForm({
 
 let url = $ref(imageUrl ?? '');
 let isUploadPending = $ref(false);
+const $root = $ref<IAppModal<RecipeImageFormModalResult> | null>(null);
 const isLocalUrl = $computed(() => /^(tmp|solid):\/\//.test(url));
 
 async function uploadImage(file: File) {
@@ -111,10 +113,10 @@ async function uploadImage(file: File) {
     UI.hideLoading();
 }
 
-function submit(close: ModalCloseCallback<RecipeImageFormModalResult>) {
+function submit() {
     const customUrl = form.customUrl.trim();
 
-    close(customUrl.length > 0 ? customUrl : null);
+    $root?.close(customUrl.length > 0 ? customUrl : null);
 }
 
 watchEffect(async () => (isUploadPending = await Files.has(url)));

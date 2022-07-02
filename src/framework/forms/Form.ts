@@ -75,12 +75,10 @@ export default class Form extends MagicObject {
     public submit(): boolean {
         (this.submitted as Ref<boolean>).value = true;
 
-        const invalidInput = Object
+        return !Object
             .values(this.inputs)
             .map(input => input.validate())
-            .find(valid => !valid);
-
-        return invalidInput === undefined;
+            .some(valid => !valid);
     }
 
     protected __get(property: string): unknown {

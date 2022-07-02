@@ -1,5 +1,7 @@
-import { arr, arrayFilter, isObject, silenced, stringMatchAll, tap } from '@noeldemartin/utils';
+import { arr, arrayFilter, isObject, objectWithoutEmpty, silenced, stringMatchAll, tap } from '@noeldemartin/utils';
 import type { JsonLD } from '@noeldemartin/solid-utils';
+
+import { translate } from '@/framework/utils/translate';
 
 import Recipe from '@/models/Recipe';
 
@@ -151,10 +153,10 @@ export function parseWebsiteMetadata(url: string, html: string): WebsiteMetadata
         head.match(/<meta[^>]+name="(?:og:image|twitter:image)"[^>]+content="([^"]+)"[^>]*\/?>/im) ??
         head.match(/<meta[^>]+content="([^"]+)"[^>]+name="(?:og:image|twitter:image)"[^>]*\/?>/im);
 
-    return {
+    return objectWithoutEmpty({
         url,
-        title: titleMatch?.[1] ?? url,
-        description: descriptionMatch?.[1] ?? url,
-        imageUrl: imageUrlMatch?.[1] ?? url,
-    };
+        title: titleMatch?.[1] ?? translate('webImport.defaultWebsiteTitle'),
+        description: descriptionMatch?.[1] ?? null,
+        imageUrl: imageUrlMatch?.[1] ?? null,
+    });
 }
