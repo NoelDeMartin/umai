@@ -35,6 +35,6 @@ export type MagicForm<Inputs extends Record<string, FormInputDefinition>> = {
         : GetFormInputValue<Inputs[key]['type']>
 } & Form;
 
-export function reactiveForm<Inputs extends Record<string, FormInputDefinition>>(inputs: Inputs): MagicForm<Inputs> {
-    return new Form(inputs) as MagicForm<Inputs>;
+export function reactiveForm<Inputs extends Record<string, FormInputDefinition>>(inputs?: Inputs): MagicForm<Inputs> {
+    return new Form(inputs ?? {}) as MagicForm<Inputs>;
 }

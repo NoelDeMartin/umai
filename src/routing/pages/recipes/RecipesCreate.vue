@@ -4,7 +4,11 @@
         :style="`margin-top: -${$ui.headerHeight}px`"
         aria-labelledby="#recipe-form-title"
     >
-        <RecipeForm @done="onCreated" @cancel="$router.back()" />
+        <RecipeForm
+            :recipe="recipe"
+            @done="onCreated"
+            @cancel="$router.back()"
+        />
     </main>
 </template>
 
@@ -12,6 +16,10 @@
 import Cloud from '@/framework/core/facades/Cloud';
 import Network from '@/framework/core/facades/Network';
 import Router from '@/framework/core/facades/Router';
+
+import Cookbook from '@/services/facades/Cookbook';
+
+const recipe = Cookbook.getTmpRecipe(history.state.tmpRecipe);
 
 async function onCreated() {
     Router.push({ name: 'home' });

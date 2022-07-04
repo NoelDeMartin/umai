@@ -130,6 +130,10 @@ export async function parseWebsiteRecipes(url: string, html: string): Promise<Re
             .map(([, rawJson]) => JSON.parse(rawJson))
             .flat()
             .map(recipeJson => {
+                if (!recipeJson) {
+                    return;
+                }
+
                 reshapeRecipeJsonLD(recipeJson);
 
                 return silenced(Recipe.newFromJsonLD(recipeJson));

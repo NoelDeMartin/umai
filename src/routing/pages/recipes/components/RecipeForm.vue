@@ -53,7 +53,7 @@
                     <CoreFluidTextArea
                         ref="$name"
                         name="name"
-                        :placeholder="recipe ? '-' : $t('recipes.name_placeholder')"
+                        :placeholder="recipe?.exists() ? '-' : $t('recipes.name_placeholder')"
                         class="pb-2 -mb-2.5 text-4xl text-white placeholder:text-white placeholder:opacity-50 bg-transparent caret-primary-500 text-shadow font-semibold"
                         @keydown.enter.prevent="submit"
                     />
@@ -209,7 +209,7 @@
                             type="submit"
                             class="text-lg focus:ring-offset-primary-gray-300"
                         >
-                            {{ recipe ? $t('recipes.form.update') : $t('recipes.form.create') }}
+                            {{ recipe?.exists() ? $t('recipes.form.update') : $t('recipes.form.create') }}
                         </CoreButton>
                         <CoreButton
                             clear
@@ -221,7 +221,7 @@
                     </div>
                     <div class="flex-grow" />
                     <CoreButton
-                        v-if="recipe"
+                        v-if="recipe?.exists()"
                         clear
                         class="focus:ring-offset-primary-gray-300"
                         @click="deleteRecipe()"
@@ -236,7 +236,7 @@
 </template>
 
 <script setup lang="ts">
-import { arrayFilter, objectWithoutEmpty, tap } from '@noeldemartin/utils';
+import { arrayFilter, objectWithoutEmpty, range, tap } from '@noeldemartin/utils';
 import { nextTick, onMounted } from 'vue';
 import type { Attributes } from 'soukai';
 
@@ -266,7 +266,7 @@ import {
 } from './RecipeForm.transitions';
 import type { IRecipeImageFormModal } from './modals/RecipeImageFormModal';
 
-const { recipe } = defineProps({
+const { recipe: recipe } = defineProps({
     recipe: objectProp<Recipe>(),
 });
 const emit = defineEmits(['done', 'cancel']);
@@ -330,7 +330,7 @@ const $ingredients = $ref<IFocusable | null>(null);
 const $instructions = $ref<IFocusable | null>(null);
 const $externalUrls = $ref<IFocusable | null>(null);
 const a11yTitle = $computed(
-    () => recipe
+    () => recipe?.exists()
         ? translate('recipes.edit_a11y_title', { recipe: recipe.name })
         : translate('recipes.create_a11y_title'),
 );
@@ -383,7 +383,7 @@ async function initializeExternalUrls() {
 }
 
 async function deleteRecipe() {
-    if (!recipe)
+    if (!recipe?.exists())
         return;
 
     const confirmed = await UI.confirm({
@@ -404,7 +404,7 @@ async function deleteRecipe() {
     });
 }
 
-async function submit() {
+function getUpdatedRecipe() {
     const updatedAttributes = {
         name: form.name,
         imageUrl: form.imageUrl || null,
@@ -415,48 +415,77 @@ async function submit() {
         ingredients: arrayFilter(form.ingredients.map(({ value }) => value)),
         externalUrls: arrayFilter(form.externalUrls.map(({ value }) => value)),
     };
-    const updatedRecipe = recipe
+
+    return recipe
         ? tap(recipe, recipe => recipe.setAttributes(updatedAttributes))
         : new Recipe(updatedAttributes);
+}
+
+function updateRecipeInstructions(recipe: Recipe) {
     const updatedInstructionUrls = form.instructions.map(({ id }) => instructionUrls[id] ?? null);
-    const updateInstructionAttributes = form.instructions
+    const updatedInstructionAttributes = form.instructions
         .filter(({ value }) => !!value)
         .map(({ id, value }) => objectWithoutEmpty({
             url: instructionUrls[id],
             text: value,
         } as Attributes));
 
-    let position = 1;
-    for (const instructionStepAttributes of updateInstructionAttributes) {
-        const instructionStep = instructionStepAttributes.url
-            && updatedRecipe.instructions?.find(model => model.url === instructionStepAttributes.url);
+    if (!recipe.exists()) {
+        recipe.relatedInstructions.reset();
 
-        instructionStepAttributes.position = position++;
+        range(updatedInstructionAttributes.length)
+            .forEach(index => recipe.relatedInstructions.attach({
+                ...updatedInstructionAttributes[index],
+                position: index + 1,
+            }));
+
+        return;
+    }
+
+    for (let index = 0; index < updatedInstructionAttributes.length; index++) {
+        const instructionStepAttributes = updatedInstructionAttributes[index] as Attributes;
+        const instructionStep = instructionStepAttributes.url
+            && recipe.instructions?.find(model => model.url === instructionStepAttributes.url);
+
+        instructionStepAttributes.position = index + 1;
 
         instructionStep
             ? instructionStep.setAttributes(instructionStepAttributes)
-            : updatedRecipe.relatedInstructions.attach(instructionStepAttributes);
+            : recipe.relatedInstructions.attach(instructionStepAttributes);
     }
 
-    for (const instruction of updatedRecipe.instructions ?? []) {
+    for (const instruction of recipe.instructions ?? []) {
         if (!instruction.exists() || updatedInstructionUrls.includes(instruction.url))
             continue;
 
-        updatedRecipe.relatedInstructions.detach(instruction);
+        recipe.relatedInstructions.detach(instruction);
+    }
+}
+
+async function updateRecipeImage(recipe: Recipe) {
+    if (!recipe.imageUrl?.startsWith('tmp://')) {
+        return;
     }
 
-    if (updatedRecipe.imageUrl?.startsWith('tmp://')) {
-        updatedRecipe.exists() || updatedRecipe.mintUrl();
+    recipe.exists() || recipe.mintUrl();
 
-        const persistentImageUrl = `${updatedRecipe.getDocumentUrl()}.png`;
+    const persistentImageUrl = `${recipe.getDocumentUrl()}.png`;
 
-        await Files.rename(updatedRecipe.imageUrl, persistentImageUrl);
+    await Files.rename(recipe.imageUrl, persistentImageUrl);
 
-        if (Cookbook.remoteCookbookUrl && persistentImageUrl.startsWith(Cookbook.remoteCookbookUrl))
-            Cloud.enqueueFileUpload(persistentImageUrl);
+    if (Cookbook.remoteCookbookUrl && persistentImageUrl.startsWith(Cookbook.remoteCookbookUrl))
+        Cloud.enqueueFileUpload(persistentImageUrl);
 
-        updatedRecipe.imageUrl = persistentImageUrl;
-    }
+    recipe.imageUrl = persistentImageUrl;
+}
+
+async function submit() {
+    const updatedRecipe = getUpdatedRecipe();
+
+    await Promise.all([
+        updateRecipeInstructions(updatedRecipe),
+        updateRecipeImage(updatedRecipe),
+    ]);
 
     await updatedRecipe.save();
 

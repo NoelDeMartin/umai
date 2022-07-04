@@ -5,75 +5,43 @@
         @submit="submit()"
     >
         <template v-if="recipes.length > 1">
-            <CoreMarkdown v-if="recipes.length > 1" :text="$t('webImport.success_infoMultiple')" />
-            <ul v-if="recipes.length > 1" class="mt-4 space-y-2">
-                <li class="flex items-center">
-                    <BaseCheckbox
-                        id="all-recipes"
-                        class="w-6 h-6"
-                        :checked="form.recipes.length === recipes.length"
-                        @change="selectAllRecipes($event)"
-                    />
-                    <label class="ml-4 cursor-pointer" for="all-recipes">{{ $t('webImport.success_allRecipes') }}</label>
-                </li>
-                <li v-for="(recipe, index) of recipes" :key="index" class="flex items-center">
-                    <BaseCheckbox
-                        :id="`recipes-${index}`"
-                        name="recipes"
-                        :value="index"
-                        class="w-6 h-6"
-                    />
-                    <label :for="`recipes-${index}`" class="mt-2 ml-4 w-full hover:cursor-pointer">
-                        <RecipeListItem
-                            :name="recipe.name"
-                            :description="recipe.description"
-                            :image-url="recipe.imageUrl"
-                        />
-                    </label>
-                </li>
-            </ul>
+            <CoreMarkdown :text="$t('webImport.success_infoMultiple')" />
+            <RadioGroup v-model="selectedRecipe">
+                <RadioGroupLabel class="sr-only">
+                    {{ $t('webImport.success_recipes') }}
+                </RadioGroupLabel>
+                <WebImportModalResultsRecipeRadio
+                    v-for="(recipe, index) of recipes"
+                    :key="index"
+                    :recipe="recipe"
+                    class="mt-3"
+                />
+            </RadioGroup>
         </template>
         <template v-else-if="recipes.length === 1">
             <CoreMarkdown :text="$t('webImport.success_infoSingle')" />
-            <RecipeListItem
-                class="mt-4"
-                :name="recipes[0]?.name"
-                :description="recipes[0]?.description"
-                :image-url="recipes[0]?.imageUrl"
-            />
+            <WebImportModalResultsRecipe class="mt-4" :recipe="recipes[0]" />
         </template>
         <template v-else>
             <CoreMarkdown :text="$t('webImport.success_infoFallback')" />
-            <RecipeListItem
-                class="mt-4"
-                :name="metadata.title"
-                :description="metadata.description"
-                :image-url="metadata.imageUrl"
-            />
+            <WebImportModalResultsRecipe class="mt-4" :recipe="metadataRecipe" />
         </template>
         <CoreButton
-            class="self-end mt-4 py-3 px-6 text-md font-medium"
             type="submit"
-            :disabled="recipes.length > 0 && form.recipes.length === 0"
+            class="self-end mt-4 py-3 px-6 text-md font-medium"
+            :disabled="recipes.length > 1 && !selectedRecipe"
         >
-            {{
-                recipes.length > 1
-                    ? $t('webImport.success_importMultiple')
-                    : $t('webImport.success_importSingle')
-            }}
+            {{ $t('webImport.success_import') }}
         </CoreButton>
     </CoreForm>
 </template>
 
 <script setup lang="ts">
-import Cloud from '@/framework/core/facades/Cloud';
-import Network from '@/framework/core/facades/Network';
 import Router from '@/framework/core/facades/Router';
-import UI from '@/framework/core/facades/UI';
 import { injectOrFail, requiredArrayProp, requiredObjectProp } from '@/framework/utils/vue';
-import { FormInputType, reactiveForm } from '@/framework/forms';
-import { translate } from '@/framework/utils/translate';
+import { reactiveForm } from '@/framework/forms';
 
+import Cookbook from '@/services/facades/Cookbook';
 import Recipe from '@/models/Recipe';
 import type { WebsiteMetadata } from '@/utils/web-parsing';
 
@@ -87,46 +55,23 @@ const modal = injectOrFail<IWebImportModal>(
     'web-import-modal',
     '<WebImportModalResults> must be a child of a <WebImportModal>',
 );
-const form = $computed(
-    () => reactiveForm({
-        recipes: {
-            type: FormInputType.Number,
-            multi: true,
-            default: recipes.map((_, index) => index),
-        },
-    }),
-);
-
-function selectAllRecipes({ target }: Event) {
-    const checked = (target as HTMLInputElement)?.matches(':checked');
-
-    form.recipes = checked ? recipes.map((_, index) => index) : [];
-}
+const form = reactiveForm();
+const selectedRecipe = $ref<Recipe | null>(null);
+const metadataRecipe = $computed(() => new Recipe({
+    name: metadata.title,
+    description: metadata.description,
+    imageUrl: metadata.imageUrl,
+    externalUrls: [metadata.url],
+}));
 
 async function submit(): Promise<void> {
     modal.close();
 
-    const selectedRecipes =
-        recipes.length === 0
-            ? [
-                new Recipe({
-                    name: metadata.title,
-                    description: metadata.description,
-                    imageUrl: metadata.imageUrl,
-                    externalUrls: [metadata.url],
-                }),
-            ]
-            : form.recipes.map(index => recipes?.[index]) as Recipe[];
-
-    await Promise.all(selectedRecipes.map(recipe => recipe.save()));
-
-    selectedRecipes.length === 1 && await Router.push({
-        name: 'recipes.show',
-        params: { recipe: selectedRecipes[0]?.uuid },
+    await Router.push({
+        name: 'recipes.create',
+        state: {
+            tmpRecipe: Cookbook.saveTmpRecipe(selectedRecipe as Recipe ?? recipes[0] ?? metadataRecipe),
+        },
     });
-
-    UI.showSnackbar(translate('webImport.done', selectedRecipes.length));
-
-    Network.online && Cloud.sync();
 }
 </script>

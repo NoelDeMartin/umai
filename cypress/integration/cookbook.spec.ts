@@ -4,6 +4,7 @@ import path from 'path';
 import firstRamenJsonLD from '@cy/fixtures/ramen-1.json';
 import jaimiesHummusJsonLD from '@cy/fixtures/jaimies-hummus.json';
 import junsRamenJsonLD from '@cy/fixtures/juns-ramen.json';
+import pistoJsonLD from '@cy/fixtures/pisto.json';
 import secondRamenJsonLD from '@cy/fixtures/ramen-2.json';
 
 describe('Cookbook', () => {
@@ -302,15 +303,49 @@ describe('Cookbook', () => {
         cy.see('Simple houmous');
         cy.see('Chickpeas – the star ingredient in houmous – are incredibly good for you.');
         cy.press('Import to my cookbook');
+        cy.ariaInput('Recipe name').clear().type('Houmous');
+        cy.press('Create recipe');
+        cy.press('Houmous', 'a');
 
         // Assert
-        cy.see('The recipe has been added to your cookbook');
-        cy.url().should('contain', 'simple-houmous');
+        cy.url().should('contain', 'houmous');
         cy.see('Chickpeas – the star ingredient in houmous – are incredibly good for you.');
         cy.see('1 lemon');
         cy.see('recipe on recipes.example.com');
 
-        cy.assertLocalDocumentEquals('solid://recipes/simple-houmous', jaimiesHummusJsonLD);
+        cy.assertLocalDocumentEquals('solid://recipes/houmous', jaimiesHummusJsonLD);
+    });
+
+    it('Imports multiple recipes from the Web', () => {
+        // Arrange
+        cy.intercept('https://recipes.example.com/pisto', { fixture: 'html/pisto.html' });
+
+        cy.see('How would you like to begin?');
+
+        // Act
+        cy.press('Create your first recipe');
+        cy.press('Import from the Web');
+        cy.toggleDetails('Advanced options');
+        cy.details('Advanced options').within(() => {
+            cy.get('input[type="checkbox"]').click();
+        });
+        cy.ariaInput('Website URL').type('https://recipes.example.com/pisto');
+        cy.press('Scan');
+        cy.see('We\'ve found more than one recipe');
+        cy.contains('[role="radio"]', 'Pisto Manchego').click();
+        cy.press('Import to my cookbook');
+        cy.press('Create recipe');
+
+        // Assert
+        cy.see('Pisto Manchego', 'a');
+        cy.dontSee('Marinated Olives');
+        cy.press('Pisto Manchego');
+        cy.url().should('contain', 'pisto-manchego');
+        cy.see('Pisto Manchego With Olive Oil');
+        cy.see('4 zucchini small, cubed');
+        cy.see('recipe on recipes.example.com');
+
+        cy.assertLocalDocumentEquals('solid://recipes/pisto-manchego', pistoJsonLD);
     });
 
     it('Imports recipes from the Web using a proxy', () => {
@@ -334,15 +369,17 @@ describe('Cookbook', () => {
         cy.see('Simple houmous');
         cy.see('Chickpeas – the star ingredient in houmous – are incredibly good for you.');
         cy.press('Import to my cookbook');
+        cy.ariaInput('Recipe name').clear().type('Houmous');
+        cy.press('Create recipe');
+        cy.press('Houmous', 'a');
 
         // Assert
-        cy.see('The recipe has been added to your cookbook');
-        cy.url().should('contain', 'simple-houmous');
+        cy.url().should('contain', 'houmous');
         cy.see('Chickpeas – the star ingredient in houmous – are incredibly good for you.');
         cy.see('1 lemon');
         cy.see('recipe on recipes.example.com');
 
-        cy.assertLocalDocumentEquals('solid://recipes/simple-houmous', jaimiesHummusJsonLD);
+        cy.assertLocalDocumentEquals('solid://recipes/houmous', jaimiesHummusJsonLD);
     });
 
     it('Imports recipes from the Web copy & pasting HTML', () => {
@@ -371,14 +408,16 @@ describe('Cookbook', () => {
         cy.wait(200);
 
         cy.press('Import to my cookbook');
+        cy.ariaInput('Recipe name').clear().type('Jun\'s Ramen');
+        cy.press('Create recipe');
+        cy.press('Jun\'s Ramen', 'a');
 
         // Assert
-        cy.see('The recipe has been added to your cookbook');
-        cy.url().should('contain', 'homemade-ramen');
+        cy.url().should('contain', 'juns-ramen');
         cy.see('Cat Merch!');
         cy.see('recipe on recipes.example.com');
 
-        cy.assertLocalDocumentEquals('solid://recipes/homemade-ramen', junsRamenJsonLD);
+        cy.assertLocalDocumentEquals('solid://recipes/juns-ramen', junsRamenJsonLD);
     });
 
     it('Shares local recipes', () => {

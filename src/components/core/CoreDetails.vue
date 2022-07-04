@@ -6,7 +6,7 @@
         >
             {{ summary }}
         </summary>
-        <div class="mt-2">
+        <div class="mt-2 pl-6">
             <slot />
         </div>
     </details>

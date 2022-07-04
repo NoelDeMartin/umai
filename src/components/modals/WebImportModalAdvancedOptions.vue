@@ -1,6 +1,6 @@
 <template>
     <CoreDetails :summary="$t('webImport.advancedOptions')">
-        <div class="flex items-center pl-6">
+        <div class="flex items-center">
             <BaseCheckbox id="use-proxy" name="useProxy" />
             <label
                 for="use-proxy"
@@ -20,7 +20,7 @@
             </label>
         </div>
         <CoreLink
-            class="text-sm ml-12"
+            class="text-sm ml-6"
             @click="$ui.showMarkdown($t('webImport.useProxy_helpTitle'), $t('webImport.useProxy_helpContent'))"
         >
             {{ $t('webImport.useProxy_help') }}

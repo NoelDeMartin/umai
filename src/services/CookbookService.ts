@@ -1,4 +1,4 @@
-import { PromisedValue, arr, isObject, tap } from '@noeldemartin/utils';
+import { PromisedValue, arr, isObject, tap, uuid } from '@noeldemartin/utils';
 import { SolidContainerModel } from 'soukai-solid';
 import type { FluentArray, Obj } from '@noeldemartin/utils';
 
@@ -39,6 +39,8 @@ export default class CookbookService extends Service<State, ComputedState> {
 
     public static persist: Array<keyof State> = ['remoteCookbookUrl'];
 
+    private tmpRecipes: Record<string, Recipe> = {};
+
     public get isReady(): boolean {
         return this.cookbook.isResolved();
     }
@@ -69,6 +71,14 @@ export default class CookbookService extends Service<State, ComputedState> {
         }
 
         await recipe.delete();
+    }
+
+    public saveTmpRecipe(recipe: Recipe): string {
+        return tap(uuid(), id => this.tmpRecipes[id] = recipe);
+    }
+
+    public getTmpRecipe(id: string): Recipe | null {
+        return this.tmpRecipes[id] ?? null;
     }
 
     protected async boot(): Promise<void> {

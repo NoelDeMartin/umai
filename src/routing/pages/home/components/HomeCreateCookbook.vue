@@ -14,7 +14,7 @@
                 :summary="$t('home.createCookbook.advancedOptions')"
                 @open="alignInputs(), $name?.focus()"
             >
-                <div class="pl-8 space-y-3">
+                <div class="space-y-3">
                     <label class="flex flex-row items-center w-full">
                         <span ref="$nameLabel" class="font-medium">
                             {{ $t('home.createCookbook.nameLabel') }}

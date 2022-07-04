@@ -6,7 +6,7 @@
                     :aria-label="$t('menu.open')"
                     :title="$t('menu.open')"
                 >
-                    <i-pepicons-gear class="w-7 h-7" aria-hidden="true" />
+                    <i-pepicons-gear-filled class="w-7 h-7" aria-hidden="true" />
                 </AppHeaderButton>
             </MenuButton>
         </div>

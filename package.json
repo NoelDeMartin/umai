@@ -33,7 +33,7 @@
     "image-blob-reduce": "^4.1.0",
     "marked": "^4.0.12",
     "soukai": "^0.4.1-next.6feb3d2e460f5b0522f6e9f1ebc1dd43b0730079",
-    "soukai-solid": "^0.4.1-next.8e503871e56346be0a9b03cf9cf17f92b07cb04a",
+    "soukai-solid": "^0.4.1-next.c03de7701ec33d3ee68098f9d83b7b6402727bca",
     "tailwindcss": "^3.1.4",
     "vue": "^3.2.29",
     "vue-i18n": "^9.2.0-beta.23",

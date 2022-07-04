@@ -3,6 +3,7 @@
         ref="$root"
         v-wobbly-border="wobblyBorder"
         :class="computedClasses"
+        :disabled="disabled"
     >
         <slot />
     </HeadlessButton>
@@ -18,7 +19,8 @@ import type { WobblyBorderOptions } from '@/directives/wobbly-border';
 
 import { CoreAlignment, CoreColor } from './index';
 
-const { color, class: customClasses, alignment, secondary, tinted, clear } = defineProps({
+const { disabled, color, class: customClasses, alignment, secondary, tinted, clear } = defineProps({
+    disabled: booleanProp(false),
     color: enumProp(CoreColor),
     class: stringProp(''),
     alignment: enumProp(CoreAlignment),
@@ -46,6 +48,10 @@ enum Style {
 
 function getColorClasses(color: CoreColor): string {
     const colorClasses = colorsClasses[color];
+
+    if (disabled) {
+        return 'bg-gray-300 text-gray-700 opacity-75 cursor-not-allowed';
+    }
 
     switch (style) {
         case Style.Primary:
