@@ -5,81 +5,87 @@
                 <p v-safe-html="$t('cloud.login.info_reconnect', { url: $auth.previousSession?.loginUrl })" />
             </div>
             <CloudConfiguration class="mt-4" />
-            <BaseButton class="mt-4 bg-brand-solid-700 hover:bg-brand-solid-500" @click="$auth.reconnect()">
-                <i-app-solid-emblem aria-hidden="true" class="h-6 w-6" />
-                <span class="ml-2">{{ $t('cloud.reconnect_now') }}</span>
-            </BaseButton>
-            <BaseButton secondary class="mt-2" @click="$auth.logout()">
-                <span>{{ $t('cloud.logout') }}</span>
-                <i-heroicons-solid-logout class="ml-2 h-4 w-4" />
-            </BaseButton>
-        </div>
-        <template v-else>
-            <div class="prose">
-                <p>{{ $t('cloud.login.info') }}</p>
-                <p>
-                    <small>
-                        <a href="https://solidproject.org/" target="_blank">{{ $t('cloud.login.info_learnMore') }}</a>
-                    </small>
-                </p>
-            </div>
-            <CoreForm class="flex flex-col" :form="form" @submit="submit(close)">
-                <BaseInput
-                    ref="input"
-                    :label="$t('cloud.login.loginUrl')"
-                    name="loginUrl"
-                    class="mt-4 focus:!border-brand-solid-500 focus:!ring-brand-solid-700"
-                    placeholder="e.g. https://alice.solidcommunity.net/profile/card#me"
-                    @keydown.enter="form.submit()"
-                />
-                <BaseButton type="submit" class="mt-4 w-full bg-brand-solid-700 hover:bg-brand-solid-500">
-                    <i-app-solid-emblem aria-hidden="true" class="h-6 w-6" />
-                    <span class="ml-2">{{ $t('cloud.login.submit') }}</span>
-                </BaseButton>
-                <BaseLink
-                    v-if="!$auth.dismissed"
-                    class="mt-1 text-sm text-brand-solid-700 hover:text-brand-solid-500"
-                    @click="$auth.dismiss(), close()"
+            <div class="flex flex-row-reverse space-x-2 space-x-reverse mt-4">
+                <CoreButton
+                    v-initial-focus
+                    secondary
+                    color="brand-solid"
+                    @click="$auth.reconnect()"
                 >
-                    {{ $t('cloud.login.dismiss') }}
-                </BaseLink>
-            </CoreForm>
-        </template>
+                    <i-pepicons-refresh aria-hidden="true" class="h-6 w-6" />
+                    <span class="ml-2">{{ $t('cloud.reconnect_now') }}</span>
+                </CoreButton>
+                <CoreButton
+                    secondary
+                    color="danger"
+                    @click="$auth.logout()"
+                >
+                    <i-pepicons-leave class="h-6 w-6" />
+                    <span class="ml-2">{{ $t('cloud.logout') }}</span>
+                </CoreButton>
+            </div>
+        </div>
+        <CoreForm
+            v-else
+            class="flex flex-col"
+            :form="form"
+            @submit="submit(close)"
+        >
+            <CoreMarkdown :text="$t('cloud.login.info')" />
+            <div class="mt-2 flex">
+                <CoreInput
+                    initial-focus
+                    name="url"
+                    class="min-w-[300px] w-full"
+                    color="brand-solid"
+                    :label="$t('cloud.login.url')"
+                    :show-errors="false"
+                    :placeholder="$t('cloud.login.url_placeholder')"
+                    :wobbly-border="{ topRight: false, bottomRight: false }"
+                />
+                <CoreButton
+                    type="submit"
+                    color="brand-solid"
+                    alignment="center"
+                    class="flex-shrink-0 focus:z-20"
+                    :wobbly-border="{ topLeft: false, bottomLeft: false }"
+                >
+                    <i-app-solid-emblem class="h-6 w-6 text-brand-solid-500" aria-hidden="true" />
+                    <span class="ml-1">{{ $t('cloud.login.submit') }}</span>
+                </CoreButton>
+            </div>
+            <CoreLink
+                v-if="!$auth.dismissed"
+                color="brand-solid"
+                class="mt-2 text-sm"
+                @click="$auth.dismiss(), close()"
+            >
+                {{ $t('cloud.login.dismiss') }}
+            </CoreLink>
+        </CoreForm>
     </AppModal>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
-
 import Auth from '@/framework/core/facades/Auth';
-import { nextTicks } from '@/framework/utils/vue';
 import { FormInputType, reactiveForm } from '@/framework/forms';
 
-import type IBaseInput from '@/components/base/BaseInput';
-
-const input = $ref<IBaseInput>();
 const form = reactiveForm({
-    loginUrl: {
+    url: {
         type: FormInputType.String,
         rules: 'required',
     },
 });
 
-onMounted(async () => {
-    await nextTicks(2);
-
-    // TODO use initialFocus when available
-    // See https://github.com/tailwindlabs/headlessui/issues/542
-    input?.focus();
-});
-
 async function submit(close: Function) {
-    if (!/^https?:\/\//.test(form.loginUrl))
-        form.loginUrl = 'https://' + form.loginUrl;
+    if (!/^https?:\/\//.test(form.url)) {
+        form.url = 'https://' + form.url;
+    }
 
-    const loggedIn = await Auth.login(form.loginUrl);
+    const loggedIn = await Auth.login(form.url);
 
-    if (loggedIn)
+    if (loggedIn) {
         close();
+    }
 }
 </script>

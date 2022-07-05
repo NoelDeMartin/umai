@@ -4,7 +4,7 @@
             {{ title }}
         </h2>
         <CoreMarkdown :text="message || $t('ui.confirm')" />
-        <div class="flex flex-row-reverse items-end space-x-2 space-x-reverse">
+        <div class="flex flex-row-reverse items-end space-x-2 space-x-reverse mt-4">
             <CoreButton :color="acceptColor" @click="close(true)">
                 {{ acceptText || $t('ui.confirm_accept') }}
             </CoreButton>

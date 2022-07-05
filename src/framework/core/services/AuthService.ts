@@ -7,11 +7,15 @@ import AuthenticationCancelledError from '@/framework/auth/errors/Authentication
 import Errors from '@/framework/core/facades/Errors';
 import Events from '@/framework/core/facades/Events';
 import Service from '@/framework/core/Service';
+import UI from '@/framework/core/facades/UI';
 import { getAuthenticator } from '@/framework/auth';
+import { translate } from '@/framework/utils/translate';
 import type Authenticator from '@/framework/auth/Authenticator';
 import type { AuthenticatorName } from '@/framework/auth';
 import type { AuthSession } from '@/framework/auth/Authenticator';
 import type { ComputedStateDefinitions, IService } from '@/framework/core/Service';
+
+import { CoreColor } from '@/components/core';
 
 interface State {
     autoReconnect: boolean;
@@ -135,14 +139,28 @@ export default class AuthService extends Service<State, ComputedState> {
         await this.login(this.previousSession.loginUrl, this.previousSession.authenticator);
     }
 
-    public async logout(): Promise<void> {
-        if (!this.previousSession)
+    public async logout(force: boolean = false): Promise<void> {
+        // TODO show a different message if there are pending local modifications
+        const confirmLogout = force || await UI.confirm({
+            title: translate('menu.logOut_confirmTitle'),
+            message: translate('menu.logOut_confirmMessage'),
+            acceptText: translate('menu.logOut'),
+            acceptColor: CoreColor.Danger,
+        });
+
+        if (!confirmLogout) {
             return;
+        }
+
+        if (!this.previousSession) {
+            return;
+        }
 
         this.setState({ previousSession: null });
 
-        if (this.isLoggedIn())
+        if (this.isLoggedIn()) {
             await this.authenticator.logout();
+        }
 
         Events.emit('logout');
     }

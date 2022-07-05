@@ -1,5 +1,5 @@
 <template>
-    <div class="flex overflow-y-auto flex-col w-screen h-screen">
+    <div ref="$root" class="flex overflow-y-auto flex-col w-screen h-screen">
         <AppHeader v-if="$route.meta.header ?? true" />
         <div class="flex flex-grow justify-center self-stretch">
             <slot />
@@ -11,4 +11,12 @@
     </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { onMounted } from 'vue';
+
+import UI from '@/framework/core/facades/UI';
+
+const $root = $ref<HTMLElement | null>(null);
+
+onMounted(() => $root && UI.setLayoutElement($root));
+</script>

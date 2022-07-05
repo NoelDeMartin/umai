@@ -1,8 +1,5 @@
 <template>
-    <details>
-        <summary class="cursor-pointer">
-            {{ $t('cloud.advancedOptions') }}
-        </summary>
+    <CoreDetails :summary="$t('cloud.advancedOptions')">
         <div v-for="option of options" :key="option.name" class="flex relative items-start py-1">
             <div class="flex items-center h-5">
                 <input
@@ -10,7 +7,7 @@
                     v-model="option.enabled"
                     :name="option.name"
                     type="checkbox"
-                    class="w-4 h-4 rounded border-gray-300 cursor-pointer form-checkbox text-primary-600 focus:ring-primary-500 hover:bg-gray-200"
+                    class="w-4 h-4 rounded border-gray-300 cursor-pointer form-checkbox text-brand-solid-600 focus:ring-brand-solid-500 hover:bg-gray-200"
                     @change="option.updated()"
                 >
             </div>
@@ -33,7 +30,7 @@
                 </label>
             </div>
         </div>
-    </details>
+    </CoreDetails>
 </template>
 
 <script setup lang="ts">

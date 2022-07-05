@@ -23,12 +23,14 @@ cloud:
 
   login:
     title: Connect to cloud
-    info: You can keep your data safe across devices using a Solid account, use the form below to log in.
-    info_learnMore: learn more
+    info: |
+      You can keep your data safe across devices with a
+      <CoreLink url="https://solidproject.org" color="brand-solid">Solid account</CoreLink>, use the input below to log in.
     info_reconnect: You need to reconnect to <a href="{url}" target="_blank">{url}</a>.
-    loginUrl: Login url
+    url: Login url
+    url_placeholder: webId or issue provider
     dismiss: No thanks, I want to keep my data offline
-    submit: Log in with Solid
+    submit: Log in
 
   logout: Log out
 

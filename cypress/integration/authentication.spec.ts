@@ -137,6 +137,8 @@ describe('Authentication', () => {
         // Act
         cy.press('online');
         cy.press('Log out');
+        cy.see('Are you sure?');
+        cy.press('Log out');
 
         // Assert
         cy.see('How would you like to begin?');

@@ -39,7 +39,7 @@
                             'flex items-center px-4 py-2 w-full text-sm text-gray-700',
                             active && 'bg-gray-100',
                         ]"
-                        @click="$auth.hasLoggedIn ? logout() : $ui.openModal(CloudStatusModal)"
+                        @click="$auth.hasLoggedIn ? $auth.logout() : $ui.openModal(CloudStatusModal)"
                     >
                         {{ $auth.hasLoggedIn ? $t('menu.logOut') : $t('menu.logIn') }}
                     </button>
@@ -50,24 +50,5 @@
 </template>
 
 <script setup lang="ts">
-import Auth from '@/framework/core/facades/Auth';
-import UI from '@/framework/core/facades/UI';
-import { translate } from '@/framework/utils/translate';
-
 import CloudStatusModal from '@/components/modals/CloudStatusModal.vue';
-
-async function logout() {
-    // TODO show a different message if there are pending local modifications
-    const confirmLogout = await UI.confirm({
-        title: translate('menu.logOut_confirmTitle'),
-        message: translate('menu.logOut_confirmMessage'),
-        acceptText: translate('menu.logOut'),
-    });
-
-    if (!confirmLogout) {
-        return;
-    }
-
-    await Auth.logout();
-}
 </script>

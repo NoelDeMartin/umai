@@ -116,6 +116,7 @@ export enum SnackbarStyle {
 
 export default class UIService extends Service<State, ComputedState> {
 
+    private $layout: HTMLElement | null = null;
     private modalCallbacks: Record<string, Partial<ModalCallbacks>> = {};
     private components: Record<ApplicationComponent, Component> = {
         [ApplicationComponent.ConfirmModal]: markRaw(ConfirmModal),
@@ -124,6 +125,10 @@ export default class UIService extends Service<State, ComputedState> {
         [ApplicationComponent.MarkdownModal]: markRaw(MarkdownModal),
         [ApplicationComponent.NotFound]: markRaw(NotFound),
     };
+
+    public setLayoutElement($layout: HTMLElement): void {
+        this.$layout = $layout;
+    }
 
     public async confirm(options: Partial<ConfirmOptions> = {}): Promise<boolean> {
         const modal = await this.openModal(this.components[ApplicationComponent.ConfirmModal], options);
@@ -254,6 +259,10 @@ export default class UIService extends Service<State, ComputedState> {
 
     public registerComponent(name: ApplicationComponent, component: Component): void {
         this.components[name] = markRaw(component);
+    }
+
+    public scrollLayout(options: ScrollToOptions): void {
+        this.$layout?.scrollTo(options);
     }
 
     public updateHeaderHeight(height: number): void {

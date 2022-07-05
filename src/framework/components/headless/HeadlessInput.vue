@@ -3,13 +3,13 @@
 </template>
 
 <script setup lang="ts">
-import { inject, provide } from 'vue';
+import { inject, onMounted, provide } from 'vue';
 import { tap, uuid } from '@noeldemartin/utils';
 import type { Tuple } from '@noeldemartin/utils';
 
 import FormValue from '@/framework/forms/FormValue';
 import { focusableElement } from '@/framework/components/headless';
-import { mixedProp, stringProp } from '@/framework/utils/vue';
+import { booleanProp, mixedProp, stringProp } from '@/framework/utils/vue';
 import type Form from '@/framework/forms/Form';
 
 import type IHeadlessInput from './HeadlessInput';
@@ -29,6 +29,7 @@ const {
     modelValue: mixedProp<string | number>([String, Number]),
     type: stringProp('text'),
     error: stringProp(),
+    initialFocus: booleanProp(),
 });
 const emit = defineEmits(['update:modelValue']);
 
@@ -87,6 +88,8 @@ const controller: HeadlessInputController = {
         );
     },
 };
+
+onMounted(() => controller.inputElement?.focus());
 
 provide('input', controller);
 defineExpose<IHeadlessInput>({

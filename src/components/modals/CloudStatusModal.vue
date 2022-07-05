@@ -10,21 +10,25 @@
                 class="prose"
             />
             <CloudConfiguration class="mt-4" />
-            <BaseButton
-                secondary
-                class="mt-4 w-full"
-                @click="$cloud.sync(), close()"
-            >
-                <span>{{ $t('cloud.sync_now') }}</span>
-            </BaseButton>
-            <BaseButton
-                secondary
-                class="mt-2 w-full"
-                @click="$auth.logout(), close()"
-            >
-                <span>{{ $t('cloud.logout') }}</span>
-                <i-heroicons-solid-logout class="ml-2" aria-hidden="true" />
-            </BaseButton>
+            <div class="flex flex-row-reverse space-x-2 space-x-reverse mt-4">
+                <CoreButton
+                    v-initial-focus
+                    secondary
+                    color="brand-solid"
+                    @click="$cloud.sync(), close()"
+                >
+                    <i-pepicons-refresh class="w-6 h-6" aria-hidden="true" />
+                    <span class="ml-2">{{ $t('cloud.sync_now') }}</span>
+                </CoreButton>
+                <CoreButton
+                    secondary
+                    color="danger"
+                    @click="$auth.logout(), close()"
+                >
+                    <i-pepicons-leave class="w-6 h-6" aria-hidden="true" />
+                    <span class="ml-2">{{ $t('cloud.logout') }}</span>
+                </CoreButton>
+            </div>
         </div>
         <template v-else>
             <p class="prose">
@@ -37,11 +41,10 @@
 
 <script setup lang="ts">
 import { stringCapitalize } from '@noeldemartin/utils';
-import { useI18n } from 'vue-i18n';
 
 import Cloud from '@/framework/core/facades/Cloud';
+import { translate } from '@/framework/utils/translate';
 
-const { t } = useI18n();
-const title = $computed(() => stringCapitalize(t(`cloud.statuses.${Cloud.status}`)));
-const body = $computed(() => stringCapitalize(t(`cloud.statuses.${Cloud.status}_description`)));
+const title = $computed(() => stringCapitalize(translate(`cloud.statuses.${Cloud.status}`)));
+const body = $computed(() => stringCapitalize(translate(`cloud.statuses.${Cloud.status}_description`)));
 </script>
