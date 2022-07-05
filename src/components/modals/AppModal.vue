@@ -8,7 +8,7 @@
         <div class="fixed inset-0 flex items-center justify-center m-edge">
             <DialogPanel class="app-modal--panel relative max-w-full max-h-full overflow-hidden flex flex-col rounded-md shadow-xl bg-white">
                 <DialogTitle
-                    v-if="title || $slots.title"
+                    v-if="hasTitle"
                     as="h2"
                     class="pt-4 pl-4 text-lg font-medium leading-6 text-gray-900"
                     :class="{
@@ -35,8 +35,8 @@
                     class="flex overflow-auto flex-col mt-2 max-h-full"
                     :class="{
                         'pl-4 pb-4': padding,
-                        'pr-4': padding && (title || !cancellable),
-                        'pr-12': padding && (!title && cancellable),
+                        'pr-4': padding && (hasTitle || !cancellable),
+                        'pr-12': padding && (!hasTitle && cancellable),
                     }"
                 >
                     <slot :close="close" />
@@ -54,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-import { provide } from 'vue';
+import { provide, useSlots } from 'vue';
 
 import Events from '@/framework/core/facades/Events';
 import UI from '@/framework/core/facades/UI';
@@ -65,7 +65,7 @@ import type { Modal } from '@/framework/core/services/UIService';
 import { hideModal, showModal } from './AppModal.transitions';
 import type IAppModal from './AppModal';
 
-const { modal, childIndex } = defineProps({
+const { modal, title, childIndex } = defineProps({
     modal: requiredObjectProp<Modal>(),
     title: stringProp(),
     childIndex: requiredNumberProp(),
@@ -75,8 +75,10 @@ const { modal, childIndex } = defineProps({
 
 let hidden = $ref(true);
 let closed = $ref(false);
+const slots = useSlots();
 const $root = $ref<{ $el?: HTMLElement } | null>(null);
 const childModal = $computed(() => UI.modals[childIndex] ?? null);
+const hasTitle = $computed(() => title || slots.title);
 
 async function hide(): Promise<void> {
     if (!$root?.$el) {
