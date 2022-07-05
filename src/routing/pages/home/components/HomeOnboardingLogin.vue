@@ -21,7 +21,7 @@
         <div>
             <div class="mt-2 flex">
                 <CoreInput
-                    ref="$input"
+                    initial-focus
                     name="url"
                     class="z-10 min-w-[300px]"
                     color="brand-solid"
@@ -50,14 +50,10 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
-
 import { FormInputType, reactiveForm } from '@/framework/forms';
-import type { IFocusable } from '@/framework/components/headless';
 
 defineEmits(['cancel']);
 
-const $input = $ref<IFocusable | null>(null);
 const form = reactiveForm({
     url: {
         type: FormInputType.String,
@@ -69,6 +65,4 @@ const form = reactiveForm({
 function reload() {
     location.reload();
 }
-
-onMounted(() => $input?.focus());
 </script>

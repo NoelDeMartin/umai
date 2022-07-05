@@ -1,6 +1,15 @@
 <template>
     <div class="flex space-x-4">
         <HeadlessButton
+            v-initial-focus
+            v-wobbly-border="{ min: 200, max: 350 }"
+            class="flex h-40 w-40 flex-col items-center justify-center bg-gray-300 text-gray-700 hover:bg-primary-500 hover:text-white focus:bg-primary-500 focus:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 active:bg-primary-700"
+            @click="$ui.openModal(WebImportModal), $emit('optionSelected')"
+        >
+            <i-pepicons-internet class="h-12 w-12" aria-hidden="true" />
+            <span class="mt-2 text-center text-lg font-medium">{{ $t('recipes.new.fromTheWeb') }}</span>
+        </HeadlessButton>
+        <HeadlessButton
             v-wobbly-border="{ min: 200, max: 350 }"
             class="flex h-40 w-40 flex-col items-center justify-center bg-gray-300 text-gray-700 hover:bg-primary-500 hover:text-white focus:bg-primary-500 focus:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 active:bg-primary-700"
             route="recipes.create"
@@ -8,14 +17,6 @@
         >
             <i-pepicons-pen class="h-12 w-12" aria-hidden="true" />
             <span class="mt-2 text-center text-lg font-medium">{{ $t('recipes.new.fromScratch') }}</span>
-        </HeadlessButton>
-        <HeadlessButton
-            v-wobbly-border="{ min: 200, max: 350 }"
-            class="flex h-40 w-40 flex-col items-center justify-center bg-gray-300 text-gray-700 hover:bg-primary-500 hover:text-white focus:bg-primary-500 focus:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 active:bg-primary-700"
-            @click="$ui.openModal(WebImportModal), $emit('optionSelected')"
-        >
-            <i-pepicons-internet class="h-12 w-12" aria-hidden="true" />
-            <span class="mt-2 text-center text-lg font-medium">{{ $t('recipes.new.fromTheWeb') }}</span>
         </HeadlessButton>
         <BaseFileInput
             v-wobbly-border="{ min: 200, max: 350 }"
