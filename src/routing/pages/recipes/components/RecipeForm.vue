@@ -52,6 +52,7 @@
                     is not calculated properly in the textarea (because of line-height shenanigans) -->
                     <CoreFluidTextArea
                         ref="$name"
+                        v-initial-focus
                         name="name"
                         :placeholder="recipe?.exists() ? '-' : $t('recipes.name_placeholder')"
                         class="pb-2 -mb-2.5 text-4xl text-white placeholder:text-white placeholder:opacity-50 bg-transparent caret-primary-500 text-shadow font-semibold"
@@ -431,6 +432,7 @@ function updateRecipeInstructions(recipe: Recipe) {
         } as Attributes));
 
     if (!recipe.exists()) {
+        recipe.setRelationModels('instructions', []);
         recipe.relatedInstructions.reset();
 
         range(updatedInstructionAttributes.length)

@@ -30,7 +30,9 @@ window.testing = {
             authenticatedRequests.clear();
         });
 
-        await boot();
+        await boot({
+            beforeMount: app => options.beforeMount?.(app),
+        });
     },
 
     async stop() {

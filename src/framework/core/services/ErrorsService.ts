@@ -30,17 +30,19 @@ export default class ErrorsService extends Service {
         UI.openModal(UI.resolveComponent(ApplicationComponent.ErrorReportModal), { report });
     }
 
-    public report(error: ErrorReason): void {
+    public report(error: ErrorReason, message?: string): void {
         if (App.isDevelopment) {
             // eslint-disable-next-line no-console
             console.error(error);
         }
 
-        if (!this.enabled) throw error;
+        if (!this.enabled) {
+            throw error;
+        }
 
         const report = this.getErrorReport(error);
 
-        const snackbarId = UI.showSnackbar(translate('errors.notice'), {
+        const snackbarId = UI.showSnackbar(message ?? translate('errors.notice'), {
             style: SnackbarStyle.Error,
             actions: [
                 {

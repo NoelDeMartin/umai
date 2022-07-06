@@ -15,6 +15,7 @@ import type { CoreColor } from '@/components/core';
 
 interface State {
     headerHeight: number;
+    headerHidden: boolean;
     loadingModal: PromisedValue<Modal> | null;
     modals: Modal[];
     snackbars: Snackbar[];
@@ -269,6 +270,14 @@ export default class UIService extends Service<State, ComputedState> {
         this.setState({ headerHeight: height });
     }
 
+    public showHeader(): void {
+        this.setState({ headerHidden: false });
+    }
+
+    public hideHeader(): void {
+        this.setState({ headerHidden: true });
+    }
+
     protected async boot(): Promise<void> {
         await super.boot();
 
@@ -279,6 +288,7 @@ export default class UIService extends Service<State, ComputedState> {
     protected getInitialState(): State {
         return {
             headerHeight: 0,
+            headerHidden: false,
             loadingModal: null,
             modals: [],
             snackbars: [],

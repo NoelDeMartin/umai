@@ -188,6 +188,8 @@ recipes:
   share: Share
   drag_instructions_a11y: Use ctrl + up/down to change instruction positions
 
+  createFromUrl_notFound: The recipe at `{domain}` was not found.
+  createFromUrl_retry: Retry
   create_a11y_title: Create new recipe
   edit_a11y_title: Edit "{recipe}" recipe
 

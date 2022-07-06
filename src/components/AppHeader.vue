@@ -3,6 +3,7 @@
         ref="$header"
         class="flex relative z-40 flex-col items-center self-stretch p-8 h-24 transition-colors duration-700 shrink-0"
         :class="{
+            'invisible': $ui.headerHidden,
             'text-white': $route.meta.fullBleedHeader && !$app.onboardingCompleting,
             'opacity-0 pointer-events-none': $app.isOnboarding,
             'transition-opacity opacity-100 duration-500': $app.onboardingCompleting,

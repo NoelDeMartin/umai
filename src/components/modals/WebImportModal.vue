@@ -1,6 +1,6 @@
 <template>
     <AppModal ref="$root" :title="title" :cancellable="!scanning">
-        <WebImportModalScanning v-if="scanning" />
+        <WebImportScanning v-if="scanning" />
         <WebImportModalResults
             v-else-if="websiteMetadata && websiteRecipes"
             :metadata="websiteMetadata"
@@ -10,14 +10,15 @@
             v-else-if="error"
             :error="error"
         />
-        <WebImportModalStart v-else />
+        <WebImportModalStart v-else ref="$start" />
     </AppModal>
 </template>
 
 <script setup lang="ts">
 import { after } from '@noeldemartin/utils';
-import { provide } from 'vue';
+import { nextTick, onMounted, provide } from 'vue';
 
+import { stringProp } from '@/framework/utils/vue';
 import { translate } from '@/framework/utils/translate';
 
 import { parseWebsiteMetadata, parseWebsiteRecipes } from '@/utils/web-parsing';
@@ -26,13 +27,19 @@ import type Recipe from '@/models/Recipe';
 import type { WebsiteMetadata } from '@/utils/web-parsing';
 
 import type IWebImportModal from './WebImportModal';
+import type IWebImportModalStart from './WebImportModalStart';
+
+const { url } = defineProps({
+    url: stringProp(),
+});
 
 let scanning = $ref(false);
 let error = $ref<Error | undefined>();
-let websiteUrl = $ref<string | undefined>();
+let websiteUrl = $ref<string | undefined>(url ?? undefined);
 let websiteRecipes = $ref<Recipe[] | undefined>();
 let websiteMetadata = $ref<WebsiteMetadata | undefined>();
 const $root = $ref<IAppModal<void> | null>(null);
+const $start = $ref<IWebImportModalStart | null>(null);
 const title = $computed(() => {
     if (scanning) {
         return;
@@ -47,6 +54,16 @@ const title = $computed(() => {
     }
 
     return translate('webImport.title');
+});
+
+onMounted(async () => {
+    await nextTick();
+
+    if (!url || !$start) {
+        return;
+    }
+
+    $start.submit();
 });
 
 provide<IWebImportModal>('web-import-modal', {

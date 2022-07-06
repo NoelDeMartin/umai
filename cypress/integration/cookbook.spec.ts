@@ -1,6 +1,8 @@
 // TODO configure .jsonld loader
 import path from 'path';
 
+import type { Services } from '@/framework/core';
+
 import firstRamenJsonLD from '@cy/fixtures/ramen-1.json';
 import jaimiesHummusJsonLD from '@cy/fixtures/jaimies-hummus.json';
 import junsRamenJsonLD from '@cy/fixtures/juns-ramen.json';
@@ -278,6 +280,7 @@ describe('Cookbook', () => {
         // Assert
         cy.url().should('contain', 'aguachile');
         cy.see('200g Shrimps');
+        cy.contains('h2', 'Instructions').next('ol').children().should('have.length', 3);
     });
 
     it('Imports recipes from the Web', () => {
@@ -312,6 +315,35 @@ describe('Cookbook', () => {
         cy.see('Chickpeas – the star ingredient in houmous – are incredibly good for you.');
         cy.see('1 lemon');
         cy.see('recipe on recipes.example.com');
+        cy.contains('h2', 'Instructions').next('ol').children().should('have.length', 7);
+
+        cy.assertLocalDocumentEquals('solid://recipes/houmous', jaimiesHummusJsonLD);
+    });
+
+    it('Imports recipes from query parameters', () => {
+        // Arrange
+        cy.intercept('https://proxy.example.com', { fixture: 'html/jaimies-hummus.html' });
+
+        cy.visit('/recipes/create?from=https://recipes.example.com/hummus');
+        cy.startApp({
+            beforeMount(app) {
+                const services = app.config.globalProperties as Services;
+
+                services.$config.proxyUrl = 'https://proxy.example.com';
+            },
+        });
+
+        // Act
+        cy.ariaInput('Recipe name').clear().type('Houmous');
+        cy.press('Create recipe');
+        cy.press('Houmous', 'a');
+
+        // Assert
+        cy.url().should('contain', 'houmous');
+        cy.see('Chickpeas – the star ingredient in houmous – are incredibly good for you.');
+        cy.see('1 lemon');
+        cy.see('recipe on recipes.example.com');
+        cy.contains('h2', 'Instructions').next('ol').children().should('have.length', 7);
 
         cy.assertLocalDocumentEquals('solid://recipes/houmous', jaimiesHummusJsonLD);
     });
@@ -344,6 +376,7 @@ describe('Cookbook', () => {
         cy.see('Pisto Manchego With Olive Oil');
         cy.see('4 zucchini small, cubed');
         cy.see('recipe on recipes.example.com');
+        cy.dontSee('Instructions');
 
         cy.assertLocalDocumentEquals('solid://recipes/pisto-manchego', pistoJsonLD);
     });
@@ -378,6 +411,7 @@ describe('Cookbook', () => {
         cy.see('Chickpeas – the star ingredient in houmous – are incredibly good for you.');
         cy.see('1 lemon');
         cy.see('recipe on recipes.example.com');
+        cy.contains('h2', 'Instructions').next('ol').children().should('have.length', 7);
 
         cy.assertLocalDocumentEquals('solid://recipes/houmous', jaimiesHummusJsonLD);
     });
@@ -416,6 +450,7 @@ describe('Cookbook', () => {
         cy.url().should('contain', 'juns-ramen');
         cy.see('Cat Merch!');
         cy.see('recipe on recipes.example.com');
+        cy.dontSee('Instructions');
 
         cy.assertLocalDocumentEquals('solid://recipes/juns-ramen', junsRamenJsonLD);
     });

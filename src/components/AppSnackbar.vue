@@ -18,7 +18,7 @@
                 'bg-primary-600 hover:bg-primary-700 focus:ring-primary-700': isInfo,
                 'bg-red-500 hover:bg-red-600 focus:ring-red-600': isError,
             }"
-            @click="action.handler"
+            @click="action.handler(), $emit('hide')"
         >
             {{ action.text }}
         </button>
@@ -34,6 +34,8 @@ const { style } = defineProps({
     actions: arrayProp<SnackbarAction>(),
     style: enumProp(SnackbarStyle),
 });
+
+defineEmits(['hide']);
 
 const isError = $computed(() => style === SnackbarStyle.Error);
 const isInfo = $computed(() => style === SnackbarStyle.Info);

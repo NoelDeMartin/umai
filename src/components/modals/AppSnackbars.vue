@@ -9,7 +9,11 @@
                 @enter="$el => grow($el as HTMLElement, { duration: 300, easing: 'ease-out' })"
             >
                 <div v-for="snackbar of $ui.snackbars" :key="snackbar.id">
-                    <AppSnackbar :actions="snackbar.actions" :style="snackbar.style">
+                    <AppSnackbar
+                        :actions="snackbar.actions"
+                        :style="snackbar.style"
+                        @hide="() => $ui.hideSnackbar(snackbar.id)"
+                    >
                         <CoreMarkdown raw :text="snackbar.message" />
                     </AppSnackbar>
                 </div>

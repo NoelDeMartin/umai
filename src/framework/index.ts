@@ -1,6 +1,6 @@
 import { createApp } from 'vue';
 import { tap } from '@noeldemartin/utils';
-import type { Component, Directive, Plugin } from 'vue';
+import type { Component, Directive, Plugin, App as VueApp } from 'vue';
 import type { RouteRecordRaw } from 'vue-router';
 
 import App from '@/framework/core/facades/App';
@@ -66,8 +66,8 @@ export type BootstrapApplicationOptions = Partial<{
     authenticators: Record<string, Authenticator>;
     defaultAuthenticator: AuthenticatorName;
     handleError(error: ErrorReason): boolean;
-    beforeLaunch(): Promise<unknown> | unknown;
-    beforeMount(): Promise<unknown> | unknown;
+    beforeLaunch(app: VueApp): Promise<unknown> | unknown;
+    beforeMount(app: VueApp): Promise<unknown> | unknown;
 }>;
 
 export async function bootstrapApplication(
@@ -98,9 +98,9 @@ export async function bootstrapApplication(
 
     setDefaultAuthenticator(getAuthenticator(options.defaultAuthenticator ?? 'inrupt'));
 
-    await options.beforeLaunch?.call(null);
+    await options.beforeLaunch?.(app);
     await Promise.all(Object.entries(services).map(([name, service]) => service.launch(name.slice(1))));
-    await options.beforeMount?.call(null);
+    await options.beforeMount?.(app);
 
     app.mount(options.selector ?? '#app');
     app._container?.classList.remove('loading');
