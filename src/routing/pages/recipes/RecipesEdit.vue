@@ -9,19 +9,15 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue';
-
 import Cloud from '@/framework/core/facades/Cloud';
 import Network from '@/framework/core/facades/Network';
 import Router from '@/framework/core/facades/Router';
+import { requiredObjectProp } from '@/framework/utils/vue';
 
 import type Recipe from '@/models/Recipe';
 
 const { recipe } = defineProps({
-    recipe: {
-        type: Object as PropType<Recipe>,
-        required: true,
-    },
+    recipe: requiredObjectProp<Recipe>(),
 });
 
 function onUpdated() {

@@ -22,11 +22,27 @@
                 </p>
             </div>
 
-            <div class="mt-2">
-                <BaseInput name="url" :placeholder="$t('viewer.urlPlaceholder')" />
-                <BaseButton type="submit">
-                    {{ $t('viewer.submit') }}
-                </BaseButton>
+            <div>
+                <div class="mt-2 flex">
+                    <CoreInput
+                        initial-focus
+                        name="url"
+                        class="z-10 min-w-[300px]"
+                        :label="$t('viewer.urlLabel')"
+                        :show-errors="false"
+                        :placeholder="$t('viewer.urlPlaceholder')"
+                        :wobbly-border="{ topRight: false, bottomRight: false }"
+                    />
+                    <CoreButton
+                        type="submit"
+                        alignment="center"
+                        class="focus:z-20"
+                        :wobbly-border="{ topLeft: false, bottomLeft: false }"
+                    >
+                        <span class="ml-1">{{ $t('viewer.submit') }}</span>
+                    </CoreButton>
+                </div>
+                <CoreFormErrors class="mt-2" />
             </div>
 
             <CoreMarkdown

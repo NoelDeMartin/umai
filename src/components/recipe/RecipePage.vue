@@ -114,17 +114,14 @@
 
 <script setup lang="ts">
 import { arrayFilter, arraySorted, urlParse } from '@noeldemartin/utils';
-import type { PropType } from 'vue';
 
 import TailwindCSS from '@/framework/utils/tailwindcss';
+import { objectProp } from '@/framework/utils/vue';
 
 import type Recipe from '@/models/Recipe';
 
 const { recipe } = defineProps({
-    recipe: {
-        type: Object as PropType<Recipe | null>,
-        default: null,
-    },
+    recipe: objectProp<Recipe>(),
 });
 
 const metadataRows = $computed(

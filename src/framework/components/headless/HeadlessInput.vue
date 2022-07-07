@@ -22,6 +22,7 @@ const {
     modelValue,
     type,
     error: errorProp,
+    initialFocus,
 } = defineProps({
     id: stringProp(),
     name: stringProp(),
@@ -89,7 +90,13 @@ const controller: HeadlessInputController = {
     },
 };
 
-onMounted(() => controller.inputElement?.focus());
+onMounted(() => {
+    if (!initialFocus) {
+        return;
+    }
+
+    controller.inputElement?.focus();
+});
 
 provide('input', controller);
 defineExpose<IHeadlessInput>({
@@ -97,6 +104,9 @@ defineExpose<IHeadlessInput>({
 
     get value() {
         return controller?.value;
+    },
+    get hasErrors() {
+        return !!controller?.error;
     },
 });
 </script>

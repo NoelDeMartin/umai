@@ -1,6 +1,7 @@
 <template>
     <CoreDetails :summary="$t('cloud.advancedOptions')">
         <div v-for="option of options" :key="option.name" class="flex relative items-start py-1">
+            <!-- TODO use CoreForm & CoreCheckbox -->
             <div class="flex items-center h-5">
                 <input
                     :id="option.name"
@@ -12,14 +13,15 @@
                 >
             </div>
             <div class="ml-3 w-full text-sm">
-                <label :for="option.name" class="inline-block w-full font-medium text-gray-700 cursor-pointer">
+                <label :for="option.name" class="inline-flex items-baseline w-full font-medium text-gray-700 cursor-pointer">
                     <span v-if="!isConfigurable(option)">{{ option.text }}</span>
                     <!-- TODO review a11y -->
                     <template v-else>
                         <span>{{ option.text[0] }}</span>
                         &nbsp;
-                        <BaseFluidInput
+                        <CoreFluidInput
                             v-model="option.value"
+                            color="brand-solid"
                             inline
                             type="number"
                             @change="option.updated()"

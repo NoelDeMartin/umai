@@ -6,6 +6,7 @@
         :placeholder="placeholder"
         :model-value="modelValue"
         :error="error"
+        :initial-focus="initialFocus"
         @update:modelValue="$emit('update:modelValue', $event)"
     >
         <HeadlessInputLabel v-if="label" class="sr-only">
@@ -48,6 +49,7 @@ const { color } = defineProps({
     showErrors: booleanProp(),
     error: stringProp(),
     wobblyBorder: objectProp<WobblyBorderOptions>(),
+    initialFocus: booleanProp(),
 });
 defineEmits(['update:modelValue']);
 

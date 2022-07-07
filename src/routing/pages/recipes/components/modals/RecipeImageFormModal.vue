@@ -3,16 +3,15 @@
         <CoreForm :form="form" class="flex flex-col" @submit="submit()">
             <div v-if="url">
                 <RecipeImage :url="url" class="w-full aspect-[5/2] max-h-[60vh] min-w-modal-content" />
-                <div class="flex items-center mt-2" :title="isUploadPending ? $t('recipes.image_edit_localUrl') : ''">
+                <div v-if="!isLocalUrl" class="flex items-center mt-2" :title="isUploadPending ? $t('recipes.image_edit_uploadPending') : ''">
                     <i-pepicons-clock
                         v-if="isUploadPending"
                         class="w-4 h-4 mr-2"
                         :aria-label="$t('recipes.image_edit_uploadPending')"
                     />
-                    <pre
-                        v-if="!isLocalUrl"
-                        class="flex items-center text-gray-700 overflow-auto whitespace-pre-wrap min-h-clickable align-center"
-                    >{{ url }}</pre>
+                    <pre class="flex items-center text-gray-700 overflow-auto whitespace-pre-wrap min-h-clickable align-center">{{
+                        url
+                    }}</pre>
                 </div>
             </div>
             <template v-else>
@@ -41,7 +40,7 @@
                     </div>
                 </div>
                 <span class="text-gray-800 mt-4">{{ $t('recipes.image_edit_customUrl') }}:</span>
-                <BaseInput
+                <CoreInput
                     ref="input"
                     :label="$t('recipes.image_edit_url')"
                     name="customUrl"
@@ -50,7 +49,7 @@
                 />
             </template>
             <div class="flex flex-col mt-4 space-y-2 w-full md:flex-row md:space-x-2 md:space-y-0 md:self-end">
-                <BaseButton
+                <CoreButton
                     v-if="url"
                     clear
                     class="self-start"
@@ -58,14 +57,14 @@
                 >
                     <i-pepicons-trash class="w-5 h-5 mr-2" aria-hidden="true" />
                     {{ $t('recipes.image_edit_remove') }}
-                </BaseButton>
+                </CoreButton>
                 <div class="flex-grow" />
-                <BaseButton secondary @click="$root?.close(null)">
+                <CoreButton secondary @click="$root?.close(null)">
                     {{ $t('recipes.image_edit_discard') }}
-                </BaseButton>
-                <BaseButton type="submit">
+                </CoreButton>
+                <CoreButton type="submit">
                     {{ $t('recipes.image_edit_submit') }}
-                </BaseButton>
+                </CoreButton>
             </div>
         </CoreForm>
     </AppModal>
@@ -79,16 +78,14 @@ import { watchEffect } from 'vue';
 import Files from '@/framework/core/facades/Files';
 import UI from '@/framework/core/facades/UI';
 import { FormInputType, reactiveForm } from '@/framework/forms';
+import { stringProp } from '@/framework/utils/vue';
 
 import type IAppModal from '@/components/modals/AppModal';
 
 import type { RecipeImageFormModalProps, RecipeImageFormModalResult } from './RecipeImageFormModal';
 
 const { imageUrl }: RecipeImageFormModalProps = defineProps({
-    imageUrl: {
-        type: String,
-        default: null,
-    },
+    imageUrl: stringProp(),
 });
 const form = reactiveForm({
     customUrl: {

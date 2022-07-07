@@ -8,23 +8,17 @@
 <script setup lang="ts">
 import { urlRoot } from '@noeldemartin/utils';
 import { watchEffect } from 'vue';
-import type { PropType } from 'vue';
 
 import Auth from '@/framework/core/facades/Auth';
+import { stringProp } from '@/framework/utils/vue';
 
 import Cookbook from '@/services/facades/Cookbook';
 import Files from '@/framework/core/facades/Files';
 import Cache from '@/framework/core/facades/Cache';
 
 const { class: classProp, url } = defineProps({
-    url: {
-        type: String as PropType<string | null>,
-        default: null,
-    },
-    class: {
-        type: String,
-        default: '',
-    },
+    url: stringProp(),
+    class: stringProp(''),
 });
 
 let sourceUrl = $ref<string | undefined>();

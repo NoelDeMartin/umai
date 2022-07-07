@@ -19,17 +19,15 @@
 
 <script setup lang="ts">
 import { onBeforeUnmount } from 'vue';
-import type { PropType } from 'vue';
+
+import { requiredArrayProp } from '@/framework/utils/vue';
 
 import type Recipe from '@/models/Recipe';
 
 const root = $ref<HTMLElement>();
 
 defineProps({
-    recipes: {
-        type: Object as PropType<Recipe[]>,
-        required: true,
-    },
+    recipes: requiredArrayProp<Recipe>(),
 });
 
 onBeforeUnmount(() => {

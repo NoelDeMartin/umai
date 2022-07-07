@@ -9,14 +9,11 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue';
+import { requiredObjectProp } from '@/framework/utils/vue';
 
 import type Recipe from '@/models/Recipe';
 
 defineProps({
-    recipe: {
-        type: Object as PropType<Recipe>,
-        required: true,
-    },
+    recipe: requiredObjectProp<Recipe>(),
 });
 </script>

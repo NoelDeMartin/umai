@@ -11,9 +11,10 @@
             :aria-label="option.name"
         >
             <div
+                v-wobbly-border
                 :class="[
                     checked ? 'bg-primary-200 px-4' : 'bg-gray-200 w-clickable',
-                    'h-clickable rounded-full flex justify-center items-center cursor-pointer'
+                    'h-clickable flex justify-center items-center cursor-pointer'
                 ]"
             >
                 <component :is="option.iconComponent" class="w-4 h-4" />
@@ -29,9 +30,10 @@
 import IconJsonLD from '~icons/file-icons/json-ld2';
 import IconSolid from '~icons/app/solid-emblem';
 import IconViewShow from '~icons/zondicons/view-show';
-import type { Component, PropType } from 'vue';
+import type { Component } from 'vue';
 
-import I18n from '@/framework/core/facades/I18n';
+import { requiredObjectProp } from '@/framework/utils/vue';
+import { translate } from '@/framework/utils/translate';
 
 import Cookbook from '@/services/facades/Cookbook';
 
@@ -44,26 +46,23 @@ interface RecipeSharingOptionData {
 }
 
 const { modelValue } = defineProps({
-    modelValue: {
-        type: String as PropType<RecipeShareOption>,
-        required: true,
-    },
+    modelValue: requiredObjectProp<RecipeShareOption>(),
 });
 const emit = defineEmits(['update:modelValue']);
 
 const optionsMap: Record<RecipeShareOption, RecipeSharingOptionData> = $computed(() => ({
     [RecipeShareOption.Umai]: {
-        name: I18n.translate('recipes.share_umai'),
+        name: translate('recipes.share_umai'),
         iconComponent: IconViewShow,
         enabled: Cookbook.isRemote,
     },
     [RecipeShareOption.Solid]: {
-        name: I18n.translate('recipes.share_solid'),
+        name: translate('recipes.share_solid'),
         iconComponent: IconSolid,
         enabled: Cookbook.isRemote,
     },
     [RecipeShareOption.JsonLD]: {
-        name: I18n.translate('recipes.share_jsonld'),
+        name: translate('recipes.share_jsonld'),
         iconComponent: IconJsonLD,
     },
 }));

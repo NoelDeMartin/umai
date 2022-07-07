@@ -4,11 +4,11 @@
             <BaseCheckbox id="use-proxy" name="useProxy" />
             <label
                 for="use-proxy"
-                class="ml-2 cursor-pointer"
+                class="ml-2 cursor-pointer inline-flex items-baseline"
                 :class="{ 'opacity-50': !form.useProxy }"
             >
                 {{ $t('webImport.useProxy') }}
-                <BaseFluidInput
+                <CoreFluidInput
                     name="proxyUrl"
                     placeholder="https://"
                     :aria-label="$t('webImport.useProxy_urlLabel')"

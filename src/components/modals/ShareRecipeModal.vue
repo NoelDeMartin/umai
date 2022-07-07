@@ -15,12 +15,22 @@
                 {{ $t('recipes.accessControl.warning') }}
             </p>
             <div class="flex justify-end mt-4">
-                <BaseButton v-if="shareOption === 'jsonld'" @click="recipe.download(), close()">
-                    <i-zondicons-download class="mr-2 w-4 h-4" /> {{ $t('recipes.download') }}
-                </BaseButton>
-                <BaseButton v-else @click="share(), close()">
-                    {{ $t('recipes.share') }}
-                </BaseButton>
+                <CoreButton
+                    v-if="shareOption === 'jsonld'"
+                    v-initial-focus
+                    @click="recipe.download(), close()"
+                >
+                    <i-pepicons-cloud-down class="w-6 h-6" aria-hidden="true" />
+                    <span class="ml-2">{{ $t('recipes.download') }}</span>
+                </CoreButton>
+                <CoreButton
+                    v-else
+                    v-initial-focus
+                    @click="share(), close()"
+                >
+                    <i-pepicons-share-android class="w-6 h-6" aria-hidden="true" />
+                    <span class="ml-2">{{ $t('recipes.share') }}</span>
+                </CoreButton>
             </div>
         </template>
     </AppModal>
@@ -28,19 +38,16 @@
 
 <script setup lang="ts">
 import { objectWithoutEmpty, stringExcerpt, urlRoot } from '@noeldemartin/utils';
-import type { PropType } from 'vue';
 
 import Router from '@/framework/core/facades/Router';
+import { requiredObjectProp } from '@/framework/utils/vue';
 
 import Cookbook from '@/services/facades/Cookbook';
 import { RecipeShareOption } from '@/components/recipe/RecipeShareOptions';
 import type Recipe from '@/models/Recipe';
 
 const { recipe } = defineProps({
-    recipe: {
-        type: Object as PropType<Recipe>,
-        required: true,
-    },
+    recipe: requiredObjectProp<Recipe>(),
 });
 
 const clipboardContents: Record<RecipeShareOption, string> = {

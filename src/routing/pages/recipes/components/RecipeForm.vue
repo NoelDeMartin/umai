@@ -51,8 +51,7 @@
                     <!-- TODO ideally, we wouldn't need to add padding and negative margin, but div height
                     is not calculated properly in the textarea (because of line-height shenanigans) -->
                     <CoreFluidTextArea
-                        ref="$name"
-                        v-initial-focus
+                        initial-focus
                         name="name"
                         :placeholder="recipe?.exists() ? '-' : $t('recipes.name_placeholder')"
                         class="pb-2 -mb-2.5 text-4xl text-white placeholder:text-white placeholder:opacity-50 bg-transparent caret-primary-500 text-shadow font-semibold"
@@ -325,7 +324,6 @@ const form = reactiveForm({
 });
 
 let recipeUrl = $ref<string | null>(null);
-const $name = $ref<IFocusable | null>(null);
 const $description = $ref<IFocusable | null>(null);
 const $ingredients = $ref<IFocusable | null>(null);
 const $instructions = $ref<IFocusable | null>(null);
@@ -496,10 +494,7 @@ async function submit() {
     emit('done', updatedRecipe);
 }
 
-onMounted(() => {
-    $name?.focus();
-    wasOnboarding = App.isOnboarding;
-});
+onMounted(() => (wasOnboarding = App.isOnboarding));
 </script>
 
 <style>

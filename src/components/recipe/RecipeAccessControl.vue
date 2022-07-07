@@ -1,13 +1,21 @@
 <template>
-    <BaseButton
-        v-if="error"
+    <CoreButton
+        v-if="!$auth.loggedIn"
+        clear
+        class="text-sm"
+        @click="$auth.reconnect()"
+    >
+        {{ $t('recipes.accessControl.disconnected') }}
+    </CoreButton>
+    <CoreButton
+        v-else-if="error"
         clear
         class="flex items-center space-x-2 text-red-500"
         @click="$errors.inspect(error)"
     >
         <i-zondicons-exclamation-outline class="w-4 h-4" aria-hidden="true" />
         <span class="text-sm">{{ $t('recipes.accessControl.error') }}</span>
-    </BaseButton>
+    </CoreButton>
     <span v-else-if="!profile" class="flex items-center space-x-2 text-gray-600">
         <i-app-spinner class="animate-spin w-4 h-4" aria-hidden="true" />
         <span class="text-sm">{{ $t('recipes.accessControl.loading') }}</span>
@@ -29,7 +37,8 @@
         <div class="relative">
             <ListboxButton
                 ref="button"
-                class="relative inline-flex items-center p-2 rounded-md text-sm font-medium focus:outline-none focus:z-10 focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-primary-500 hover:bg-gray-200"
+                v-wobbly-border
+                class="relative inline-flex items-center p-2 rounded-md text-sm font-medium focus:outline-none focus:z-10 focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-brand-solid-500 hover:bg-gray-200"
                 :aria-label="$t('recipes.accessControl.change_label_a11y', { current: profile.name })"
             >
                 <component :is="profile.iconComponent" class="h-4 w-4" aria-hidden="true" />
@@ -52,7 +61,7 @@
                     >
                         <li
                             :class="[
-                                active ? 'text-white bg-primary-500' : 'text-gray-900',
+                                active ? 'text-white bg-brand-solid-500' : 'text-gray-900',
                                 'select-none relative p-4 text-sm flex items-center cursor-pointer'
                             ]"
                         >
@@ -63,12 +72,12 @@
                                         <span class="ml-2">{{ profileOption.name }}</span>
                                     </p>
                                 </div>
-                                <p :class="[active ? 'text-primary-200' : 'text-gray-500', 'mt-2']">
+                                <p :class="[active ? 'text-brand-solid-200' : 'text-gray-500', 'mt-2']">
                                     {{ profileOption.description }}
                                 </p>
                             </div>
                             <div class="flex-grow" />
-                            <span v-if="selected" :class="[active ? 'text-white' : 'text-primary-500', 'ml-4']">
+                            <span v-if="selected" :class="[active ? 'text-white' : 'text-brand-solid-500', 'ml-4']">
                                 <i-zondicons-checkmark class="h-5 w-5" aria-hidden="true" />
                             </span>
                         </li>
@@ -82,12 +91,13 @@
 <script setup lang="ts">
 import IconViewHide from '~icons/zondicons/view-hide';
 import IconViewShow from '~icons/zondicons/view-show';
-import type { Error } from '@noeldemartin/utils';
 import { markRaw, onMounted, watchEffect } from 'vue';
 import { SolidDocumentPermission } from 'soukai-solid';
-import type { Component, PropType } from 'vue';
+import type { Component } from 'vue';
 
-import I18n from '@/framework/core/facades/I18n';
+import Auth from '@/framework/core/facades/Auth';
+import { requiredObjectProp } from '@/framework/utils/vue';
+import { translate } from '@/framework/utils/translate';
 
 import type Recipe from '@/models/Recipe';
 
@@ -99,21 +109,18 @@ interface AccessControlProfile {
 }
 
 const { recipe } = defineProps({
-    recipe: {
-        type: Object as PropType<Recipe>,
-        required: true,
-    },
+    recipe: requiredObjectProp<Recipe>(),
 });
 
 const publicProfile: AccessControlProfile = markRaw({
-    name: I18n.translate('recipes.accessControl.profile_public'),
-    description: I18n.translate('recipes.accessControl.profile_publicDescription'),
+    name: translate('recipes.accessControl.profile_public'),
+    description: translate('recipes.accessControl.profile_publicDescription'),
     iconComponent: IconViewShow,
     publicPermissions: [SolidDocumentPermission.Read],
 });
 const privateProfile: AccessControlProfile = markRaw({
-    name: I18n.translate('recipes.accessControl.profile_private'),
-    description: I18n.translate('recipes.accessControl.profile_privateDescription'),
+    name: translate('recipes.accessControl.profile_private'),
+    description: translate('recipes.accessControl.profile_privateDescription'),
     iconComponent: IconViewHide,
     publicPermissions: [],
 });
@@ -171,5 +178,11 @@ function updateOptionsPosition(buttonElement: HTMLElement) {
 }
 
 watchEffect(() => button && updateOptionsPosition(button.el));
-onMounted(() => initializePermissionsProfile());
+onMounted(async () => {
+    if (!Auth.loggedIn) {
+        return;
+    }
+
+    await initializePermissionsProfile();
+});
 </script>

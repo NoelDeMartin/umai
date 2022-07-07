@@ -253,6 +253,7 @@ recipes:
     profile_privateDescription: Only you can view this recipe
     change_label_a11y: Public permissions
     change_button_a11y: 'Change permissions (current: {current})'
+    disconnected: reconnect to view permissions
     loading: loading permissions
     updating: updating permissions
     error: error reading permissions
@@ -272,6 +273,7 @@ recipes:
 viewer:
   title: Umai Viewer
   description: You can use this viewer to explore recipes.
+  urlLabel: Website URL
   urlPlaceholder: https://...
   searching: Searching recipes...
   notFound: We couldn't find a recipe at [{url}]({url})!
@@ -288,6 +290,7 @@ ui:
   confirm_accept: "OK"
   confirm_cancel: "Cancel"
   close: Close
+  loading: Loading...
 
 errors:
   notice: Something went wrong, but it's not your fault. Try again!

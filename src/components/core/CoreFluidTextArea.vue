@@ -6,6 +6,7 @@
         :placeholder="placeholder"
         :model-value="modelValue"
         :error="error"
+        :initial-focus="initialFocus"
         @update:modelValue="$emit('update:modelValue', $event)"
     >
         <div ref="$wrapper" class="relative w-full">
@@ -33,7 +34,7 @@
 <script lang="ts">
 import { defineComponent, nextTick, useAttrs, watch } from 'vue';
 
-import { stringProp } from '@/framework/utils/vue';
+import { booleanProp, stringProp } from '@/framework/utils/vue';
 import { focusable } from '@/framework/components/headless';
 import type IHeadlessInput from '@/framework/components/headless/HeadlessInput';
 import type { IFocusable } from '@/framework/components/headless';
@@ -48,6 +49,7 @@ const { placeholder } = defineProps({
     placeholder: stringProp(),
     modelValue: stringProp(),
     error: stringProp(),
+    initialFocus: booleanProp(),
 });
 defineEmits(['update:modelValue']);
 

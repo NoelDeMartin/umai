@@ -7,10 +7,9 @@
 </template>
 
 <script setup lang="ts">
+import { stringProp } from '@/framework/utils/vue';
+
 defineProps({
-    text: {
-        type: String,
-        default: 'Loading...',
-    },
+    text: stringProp('Loading...'),
 });
 </script>

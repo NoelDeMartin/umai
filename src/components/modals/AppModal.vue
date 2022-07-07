@@ -12,7 +12,7 @@
                     as="h2"
                     class="pt-4 pl-4 text-lg font-medium leading-6 text-gray-900"
                     :class="{
-                        'pr-16': cancellable,
+                        'pr-14': cancellable,
                         'pr-4': !cancellable,
                     }"
                 >

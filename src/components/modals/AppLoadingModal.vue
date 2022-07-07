@@ -1,6 +1,6 @@
 <template>
     <AppModal :cancellable="false">
-        <CoreMarkdown :text="text" />
+        <CoreMarkdown :text="displayText" />
         <div class="h-4 rounded-full overflow-hidden w-full bg-primary-200 mt-2 min-w-modal-content">
             <div class="progress-bar-content bg-primary-500 rounded-full h-full" />
         </div>
@@ -8,12 +8,13 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
-    text: {
-        type: String,
-        default: 'Loading...',
-    },
+import { stringProp } from '@/framework/utils/vue';
+import { translate } from '@/framework/utils/translate';
+
+const { text } = defineProps({
+    text: stringProp(),
 });
+const displayText = $computed(() => text ?? translate('ui.loading'));
 </script>
 
 <style>
