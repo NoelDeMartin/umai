@@ -65,7 +65,7 @@ export function renderCoreLink({ url, text, title, color, classes }: CoreLinkAtt
     return `<a
         href="${url}"
         style="border-radius:${borderRadius}" ${(title && `title="${title}"`) || ''}
-        target="_blank"
+        ${ url.startsWith('/') ? '' : 'target="_blank"' }
         class="no-underline hover:underline focus-visible:outline-none focus-visible:ring-2 ${extraClasses}"
     >${text}</a>`;
 }

@@ -12,22 +12,20 @@
         </div>
 
         <template v-else>
-            <h1 id="viewer-form-title" class="text-xl font-semibold">
+            <i-app-umai class="h-auto w-[250px] max-w-[60vw] fill-primary-500" aria-hidden="true" />
+
+            <h1 id="viewer-form-title" class="text-2xl font-medium mt-6">
                 {{ $t('viewer.title') }}
             </h1>
 
-            <div class="prose">
-                <p>
-                    {{ $t('viewer.description') }}
-                </p>
-            </div>
+            <CoreMarkdown :text="$t('viewer.description')" class="mt-4 text-center" />
 
-            <div>
-                <div class="mt-2 flex">
+            <div class="w-full max-w-prose">
+                <div class="mt-4 flex w-full px-4">
                     <CoreInput
                         initial-focus
                         name="url"
-                        class="z-10 min-w-[300px]"
+                        class="z-10 flex-grow"
                         :label="$t('viewer.urlLabel')"
                         :show-errors="false"
                         :placeholder="$t('viewer.urlPlaceholder')"

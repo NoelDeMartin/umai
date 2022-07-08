@@ -271,13 +271,18 @@ recipes:
     update: Save
 
 viewer:
-  title: Umai Viewer
-  description: You can use this viewer to explore recipes.
-  urlLabel: Website URL
+  title: Recipes Viewer
+  description: |
+    In this page, you can explore recipes that someone shared with you.
+
+    However, keep in mind that this only works for recipes stored in a <CoreLink color="brand-solid" url="https://solidproject.org/">Solid POD</CoreLink>.
+    If you don't have one, or you don't even know what that is, just [head back home](/)
+    and you'll be able to import any recipes from the Web.
+  urlLabel: Solid document URL
   urlPlaceholder: https://...
   searching: Searching recipes...
-  notFound: We couldn't find a recipe at [{url}]({url})!
-  submit: View
+  notFound: We couldn't find a recipe at `{url}`.
+  submit: View recipe
 
 validation:
   required: This is required
