@@ -101,7 +101,7 @@ export default class CloudService extends Service<State, ComputedState> {
 
         Events.on('login', ({ authenticator }) => this.initializeEngine(authenticator));
         Events.on('logout', () => this.setState({ status: CloudStatus.Disconnected }));
-        Events.on('application-ready', async () => {
+        Events.once('application-mounted', async () => {
             if (!this.startupSync) {
                 this.status = Auth.isLoggedIn() ? CloudStatus.Online : CloudStatus.Disconnected;
 

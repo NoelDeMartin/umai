@@ -13,12 +13,21 @@ export default {
     },
 
     startApp(options: Partial<TestingStartOptions> = {}): void {
-        cy.window().then((window: Window) => {
-            patchWindow(window);
-            queueAuthenticatedRequests(window);
+        cy.window()
+            .then((window: Window) => {
+                patchWindow(window);
+                queueAuthenticatedRequests(window);
 
-            return Cypress.Promise.cast(window.testing?.start(options));
-        });
+                return Cypress.Promise.cast(window.testing?.start(options));
+            })
+            .then(reloaded => {
+                if (!reloaded) {
+                    return;
+                }
+
+                cy.press('Consent');
+                cy.startApp(options);
+            });
 
         cy.service('$errors').then((Errors) => Errors.disable());
         cy.contains('Something went wrong').should('not.exist');

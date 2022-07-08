@@ -11,7 +11,7 @@ interface TestingStartOptions {
 }
 
 interface TestingRuntime {
-    start(options?: Partial<TestingStartOptions>): Promise<void>;
+    start(options?: Partial<TestingStartOptions>): Promise<boolean>;
     stop(): Promise<void>;
     queueAuthenticatedRequest(url: string, options: RequestInit): void;
     createRecipe(attributes: Attributes): Promise<Recipe>;

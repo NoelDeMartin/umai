@@ -2,8 +2,27 @@
     <AppModal :padding="false">
         <div class="px-4 pt-1 pb-4">
             <div class="flex justify-between">
-                <h2 class="font-medium text-lg">
+                <h2 class="font-medium text-lg flex items-center">
                     {{ title }}
+                    <template v-if="reports.length > 1">
+                        ({{ activeReportIndex + 1 }}/{{ reports.length }})
+                        <CoreButton
+                            clear
+                            :wobbly-border="{ topRight: false, bottomRight: false }"
+                            :disabled="activeReportIndex === 0"
+                            @click="activeReportIndex--"
+                        >
+                            <i-pepicons-angle-left class="w-6 h-6" aria-hidden="true" />
+                        </CoreButton>
+                        <CoreButton
+                            clear
+                            :wobbly-border="{ topLeft: false, bottomLeft: false }"
+                            :disabled="activeReportIndex === reports.length - 1"
+                            @click="activeReportIndex++"
+                        >
+                            <i-pepicons-angle-right class="w-6 h-6" aria-hidden="true" />
+                        </CoreButton>
+                    </template>
                 </h2>
                 <div v-if="details" class="flex flex-row-reverse space-x-reverse space-x-2 mr-10">
                     <CoreButton
@@ -56,13 +75,15 @@ import { stringExcerpt } from '@noeldemartin/utils';
 import App from '@/framework/core/facades/App';
 import UI from '@/framework/core/facades/UI';
 import { translate } from '@/framework/utils/translate';
-import { requiredObjectProp } from '@/framework/utils/vue';
+import { requiredArrayProp } from '@/framework/utils/vue';
 import type { ErrorReport } from '@/framework/core/services/ErrorsService';
 
-const { report } = defineProps({
-    report: requiredObjectProp<ErrorReport>(),
+const { reports } = defineProps({
+    reports: requiredArrayProp<ErrorReport>(),
 });
 
+const activeReportIndex = $ref(0);
+const report = $computed(() => reports[activeReportIndex] as ErrorReport);
 const title = $computed(() => report.error?.name ?? report.title);
 const description = $computed(() => report.error ? report.error.message : null);
 const summary = $computed(() => description ? `${title}: ${description}` : title);

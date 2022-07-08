@@ -50,7 +50,7 @@ function setUpErrorHandler(baseHandler: ErrorHandler = (() => false)): ErrorHand
 declare module '@/framework/core/services/EventsService' {
 
     export interface EventsPayload {
-        'application-ready': void;
+        'application-mounted': void;
     }
 
 }
@@ -105,5 +105,5 @@ export async function bootstrapApplication(
     app.mount(options.selector ?? '#app');
     app._container?.classList.remove('loading');
 
-    Events.emit('application-ready');
+    Events.emit('application-mounted');
 }

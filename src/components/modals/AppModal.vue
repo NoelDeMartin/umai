@@ -23,8 +23,8 @@
                 <CoreButton
                     v-if="cancellable"
                     clear
-                    :aria-label="$t('ui.close')"
-                    :label="$t('ui.close')"
+                    :aria-label="$t('ui.closeModal')"
+                    :title="$t('ui.closeModal')"
                     class="absolute w-clickable h-clickable top-2 right-2"
                     @click="close()"
                 >

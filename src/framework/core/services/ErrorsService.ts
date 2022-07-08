@@ -3,6 +3,15 @@ import Service from '@/framework/core/Service';
 import UI from '@/framework/core/facades/UI';
 import { translate } from '@/framework/utils/translate';
 import { ApplicationComponent, SnackbarStyle } from '@/framework/core/services/UIService';
+import type { ComputedStateDefinitions, IService } from '@/framework/core/Service';
+
+interface State {
+    startupErrors: ErrorReport[];
+}
+
+interface ComputedState {
+    hasStartupErrors: boolean;
+}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ErrorReason = string | Error | any;
@@ -12,7 +21,7 @@ export interface ErrorReport {
     error?: Error;
 }
 
-export default class ErrorsService extends Service {
+export default class ErrorsService extends Service<State, ComputedState> {
 
     private enabled: boolean = true;
 
@@ -24,10 +33,10 @@ export default class ErrorsService extends Service {
         this.enabled = false;
     }
 
-    public inspect(error: ErrorReason): void {
-        const report = this.getErrorReport(error);
+    public inspect(error: ErrorReason | ErrorReport[]): void {
+        const reports = Array.isArray(error) ? error : [this.getErrorReport(error)];
 
-        UI.openModal(UI.resolveComponent(ApplicationComponent.ErrorReportModal), { report });
+        UI.openModal(UI.resolveComponent(ApplicationComponent.ErrorReportModal), { reports });
     }
 
     public report(error: ErrorReason, message?: string): void {
@@ -42,18 +51,33 @@ export default class ErrorsService extends Service {
 
         const report = this.getErrorReport(error);
 
-        const snackbarId = UI.showSnackbar(message ?? translate('errors.notice'), {
+        if (!App.isMounted) {
+            this.setState({ startupErrors: this.startupErrors.concat(report) });
+
+            return;
+        }
+
+        UI.showSnackbar(message ?? translate('errors.notice'), {
             style: SnackbarStyle.Error,
             actions: [
                 {
                     text: translate('errors.viewDetails'),
-                    handler: () => {
-                        UI.hideSnackbar(snackbarId);
-                        UI.openModal(UI.resolveComponent(ApplicationComponent.ErrorReportModal), { report });
-                    },
+                    handler: () => UI.openModal(UI.resolveComponent(ApplicationComponent.ErrorReportModal), { report }),
                 },
             ],
         });
+    }
+
+    protected getInitialState(): State {
+        return {
+            startupErrors: [],
+        };
+    }
+
+    protected getComputedStateDefinitions(): ComputedStateDefinitions<State, ComputedState> {
+        return {
+            hasStartupErrors: ({ startupErrors }) => startupErrors.length > 0,
+        };
     }
 
     private getErrorReport(reason: ErrorReason): ErrorReport {
@@ -66,3 +90,5 @@ export default class ErrorsService extends Service {
     }
 
 }
+
+export default interface Errors extends IService<State, ComputedState> {}

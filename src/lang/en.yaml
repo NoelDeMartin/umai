@@ -7,6 +7,7 @@ cloud:
     disconnected: disconnected
     syncing: syncing
     syncing_description: Syncing in progress...
+    loginError_description: There was a problem connecting to the login server
 
   advancedOptions: Advanced options
 
@@ -26,7 +27,11 @@ cloud:
     info: |
       You can keep your data safe across devices with a
       <CoreLink url="https://solidproject.org" color="brand-solid">Solid account</CoreLink>, use the input below to log in.
-    info_reconnect: You need to reconnect to <a href="{url}" target="_blank">{url}</a>.
+    info_reconnect: You need to reconnect to `{url}`.
+    info_loginError: |
+      There was a problem connecting to `{url}`.
+
+      [view error details](action:view-error-details)
     url: Login url
     url_placeholder: webId or issue provider
     dismiss: No thanks, I want to keep my data offline
@@ -270,6 +275,16 @@ recipes:
     create: Create recipe
     update: Save
 
+startupCrash:
+  title: Something went wrong!
+  message: |
+    It seems like something did not work as it should :/
+
+    Here's some things you can do:
+  reload: Try again
+  logout: Logout
+  inspect: View error details
+
 viewer:
   title: Recipes Viewer
   description: |
@@ -294,7 +309,7 @@ ui:
   confirm: Are you sure?
   confirm_accept: "OK"
   confirm_cancel: "Cancel"
-  close: Close
+  closeModal: Close modal
   loading: Loading...
 
 errors:
@@ -313,5 +328,4 @@ errors:
     ```
     %STACKTRACE%
     ```
-
   fileUpload: There was an error reading the file

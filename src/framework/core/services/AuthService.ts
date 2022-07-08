@@ -3,6 +3,7 @@ import { fail, objectWithout, tap, urlRoot } from '@noeldemartin/utils';
 import { SolidACLAuthorization } from 'soukai-solid';
 import type { Fetch, SolidUserProfile } from '@noeldemartin/solid-utils';
 
+import App from '@/framework/core/facades/App';
 import AuthenticationCancelledError from '@/framework/auth/errors/AuthenticationCancelledError';
 import Errors from '@/framework/core/facades/Errors';
 import Events from '@/framework/core/facades/Events';
@@ -25,6 +26,7 @@ interface State {
     preferredAuthenticator: AuthenticatorName | null;
     ongoing: boolean;
     stale: boolean;
+    loginError: unknown | null;
     previousSession: {
         authenticator: AuthenticatorName;
         loginUrl: string;
@@ -93,11 +95,13 @@ export default class AuthService extends Service<State, ComputedState> {
     public async login(loginUrl: string, authenticatorName?: AuthenticatorName): Promise<boolean> {
         authenticatorName = authenticatorName ?? this.preferredAuthenticator ?? 'default';
 
-        if (this.loggedIn)
+        if (this.loggedIn) {
             return true;
+        }
 
-        if (this.ongoing)
+        if (this.ongoing) {
             throw new Error('Authentication already in progress');
+        }
 
         const staleTimeout = setTimeout(() => (this.stale = true), 10000);
         this.ongoing = true;
@@ -116,12 +120,13 @@ export default class AuthService extends Service<State, ComputedState> {
 
             return true;
         } catch (error) {
-            this.setState({ previousSession: null });
-
-            if (error instanceof AuthenticationCancelledError)
+            if (error instanceof AuthenticationCancelledError) {
                 return false;
+            }
 
-            Errors.report(error);
+            App.isMounted
+                ? Errors.report(error)
+                : this.setState({ loginError: error });
 
             return false;
         } finally {
@@ -133,8 +138,9 @@ export default class AuthService extends Service<State, ComputedState> {
     }
 
     public async reconnect(): Promise<void> {
-        if (!this.previousSession || this.loggedIn)
+        if (!this.previousSession || this.loggedIn) {
             return;
+        }
 
         await this.login(this.previousSession.loginUrl, this.previousSession.authenticator);
     }
@@ -185,6 +191,7 @@ export default class AuthService extends Service<State, ComputedState> {
 
     protected async boot(): Promise<void> {
         await super.boot();
+        await Errors.ready;
 
         const url = new URL(location.href);
 
@@ -198,6 +205,7 @@ export default class AuthService extends Service<State, ComputedState> {
     protected getInitialState(): State {
         return {
             autoReconnect: true,
+            loginError: null,
             session: null,
             dismissed: false,
             ongoing: false,

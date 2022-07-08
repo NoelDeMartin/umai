@@ -7,6 +7,7 @@ import type { IService } from '@/framework/core/Service';
 import Cookbook from '@/services/facades/Cookbook';
 
 interface State {
+    isMounted: boolean;
     isOnboarding: boolean;
     onboardingCompleting: boolean;
 }
@@ -60,10 +61,13 @@ export default class AppService extends Service<State> {
 
             this.setState({ isOnboarding: true });
         });
+
+        Events.once('application-mounted', () => this.setState({ isMounted: true }));
     }
 
     protected getInitialState(): State {
         return {
+            isMounted: false,
             isOnboarding: false,
             onboardingCompleting: false,
         };

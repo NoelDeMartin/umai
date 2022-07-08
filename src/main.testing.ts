@@ -12,26 +12,33 @@ import Recipe from '@/models/Recipe';
 const authenticatedRequests = arr<{ url: string; options: RequestInit }>();
 
 window.testing = {
-    async start(options = {}) {
-        if (options.resetProfiles && Storage.has('auth')) {
-            const auth = Storage.require<Record<string, unknown>>('auth');
+    start(options = {}) {
+        return new Promise<boolean>(resolve => {
+            window.onbeforeunload = () => resolve(true);
 
-            Storage.set('auth', {
-                ...auth,
-                profiles: {},
-            });
-        }
+            if (options.resetProfiles && Storage.has('auth')) {
+                const auth = Storage.require<Record<string, unknown>>('auth');
 
-        Events.on('authenticated-fetch-ready', async fetch => {
-            for (const request of authenticatedRequests) {
-                await fetch(request.url, request.options);
+                Storage.set('auth', {
+                    ...auth,
+                    profiles: {},
+                });
             }
 
-            authenticatedRequests.clear();
-        });
+            Events.on('authenticated-fetch-ready', async fetch => {
+                for (const request of authenticatedRequests) {
+                    await fetch(request.url, request.options);
+                }
 
-        await boot({
-            beforeMount: app => options.beforeMount?.(app),
+                authenticatedRequests.clear();
+            });
+
+            boot({ beforeMount: app => options.beforeMount?.(app) })
+                .then(() => {
+                    window.onbeforeunload = null;
+
+                    resolve(false);
+                });
         });
     },
 

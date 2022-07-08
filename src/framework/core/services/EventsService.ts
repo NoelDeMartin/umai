@@ -1,4 +1,4 @@
-import { arr } from '@noeldemartin/utils';
+import { arr, tap } from '@noeldemartin/utils';
 import type { FluentArray } from '@noeldemartin/utils';
 
 import Service from '@/framework/core/Service';
@@ -37,6 +37,25 @@ export default class EventsService extends Service {
         (this.listeners[event] ??= arr<EventListener>([])).push(listener);
 
         return () => this.off(event, listener);
+    }
+
+    /* eslint-disable max-len */
+    public once<Event extends EventWithoutPayload>(event: Event, listener: () => unknown): () => void;
+    public once<Event extends EventWithPayload>(event: Event, listener: EventListener<EventsPayload[Event]>): () => void | void;
+    public once<Event extends string>(event: UnknownEvent<Event>, listener: EventListener): () => void;
+    /* eslint-enable max-len */
+
+    public once(event: string, listener: EventListener): () => void {
+        let onceListener: EventListener | null = null;
+
+        return tap(() => onceListener && this.off(event, onceListener), off => {
+            (this.listeners[event] ??= arr<EventListener>([]))
+                .push(onceListener = (...args) => {
+                    off();
+
+                    return listener(...args);
+                });
+        });
     }
 
     public off(event: string, listener: EventListener): void {
