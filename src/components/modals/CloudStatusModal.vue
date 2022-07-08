@@ -2,12 +2,11 @@
     <CloudLoginModal v-if="$cloud.disconnected" />
     <AppModal v-else v-slot="{ close }" :title="title">
         <div v-if="$cloud.online">
-            <p
-                v-safe-html="$t('cloud.statuses.online_description', {
+            <CoreMarkdown
+                :text="$t('cloud.statuses.online_description', {
                     url: $auth.user?.webId,
                     name: $auth.user?.name ?? $auth.user?.webId,
                 })"
-                class="prose"
             />
             <CloudConfiguration class="mt-4" />
             <div class="flex flex-row-reverse space-x-2 space-x-reverse mt-4">
@@ -31,9 +30,7 @@
             </div>
         </div>
         <template v-else>
-            <p class="prose">
-                {{ body }}
-            </p>
+            <CoreMarkdown :text="body" />
             <CloudConfiguration class="mt-4" />
         </template>
     </AppModal>

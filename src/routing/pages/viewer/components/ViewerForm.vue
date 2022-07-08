@@ -45,7 +45,7 @@
 
             <CoreMarkdown
                 v-if="notFound"
-                class="mt-2 text-center prose"
+                class="mt-2 text-center"
                 :text="$t('viewer.notFound', { url: notFound })"
             />
         </template>

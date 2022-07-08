@@ -1,9 +1,7 @@
 <template>
     <AppModal v-slot="{ close }" :title="$t('cloud.login.title')">
         <div v-if="$auth.hasLoggedIn" class="flex flex-col">
-            <div class="prose">
-                <p v-safe-html="$t('cloud.login.info_reconnect', { url: $auth.previousSession?.loginUrl })" />
-            </div>
+            <CoreMarkdown :text="$t('cloud.login.info_reconnect', { url: $auth.previousSession?.loginUrl })" />
             <CloudConfiguration class="mt-4" />
             <div class="flex flex-row-reverse space-x-2 space-x-reverse mt-4">
                 <CoreButton
