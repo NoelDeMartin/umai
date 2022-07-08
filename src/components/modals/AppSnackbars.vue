@@ -1,5 +1,9 @@
 <template>
-    <div aria-live="assertive" class="flex fixed inset-0 z-60 items-end px-4 py-6 pointer-events-none sm:p-6">
+    <div
+        aria-live="assertive"
+        class="flex fixed inset-0 z-60 items-end px-4 py-6 pointer-events-none sm:p-6"
+        :class="{ 'bottom-16': $route.meta.pageFooter }"
+    >
         <div class="flex flex-col items-center space-y-4 w-full sm:items-start">
             <transition-group
                 :duration="{ enter: 300, leave: 200 }"

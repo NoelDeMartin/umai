@@ -14,9 +14,18 @@ import Viewer from './pages/viewer/Viewer.vue';
 const routes: RouteRecordRaw[] = [
     { name: 'home', path: '/', component: Home },
     { name: 'recipes.index', path: '/recipes', redirect: { name: 'home' } },
-    { name: 'recipes.create', path: '/recipes/create', component: RecipesCreate, meta: { fullBleedHeader: true } },
+    {
+        name: 'recipes.create',
+        path: '/recipes/create',
+        component: RecipesCreate,
+        meta: { fullBleedHeader: true, pageFooter: true },
+    },
     { name: 'recipes.show', path: '/recipes/:recipe', component: RecipesShow, meta: { fullBleedHeader: true } },
-    { name: 'recipes.edit', path: '/recipes/:recipe/edit', component: RecipesEdit, meta: { fullBleedHeader: true } },
+    {
+        name: 'recipes.edit',
+        path: '/recipes/:recipe/edit',
+        component: RecipesEdit, meta: { fullBleedHeader: true, pageFooter: true },
+    },
     { name: 'viewer', path: '/viewer', component: Viewer, meta: { header: false } },
 ];
 
