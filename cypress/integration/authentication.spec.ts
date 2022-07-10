@@ -144,6 +144,38 @@ describe('Authentication', () => {
         cy.see('How would you like to begin?');
     });
 
+    it('Logs out while disconnected', () => {
+        // Arrange
+        cy.visit('/?authenticator=inrupt');
+        cy.startApp();
+        cy.press('Connect your Solid POD');
+        cy.ariaInput('Login url').clear().type('http://localhost:4000/alice/{enter}');
+        cy.cssAuthorize({
+            reset: {
+                typeIndex: true,
+                cookbook: true,
+                recipe: 'pisto',
+            },
+        });
+        cy.waitForReload({ resetProfiles: true });
+        cy.see('Pisto');
+        cy.press('online');
+        cy.toggleDetails('Advanced options');
+        cy.press('Reconnect on startup');
+        cy.reload();
+
+        // Act
+        cy.press('disconnected');
+        cy.press('Log out');
+        cy.contains('[role="dialog"]', 'Are you sure?').within(() => {
+            cy.press('Log out');
+        });
+
+        // Assert
+        cy.see('How would you like to begin?');
+        cy.dontSee('Connect to cloud');
+    });
+
     it('Migrates local data to cloud after logging in', () => {
         // Arrange
         cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/ramen').as('patchRamen');

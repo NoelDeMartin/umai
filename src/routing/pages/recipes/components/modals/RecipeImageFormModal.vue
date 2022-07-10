@@ -62,7 +62,7 @@
                 <CoreButton secondary @click="$root?.close(null)">
                     {{ $t('recipes.image_edit_discard') }}
                 </CoreButton>
-                <CoreButton type="submit">
+                <CoreButton v-initial-focus type="submit">
                     {{ $t('recipes.image_edit_submit') }}
                 </CoreButton>
             </div>

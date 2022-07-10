@@ -40,7 +40,7 @@
                 <CoreButton
                     secondary
                     color="danger"
-                    @click="$auth.logout()"
+                    @click="$auth.logout(), close()"
                 >
                     <i-pepicons-leave class="h-6 w-6" />
                     <span class="ml-2">{{ $t('cloud.logout') }}</span>
