@@ -7,7 +7,9 @@
                     ? $t('home.onboarding.loginWithSolid_stale')
                     : $t('home.onboarding.loginWithSolid_loading')
             "
-            :actions="{ reload }"
+            :actions="{
+                reload: () => $app.reload(),
+            }"
             class="ml-2 text-lg text-gray-700"
         />
     </div>
@@ -15,7 +17,7 @@
         v-else
         :form="form"
         class="flex flex-col items-center"
-        @submit="$auth.login(form.url)"
+        @submit="submit()"
     >
         <CoreMarkdown :text="$t('home.onboarding.loginWithSolid_info')" class="max-w-md text-center" />
         <div>
@@ -50,6 +52,7 @@
 </template>
 
 <script setup lang="ts">
+import Auth from '@/framework/core/facades/Auth';
 import { FormInputType, reactiveForm } from '@/framework/forms';
 
 defineEmits(['cancel']);
@@ -62,7 +65,11 @@ const form = reactiveForm({
     },
 });
 
-function reload() {
-    location.reload();
+async function submit() {
+    if (!/^https?:\/\//.test(form.url)) {
+        form.url = 'https://' + form.url;
+    }
+
+    await Auth.login(form.url);
 }
 </script>

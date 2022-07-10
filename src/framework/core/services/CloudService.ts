@@ -218,8 +218,14 @@ export default class CloudService extends Service<State, ComputedState> {
 
     protected async pullChanges(): Promise<void> {
         const localModels = map(this.getLocalModels(), 'url');
-        const remoteModelsArray = await this.fetchRemoteModels(localModels.getKeys());
-        const remoteModels = map(remoteModelsArray, 'url');
+        const remoteModelsArray = await this.fetchRemoteModels(localModels.getItems());
+        const remoteModels = map(remoteModelsArray, model => {
+            if (model instanceof Tombstone) {
+                return model.resourceUrl;
+            }
+
+            return model.url;
+        });
 
         await this.synchronizeModels(localModels, remoteModels);
 
@@ -305,15 +311,19 @@ export default class CloudService extends Service<State, ComputedState> {
         const synchronizedModelUrls = new Set<string>();
 
         for (const remoteModel of remoteModels.items()) {
-            const localModel = this.getLocalModel(remoteModel, localModels);
-
             if (remoteModel instanceof Tombstone) {
-                await localModel.delete();
+                const localModel = localModels.get(remoteModel.resourceUrl);
 
-                synchronizedModelUrls.add(remoteModel.url);
+                if (localModel) {
+                    await localModel.delete();
+
+                    synchronizedModelUrls.add(remoteModel.url);
+                }
 
                 continue;
             }
+
+            const localModel = this.getLocalModel(remoteModel, localModels);
 
             await SolidModel.synchronize(localModel, remoteModel);
             await localModel.save();
@@ -381,7 +391,7 @@ export default class CloudService extends Service<State, ComputedState> {
         return remoteModel.clone({ constructors: [[remoteClass, localClass]] });
     }
 
-    protected async fetchRemoteModels(localModelUrls: string[]): Promise<SolidModel[]> {
+    protected async fetchRemoteModels(localModels: SolidModel[]): Promise<SolidModel[]> {
         const RemoteTombstone = getRemoteClass(Tombstone);
         const handlersModels = await Promise.all(
             this.handlers.map(async handler => {
@@ -414,8 +424,10 @@ export default class CloudService extends Service<State, ComputedState> {
         );
         const remoteModels = handlersModels.flat();
         const remoteModelUrls = remoteModels.map(remoteModel => remoteModel.url);
-        const missingModelUrls = localModelUrls.filter(url => !remoteModelUrls.includes(url));
-        const tombstones = await RemoteTombstone.all({ $in: missingModelUrls });
+        const missingModelDocumentUrls = localModels
+            .filter(localModel => !remoteModelUrls.includes(localModel.url))
+            .map(localModel => localModel.requireDocumentUrl());
+        const tombstones = await RemoteTombstone.all({ $in: missingModelDocumentUrls });
 
         return remoteModels.concat(tombstones);
     }

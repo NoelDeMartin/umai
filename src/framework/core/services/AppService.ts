@@ -32,6 +32,14 @@ export default class AppService extends Service<State> {
         return import.meta.env[`VITE_${property}`] as unknown as T;
     }
 
+    public async reload(): Promise<void> {
+        location.reload();
+
+        await new Promise(() => {
+            // stall until actual reload happens
+        });
+    }
+
     protected async boot(): Promise<void> {
         await super.boot();
         await Auth.ready;

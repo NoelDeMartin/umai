@@ -32,7 +32,7 @@ import IconSolid from '~icons/app/solid-emblem';
 import IconViewShow from '~icons/zondicons/view-show';
 import type { Component } from 'vue';
 
-import { requiredObjectProp } from '@/framework/utils/vue';
+import { requiredEnumProp } from '@/framework/utils/vue';
 import { translate } from '@/framework/utils/translate';
 
 import Cookbook from '@/services/facades/Cookbook';
@@ -46,7 +46,7 @@ interface RecipeSharingOptionData {
 }
 
 const { modelValue } = defineProps({
-    modelValue: requiredObjectProp<RecipeShareOption>(),
+    modelValue: requiredEnumProp(RecipeShareOption),
 });
 const emit = defineEmits(['update:modelValue']);
 

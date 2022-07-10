@@ -1,4 +1,4 @@
-export const enum RecipeShareOption {
+export enum RecipeShareOption {
     Umai = 'umai',
     Solid = 'solid',
     JsonLD = 'jsonld',

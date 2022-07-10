@@ -90,7 +90,7 @@ const filteredRecipes = $computed(() => {
         ? searchIndex.filter(({ searchableText }) => searchableText.includes(searchQuery))
         : searchIndex;
 
-    return filteredSearchIndex.map(({ recipe }) => recipe);
+    return filteredSearchIndex.map(({ recipe }) => recipe).toArray();
 });
 
 function getTitle(): string {

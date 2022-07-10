@@ -1,6 +1,6 @@
 INSERT DATA {
     @prefix schema: <https://schema.org/> .
-    @prefix soukai: <https://soukai.noeldemartin.com/vocab/> .
+    @prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
     @prefix dcmi: <http://purl.org/dc/elements/1.1/> .
     @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
@@ -10,8 +10,8 @@ INSERT DATA {
         schema:recipeIngredient "Broth", "Noodles" .
 
     <#it-metadata>
-        a soukai:Metadata ;
-        soukai:resource <#it> ;
-        soukai:createdAt "[[.*]]"^^xsd:dateTime ;
-        soukai:updatedAt "[[.*]]"^^xsd:dateTime .
+        a crdt:Metadata ;
+        crdt:resource <#it> ;
+        crdt:createdAt "[[.*]]"^^xsd:dateTime ;
+        crdt:updatedAt "[[.*]]"^^xsd:dateTime .
 }

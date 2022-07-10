@@ -62,7 +62,10 @@ export default class ErrorsService extends Service<State, ComputedState> {
             actions: [
                 {
                     text: translate('errors.viewDetails'),
-                    handler: () => UI.openModal(UI.resolveComponent(ApplicationComponent.ErrorReportModal), { report }),
+                    handler: () => UI.openModal(
+                        UI.resolveComponent(ApplicationComponent.ErrorReportModal),
+                        { reports: [report] },
+                    ),
                 },
             ],
         });

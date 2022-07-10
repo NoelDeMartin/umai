@@ -50,7 +50,12 @@ function getColorClasses(color: CoreColor): string {
     const colorClasses = colorsClasses[color];
 
     if (disabled) {
-        return 'bg-gray-300 text-gray-700 opacity-75 cursor-not-allowed';
+        switch (style) {
+            case Style.Clear:
+                return 'text-gray-700 opacity-50 cursor-not-allowed';
+            default:
+                return 'bg-gray-300 text-gray-700 opacity-75 cursor-not-allowed';
+        }
     }
 
     switch (style) {

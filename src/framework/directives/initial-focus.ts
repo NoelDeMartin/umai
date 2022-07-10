@@ -1,7 +1,7 @@
 import { defineDirective } from '@/framework/utils/vue';
 
 export default defineDirective({
-    async mounted(element: HTMLElement) {
+    mounted(element: HTMLElement) {
         element.focus();
     },
 });

@@ -8,7 +8,7 @@
             <CoreButton
                 secondary
                 alignment="center"
-                @click="reload()"
+                @click="$app.reload()"
             >
                 {{ $t('startupCrash.reload') }}
             </CoreButton>
@@ -16,7 +16,7 @@
                 v-if="$auth.hasLoggedIn"
                 secondary
                 alignment="center"
-                @click="$auth.logout()"
+                @click="$auth.logout(true).then(() => $app.reload())"
             >
                 {{ $t('startupCrash.logout') }}
             </CoreButton>
@@ -31,8 +31,4 @@
     </main>
 </template>
 
-<script setup lang="ts">
-function reload() {
-    location.reload();
-}
-</script>
+<script setup lang="ts"></script>

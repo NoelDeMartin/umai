@@ -77,6 +77,16 @@ export function requiredArrayProp<T>(): Prop<T[]> {
     };
 }
 
+export function requiredEnumProp<Enum>(enumeration: Enum): Prop<Enum[keyof Enum]> {
+    const values = Object.values(enumeration);
+
+    return {
+        type: String as unknown as PropType<Enum[keyof Enum]>,
+        required: true,
+        validator: (value) => values.includes(value),
+    };
+}
+
 export function requiredNumberProp(): Prop<number> {
     return {
         type: Number,

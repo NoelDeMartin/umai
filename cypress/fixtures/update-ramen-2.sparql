@@ -1,6 +1,6 @@
 DELETE DATA {
     @prefix schema: <https://schema.org/> .
-    @prefix soukai: <https://soukai.noeldemartin.com/vocab/> .
+    @prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
     @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 	<#it>
@@ -8,17 +8,17 @@ DELETE DATA {
         schema:description "is life" ;
         schema:recipeIngredient "Toppings" .
 
-    <#it-metadata> soukai:updatedAt "[[.*]]"^^xsd:dateTime .
+    <#it-metadata> crdt:updatedAt "[[.*]]"^^xsd:dateTime .
 
     <#[[instruction-step-2][%uuid%]]> schema:text "Dip them into the broth" .
 
-    <#[[instruction-step-2][%uuid%]]-metadata> soukai:updatedAt "[[.*]]"^^xsd:dateTime .
+    <#[[instruction-step-2][%uuid%]]-metadata> crdt:updatedAt "[[.*]]"^^xsd:dateTime .
 
 } ;
 
 INSERT DATA {
     @prefix schema: <https://schema.org/> .
-    @prefix soukai: <https://soukai.noeldemartin.com/vocab/> .
+    @prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
     @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
     <#it>
@@ -27,67 +27,67 @@ INSERT DATA {
         schema:recipeIngredient "Shiitake", "Nori" ;
         schema:recipeInstructions <#[[instruction-step-3][%uuid%]]> .
 
-    <#it-metadata> soukai:updatedAt "[[.*]]"^^xsd:dateTime .
+    <#it-metadata> crdt:updatedAt "[[.*]]"^^xsd:dateTime .
 
     <#it-operation-[[%uuid%]]>
-        a soukai:SetPropertyOperation ;
-        soukai:resource <#it> ;
-        soukai:date "[[.*]]"^^xsd:dateTime ;
-        soukai:property schema:name ;
-        soukai:value "Jun's Ramen" .
+        a crdt:SetPropertyOperation ;
+        crdt:resource <#it> ;
+        crdt:date "[[.*]]"^^xsd:dateTime ;
+        crdt:property schema:name ;
+        crdt:value "Jun's Ramen" .
 
     <#it-operation-[[%uuid%]]>
-        a soukai:SetPropertyOperation ;
-        soukai:resource <#it> ;
-        soukai:date "[[.*]]"^^xsd:dateTime ;
-        soukai:property schema:description ;
-        soukai:value "Instructions: https://www.youtube.com/watch?v=9WXIrnWsaCo" .
+        a crdt:SetPropertyOperation ;
+        crdt:resource <#it> ;
+        crdt:date "[[.*]]"^^xsd:dateTime ;
+        crdt:property schema:description ;
+        crdt:value "Instructions: https://www.youtube.com/watch?v=9WXIrnWsaCo" .
 
     <#it-operation-[[%uuid%]]>
-        a soukai:AddPropertyOperation ;
-        soukai:resource <#it> ;
-        soukai:date "[[.*]]"^^xsd:dateTime ;
-        soukai:property schema:recipeIngredient ;
-        soukai:value "Shiitake", "Nori" .
+        a crdt:AddPropertyOperation ;
+        crdt:resource <#it> ;
+        crdt:date "[[.*]]"^^xsd:dateTime ;
+        crdt:property schema:recipeIngredient ;
+        crdt:value "Shiitake", "Nori" .
 
     <#it-operation-[[%uuid%]]>
-        a soukai:RemovePropertyOperation ;
-        soukai:resource <#it> ;
-        soukai:date "[[.*]]"^^xsd:dateTime ;
-        soukai:property schema:recipeIngredient ;
-        soukai:value "Toppings" .
+        a crdt:RemovePropertyOperation ;
+        crdt:resource <#it> ;
+        crdt:date "[[.*]]"^^xsd:dateTime ;
+        crdt:property schema:recipeIngredient ;
+        crdt:value "Toppings" .
 
     <#it-operation-[[%uuid%]]>
-        a soukai:AddPropertyOperation ;
-        soukai:resource <#it> ;
-        soukai:date "[[.*]]"^^xsd:dateTime ;
-        soukai:property schema:recipeInstructions ;
-        soukai:value <#[[instruction-step-3][%uuid%]]> .
+        a crdt:AddPropertyOperation ;
+        crdt:resource <#it> ;
+        crdt:date "[[.*]]"^^xsd:dateTime ;
+        crdt:property schema:recipeInstructions ;
+        crdt:value <#[[instruction-step-3][%uuid%]]> .
 
     <#[[instruction-step-2][%uuid%]]> schema:text "Dip them into the broth!" .
 
-    <#[[instruction-step-2][%uuid%]]-metadata> soukai:updatedAt "[[.*]]"^^xsd:dateTime .
+    <#[[instruction-step-2][%uuid%]]-metadata> crdt:updatedAt "[[.*]]"^^xsd:dateTime .
 
     <#[[instruction-step-2][%uuid%]]-operation-[[%uuid%]]>
-        a soukai:SetPropertyOperation ;
-        soukai:resource <#[[instruction-step-2][%uuid%]]> ;
-        soukai:date "[[.*]]"^^xsd:dateTime ;
-        soukai:property schema:text ;
-        soukai:value "Dip them into the broth" .
+        a crdt:SetPropertyOperation ;
+        crdt:resource <#[[instruction-step-2][%uuid%]]> ;
+        crdt:date "[[.*]]"^^xsd:dateTime ;
+        crdt:property schema:text ;
+        crdt:value "Dip them into the broth" .
 
     <#[[instruction-step-2][%uuid%]]-operation-[[%uuid%]]>
-        a soukai:SetPropertyOperation ;
-        soukai:resource <#[[instruction-step-2][%uuid%]]> ;
-        soukai:date "[[.*]]"^^xsd:dateTime ;
-        soukai:property schema:position ;
-        soukai:value 2 .
+        a crdt:SetPropertyOperation ;
+        crdt:resource <#[[instruction-step-2][%uuid%]]> ;
+        crdt:date "[[.*]]"^^xsd:dateTime ;
+        crdt:property schema:position ;
+        crdt:value 2 .
 
     <#[[instruction-step-2][%uuid%]]-operation-[[%uuid%]]>
-        a soukai:SetPropertyOperation ;
-        soukai:resource <#[[instruction-step-2][%uuid%]]> ;
-        soukai:date "[[.*]]"^^xsd:dateTime ;
-        soukai:property schema:text ;
-        soukai:value "Dip them into the broth!" .
+        a crdt:SetPropertyOperation ;
+        crdt:resource <#[[instruction-step-2][%uuid%]]> ;
+        crdt:date "[[.*]]"^^xsd:dateTime ;
+        crdt:property schema:text ;
+        crdt:value "Dip them into the broth!" .
 
     <#[[instruction-step-3][%uuid%]]>
         a schema:HowToStep ;
@@ -95,9 +95,9 @@ INSERT DATA {
         schema:position 3 .
 
     <#[[instruction-step-3][%uuid%]]-metadata>
-        a soukai:Metadata ;
-        soukai:resource <#[[instruction-step-3][%uuid%]]> ;
-        soukai:createdAt "[[.*]]"^^xsd:dateTime ;
-        soukai:updatedAt "[[.*]]"^^xsd:dateTime .
+        a crdt:Metadata ;
+        crdt:resource <#[[instruction-step-3][%uuid%]]> ;
+        crdt:createdAt "[[.*]]"^^xsd:dateTime ;
+        crdt:updatedAt "[[.*]]"^^xsd:dateTime .
 
 }

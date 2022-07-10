@@ -1,5 +1,13 @@
+import {
+    fail,
+    getLocationQueryParameter,
+    hasLocationQueryParameter,
+    objectWithout,
+    parseBoolean,
+    tap,
+    urlRoot,
+} from '@noeldemartin/utils';
 import { createPrivateTypeIndex, fetchLoginUserProfile } from '@noeldemartin/solid-utils';
-import { fail, objectWithout, tap, urlRoot } from '@noeldemartin/utils';
 import { SolidACLAuthorization } from 'soukai-solid';
 import type { Fetch, SolidUserProfile } from '@noeldemartin/solid-utils';
 
@@ -7,6 +15,7 @@ import App from '@/framework/core/facades/App';
 import AuthenticationCancelledError from '@/framework/auth/errors/AuthenticationCancelledError';
 import Errors from '@/framework/core/facades/Errors';
 import Events from '@/framework/core/facades/Events';
+import Router from '@/framework/core/facades/Router';
 import Service from '@/framework/core/Service';
 import UI from '@/framework/core/facades/UI';
 import { getAuthenticator } from '@/framework/auth';
@@ -165,6 +174,8 @@ export default class AuthService extends Service<State, ComputedState> {
         this.setState({ previousSession: null });
 
         if (this.isLoggedIn()) {
+            Router.push({ name: 'home' });
+
             await this.authenticator.logout();
         }
 
@@ -199,7 +210,7 @@ export default class AuthService extends Service<State, ComputedState> {
             this.setState({ preferredAuthenticator: url.searchParams.get('authenticator') as AuthenticatorName });
 
         this.previousSession && await this.bootAuthenticator(this.previousSession.authenticator);
-        this.autoReconnect && await this.reconnect();
+        this.reconnectOnStartup() && await this.reconnect();
     }
 
     protected getInitialState(): State {
@@ -225,6 +236,18 @@ export default class AuthService extends Service<State, ComputedState> {
             hasLoggedIn: (_, state) => state.loggedIn || state.wasLoggedIn,
             user: state => state.session?.user ?? null,
         };
+    }
+
+    private reconnectOnStartup(): boolean {
+        if (Router.currentRoute.value.meta.reconnect === false) {
+            return false;
+        }
+
+        if (hasLocationQueryParameter('autoReconnect')) {
+            return parseBoolean(getLocationQueryParameter('autoReconnect'));
+        }
+
+        return this.autoReconnect;
     }
 
     private async bootAuthenticator(name: AuthenticatorName): Promise<Authenticator> {

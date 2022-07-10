@@ -531,12 +531,13 @@ describe('Cookbook', () => {
             cy.get('@patchRamen').its('request.body').should('be.sparql', `
                 DELETE DATA { ${ramenTurtle} } ;
                 INSERT DATA {
-                    @prefix soukai: <https://soukai.noeldemartin.com/vocab/> .
+                    @prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
                     @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-                    <#it>
-                        a soukai:Tombstone ;
-                        soukai:deletedAt  "[[.*]]"^^xsd:dateTime .
+                    <#it-metadata>
+                        a crdt:Tombstone ;
+                        crdt:resource <#it> ;
+                        crdt:deletedAt  "[[.*]]"^^xsd:dateTime .
                 } .
             `);
         });
@@ -553,12 +554,13 @@ describe('Cookbook', () => {
             url: 'http://localhost:4000/cookbook/ramen',
             headers: { 'Content-Type': 'text/turtle' },
             body: `
-                @prefix soukai: <https://soukai.noeldemartin.com/vocab/> .
+                @prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
                 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-                <#it>
-                    a soukai:Tombstone ;
-                    soukai:deletedAt "2022-06-12T00:00:00.000Z"^^xsd:dateTime .
+                <#it-metadata>
+                    a crdt:Tombstone ;
+                    crdt:resource <#it> ;
+                    crdt:deletedAt "2022-06-12T00:00:00.000Z"^^xsd:dateTime .
             `,
         });
 

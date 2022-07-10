@@ -36,6 +36,8 @@ cloud:
     url_placeholder: webId or issue provider
     dismiss: No thanks, I want to keep my data offline
     submit: Log in
+    loading: Connecting to your Solid POD...
+    stale: This is taking too long, maybe try [reloading the page](action:reload) to start again.
 
   logout: Log out
 
@@ -258,10 +260,10 @@ recipes:
     profile_privateDescription: Only you can view this recipe
     change_label_a11y: Public permissions
     change_button_a11y: 'Change permissions (current: {current})'
-    disconnected: reconnect to view permissions
+    disconnected: reconnect to manage permissions
     loading: loading permissions
     updating: updating permissions
-    error: error reading permissions
+    error: something went wrong
     warning: This recipe is private, remember to make it public before sharing it with someone else.
 
   new:
@@ -313,6 +315,8 @@ ui:
   loading: Loading...
 
 errors:
+  notFound: "404: Not Found"
+  notFound_goHome: go home
   notice: Something went wrong, but it's not your fault. Try again!
   viewDetails: View details
   unknown: Unknown error

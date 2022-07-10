@@ -1,18 +1,18 @@
 DELETE DATA {
     @prefix schema: <https://schema.org/> .
-    @prefix soukai: <https://soukai.noeldemartin.com/vocab/> .
+    @prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
     @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 	<#it>
         schema:name "Ramen" .
 
     <#it-metadata>
-        soukai:updatedAt "[[.*]]"^^xsd:dateTime .
+        crdt:updatedAt "[[.*]]"^^xsd:dateTime .
 } ;
 
 INSERT DATA {
     @prefix schema: <https://schema.org/> .
-    @prefix soukai: <https://soukai.noeldemartin.com/vocab/> .
+    @prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
     @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
     <#it>
@@ -22,49 +22,49 @@ INSERT DATA {
         schema:recipeInstructions <#[[instruction-step-1][%uuid%]]>, <#[[instruction-step-2][%uuid%]]> .
 
     <#it-metadata>
-        soukai:updatedAt "[[.*]]"^^xsd:dateTime .
+        crdt:updatedAt "[[.*]]"^^xsd:dateTime .
 
     <#it-operation-[[%uuid%]]>
-        a soukai:SetPropertyOperation ;
-        soukai:resource <#it> ;
-        soukai:date "[[.*]]"^^xsd:dateTime ;
-        soukai:property schema:name ;
-        soukai:value "Ramen" .
+        a crdt:SetPropertyOperation ;
+        crdt:resource <#it> ;
+        crdt:date "[[.*]]"^^xsd:dateTime ;
+        crdt:property schema:name ;
+        crdt:value "Ramen" .
 
     <#it-operation-[[%uuid%]]>
-        a soukai:SetPropertyOperation ;
-        soukai:resource <#it> ;
-        soukai:date "[[.*]]"^^xsd:dateTime ;
-        soukai:property schema:recipeIngredient ;
-        soukai:value "Broth", "Noodles" .
+        a crdt:SetPropertyOperation ;
+        crdt:resource <#it> ;
+        crdt:date "[[.*]]"^^xsd:dateTime ;
+        crdt:property schema:recipeIngredient ;
+        crdt:value "Broth", "Noodles" .
 
     <#it-operation-[[%uuid%]]>
-        a soukai:SetPropertyOperation ;
-        soukai:resource <#it> ;
-        soukai:date "[[.*]]"^^xsd:dateTime ;
-        soukai:property schema:name ;
-        soukai:value "Ramen!" .
+        a crdt:SetPropertyOperation ;
+        crdt:resource <#it> ;
+        crdt:date "[[.*]]"^^xsd:dateTime ;
+        crdt:property schema:name ;
+        crdt:value "Ramen!" .
 
     <#it-operation-[[%uuid%]]>
-        a soukai:SetPropertyOperation ;
-        soukai:resource <#it> ;
-        soukai:date "[[.*]]"^^xsd:dateTime ;
-        soukai:property schema:description ;
-        soukai:value "is life" .
+        a crdt:SetPropertyOperation ;
+        crdt:resource <#it> ;
+        crdt:date "[[.*]]"^^xsd:dateTime ;
+        crdt:property schema:description ;
+        crdt:value "is life" .
 
     <#it-operation-[[%uuid%]]>
-        a soukai:AddPropertyOperation ;
-        soukai:resource <#it> ;
-        soukai:date "[[.*]]"^^xsd:dateTime ;
-        soukai:property schema:recipeIngredient ;
-        soukai:value "Toppings" .
+        a crdt:AddPropertyOperation ;
+        crdt:resource <#it> ;
+        crdt:date "[[.*]]"^^xsd:dateTime ;
+        crdt:property schema:recipeIngredient ;
+        crdt:value "Toppings" .
 
     <#it-operation-[[%uuid%]]>
-        a soukai:AddPropertyOperation ;
-        soukai:resource <#it> ;
-        soukai:date "[[.*]]"^^xsd:dateTime ;
-        soukai:property schema:recipeInstructions ;
-        soukai:value <#[[instruction-step-1][%uuid%]]>, <#[[instruction-step-2][%uuid%]]> .
+        a crdt:AddPropertyOperation ;
+        crdt:resource <#it> ;
+        crdt:date "[[.*]]"^^xsd:dateTime ;
+        crdt:property schema:recipeInstructions ;
+        crdt:value <#[[instruction-step-1][%uuid%]]>, <#[[instruction-step-2][%uuid%]]> .
 
     <#[[instruction-step-1][%uuid%]]>
         a schema:HowToStep ;
@@ -72,10 +72,10 @@ INSERT DATA {
         schema:position 1 .
 
     <#[[instruction-step-1][%uuid%]]-metadata>
-        a soukai:Metadata ;
-        soukai:resource <#[[instruction-step-1][%uuid%]]> ;
-        soukai:createdAt "[[.*]]"^^xsd:dateTime ;
-        soukai:updatedAt "[[.*]]"^^xsd:dateTime .
+        a crdt:Metadata ;
+        crdt:resource <#[[instruction-step-1][%uuid%]]> ;
+        crdt:createdAt "[[.*]]"^^xsd:dateTime ;
+        crdt:updatedAt "[[.*]]"^^xsd:dateTime .
 
     <#[[instruction-step-2][%uuid%]]>
         a schema:HowToStep ;
@@ -83,8 +83,8 @@ INSERT DATA {
         schema:position 2 .
 
     <#[[instruction-step-2][%uuid%]]-metadata>
-        a soukai:Metadata ;
-        soukai:resource <#[[instruction-step-2][%uuid%]]> ;
-        soukai:createdAt "[[.*]]"^^xsd:dateTime ;
-        soukai:updatedAt "[[.*]]"^^xsd:dateTime .
+        a crdt:Metadata ;
+        crdt:resource <#[[instruction-step-2][%uuid%]]> ;
+        crdt:createdAt "[[.*]]"^^xsd:dateTime ;
+        crdt:updatedAt "[[.*]]"^^xsd:dateTime .
 }

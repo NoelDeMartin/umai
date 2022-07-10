@@ -3,7 +3,7 @@
         v-if="!$auth.loggedIn"
         clear
         class="text-sm"
-        @click="$auth.reconnect()"
+        @click="$ui.openModal(CloudStatusModal)"
     >
         {{ $t('recipes.accessControl.disconnected') }}
     </CoreButton>
@@ -99,6 +99,7 @@ import Auth from '@/framework/core/facades/Auth';
 import { requiredObjectProp } from '@/framework/utils/vue';
 import { translate } from '@/framework/utils/translate';
 
+import CloudStatusModal from '@/components/modals/CloudStatusModal.vue';
 import type Recipe from '@/models/Recipe';
 
 interface AccessControlProfile {
@@ -152,10 +153,15 @@ async function updatePermissions(newProfile: AccessControlProfile) {
 
     updatingPermissions = true;
 
-    await recipe.updatePublicPermissions(newProfile.publicPermissions);
+    try {
+        await recipe.updatePublicPermissions(newProfile.publicPermissions);
 
-    profile = newProfile;
-    updatingPermissions = false;
+        profile = newProfile;
+    } catch (e) {
+        error = e as Error;
+    } finally {
+        updatingPermissions = false;
+    }
 }
 
 async function initializePermissionsProfile() {

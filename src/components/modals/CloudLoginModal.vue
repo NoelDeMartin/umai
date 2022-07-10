@@ -1,6 +1,20 @@
 <template>
-    <AppModal v-slot="{ close }" :title="$t('cloud.login.title')">
-        <div v-if="$auth.hasLoggedIn" class="flex flex-col">
+    <AppModal v-slot="{ close }" :title="$t('cloud.login.title')" :cancellable="!$auth.ongoing">
+        <div v-if="$auth.ongoing" class="flex items-center">
+            <i-app-spinner class="h-4 w-4 animate-spin text-brand-solid-700" aria-hidden="true" />
+            <CoreMarkdown
+                :text="
+                    $auth.stale
+                        ? $t('cloud.login.stale')
+                        : $t('cloud.login.loading')
+                "
+                :actions="{
+                    reload: () => $app.reload(),
+                }"
+                class="ml-2 text-lg text-gray-700"
+            />
+        </div>
+        <div v-else-if="$auth.hasLoggedIn" class="flex flex-col">
             <CoreMarkdown
                 v-if="$auth.loginError"
                 :text="$t('cloud.login.info_loginError', { url: $auth.previousSession?.loginUrl })"
