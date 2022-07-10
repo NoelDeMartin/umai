@@ -497,7 +497,11 @@ describe('Cookbook', () => {
 
     it('Deletes local recipes', () => {
         // Arrange
-        cy.createRecipe({ name: 'Ramen' }).as('ramen');
+        cy.createRecipe({
+            name: 'Ramen',
+            imageUrl: 'solid://recipes/ramen.png',
+        }).as('ramen');
+        cy.createFile('solid://recipes/ramen.png', 'image/png', 'img/ramen.png');
 
         // Act
         cy.press('Ramen');
@@ -508,16 +512,21 @@ describe('Cookbook', () => {
         // Assert
         cy.see('Ramen has been deleted');
         cy.assertLocalDocumentDoesNotExist('solid://recipes/ramen');
+        cy.assertStoredFileDoesNotExist('solid://recipes/ramen.png');
     });
 
     it('Deletes remotes recipes', () => {
         // Arrange
-        cy.createRecipe({ name: 'Ramen' });
+        cy.createRecipe({
+            name: 'Ramen',
+            imageUrl: 'http://localhost:4000/cookbook/ramen.png',
+        });
         cy.login({ hasCookbook: true });
         cy.request('http://localhost:4000/cookbook/ramen')
             .then(response => cy.wrap(response.body).as('ramenTurtle'));
 
         cy.intercept('PATCH', 'http://localhost:4000/cookbook/ramen').as('patchRamen');
+        cy.intercept('DELETE', 'http://localhost:4000/cookbook/ramen.png').as('deleteRamenImage');
 
         // Act
         cy.press('Ramen');
@@ -541,6 +550,7 @@ describe('Cookbook', () => {
                 } .
             `);
         });
+        cy.get('@deleteRamenImage').should('not.be.null');
         cy.assertLocalDocumentDoesNotExist('http://localhost:4000/cookbook/ramen');
     });
 

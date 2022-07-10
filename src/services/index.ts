@@ -25,6 +25,15 @@ export function registerServices(): void {
     Cloud.registerHandler(Recipe, {
         isReady: () => !!Cookbook.cookbook.value,
         getLocalModels: () => Cookbook.allRecipes.toArray(),
+        getLocalModelsWithRemoteFileUrls: () =>
+            Cookbook.allRecipes.toArray().map(recipe => ({
+                model: recipe,
+                remoteFileUrls:
+                    Cookbook.remoteCookbookUrl &&
+                    recipe.imageUrl?.startsWith(Cookbook.remoteCookbookUrl)
+                        ? [recipe.imageUrl]
+                        : [],
+            })),
     });
 
     UI.registerComponent(ApplicationComponent.LoadingModal, AppLoadingModal);

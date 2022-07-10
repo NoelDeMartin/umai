@@ -46,8 +46,9 @@ describe('Cloud Service', () => {
             authenticator,
         }));
         cloud.registerHandler(Recipe, {
-            getLocalModels: () => localModels,
             isReady: () => true,
+            getLocalModels: () => localModels,
+            getLocalModelsWithRemoteFileUrls: () => localModels.map(model => ({ model, remoteFileUrls: [] })),
         });
 
         await cloud.launch();

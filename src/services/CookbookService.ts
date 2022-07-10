@@ -70,6 +70,10 @@ export default class CookbookService extends Service<State, ComputedState> {
             return;
         }
 
+        if (recipe.imageUrl && await Files.has(recipe.imageUrl)) {
+            await Files.delete(recipe.imageUrl);
+        }
+
         await recipe.delete();
     }
 

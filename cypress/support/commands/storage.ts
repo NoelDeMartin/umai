@@ -80,6 +80,10 @@ export default {
             ]));
     },
 
+    assertStoredFileDoesNotExist(url: string): void {
+        cy.getIndexedDBObject<JsonLD>('app', 'files', url)
+            .then(document => expect(document).to.be.null);
+    },
 
     assertStoredFileMatches(url: string, expected: Record<string, unknown>): void {
         cy

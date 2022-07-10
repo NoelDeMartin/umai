@@ -43,6 +43,7 @@ export interface CloudHandler<T extends SolidModel = SolidModel> {
     modelClass: SolidModelConstructor<T>;
     isReady(): boolean;
     getLocalModels(): T[];
+    getLocalModelsWithRemoteFileUrls(): { model: T; remoteFileUrls: string[] }[];
 }
 
 export default class CloudService extends Service<State, ComputedState> {
@@ -244,19 +245,23 @@ export default class CloudService extends Service<State, ComputedState> {
     }
 
     protected async pushChanges(): Promise<void> {
+        const fetch = Auth.requireAuthenticator().requireAuthenticatedFetch();
         const remoteModels = this.dirtyRemoteModels.getItems();
-        const localModels = map(this.getLocalModels(), 'url');
+        const localModelsWithRemoteFileUrls = map(this.getLocalModelsWithRemoteFileUrls(), (({ model }) => model.url));
 
         await Promise.all(
             remoteModels.map(async remoteModel => {
                 if (remoteModel.isSoftDeleted()) {
-                    const localModel = localModels.get(remoteModel.url);
+                    const localModel = localModelsWithRemoteFileUrls.get(remoteModel.url);
+
+                    await Promise.all(
+                        localModel?.remoteFileUrls.map(url => fetch(url, { method: 'DELETE' })) ?? [],
+                    );
 
                     remoteModel.enableHistory();
                     remoteModel.enableTombstone();
                     await remoteModel.delete();
-
-                    await localModel?.delete();
+                    await localModel?.model.delete();
 
                     return;
                 }
@@ -434,6 +439,10 @@ export default class CloudService extends Service<State, ComputedState> {
 
     protected getLocalModels(): Iterable<SolidModel> {
         return this.handlers.map(handler => handler.isReady() ? handler.getLocalModels() : []).flat();
+    }
+
+    protected getLocalModelsWithRemoteFileUrls(): Iterable<{ model: SolidModel; remoteFileUrls: string[] }> {
+        return this.handlers.map(handler => handler.isReady() ? handler.getLocalModelsWithRemoteFileUrls() : []).flat();
     }
 
     protected cleanRemoteModel(remoteModel: SolidModel): void {
