@@ -10,13 +10,16 @@
             :open-tooltip="open"
             :close-tooltip="close"
         />
-
-        <!-- TODO fix width & position for mobile -->
         <span
             :id="id"
+            ref="$wrapper"
             role="tooltip"
-            class="absolute -top-3 left-1/2 bg-gray-700 text-white whitespace-nowrap -translate-x-1/2 -translate-y-full px-2 py-1 rounded-md"
-            :class="{ 'hidden': !isOpen }"
+            class="absolute -top-3 left-1/2 bg-gray-700 text-white -translate-x-1/2 -translate-y-full px-2 py-1 rounded-md"
+            :style="inlineWrapperStyle"
+            :class="{
+                'hidden': !isOpen,
+                'whitespace-nowrap': !inlineWrapperStyle,
+            }"
         >
             {{ text }}
         </span>
@@ -28,17 +31,20 @@
 </template>
 
 <script setup lang="ts">
+import { nextTick, onUnmounted } from 'vue';
 import { uuid } from '@noeldemartin/utils';
 
+import TailwindCSS from '@/framework/utils/tailwindcss';
 import { requiredStringProp } from '@/framework/utils/vue';
-import { onUnmounted } from 'vue';
 
 defineProps({
     text: requiredStringProp(),
 });
 
 const id = uuid();
+const $wrapper = $ref<HTMLDivElement | null>(null);
 let isOpen = $ref(false);
+let inlineWrapperStyle = $ref<string>('');
 
 const onKeydown = (event: KeyboardEvent) => {
     if (event.key !== 'Escape' && event.key !== 'Esc')
@@ -47,11 +53,15 @@ const onKeydown = (event: KeyboardEvent) => {
     close();
 };
 
-function open() {
+async function open() {
     isOpen = true;
 
     // TODO extract global key bindings management
     document.addEventListener('keydown', onKeydown);
+
+    await nextTick();
+
+    calculateWrapperWidth();
 }
 
 function close() {
@@ -60,7 +70,22 @@ function close() {
     document.removeEventListener('keydown', onKeydown);
 }
 
-onUnmounted(() => {
-    document.removeEventListener('keydown', onKeydown);
-});
+function calculateWrapperWidth() {
+    if (!$wrapper || inlineWrapperStyle) {
+        return;
+    }
+
+    const edge = TailwindCSS.pixels('spacing.edge');
+    const boundingRect = $wrapper.getBoundingClientRect();
+    const overflowingWidth = -Math.min(
+        0,
+        boundingRect.x - edge,
+        window.innerWidth - (boundingRect.width - boundingRect.x) - edge,
+    );
+    const wrapperWidth = $wrapper.clientWidth - 2 * overflowingWidth;
+
+    inlineWrapperStyle = `width:${wrapperWidth + TailwindCSS.pixels('spacing.1')}px`;
+}
+
+onUnmounted(() => document.removeEventListener('keydown', onKeydown));
 </script>
