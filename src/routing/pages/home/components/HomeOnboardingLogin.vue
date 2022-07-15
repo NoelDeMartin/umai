@@ -20,31 +20,16 @@
         @submit="submit()"
     >
         <CoreMarkdown :text="$t('home.onboarding.loginWithSolid_info')" class="max-w-md text-center" />
-        <div>
-            <div class="mt-2 flex">
-                <CoreInput
-                    initial-focus
-                    name="url"
-                    class="z-10 min-w-[300px]"
-                    color="brand-solid"
-                    :label="$t('home.onboarding.loginWithSolid_label')"
-                    :show-errors="false"
-                    :placeholder="$t('home.onboarding.loginWithSolid_placeholder')"
-                    :wobbly-border="{ topRight: false, bottomRight: false }"
-                />
-                <CoreButton
-                    type="submit"
-                    color="brand-solid"
-                    alignment="center"
-                    class="focus:z-20"
-                    :wobbly-border="{ topLeft: false, bottomLeft: false }"
-                >
-                    <i-app-solid-emblem class="h-6 w-6 text-brand-solid-500" aria-hidden="true" />
-                    <span class="ml-1">{{ $t('home.onboarding.loginWithSolid_submit') }}</span>
-                </CoreButton>
-            </div>
-            <CoreFormErrors class="mt-2" />
-        </div>
+        <CoreInputSubmit
+            class="mt-4"
+            name="url"
+            color="brand-solid"
+            :label="$t('home.onboarding.loginWithSolid_label')"
+            :placeholder="$t('home.onboarding.loginWithSolid_placeholder')"
+        >
+            <i-app-solid-emblem class="h-6 w-6 text-brand-solid-500" aria-hidden="true" />
+            <span class="ml-1">{{ $t('home.onboarding.loginWithSolid_submit') }}</span>
+        </CoreInputSubmit>
         <CoreLink class="mt-4 text-sm" @click="$emit('cancel')">
             {{ $t('home.onboarding.back') }}
         </CoreLink>

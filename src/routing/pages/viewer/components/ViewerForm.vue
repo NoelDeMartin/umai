@@ -1,7 +1,7 @@
 <template>
     <CoreForm
         :form="form"
-        class="flex flex-col items-center justify-center"
+        class="flex flex-col items-center justify-center max-w-prose px-edge mx-auto"
         @submit="submit()"
     >
         <div v-if="searching" class="flex flex-col justify-center items-center p-4 space-y-4">
@@ -19,30 +19,14 @@
             </h1>
 
             <CoreMarkdown :text="$t('viewer.description')" class="mt-4 text-center" />
-
-            <div class="w-full max-w-prose">
-                <div class="mt-4 flex w-full px-4">
-                    <CoreInput
-                        initial-focus
-                        name="url"
-                        class="z-10 flex-grow"
-                        :label="$t('viewer.urlLabel')"
-                        :show-errors="false"
-                        :placeholder="$t('viewer.urlPlaceholder')"
-                        :wobbly-border="{ topRight: false, bottomRight: false }"
-                    />
-                    <CoreButton
-                        type="submit"
-                        alignment="center"
-                        class="focus:z-20"
-                        :wobbly-border="{ topLeft: false, bottomLeft: false }"
-                    >
-                        <span class="ml-1">{{ $t('viewer.submit') }}</span>
-                    </CoreButton>
-                </div>
-                <CoreFormErrors class="mt-2" />
-            </div>
-
+            <CoreInputSubmit
+                class="mt-4 w-full"
+                name="url"
+                :label="$t('viewer.urlLabel')"
+                :placeholder="$t('viewer.urlPlaceholder')"
+            >
+                {{ $t('viewer.submit') }}
+            </CoreInputSubmit>
             <CoreMarkdown
                 v-if="notFound"
                 class="mt-2 text-center"

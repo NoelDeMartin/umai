@@ -7,7 +7,7 @@
                 class="ml-2 cursor-pointer inline-flex items-baseline"
                 :class="{ 'opacity-50': !form.useProxy }"
             >
-                {{ $t('webImport.useProxy') }}
+                <span class="flex-shrink-0">{{ $t('webImport.useProxy') }}</span>
                 <CoreFluidInput
                     name="proxyUrl"
                     placeholder="https://"

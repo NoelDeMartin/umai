@@ -51,20 +51,11 @@
             </div>
         </div>
     </transition>
-    <div
+    <CoreFAB
         v-if="$ui.isMobile"
-        class="flex fixed right-0 bottom-0 z-40 justify-center p-5 w-screen pointer-events-none recipes-index--fab"
-    >
-        <div class="flex justify-center w-full">
-            <div class="w-clickable" />
-            <div class="mx-4 w-full max-w-content" />
-            <BaseFloatingActionButton
-                class="pointer-events-auto"
-                :label="$t('home.recipes.create')"
-                @click="$ui.openModal(CreateRecipeModal)"
-            />
-        </div>
-    </div>
+        :label="$t('home.recipes.create')"
+        @click="$ui.openModal(CreateRecipeModal)"
+    />
 </template>
 
 <script setup lang="ts">

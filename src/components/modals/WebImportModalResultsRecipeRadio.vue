@@ -1,6 +1,7 @@
 <template>
     <RadioGroupOption
         v-slot="{ active, checked }"
+        class="cursor-pointer focus:outline-none"
         :value="recipe"
     >
         <WebImportModalResultsRecipe

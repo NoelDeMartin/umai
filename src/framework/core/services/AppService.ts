@@ -17,12 +17,9 @@ export default class AppService extends Service<State> {
     public name: string = 'Solid App';
 
     public sourceUrl: string = '';
+    public releaseNotesUrl: string = '';
     public version: string = '';
     public versionName: string = '';
-
-    public get releaseNotesUrl(): string {
-        return `${this.sourceUrl}/releases/tag/${this.versionName}`;
-    }
 
     public get isDevelopment(): boolean {
         return process.env.VUE_APP_ENV === 'development';
@@ -46,6 +43,7 @@ export default class AppService extends Service<State> {
         await Cookbook.ready;
 
         this.sourceUrl = process.env.VUE_APP_SOURCE_URL as string;
+        this.releaseNotesUrl = process.env.VUE_APP_RELEASE_NOTES_URL as string;
         this.version = process.env.VUE_APP_VERSION as string;
         this.versionName = process.env.VUE_APP_VERSION_NAME as string;
         this.isOnboarding = !Auth.isLoggedIn() && Auth.previousSession === null && Cookbook.recipes.isEmpty();

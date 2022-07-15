@@ -14,8 +14,21 @@ import packageJson from './package.json';
 const version = packageJson.version;
 const env = process.env.NODE_ENV ?? 'development';
 const isProduction = env === 'production';
-const versionName = 'v' + version + (isProduction ? '' : ('-next-' + execSync('git rev-parse HEAD')));
 const sourceUrl = packageJson.repository.replace('github:', 'https://github.com/');
+const versionName = formatVersionName(
+    isProduction
+        ? version
+        : ('next.' + execSync('git rev-parse HEAD').toString().substring(0, 8)),
+);
+const releaseNotesUrl = sourceUrl + (
+    isProduction
+        ? `/releases/tag/${versionName}`
+        : `/commit/${execSync('git rev-parse HEAD')}`
+);
+
+function formatVersionName(name: string) {
+    return /\d/.test(name[0]) ? `v${name}` : name;
+}
 
 export default defineConfig({
     plugins: [
@@ -76,6 +89,7 @@ export default defineConfig({
             VUE_APP_VERSION: version,
             VUE_APP_VERSION_NAME: versionName,
             VUE_APP_SOURCE_URL: sourceUrl,
+            VUE_APP_RELEASE_NOTES_URL: releaseNotesUrl,
         },
     },
 });

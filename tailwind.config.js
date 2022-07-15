@@ -1,4 +1,5 @@
 const colors = require('tailwindcss/colors');
+const { theme: { spacing } } = require('tailwindcss/defaultConfig');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -73,10 +74,10 @@ module.exports = {
             },
         },
         extend: {
-            margin: theme => ({
-                13: `calc(${theme('spacing.12')} + ${theme('spacing.1')})`,
-                edge: theme('spacing.8'),
-            }),
+            spacing: {
+                13: `calc(${spacing['12']} + ${spacing['1']})`,
+                edge: spacing['8'],
+            },
             typography: ({ theme }) => ({
                 DEFAULT: {
                     css: {

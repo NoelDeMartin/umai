@@ -54,28 +54,16 @@
             @submit="submit(close)"
         >
             <CoreMarkdown :text="$t('cloud.login.info')" />
-            <div class="mt-2 flex">
-                <CoreInput
-                    initial-focus
-                    name="url"
-                    class="min-w-[300px] w-full"
-                    color="brand-solid"
-                    :label="$t('cloud.login.url')"
-                    :show-errors="false"
-                    :placeholder="$t('cloud.login.url_placeholder')"
-                    :wobbly-border="{ topRight: false, bottomRight: false }"
-                />
-                <CoreButton
-                    type="submit"
-                    color="brand-solid"
-                    alignment="center"
-                    class="flex-shrink-0 focus:z-20"
-                    :wobbly-border="{ topLeft: false, bottomLeft: false }"
-                >
-                    <i-app-solid-emblem class="h-6 w-6 text-brand-solid-500" aria-hidden="true" />
-                    <span class="ml-1">{{ $t('cloud.login.submit') }}</span>
-                </CoreButton>
-            </div>
+            <CoreInputSubmit
+                name="url"
+                class="mt-2"
+                color="brand-solid"
+                :label="$t('cloud.login.url')"
+                :placeholder="$t('cloud.login.url_placeholder')"
+            >
+                <i-app-solid-emblem class="h-6 w-6 text-brand-solid-500" aria-hidden="true" />
+                <span class="ml-1">{{ $t('cloud.login.submit') }}</span>
+            </CoreInputSubmit>
             <CoreLink
                 v-if="!$auth.dismissed"
                 color="brand-solid"

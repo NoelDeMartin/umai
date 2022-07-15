@@ -1,10 +1,10 @@
 <template>
     <div
-        class="flex overflow-hidden rounded-lg border-gray-200 shadow cursor-pointer focus:outline-none"
+        class="flex flex-col overflow-hidden rounded-lg border-gray-200 shadow md:flex-row"
         :class="wrapperClasses"
     >
         <div class="relative">
-            <RecipeImage :url="recipe.imageUrl" class="w-40 h-40" />
+            <RecipeImage :url="recipe.imageUrl" class="w-full h-20 md:w-40 md:h-40" />
             <slot name="image" />
         </div>
         <div class="p-4 h-40 prose relative">
