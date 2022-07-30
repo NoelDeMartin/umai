@@ -19,7 +19,7 @@
                 {{ fillerContent }}
             </span>
             <HeadlessInputInput
-                class="fluid-input absolute inset-0 w-full text-gray-900 border-b-2 border-transparent hover:border-gray-300 focus:outline-none"
+                class="fluid-input absolute inset-0 w-full text-gray-900 border-b-2 hover:border-gray-300 focus:outline-none"
                 :class="inputClasses"
                 v-bind="$attrs"
             />
@@ -95,7 +95,9 @@ const inputClasses = $computed(() => {
     return arrayFilter([
         colorClasses.base,
         isNumber && 'show-spinners',
-        $root?.hasErrors ? `border-red-500 ${colorClasses.withErrors}` : 'hover:border-gray-300',
+        $root?.hasErrors
+            ? `border-red-500 ${colorClasses.withErrors}`
+            : 'border-gray-300 md:border-transparent md:hover:border-gray-300',
         inline ? 'py-1' : 'py-2',
     ]).join(' ');
 });

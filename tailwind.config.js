@@ -82,6 +82,9 @@ module.exports = {
                 DEFAULT: {
                     css: {
                         'fontSize': theme('fontSize.base'),
+                        'code': {
+                            color: 'currentColor',
+                        },
                         'code::before': {
                             content: '""',
                         },

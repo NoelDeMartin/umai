@@ -1,5 +1,9 @@
 <template>
-    <RadioGroup v-if="$cookbook.isRemote" v-model="selectedOption" class="flex items-center space-x-2">
+    <RadioGroup
+        v-if="$cookbook.isRemote"
+        v-model="selectedOption"
+        class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0 md:items-center"
+    >
         <RadioGroupLabel class="mr-2">
             {{ $t('recipes.shareWith') }}
         </RadioGroupLabel>
@@ -13,12 +17,15 @@
             <div
                 v-wobbly-border
                 :class="[
-                    checked ? 'bg-primary-200 px-4' : 'bg-gray-200 w-clickable',
+                    checked ? 'bg-primary-200 px-4' : 'bg-gray-200 md:w-clickable',
                     'h-clickable flex justify-center items-center cursor-pointer'
                 ]"
             >
                 <component :is="option.iconComponent" class="w-4 h-4" />
-                <span v-if="checked" class="ml-2">
+                <span
+                    class="ml-2"
+                    :class="{ 'md:hidden': !checked }"
+                >
                     {{ option.name }}
                 </span>
             </div>

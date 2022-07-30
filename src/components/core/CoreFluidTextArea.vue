@@ -19,11 +19,11 @@
             <HeadlessInputTextArea
                 v-bind="$attrs"
                 :rows="rows"
-                class="block w-full resize-none border-b-2 border-transparent caret-primary-500 focus:outline-none"
+                class="block w-full resize-none border-b-2 caret-primary-500 focus:outline-none"
                 :class="
                     hasErrors
                         ? 'border-red-500 hover:border-primary-600 focus:border-primary-600'
-                        : 'hover:border-gray-300 focus:border-primary-600'
+                        : 'border-gray-300 md:border-transparent md:hover:border-gray-300 focus:border-primary-600'
                 "
             />
             <HeadlessInputError class="mt-1 text-sm text-left text-red-700 opacity-75" />

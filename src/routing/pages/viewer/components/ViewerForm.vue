@@ -29,7 +29,7 @@
             </CoreInputSubmit>
             <CoreMarkdown
                 v-if="notFound"
-                class="mt-2 text-center"
+                class="mt-2 text-center text-red-700 opacity-75"
                 :text="$t('viewer.notFound', { url: notFound })"
             />
         </template>
