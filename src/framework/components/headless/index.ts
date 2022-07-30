@@ -64,4 +64,7 @@ export function focusableElement(element: Ref<HTMLElement | null> | (() => HTMLE
     };
 }
 
-export default importModules<Component>(import.meta.globEager('@/framework/components/headless/*.vue'), '.vue');
+export default importModules<Component>(
+    import.meta.glob('@/framework/components/headless/*.vue', { eager: true }),
+    '.vue',
+);

@@ -1,7 +1,8 @@
-import { arr } from '@noeldemartin/utils';
+import { arr, fail } from '@noeldemartin/utils';
 
 import rules from './rules';
 import type Form from './Form';
+import type { FormValidationRule } from './rules';
 
 export default class FormInput<Value = unknown> {
 
@@ -32,7 +33,7 @@ export default class FormInput<Value = unknown> {
     public validate(): boolean {
         this.errors = arr(this.rules)
             .map(rule => {
-                const validator = rules[rule] ?? fail(`Unknown '${rule}' validation rule`);
+                const validator = rules[rule] ?? fail<FormValidationRule>(`Unknown '${rule}' validation rule`);
 
                 return validator(this.value);
             })

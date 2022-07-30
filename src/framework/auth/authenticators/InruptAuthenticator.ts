@@ -1,4 +1,4 @@
-import { Storage, after } from '@noeldemartin/utils';
+import { Storage, after, fail } from '@noeldemartin/utils';
 import type { Fetch } from 'soukai-solid';
 import type { handleIncomingRedirect, login, logout } from '@inrupt/solid-client-authn-browser';
 

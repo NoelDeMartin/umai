@@ -1,4 +1,4 @@
-import { Semaphore, after, arrayChunk, isSuccessfulResponse, map, tap } from '@noeldemartin/utils';
+import { Semaphore, after, arrayChunk, fail, isSuccessfulResponse, map, tap } from '@noeldemartin/utils';
 import { Metadata, Operation, SolidContainerModel, SolidModel, Tombstone } from 'soukai-solid';
 import type { Engine } from 'soukai';
 import type { ObjectsMap } from '@noeldemartin/utils';

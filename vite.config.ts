@@ -8,6 +8,7 @@ import { execSync } from 'child_process';
 import { FileSystemIconLoader } from 'unplugin-icons/loaders';
 import { HeadlessUiResolver } from 'unplugin-vue-components/resolvers';
 import { resolve } from 'path';
+import { VitePWA } from 'vite-plugin-pwa';
 
 import packageJson from './package.json';
 
@@ -34,6 +35,27 @@ export default defineConfig({
     plugins: [
         Vue({ reactivityTransform: true }),
         I18n({ include: resolve(__dirname, './src/lang/**') }),
+        VitePWA({
+            registerType: 'autoUpdate',
+            manifest: {
+                name: 'Umai',
+                short_name: 'Umai',
+                description: 'Your favorite recipes manager',
+                theme_color: '#ffffff',
+                icons: [
+                    {
+                        src: 'android-chrome-192x192.png',
+                        sizes: '192x192',
+                        type: 'image/png',
+                    },
+                    {
+                        src: 'android-chrome-512x512.png',
+                        sizes: '512x512',
+                        type: 'image/png',
+                    },
+                ],
+            },
+        }),
         Icons({
             customCollections: {
                 app: FileSystemIconLoader('./src/assets/icons'),
@@ -78,10 +100,9 @@ export default defineConfig({
                 404: resolve(__dirname, '404.html'),
             },
         },
-        terserOptions: {
-            keep_classnames: /Error$/,
-            keep_fnames: /Error$/,
-        },
+    },
+    esbuild: {
+        keepNames: true,
     },
     define: {
         'process.env': {

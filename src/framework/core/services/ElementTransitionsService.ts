@@ -1,4 +1,4 @@
-import { afterAnimationFrame, arr, tap, toString } from '@noeldemartin/utils';
+import { afterAnimationFrame, arr, fail, tap, toString } from '@noeldemartin/utils';
 import { nextTick } from 'vue';
 import type { Closure, GetClosureArgs } from '@noeldemartin/utils';
 

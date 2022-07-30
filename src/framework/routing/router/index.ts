@@ -1,4 +1,4 @@
-import { applyMixins, tap } from '@noeldemartin/utils';
+import { applyMixins, fail, tap } from '@noeldemartin/utils';
 import { createRouter } from 'vue-router';
 import { defineComponent, h } from 'vue';
 import type { Component, ComponentOptions } from 'vue';
