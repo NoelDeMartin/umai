@@ -4,11 +4,11 @@
             v-initial-focus="!$ui.isMobile"
             v-wobbly-border="wobblyBorder"
             class="
-                flex flex-row items-center justify-center bg-gray-300 text-gray-700 py-3 w-full
+                flex flex-row items-center justify-center bg-gray-300 text-gray-700 px-2 py-3 w-full
                 hover:bg-primary-500 hover:text-white
                 focus:bg-primary-500 focus:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
                 active:bg-primary-700 active:text-white
-                md:flex-col md:h-40 md:w-40 md:py-0
+                md:flex-col md:h-40 md:w-40 md:px-0 md:py-0
             "
             @click="$ui.openModal(WebImportModal), $emit('optionSelected')"
         >
@@ -18,11 +18,11 @@
         <HeadlessButton
             v-wobbly-border="wobblyBorder"
             class="
-                flex flex-row items-center justify-center bg-gray-300 text-gray-700 py-3 w-full
+                flex flex-row items-center justify-center bg-gray-300 text-gray-700 px-2 py-3 w-full
                 hover:bg-primary-500 hover:text-white
                 focus:bg-primary-500 focus:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
                 active:bg-primary-700 active:text-white
-                md:flex-col md:h-40 md:w-40 md:py-0
+                md:flex-col md:h-40 md:w-40 md:px-0 md:py-0
             "
             route="recipes.create"
             @click="$emit('optionSelected')"
@@ -35,11 +35,11 @@
             accept="application/json, application/ld+json"
             parse="json"
             class="
-                flex flex-row items-center justify-center bg-gray-300 text-gray-700 py-3 w-full
+                flex flex-row items-center justify-center bg-gray-300 text-gray-700 px-2 py-3 w-full
                 focus-within:bg-primary-500 focus-within:text-white focus-within:ring-2 focus-within:ring-primary-500 focus-within:ring-offset-2
                 hover:cursor-pointer hover:bg-primary-500 hover:text-white
                 active:bg-primary-700 active:text-white
-                md:flex-col md:h-40 md:w-40 md:py-0
+                md:flex-col md:h-40 md:w-40 md:px-0 md:py-0
             "
             @error="(error: unknown) => $errors.report(error)"
             @success="(jsonld: JsonLD) => (importFromJsonLD(jsonld), $emit('optionSelected'))"

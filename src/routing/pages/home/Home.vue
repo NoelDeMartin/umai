@@ -12,7 +12,7 @@
                 '*': $elementTransitions.fadeOut,
             },
         }"
-        class="relative flex flex-col w-full h-full max-w-content mx-edge"
+        class="relative flex flex-col flex-grow max-w-content mx-edge"
         aria-labelledby="#home-title"
     >
         <HomeOnboarding v-if="$app.isOnboarding" />

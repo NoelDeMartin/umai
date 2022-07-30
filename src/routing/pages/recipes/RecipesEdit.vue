@@ -1,9 +1,12 @@
 <template>
-    <main class="w-full" :style="`margin-top: -${$ui.headerHeight}px`" aria-labelledby="#recipe-form-title">
+    <main
+        :style="`margin-top: -${$ui.headerHeight}px`"
+        aria-labelledby="#recipe-form-title"
+    >
         <RecipeForm
             :recipe="recipe"
             @done="onUpdated"
-            @cancel="$router.back()"
+            @cancel="$router.push({ name: 'recipes.show', params: { recipe: recipe.uuid as string } })"
         />
     </main>
 </template>

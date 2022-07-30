@@ -1,7 +1,6 @@
 <template>
     <main
         aria-labelledby="#recipe-details-title"
-        class="w-full"
         :style="`margin-top: -${$ui.headerHeight}px`"
     >
         <RecipeDetails :recipe="recipe" />

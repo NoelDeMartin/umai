@@ -54,7 +54,7 @@
                         initial-focus
                         name="name"
                         :placeholder="recipe?.exists() ? '-' : $t('recipes.name_placeholder')"
-                        class="pb-2 -mb-2.5 text-4xl text-white placeholder:text-white placeholder:opacity-50 bg-transparent caret-primary-500 text-shadow font-semibold"
+                        class="pb-2 -mb-2.5 text-2xl text-white placeholder:text-white placeholder:opacity-50 bg-transparent caret-primary-500 text-shadow font-semibold md:text-4xl"
                         @keydown.enter.prevent="submit"
                     />
                 </label>
@@ -172,6 +172,7 @@
                     v-if="form.externalUrls.length === 0"
                     secondary
                     tinted
+                    class="self-start"
                     @click="initializeExternalUrls()"
                 >
                     <i-pepicons-chain class="w-4 h-4" aria-hidden="true" />
@@ -196,7 +197,7 @@
         </RecipePage>
 
         <div class="fixed flex justify-center inset-x-0 bottom-0 z-30 bg-primary-gray-300 recipe-form--footer">
-            <div class="mx-edge">
+            <div class="mx-edge overflow-hidden">
                 <div class="flex">
                     <div class="prose mr-8">
                         <CoreProseFiller />

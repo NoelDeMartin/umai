@@ -1,5 +1,5 @@
 <template>
-    <RadioGroup v-model="selectedOption" class="flex items-center space-x-2">
+    <RadioGroup v-if="$cookbook.isRemote" v-model="selectedOption" class="flex items-center space-x-2">
         <RadioGroupLabel class="mr-2">
             {{ $t('recipes.shareWith') }}
         </RadioGroupLabel>
@@ -35,14 +35,11 @@ import type { Component } from 'vue';
 import { requiredEnumProp } from '@/framework/utils/vue';
 import { translate } from '@/framework/utils/translate';
 
-import Cookbook from '@/services/facades/Cookbook';
-
 import { RecipeShareOption } from './RecipeShareOptions';
 
 interface RecipeSharingOptionData {
     name: string;
     iconComponent: Component;
-    enabled?: boolean;
 }
 
 const { modelValue } = defineProps({
@@ -54,19 +51,17 @@ const optionsMap: Record<RecipeShareOption, RecipeSharingOptionData> = $computed
     [RecipeShareOption.Umai]: {
         name: translate('recipes.share_umai'),
         iconComponent: IconViewShow,
-        enabled: Cookbook.isRemote,
     },
     [RecipeShareOption.Solid]: {
         name: translate('recipes.share_solid'),
         iconComponent: IconSolid,
-        enabled: Cookbook.isRemote,
     },
     [RecipeShareOption.JsonLD]: {
         name: translate('recipes.share_jsonld'),
         iconComponent: IconJsonLD,
     },
 }));
-const options = $computed(() => Object.entries(optionsMap).filter(([, { enabled }]) => enabled ?? true).reduce(
+const options = $computed(() => Object.entries(optionsMap).reduce(
     (options, [id, option]) => [...options, { id, ...option }],
     [] as (RecipeSharingOptionData & { id: string })[],
 ));

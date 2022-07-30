@@ -1,6 +1,9 @@
 import { afterAnimationFrame, arr, tap, toString } from '@noeldemartin/utils';
 import { nextTick } from 'vue';
+import type { Closure, GetClosureArgs } from '@noeldemartin/utils';
 
+import App from '@/framework/core/facades/App';
+import Errors from '@/framework/core/facades/Errors';
 import Router from '@/framework/core/facades/Router';
 import Service from '@/framework/core/Service';
 import { fadeIn, fadeOut } from '@/framework/utils/transitions';
@@ -35,7 +38,6 @@ export interface TransitionalElementConfig {
 export interface GlobalElementTransitions {
     fadeIn: EnterTransition;
     fadeOut: LeaveTransition;
-    waitChildrenTransitions: LeaveTransition;
 }
 
 export default interface ElementTransitionsService extends GlobalElementTransitions {}
@@ -100,10 +102,17 @@ export default class ElementTransitionsService extends Service {
         });
     }
 
-    public async waitElementsGone(name: string): Promise<void> {
-        name;
+    public async waitElementsGone(name: string, id?: string): Promise<void> {
+        await afterAnimationFrame();
+        await Promise.all(
+            arr(this.elementsLeaving)
+                .filter(element => {
+                    const config = this.requireElementConfig(element);
 
-        // TODO
+                    return config.name === name && (!id || config.id === id);
+                })
+                .map(element => this.elementsSourceTransitions.get(element)),
+        );
     }
 
     public async waitElementsReady(name: string): Promise<void> {
@@ -114,19 +123,11 @@ export default class ElementTransitionsService extends Service {
         );
     }
 
-    protected async initialize(): Promise<void> {
-        await super.initialize();
+    protected async boot(): Promise<void> {
+        await super.boot();
 
         this.defineGlobalEnterTransition('fadeIn', element => fadeIn(element, 700));
         this.defineGlobalLeaveTransition('fadeOut', wrapper => fadeOut(wrapper, 700));
-        this.defineGlobalLeaveTransition('waitChildrenTransitions', async (_, element) => {
-            const children = this.elementsChildren.get(element) ?? [];
-
-            if (children.length > 0)
-                await nextTick();
-
-            await Promise.all(children.map(element => this.elementsSourceTransitions.get(element)) ?? []);
-        });
     }
 
     protected __get(name: string): unknown {
@@ -265,7 +266,7 @@ export default class ElementTransitionsService extends Service {
         if (!enterTransition)
             return;
 
-        await enterTransition(element, previous);
+        await this.runSafeTransition(enterTransition, element, previous);
     }
 
     private async runLeaveElementTransition(wrapper: HTMLElement, element: HTMLElement): Promise<void> {
@@ -282,7 +283,7 @@ export default class ElementTransitionsService extends Service {
         if (!leaveTransition)
             return;
 
-        await leaveTransition(wrapper, element);
+        await this.runSafeTransition(leaveTransition, wrapper, element);
     }
 
     private runElementTransition(
@@ -295,9 +296,24 @@ export default class ElementTransitionsService extends Service {
             ? config.blocking(target.config, target.element)
             : config.blocking ?? false;
 
-        return tap(target.transition(wrapper, element, target), transitionPromise => {
+        return tap(this.runSafeTransition(target.transition, wrapper, element, target), transitionPromise => {
             blocking && this.elementsTargetTransitions.set(target.element, transitionPromise);
         });
+    }
+
+    private async runSafeTransition<Transition extends Closure, Args extends GetClosureArgs<Transition>>(
+        transition: Transition,
+        ...args: Args
+    ): Promise<void> {
+        try {
+            await transition(...args);
+        } catch (error) {
+            if (App.isProduction) {
+                return;
+            }
+
+            Errors.report(error);
+        }
     }
 
 }

@@ -1,8 +1,5 @@
 <template>
-    <main
-        :aria-labelledby="viewerRecipe ? '#viewer-recipe-title' : '#viewer-form-title'"
-        class="w-full"
-    >
+    <main :aria-labelledby="viewerRecipe ? '#viewer-recipe-title' : '#viewer-form-title'">
         <transition
             :enter-active-class="starting ? '' : 'transition duration-1000'"
             enter-from-class="opacity-0"

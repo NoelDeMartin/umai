@@ -181,6 +181,8 @@ recipes:
   prepTime: Preparation time
   servings: Servings
   externalUrl: recipe on {domain}
+  showMainPanel: Show main content
+  showSecondaryPanel: Show extra content
 
   edit: Edit
   delete: Delete

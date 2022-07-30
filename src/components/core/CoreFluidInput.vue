@@ -19,7 +19,7 @@
                 {{ fillerContent }}
             </span>
             <HeadlessInputInput
-                class="absolute inset-0 w-full text-gray-900 border-b-2 border-transparent hover:border-gray-300 focus:outline-none"
+                class="fluid-input absolute inset-0 w-full text-gray-900 border-b-2 border-transparent hover:border-gray-300 focus:outline-none"
                 :class="inputClasses"
                 v-bind="$attrs"
             />
@@ -118,3 +118,9 @@ defineExpose<ICoreFluidInput>({
     },
 });
 </script>
+
+<style>
+input.fluid-input[type="search"]::-webkit-search-cancel-button {
+  display: none;
+}
+</style>

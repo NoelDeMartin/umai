@@ -1,5 +1,6 @@
 <template>
     <RecipePage
+        ref="$page"
         v-element-transitions="{
             name: 'recipe-details',
             id: recipe.url,
@@ -7,6 +8,7 @@
                 enter: enterTransition,
                 leave: {
                     'recipes.edit': $elementTransitions.fadeOut,
+                    'recipes.show': $elementTransitions.fadeOut,
                 },
                 'recipe-card': transitionToCard,
             },
@@ -14,7 +16,10 @@
         :recipe="recipe"
     >
         <template #title>
-            <h1 id="recipe-details-title" class="text-4xl font-semibold text-white recipe-details--header-title text-shadow">
+            <h1
+                id="recipe-details-title"
+                class="recipe-details--header-title text-2xl font-semibold text-white text-shadow md:text-4xl"
+            >
                 <span class="recipe-details--header-title-text">{{ recipe.name }}</span>
             </h1>
         </template>
@@ -24,8 +29,7 @@
                 <CoreButton
                     secondary
                     class="h-12"
-                    route="recipes.edit"
-                    :route-params="{ recipe: recipe.uuid }"
+                    @click="editRecipe"
                 >
                     <i-pepicons-pen class="ml-2 w-4 h-4" aria-hidden="true" />
                     <span class="mx-2 uppercase tracking-wider font-semibold text-sm">{{ $t('recipes.edit') }}</span>
@@ -44,9 +48,13 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from 'vue';
+
+import Router from '@/framework/core/facades/Router';
 import { requiredObjectProp } from '@/framework/utils/vue';
 
 import ShareRecipeModal from '@/components/modals/ShareRecipeModal.vue';
+import type IRecipePage from '@/components/recipe/RecipePage';
 import type Recipe from '@/models/Recipe';
 
 import { enterTransition, transitionToCard } from './RecipeDetails.transitions';
@@ -54,4 +62,16 @@ import { enterTransition, transitionToCard } from './RecipeDetails.transitions';
 const { recipe } = defineProps({
     recipe: requiredObjectProp<Recipe>(),
 });
+
+const $page = $ref<IRecipePage | null>(null);
+
+async function editRecipe() {
+    await $page?.showPrimaryPanel();
+    await Router.push({
+        name: 'recipes.edit',
+        params: { recipe: recipe.uuid },
+    });
+}
+
+onMounted(() => window.scrollTo({ top: 0 }));
 </script>

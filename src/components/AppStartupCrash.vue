@@ -1,5 +1,5 @@
 <template>
-    <main class="flex flex-col items-center justify-center w-full h-full max-w-content mx-edge">
+    <main class="flex flex-col items-center justify-center h-full max-w-content mx-edge">
         <h1 class="text-red-700 text-2xl font-semibold">
             {{ $t('startupCrash.title') }}
         </h1>

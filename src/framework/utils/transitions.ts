@@ -23,6 +23,14 @@ export async function delay($element: HTMLElement, config: TransitionConfig): Pr
     });
 }
 
+export async function delayUntil($element: HTMLElement, promise: Promise<void>): Promise<void> {
+    $element.style.opacity = '0';
+
+    await promise;
+
+    $element.removeAttribute('style');
+}
+
 export async function fadeIn($element: HTMLElement, config: TransitionConfig): Promise<void> {
     await animateElement($element, {
         ...animationOptions(config),

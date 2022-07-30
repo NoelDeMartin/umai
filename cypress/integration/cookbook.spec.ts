@@ -468,7 +468,6 @@ describe('Cookbook', () => {
         cy.ariaLabel('Solid url').should('not.exist');
         cy.dontSee('Public');
         cy.dontSee('Private');
-        cy.ariaLabel('JSON-LD').should('match', '[aria-checked="true"]');
         cy.see('Download');
     });
 

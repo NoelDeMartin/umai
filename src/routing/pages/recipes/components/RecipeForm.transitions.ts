@@ -6,7 +6,7 @@ import {
     defineLeaveTransition,
 } from '@/framework/core/services/ElementTransitionsService';
 import { requireChildElement } from '@/framework/utils/dom';
-import { fadeOut, slideDown, slideUp } from '@/framework/utils/transitions';
+import { fadeIn, fadeOut, slideDown, slideUp } from '@/framework/utils/transitions';
 
 import {
     bodySlideDown,
@@ -18,9 +18,13 @@ import {
 
 export const enterFromDetails = defineEnterTransition(async ($root) => {
     const duration = 500;
+    const $recipePage = requireChildElement($root, '.recipe-form--recipe-page');
     const $footer = requireChildElement($root, '.recipe-form--footer');
 
-    await slideUp($footer, duration);
+    await Promise.all([
+        fadeIn($recipePage, duration),
+        slideUp($footer, duration),
+    ]);
 });
 
 export const enterTransition = defineEnterTransition(async ($root) => {
@@ -41,10 +45,12 @@ export const enterTransition = defineEnterTransition(async ($root) => {
     $root.classList.remove('relative');
 });
 
-export const leaveToDetails = defineLeaveTransition(async ($root) => {
+export const leaveToDetails = defineLeaveTransition(async ($wrapper, $root) => {
     const duration = 500;
     const $recipePage = requireChildElement($root, '.recipe-form--recipe-page');
     const $footer = requireChildElement($root, '.recipe-form--footer');
+
+    $wrapper.classList.add('z-10');
 
     await Promise.all([
         fadeOut($recipePage, duration),

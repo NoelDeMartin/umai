@@ -25,6 +25,10 @@ export default class AppService extends Service<State> {
         return process.env.VUE_APP_ENV === 'development';
     }
 
+    public get isProduction(): boolean {
+        return process.env.VUE_APP_ENV === 'production';
+    }
+
     public env<T = unknown>(property: string): T {
         return import.meta.env[`VITE_${property}`] as unknown as T;
     }

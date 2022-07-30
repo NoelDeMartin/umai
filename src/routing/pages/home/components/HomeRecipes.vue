@@ -41,7 +41,7 @@
     >
         <div
             v-if="filteredRecipes.length === 0"
-            class="absolute top-12 bottom-0 inset-x-0 flex-grow items-center justify-center flex"
+            class="absolute top-24 bottom-0 inset-x-0 flex-grow items-center justify-center flex"
         >
             <div class="prose">
                 <CoreMarkdown
@@ -51,11 +51,7 @@
             </div>
         </div>
     </transition>
-    <CoreFAB
-        v-if="$ui.isMobile"
-        :label="$t('home.recipes.create')"
-        @click="$ui.openModal(CreateRecipeModal)"
-    />
+    <HomeRecipesFAB v-if="$ui.isMobile" />
 </template>
 
 <script setup lang="ts">

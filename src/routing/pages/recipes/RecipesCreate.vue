@@ -1,6 +1,6 @@
 <template>
     <main
-        class="flex flex-col w-full min-h-screen"
+        class="flex flex-col min-h-screen"
         :style="`margin-top: -${$ui.headerHeight}px`"
         aria-labelledby="#recipe-form-title"
     >
