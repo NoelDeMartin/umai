@@ -15,19 +15,13 @@ interface State {
 export default class AppService extends Service<State> {
 
     public name: string = 'Solid App';
-
+    public isDevelopment: boolean = false;
+    public isProduction: boolean = false;
+    public isStaging: boolean = false;
     public sourceUrl: string = '';
-    public releaseNotesUrl: string = '';
     public version: string = '';
     public versionName: string = '';
-
-    public get isDevelopment(): boolean {
-        return process.env.VUE_APP_ENV === 'development';
-    }
-
-    public get isProduction(): boolean {
-        return process.env.VUE_APP_ENV === 'production';
-    }
+    public releaseNotesUrl: string = '';
 
     public env<T = unknown>(property: string): T {
         return import.meta.env[`VITE_${property}`] as unknown as T;
@@ -46,10 +40,23 @@ export default class AppService extends Service<State> {
         await Auth.ready;
         await Cookbook.ready;
 
+        const sourceCommitHash = process.env.VUE_APP_SOURCE_COMMIT_HASH as string;
+
         this.sourceUrl = process.env.VUE_APP_SOURCE_URL as string;
-        this.releaseNotesUrl = process.env.VUE_APP_RELEASE_NOTES_URL as string;
+        this.isDevelopment = import.meta.env.DEV;
+        this.isProduction = import.meta.env.PROD;
+        this.isStaging = import.meta.env.MODE === 'staging';
         this.version = process.env.VUE_APP_VERSION as string;
-        this.versionName = process.env.VUE_APP_VERSION_NAME as string;
+        this.versionName = this.formatVersionName(
+            (this.isStaging || this.isDevelopment)
+                ? ((this.isStaging ? 'staging.' : 'dev.') + sourceCommitHash.toString().substring(0, 7))
+                : this.version,
+        );
+        this.releaseNotesUrl = this.sourceUrl + (
+            (this.isStaging || this.isDevelopment)
+                ? `/tree/${sourceCommitHash}`
+                : `/releases/tag/${this.versionName}`
+        );
         this.isOnboarding = !Auth.isLoggedIn() && Auth.previousSession === null && Cookbook.recipes.isEmpty();
 
         Events.on('recipe-created', async () => {
@@ -81,6 +88,10 @@ export default class AppService extends Service<State> {
             isOnboarding: false,
             onboardingCompleting: false,
         };
+    }
+
+    private formatVersionName(name: string) {
+        return /\d/.test(name[0] ?? '') ? `v${name}` : name;
     }
 
 }
