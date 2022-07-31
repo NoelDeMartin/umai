@@ -19,12 +19,12 @@ const sourceUrl = packageJson.repository.replace('github:', 'https://github.com/
 const versionName = formatVersionName(
     isProduction
         ? version
-        : ('next.' + execSync('git rev-parse HEAD').toString().substring(0, 8)),
+        : ('dev-' + execSync('git rev-parse HEAD').toString().substring(0, 7)),
 );
 const releaseNotesUrl = sourceUrl + (
     isProduction
         ? `/releases/tag/${versionName}`
-        : `/commit/${execSync('git rev-parse HEAD')}`
+        : `/tree/${execSync('git rev-parse HEAD')}`
 );
 
 function formatVersionName(name: string) {
