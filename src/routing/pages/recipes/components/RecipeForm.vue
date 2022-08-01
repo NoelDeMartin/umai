@@ -70,6 +70,7 @@
                             :placeholder="$t('recipes.description_placeholder')"
                             @focus="writingDescription = true"
                             @blur="writingDescription = false"
+                            @keydown.enter.ctrl.exact.prevent="submit()"
                         />
                         <CoreFluidActionButton
                             v-if="form.description"
@@ -124,6 +125,7 @@
                         :item-placeholder="$t('recipes.ingredient_placeholder')"
                         :item-remove-label="$t('recipes.ingredient_remove')"
                         :item-remove-a11y-label="$t('recipes.ingredient_remove_a11y', { ingredient: ':value' })"
+                        @submit="submit()"
                     />
                 </div>
             </template>
@@ -138,6 +140,7 @@
                     :item-placeholder="$t('recipes.instructionStep_placeholder')"
                     :item-remove-label="$t('recipes.instructionStep_remove')"
                     :item-remove-a11y-label="$t('recipes.instructionStep_remove_a11y', { position: ':position' })"
+                    @submit="submit()"
                 />
             </template>
 
@@ -188,6 +191,7 @@
                     :item-placeholder="$t('recipes.externalUrl_placeholder')"
                     :item-remove-label="$t('recipes.externalUrl_remove')"
                     :item-remove-a11y-label="$t('recipes.externalUrl_remove_a11y', { url: ':value' })"
+                    @submit="submit()"
                 >
                     <template #marker>
                         <i-pepicons-chain class="w-4 h-4" aria-hidden="true" />

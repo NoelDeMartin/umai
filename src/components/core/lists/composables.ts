@@ -42,12 +42,14 @@ type ExtractEmitTypes<T> = UnionToIntersection<{
 
 interface CoreListEvents {
     'update:modelValue'(value: CoreListItemValue[]): void;
+    'submit'(): void;
 }
 
 interface CoreListItemEvents {
     'add'(): void;
     'remove'(): void;
     'update:modelValue'(value: CoreListItemValue): void;
+    'submit'(): void;
 }
 
 export interface CoreListComposable {
@@ -74,7 +76,7 @@ export function useListProps(): typeof listProps {
 }
 
 export function useListEmits(): (keyof CoreListEvents)[] {
-    return ['update:modelValue'];
+    return ['update:modelValue', 'submit'];
 }
 
 export function useList(
@@ -100,6 +102,7 @@ export function useList(
         'add': () => addItem(index),
         'remove': () => removeItem(index),
         'update:modelValue': (value: CoreListItemValue) => updateItem(index, value),
+        'submit': () => emit('submit'),
     })));
     const focusableApi: IFocusable = {
         getRootElement() {
@@ -176,7 +179,7 @@ export function useListItemProps(): typeof listItemProps {
 }
 
 export function useListItemEmits(): (keyof CoreListItemEvents)[] {
-    return ['add', 'remove', 'update:modelValue'];
+    return ['add', 'remove', 'update:modelValue', 'submit'];
 }
 
 export function useListItem(
@@ -205,7 +208,8 @@ export function useListItem(
             }
 
             event.preventDefault();
-            emit('add');
+
+            event.ctrlKey ? emit('submit') : emit('add');
         },
     }));
     const removeButtonProps = computed(() => ({
