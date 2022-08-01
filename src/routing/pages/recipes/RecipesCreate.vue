@@ -1,6 +1,5 @@
 <template>
-    <main
-        class="flex flex-col min-h-screen"
+    <AppPage
         :style="`margin-top: -${$ui.headerHeight}px`"
         aria-labelledby="#recipe-form-title"
     >
@@ -11,7 +10,7 @@
             @done="onCreated"
             @cancel="$router.back()"
         />
-    </main>
+    </AppPage>
 </template>
 
 <script setup lang="ts">

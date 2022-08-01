@@ -1,5 +1,5 @@
 <template>
-    <main :aria-labelledby="viewerRecipe ? '#viewer-recipe-title' : '#viewer-form-title'">
+    <AppPage :aria-labelledby="viewerRecipe ? '#viewer-recipe-title' : '#viewer-form-title'">
         <transition
             :enter-active-class="starting ? '' : 'transition duration-1000'"
             enter-from-class="opacity-0"
@@ -16,7 +16,7 @@
                 @found-recipe="(recipe: Recipe) => viewerRecipe = recipe"
             />
         </transition>
-    </main>
+    </AppPage>
 </template>
 
 <script setup lang="ts">

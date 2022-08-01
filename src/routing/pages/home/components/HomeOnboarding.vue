@@ -1,5 +1,5 @@
 <template>
-    <div class="flex min-h-full flex-col items-center justify-center">
+    <div class="flex flex-col flex-grow items-center justify-center">
         <h1 id="home-title" class="sr-only">
             Umai
         </h1>

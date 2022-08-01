@@ -17,7 +17,7 @@
         }"
         :data-was-onboarding="wasOnboarding"
         :form="form"
-        class="flex-grow"
+        class="flex flex-grow"
         @submit="submit()"
     >
         <h1 id="recipe-form-title" class="sr-only">

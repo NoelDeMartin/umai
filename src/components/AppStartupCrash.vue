@@ -1,5 +1,5 @@
 <template>
-    <main class="flex flex-col items-center justify-center h-full max-w-content mx-edge">
+    <AppPage class="px-edge">
         <h1 class="text-red-700 text-2xl font-semibold">
             {{ $t('startupCrash.title') }}
         </h1>
@@ -28,7 +28,7 @@
                 {{ $t('startupCrash.inspect') }}
             </CoreButton>
         </div>
-    </main>
+    </AppPage>
 </template>
 
 <script setup lang="ts"></script>

@@ -1,5 +1,5 @@
 <template>
-    <main
+    <AppPage
         v-element-transitions="{
             enter: {
                 'recipes.show': () => $elementTransitions.waitElementsGone('recipe-details'),
@@ -12,14 +12,14 @@
                 '*': $elementTransitions.fadeOut,
             },
         }"
-        class="relative flex flex-col flex-grow max-w-content mx-edge"
+        class="px-edge"
         aria-labelledby="#home-title"
     >
         <HomeOnboarding v-if="$app.isOnboarding" />
         <HomeCreateCookbook v-else-if="$auth.loggedIn && !$cookbook.isReady" />
         <HomeCreateRecipe v-else-if="$cookbook.recipes.isEmpty()" />
         <HomeRecipes v-else />
-    </main>
+    </AppPage>
 </template>
 
 <script setup lang="ts"></script>

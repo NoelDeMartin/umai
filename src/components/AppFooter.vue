@@ -1,11 +1,7 @@
 <template>
     <footer
-        class="flex items-center space-x-1 p-4 text-sm font-medium text-primary-700 opacity-75"
-        :class="{
-            'justify-center': $app.isOnboarding,
-            'justify-start': !$app.isOnboarding,
-            'fixed bottom-0 left-0 right-0': $router.currentRouteIs('recipes.create'),
-        }"
+        class="flex items-center justify-center space-x-1 p-4 text-sm font-medium text-primary-700 opacity-75"
+        :class="{ 'fixed bottom-0 left-0 right-0': $router.currentRouteIs(/recipes\.(create|edit)/) }"
     >
         <CoreLink
             class="font-medium"

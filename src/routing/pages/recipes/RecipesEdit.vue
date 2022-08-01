@@ -1,5 +1,5 @@
 <template>
-    <main
+    <AppPage
         :style="`margin-top: -${$ui.headerHeight}px`"
         aria-labelledby="#recipe-form-title"
     >
@@ -8,7 +8,7 @@
             @done="onUpdated"
             @cancel="$router.push({ name: 'recipes.show', params: { recipe: recipe.uuid as string } })"
         />
-    </main>
+    </AppPage>
 </template>
 
 <script setup lang="ts">

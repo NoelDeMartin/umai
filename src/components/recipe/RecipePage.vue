@@ -6,7 +6,7 @@
             </slot>
         </div>
         <div
-            class="recipe-page--wrapper w-[200vw] z-10 md:w-full pointer-events-none"
+            class="recipe-page--wrapper flex flex-col flex-grow w-[200vw] z-10 md:w-full pointer-events-none"
             :class="{
                 'transition-transform duration-300': $ui.isMobile,
                 '-translate-x-screen': $ui.isMobile && showSecondaryPanel,
@@ -57,7 +57,7 @@
                         <i-pepicons-triangle-right-filled class="w-8 h-8" aria-hidden="true" />
                     </button>
                 </div>
-                <div class="prose prose-h2:mt-6 px-edge w-screen md:mr-8 md:px-0 md:w-auto md:max-w-full-minus-72">
+                <div class="prose prose-h2:mt-6 px-edge w-screen md:mr-8 md:px-0 md:w-auto">
                     <slot name="description">
                         <CoreMarkdown v-if="recipe?.description" :text="recipe.description" />
                     </slot>

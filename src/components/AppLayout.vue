@@ -1,7 +1,7 @@
 <template>
     <div ref="$root" class="flex flex-col min-w-screen min-h-screen overflow-x-hidden">
         <AppHeader v-if="!$errors.hasStartupErrors && ($route.meta.header ?? true)" />
-        <div class="flex flex-col flex-grow self-stretch">
+        <div class="flex flex-col flex-grow self-stretch items-center">
             <slot />
         </div>
         <AppFooter />

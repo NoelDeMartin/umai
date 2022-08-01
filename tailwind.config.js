@@ -111,10 +111,9 @@ module.exports = {
             minHeight: {
                 clickable: '42px',
             },
-            maxWidth: theme => ({
-                'content': '1280px',
-                'full-minus-72': `calc(100% - ${theme('spacing.72')})`,
-            }),
+            maxWidth: {
+                content: '1280px',
+            },
             zIndex: {
                 60: '60',
             },

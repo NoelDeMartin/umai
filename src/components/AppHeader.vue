@@ -1,7 +1,7 @@
 <template>
     <header
         ref="$header"
-        class="flex relative z-40 flex-col items-center self-stretch p-2 h-24 transition-colors duration-700 shrink-0 md:p-8"
+        class="flex relative z-40 flex-col items-center self-stretch pt-edge h-24 transition-colors duration-700 shrink-0"
         :class="{
             'invisible': $ui.headerHidden,
             'text-white': $route.meta.fullBleedHeader && !$app.onboardingCompleting,
@@ -9,7 +9,7 @@
             'transition-opacity opacity-100 duration-500': $app.onboardingCompleting,
         }"
     >
-        <div class="flex relative z-10 justify-between items-center w-full max-w-content">
+        <div class="flex relative z-10 justify-between items-center w-full max-w-content px-edge">
             <div class="relative flex-grow h-full">
                 <transition
                     enter-active-class="transition duration-700"
