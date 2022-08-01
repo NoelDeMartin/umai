@@ -72,9 +72,9 @@ const searchIndex = $computed(() => Cookbook.recipes.map(recipe => ({
     recipe,
     searchableText: stringToSlug(recipe.name).replaceAll('-', ''),
 })));
-const normalizedSearch = $computed(() => stringToSlug(search.trim()).replaceAll('-', ''));
+const trimmedSearch = $computed(() => search.trim());
 const filteredRecipes = $computed(() => {
-    const searchQuery = normalizedSearch;
+    const searchQuery = stringToSlug(trimmedSearch).replaceAll('-', '');
     const filteredSearchIndex = searchQuery.length
         ? searchIndex.filter(({ searchableText }) => searchableText.includes(searchQuery))
         : searchIndex;
