@@ -51,7 +51,7 @@ const routes: RouteRecordRaw[] = [
 export function registerRouterBindings(): void {
     Router.registerModelBinding('recipe', {
         find: uuid => Cookbook.recipes?.find(recipe => recipe.uuid === uuid) || null,
-        subscribe: listener => Recipe.on('updated', listener),
+        subscribe: (uuid, listener) => Recipe.on('updated', recipe => recipe.uuid === uuid && listener(recipe)),
     });
 }
 

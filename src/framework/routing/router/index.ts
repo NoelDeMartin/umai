@@ -65,16 +65,20 @@ function enhanceRouteComponent<P>(pageComponent: Component<P>): Component {
                         .entries(this.$route.params)
                         .reduce(
                             (params, [paramName, paramValue]) => {
+                                if (Array.isArray(paramValue)) {
+                                    return params;
+                                }
+
                                 const modelBinding = this.$router.getModelBinding(paramName);
 
                                 if (!modelBinding)
                                     return params;
 
                                 return tap(params, params => {
-                                    params[paramName] = modelBinding.find(paramValue as string) ?? fail();
+                                    params[paramName] = modelBinding.find(paramValue) ?? fail();
 
                                     if (modelBinding.subscribe)
-                                        this.subscriptions.push(modelBinding.subscribe(model => {
+                                        this.subscriptions.push(modelBinding.subscribe(paramValue, model => {
                                             if (!this.routeParameters)
                                                 return;
 

@@ -6,7 +6,7 @@ const HISTORY_LENGTH = 10;
 
 interface ModelBindingConfiguration {
     find: (param: string) => SolidModel | null;
-    subscribe?: (listener: (model: SolidModel | null) => void) => Function;
+    subscribe?: (param: string, listener: (model: SolidModel | null) => void) => Function;
 }
 
 export default class FrameworkRouter {
