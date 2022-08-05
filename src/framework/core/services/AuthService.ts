@@ -24,8 +24,10 @@ import type Authenticator from '@/framework/auth/Authenticator';
 import type { AuthenticatorName } from '@/framework/auth';
 import type { AuthSession } from '@/framework/auth/Authenticator';
 import type { ComputedStateDefinitions, IService } from '@/framework/core/Service';
+import type { ErrorReason } from '@/framework/core/services/ErrorsService';
 
 import { CoreColor } from '@/components/core';
+import { i18nTranslate } from '@/framework/plugins/i18n';
 
 interface State {
     autoReconnect: boolean;
@@ -39,6 +41,7 @@ interface State {
     previousSession: {
         authenticator: AuthenticatorName;
         loginUrl: string;
+        error: ErrorReason | null;
     } | null;
 }
 
@@ -122,7 +125,11 @@ export default class AuthService extends Service<State, ComputedState> {
 
             this.setState({
                 dismissed: false,
-                previousSession: { loginUrl, authenticator: authenticatorName },
+                previousSession: {
+                    loginUrl,
+                    authenticator: authenticatorName,
+                    error: i18nTranslate('auth.stuckConnecting'),
+                },
             });
 
             await authenticator.login(oidcIssuerUrl);
@@ -146,8 +153,12 @@ export default class AuthService extends Service<State, ComputedState> {
         }
     }
 
-    public async reconnect(): Promise<void> {
-        if (!this.previousSession || this.loggedIn) {
+    public async reconnect(force: boolean = false): Promise<void> {
+        if (
+            this.loggedIn ||
+            !this.previousSession ||
+            (this.previousSession.error !== null && !force)
+        ) {
             return;
         }
 
@@ -255,11 +266,27 @@ export default class AuthService extends Service<State, ComputedState> {
 
         authenticator.addListener({
             onSessionStarted: async session => {
-                this.setState({ session });
+                this.setState({
+                    session,
+                    previousSession: {
+                        authenticator: authenticator.name,
+                        loginUrl: session.loginUrl,
+                        error: null,
+                    },
+                });
 
                 SolidACLAuthorization.setEngine(session.authenticator.engine);
 
                 await Events.emit('login', session);
+            },
+            onSessionFailed: async (loginUrl, error) => {
+                this.setState({
+                    previousSession: {
+                        authenticator: authenticator.name,
+                        loginUrl,
+                        error,
+                    },
+                });
             },
             onSessionEnded: async () => {
                 this.setState({ session: null, previousSession: null });

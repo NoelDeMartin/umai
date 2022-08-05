@@ -1,11 +1,18 @@
 import { PromisedValue, arr, fail } from '@noeldemartin/utils';
 import { SolidEngine } from 'soukai-solid';
+import type { Closure, FluentArray, GetClosureArgs } from '@noeldemartin/utils';
 import type { Engine } from 'soukai';
 import type { Fetch } from 'soukai-solid';
-import type { FluentArray } from '@noeldemartin/utils';
 import type { SolidUserProfile } from '@noeldemartin/solid-utils';
 
 import type { AuthenticatorName } from '@/framework/auth';
+import type { ErrorReason } from '@/framework/core/services/ErrorsService';
+
+type ListenerEvent = keyof AuthenticatorListener;
+type ListenerEventPayload<Event extends ListenerEvent, Callback = AuthenticatorListener[Event]> =
+    Callback extends Closure
+        ? GetClosureArgs<Callback>
+        : never;
 
 export interface AuthSession {
     user: SolidUserProfile;
@@ -15,6 +22,7 @@ export interface AuthSession {
 
 export interface AuthenticatorListener {
     onSessionStarted?: (session: AuthSession) => Promise<void> | void;
+    onSessionFailed?: (loginUrl: string, error: ErrorReason) => Promise<void> | void;
     onSessionEnded?: () => Promise<void> | void;
     onAuthenticatedFetchReady?: (fetch: Fetch) => Promise<void> | void;
 }
@@ -78,13 +86,7 @@ export default abstract class Authenticator {
     protected async initAuthenticatedFetch(fetch: Fetch): Promise<void> {
         this.authenticatedFetch = fetch;
 
-        await Promise.all(
-            this.listeners.toArray().map(
-                async listener => {
-                    await listener.onAuthenticatedFetchReady?.call(listener, fetch);
-                },
-            ),
-        );
+        await this.notifyListeners('onAuthenticatedFetchReady', fetch);
     }
 
     protected async startSession(sessionData: Omit<AuthSession, 'authenticator'>): Promise<AuthSession> {
@@ -93,22 +95,29 @@ export default abstract class Authenticator {
             ...sessionData,
         };
 
-        await Promise.all(
-            this.listeners.toArray().map(
-                async listener => {
-                    await listener.onSessionStarted?.call(listener, session);
-                },
-            ),
-        );
+        await this.notifyListeners('onSessionStarted', session);
 
         return session;
     }
 
+    protected async failSession(loginUrl: string, error: ErrorReason): Promise<void> {
+        await this.notifyListeners('onSessionFailed', loginUrl, error);
+    }
+
     protected async endSession(): Promise<void> {
+        await this.notifyListeners('onSessionEnded');
+    }
+
+    protected async notifyListeners<Event extends ListenerEvent>(
+        event: Event,
+        ...payload: ListenerEventPayload<Event>
+    ): Promise<void> {
         await Promise.all(
             this.listeners.toArray().map(
                 async listener => {
-                    await listener.onSessionEnded?.call(listener);
+                    const callback = listener[event] as Closure | undefined;
+
+                    await callback?.(...payload);
                 },
             ),
         );

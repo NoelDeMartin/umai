@@ -1,9 +1,9 @@
 <template>
-    <AppModal :padding="false">
+    <AppModal v-slot="{ close }" :padding="false" :cancellable="!!details">
         <div class="px-4 pt-1 pb-4">
             <div class="flex justify-between">
                 <h2 class="font-medium text-lg flex items-center">
-                    {{ title }}
+                    <CoreMarkdown :text="title" heading />
                     <template v-if="reports.length > 1">
                         ({{ activeReportIndex + 1 }}/{{ reports.length }})
                         <CoreButton
@@ -57,9 +57,16 @@
                     </CoreButton>
                 </div>
             </div>
-            <p v-if="description" class="mt-2">
-                {{ description }}
-            </p>
+            <CoreMarkdown
+                v-if="description"
+                :text="description"
+                class="mt-2"
+            />
+            <div v-if="!details" class="flex flex-row justify-end mt-4">
+                <CoreButton color="danger" @click="close">
+                    {{ $t('ui.error_accept') }}
+                </CoreButton>
+            </div>
         </div>
         <pre
             v-if="details"

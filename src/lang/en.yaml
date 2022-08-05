@@ -306,13 +306,18 @@ viewer:
 validation:
   required: This is required
 
+auth:
+  stuckConnecting: We didn't hear back from the identity provider, maybe try reconnecting?
+  invalidWebId: "`{webId}` does not return a valid webId document."
+
 ui:
   drag: Hold and drag to move!
   copyToClipboard: Copy to clipboard
   copiedToClipboard: Text copied to clipboard
   confirm: Are you sure?
-  confirm_accept: "OK"
-  confirm_cancel: "Cancel"
+  confirm_accept: OK
+  confirm_cancel: Cancel
+  error_accept: OK
   closeModal: Close modal
   loading: Loading...
 

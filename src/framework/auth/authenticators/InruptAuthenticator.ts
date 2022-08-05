@@ -5,6 +5,7 @@ import type { handleIncomingRedirect, login, logout } from '@inrupt/solid-client
 import App from '@/framework/core/facades/App';
 import Auth from '@/framework/core/facades/Auth';
 import Authenticator from '@/framework/auth/Authenticator';
+import { i18nTranslate } from '@/framework/plugins/i18n';
 import type { AuthSession } from '@/framework/auth/Authenticator';
 
 const STORAGE_KEY = 'inrupt-authenticator';
@@ -17,7 +18,7 @@ export default class InruptAuthenticator extends Authenticator {
     private _handleIncomingRedirect!: typeof handleIncomingRedirect;
 
     public async login(loginUrl: string): Promise<AuthSession> {
-        Storage.set<string>(STORAGE_KEY, loginUrl);
+        Storage.set<boolean>(STORAGE_KEY, true);
 
         await this._login({
             oidcIssuer: loginUrl,
@@ -51,15 +52,18 @@ export default class InruptAuthenticator extends Authenticator {
         if (!Storage.has(STORAGE_KEY))
             return;
 
-        const loginUrl = Storage.pull<string>(STORAGE_KEY) as string;
         const session = await this._handleIncomingRedirect(window.location.href);
+
+        Storage.remove(STORAGE_KEY);
 
         if (session?.isLoggedIn && session.webId) {
             await this.initAuthenticatedFetch(this._fetch);
 
             const user = await Auth.getUserProfile(session.webId);
 
-            user && await this.startSession({ user, loginUrl });
+            user
+                ? await this.startSession({ user, loginUrl: session.webId })
+                : await this.failSession(session.webId, i18nTranslate('auth.invalidWebId', { webId: session.webId }));
         }
     }
 

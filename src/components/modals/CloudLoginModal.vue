@@ -23,6 +23,13 @@
                 }"
             />
             <CoreMarkdown
+                v-else-if="$auth.previousSession?.error"
+                :text="$t('cloud.login.info_loginError', { url: $auth.previousSession?.loginUrl })"
+                :actions="{
+                    'view-error-details': () => $errors.inspect($auth.previousSession?.error),
+                }"
+            />
+            <CoreMarkdown
                 v-else
                 :text="$t('cloud.login.info_reconnect', { url: $auth.previousSession?.loginUrl })"
             />
@@ -32,7 +39,7 @@
                     v-initial-focus
                     secondary
                     color="brand-solid"
-                    @click="$auth.reconnect()"
+                    @click="$auth.reconnect(true)"
                 >
                     <i-pepicons-refresh aria-hidden="true" class="h-6 w-6" />
                     <span class="ml-2">{{ $t('cloud.reconnect_now') }}</span>

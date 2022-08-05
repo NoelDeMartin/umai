@@ -7,13 +7,22 @@ import { booleanProp, objectProp, requiredStringProp } from '@/framework/utils/v
 
 import { renderMarkdown } from '@/utils/markdown';
 
-const { text, actions } = defineProps({
+const { text, actions, heading } = defineProps({
     text: requiredStringProp(),
     actions: objectProp<Record<string, () => unknown>>(() => ({})),
+    heading: booleanProp(),
     raw: booleanProp(),
 });
 
-const html = $computed(() => renderMarkdown(text));
+const html = $computed(() => {
+    const html = renderMarkdown(text);
+
+    return heading
+        ? html
+            .replace('<p>', '<span>')
+            .replace('</p>', '</span>')
+        : html;
+});
 
 function onClick({ target }: Event) {
     if (!(target instanceof HTMLElement)) {
