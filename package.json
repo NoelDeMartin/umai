@@ -23,7 +23,7 @@
   "dependencies": {
     "@headlessui/vue": "^0.0.0-insiders.90aa478",
     "@inrupt/solid-client-authn-browser": "^1.11.6",
-    "@noeldemartin/solid-utils": "^0.1.1-next.4e968af69bdec1e90b14bf8107fad4fafd43f952",
+    "@noeldemartin/solid-utils": "^0.1.1-next.f279ff39536b39493ea8febae8d8052a9a3b1365",
     "@noeldemartin/utils": "^0.2.1-next.358018707f76deaa621891d9ccb26373e6019fed",
     "@tailwindcss/forms": "^0.4.0",
     "@tailwindcss/typography": "^0.5.0",
@@ -33,7 +33,7 @@
     "image-blob-reduce": "^4.1.0",
     "marked": "^4.0.12",
     "soukai": "^0.4.1-next.6feb3d2e460f5b0522f6e9f1ebc1dd43b0730079",
-    "soukai-solid": "^0.4.1-next.62df61cb1bad4a519fea500f89e55fbe279f004f",
+    "soukai-solid": "^0.4.1-next.151a095039926e76c3471a674b519b6679fb6530",
     "tailwindcss": "^3.1.4",
     "vue": "^3.2.29",
     "vue-i18n": "^9.2.0-beta.40",
