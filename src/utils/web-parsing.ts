@@ -12,6 +12,9 @@ const CONTEXT_ALIASES: Record<string, string> = {
 };
 
 interface RecipeJsonLD extends JsonLD {
+    cookTime?: string;
+    prepTime?: string;
+    totalTime?: string;
     recipeInstructions?: string | string[] | JsonLD | JsonLD[];
     recipeIngredient?: string | string[];
     image?: string | string[] | { url?: string } | { url?: string }[];
@@ -20,6 +23,7 @@ interface RecipeJsonLD extends JsonLD {
 
 function reshapeRecipeJsonLD(json: RecipeJsonLD): void {
     reshapeContexts(json);
+    reshapeRecipeMetadata(json);
     reshapeRecipeInstructions(json);
     reshapeRecipeIngredients(json);
     reshapeRecipeImage(json);
@@ -38,6 +42,14 @@ function reshapeContexts(json: JsonLD): void {
             reshapeContexts(value);
         }
     }
+}
+
+function reshapeRecipeMetadata(json: RecipeJsonLD): void {
+    if (json.cookTime || json.prepTime || !json.totalTime) {
+        return;
+    }
+
+    json.cookTime = json.totalTime;
 }
 
 function reshapeRecipeIngredients(json: RecipeJsonLD): void {
