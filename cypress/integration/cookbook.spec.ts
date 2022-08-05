@@ -514,7 +514,7 @@ describe('Cookbook', () => {
         cy.assertStoredFileDoesNotExist('solid://recipes/ramen.png');
     });
 
-    it('Deletes remotes recipes', () => {
+    it('Deletes remote recipes', () => {
         // Arrange
         cy.createRecipe({
             name: 'Ramen',

@@ -22,7 +22,7 @@ describe('Authentication', () => {
 
     it('Signs up using the Inrupt authenticator', () => {
         // Arrange
-        cy.intercept('POST', 'http://localhost:4000/alice/').as('createCookbook');
+        cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/').as('createCookbook');
         cy.intercept('PUT', 'http://localhost:4000/alice/settings/privateTypeIndex').as('createTypeIndex');
         cy.intercept('PATCH', 'http://localhost:4000/alice/settings/privateTypeIndex').as('registerCookbook');
         cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/ramen').as('patchRamen');
@@ -245,53 +245,6 @@ describe('Authentication', () => {
         cy.get('@patchRamen.all').should('have.length', 1);
         cy.assertLocalDocumentEquals('http://localhost:4000/alice/cookbook/ramen', ramenJsonLD);
         cy.assertLocalDocumentDoesNotExist('solid://recipes/ramen');
-    });
-
-    it('Handles errors on reconnect', () => {
-        // Arrange
-        cy.visit('/?authenticator=inrupt');
-        cy.startApp();
-        cy.press('Connect your Solid POD');
-        cy.ariaInput('Login url').clear().type('http://localhost:4000/alice/{enter}');
-        cy.cssAuthorize({ reset: true });
-        cy.waitForReload({ resetProfiles: true });
-        cy.see('online');
-
-        // Act - Successful reconnect
-        cy.reload();
-        cy.service('$auth').then(Auth => {
-            Auth.previousSession = Auth.previousSession && {
-                ...Auth.previousSession,
-                loginUrl: 'invalidurl',
-            };
-        });
-        cy.see('online');
-
-        // Act - Failed reconnect
-        cy.reload();
-        cy.see('disconnected');
-
-        // Act - Reattempt reconnect
-        cy.reload();
-        cy.service('$auth').then(Auth => {
-            Auth.previousSession = Auth.previousSession && {
-                ...Auth.previousSession,
-                loginUrl: 'http://localhost:4000/alice/',
-            };
-        });
-        cy.press('disconnected');
-        cy.see('There was a problem connecting');
-        cy.press('view error details');
-        cy.see('Failed to construct \'URL\'');
-        cy.contains('[role="dialog"]', 'TypeError').within(() => {
-            cy.ariaLabel('Close modal').click();
-        });
-        cy.press('Reconnect', 'button');
-        cy.press('Consent');
-        cy.waitForReload();
-
-        // Assert
-        cy.see('online');
     });
 
 });
