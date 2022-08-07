@@ -82,7 +82,7 @@ export default class AuthService extends Service<State, ComputedState> {
 
     public async getUserProfile(url: string): Promise<SolidUserProfile | null> {
         return this.profiles[url]
-            ?? tap(await fetchLoginUserProfile(url), profile => profile && this.rememberProfile(profile));
+            ?? tap(await fetchLoginUserProfile(url, this.fetch), profile => profile && this.rememberProfile(profile));
     }
 
     public async refreshUserProfile(): Promise<void> {
@@ -274,6 +274,10 @@ export default class AuthService extends Service<State, ComputedState> {
                         error: null,
                     },
                 });
+
+                if (session.user.cloaked) {
+                    await this.refreshUserProfile();
+                }
 
                 SolidACLAuthorization.setEngine(session.authenticator.engine);
 

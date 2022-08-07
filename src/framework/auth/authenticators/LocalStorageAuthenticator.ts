@@ -18,6 +18,7 @@ export default class LocalStorageAuthenticator extends Authenticator {
         user = user ?? {
             webId: prompt('What is your webId?', loginUrl) ?? fail(AuthenticationCancelledError),
             name: prompt('What is your name?', 'John Doe') ?? fail(AuthenticationCancelledError),
+            cloaked: false,
             storageUrls: [
                 prompt('Where is your storage?', 'http://localhost:4000/') ?? fail(AuthenticationCancelledError),
             ],
