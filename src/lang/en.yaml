@@ -7,7 +7,7 @@ cloud:
     disconnected: disconnected
     syncing: syncing
     syncing_description: Syncing in progress...
-    loginError_description: There was a problem connecting to the login server
+    authError_description: There was a problem connecting to the authentication server
 
   advancedOptions: Advanced options
 
@@ -28,7 +28,7 @@ cloud:
       You can keep your data safe across devices with a
       <CoreLink url="https://solidproject.org" color="brand-solid">Solid account</CoreLink>, use the input below to log in.
     info_reconnect: You need to reconnect to `{url}`.
-    info_loginError: |
+    info_authError: |
       There was a problem connecting to `{url}`.
 
       [view error details](action:view-error-details)

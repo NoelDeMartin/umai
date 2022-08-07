@@ -4,7 +4,7 @@
             <div class="relative w-8 h-8" aria-hidden="true">
                 <i-zondicons-cloud
                     class="absolute inset-0 w-full h-full"
-                    :class="{ 'text-red-600': $auth.loginError }"
+                    :class="{ 'text-red-600': $auth.error }"
                     aria-hidden="true"
                 />
                 <div
@@ -13,7 +13,7 @@
                 >
                     <i-pepicons-refresh v-if="$cloud.syncing" class="w-4 h-4 animate-spin" aria-hidden="true" />
                     <span v-else-if="$cloud.offline">!</span>
-                    <i-pepicons-exclamation v-else-if="$auth.loginError" class="w-3 h-3" aria-hidden="true" />
+                    <i-pepicons-exclamation v-else-if="$auth.error" class="w-3 h-3" aria-hidden="true" />
                     <i-pepicons-times v-else-if="$cloud.disconnected" class="w-4 h-4" aria-hidden="true" />
                     <template v-else-if="$cloud.online">
                         <span v-if="$cloud.dirty" class="text-xs">{{ pendingUpdates.badge }}</span>
@@ -23,7 +23,7 @@
             </div>
             <span class="sr-only sm:not-sr-only">{{ $t(`cloud.statuses.${$cloud.status}`) }}</span>
             <span v-if="$cloud.syncing" class="sr-only">{{ $t('cloud.statuses.syncing_description') }}</span>
-            <span v-else-if="$auth.loginError" class="sr-only">{{ $t('cloud.statuses.loginError_description') }}</span>
+            <span v-else-if="$auth.error" class="sr-only">{{ $t('cloud.statuses.authError_description') }}</span>
             <span v-else class="sr-only">{{ pendingUpdates.a11y }}</span>
         </div>
     </AppHeaderButton>

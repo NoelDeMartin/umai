@@ -37,7 +37,7 @@ interface State {
     preferredAuthenticator: AuthenticatorName | null;
     ongoing: boolean;
     stale: boolean;
-    loginError: unknown | null;
+    loginError: ErrorReason | null;
     previousSession: {
         authenticator: AuthenticatorName;
         loginUrl: string;
@@ -47,6 +47,7 @@ interface State {
 
 interface ComputedState {
     authenticator: Authenticator | null;
+    error: ErrorReason | null;
     fetch: Fetch;
     loggedIn: boolean;
     wasLoggedIn: boolean;
@@ -241,6 +242,7 @@ export default class AuthService extends Service<State, ComputedState> {
     protected getComputedStateDefinitions(): ComputedStateDefinitions<State, ComputedState> {
         return {
             authenticator: state => state.session?.authenticator ?? null,
+            error: state => state.loginError ?? state.previousSession?.error ?? null,
             fetch: (_, { authenticator }) => authenticator?.getAuthenticatedFetch() ?? window.fetch.bind(window),
             loggedIn: state => !!state.session,
             wasLoggedIn: state => !!state.previousSession?.loginUrl,

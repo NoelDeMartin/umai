@@ -16,17 +16,10 @@
         </div>
         <div v-else-if="$auth.hasLoggedIn" class="flex flex-col">
             <CoreMarkdown
-                v-if="$auth.loginError"
-                :text="$t('cloud.login.info_loginError', { url: $auth.previousSession?.loginUrl })"
+                v-if="$auth.error"
+                :text="$t('cloud.login.info_authError', { url: $auth.previousSession?.loginUrl })"
                 :actions="{
-                    'view-error-details': () => $errors.inspect($auth.loginError),
-                }"
-            />
-            <CoreMarkdown
-                v-else-if="$auth.previousSession?.error"
-                :text="$t('cloud.login.info_loginError', { url: $auth.previousSession?.loginUrl })"
-                :actions="{
-                    'view-error-details': () => $errors.inspect($auth.previousSession?.error),
+                    'view-error-details': () => $errors.inspect($auth.error),
                 }"
             />
             <CoreMarkdown
