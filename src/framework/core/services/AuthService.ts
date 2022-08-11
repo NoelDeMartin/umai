@@ -1,12 +1,4 @@
-import {
-    fail,
-    getLocationQueryParameter,
-    hasLocationQueryParameter,
-    objectWithout,
-    parseBoolean,
-    tap,
-    urlRoot,
-} from '@noeldemartin/utils';
+import { fail, getLocationQueryParameter, objectWithout, parseBoolean, tap, urlRoot } from '@noeldemartin/utils';
 import { createPrivateTypeIndex, fetchLoginUserProfile } from '@noeldemartin/solid-utils';
 import { SolidACLAuthorization } from 'soukai-solid';
 import type { Fetch, SolidUserProfile } from '@noeldemartin/solid-utils';
@@ -256,11 +248,19 @@ export default class AuthService extends Service<State, ComputedState> {
             return false;
         }
 
-        if (hasLocationQueryParameter('autoReconnect')) {
-            return parseBoolean(getLocationQueryParameter('autoReconnect'));
+        if (parseBoolean(getLocationQueryParameter('autoReconnect'))) {
+            return true;
         }
 
         return this.autoReconnect;
+    }
+
+    private refreshProfileOnSessionStarted(user: SolidUserProfile): boolean {
+        if (user.cloaked || !user.writableProfileUrl) {
+            return true;
+        }
+
+        return parseBoolean(getLocationQueryParameter('refreshProfile'));
     }
 
     private async bootAuthenticator(name: AuthenticatorName): Promise<Authenticator> {
@@ -277,7 +277,7 @@ export default class AuthService extends Service<State, ComputedState> {
                     },
                 });
 
-                if (session.user.cloaked) {
+                if (this.refreshProfileOnSessionStarted(session.user)) {
                     await this.refreshUserProfile();
                 }
 

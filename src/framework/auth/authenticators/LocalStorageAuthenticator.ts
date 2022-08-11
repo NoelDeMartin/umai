@@ -15,10 +15,13 @@ interface StorageData {
 export default class LocalStorageAuthenticator extends Authenticator {
 
     public async login(loginUrl: string, user?: SolidUserProfile): Promise<AuthSession> {
+        const webId = prompt('What is your webId?', loginUrl) ?? fail<string>(AuthenticationCancelledError);
+
         user = user ?? {
-            webId: prompt('What is your webId?', loginUrl) ?? fail(AuthenticationCancelledError),
+            webId,
             name: prompt('What is your name?', 'John Doe') ?? fail(AuthenticationCancelledError),
             cloaked: false,
+            writableProfileUrl: webId,
             storageUrls: [
                 prompt('Where is your storage?', 'http://localhost:4000/') ?? fail(AuthenticationCancelledError),
             ],
