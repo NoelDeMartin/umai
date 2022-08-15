@@ -144,7 +144,7 @@ home:
 
   createCookbook:
     title: Create your cookbook
-    message: In order to store recipes in your Solid POD, we need to create a container.
+    message: In order to store recipes in your Solid POD, we need to create a place for them.
     advancedOptions: Advanced options
     nameLabel: "Name:"
     storageUrlLabel: "Location:"
