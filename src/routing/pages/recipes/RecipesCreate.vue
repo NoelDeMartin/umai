@@ -33,11 +33,11 @@ import { parseWebsiteMetadata, parseWebsiteRecipes } from '@/utils/web-parsing';
 let recipe = $ref(Cookbook.getTmpRecipe(history.state.tmpRecipe));
 let scanning = $ref(hasLocationQueryParameter('from'));
 
-async function onCreated() {
+async function onCreated(recipe: Recipe) {
     UI.scrollLayout({ top: 0 });
     Router.push({ name: 'home' });
 
-    await (Network.online && Cloud.sync());
+    await (Network.online && Cloud.sync(recipe));
 }
 
 onMounted(async () => {

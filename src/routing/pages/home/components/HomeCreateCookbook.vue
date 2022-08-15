@@ -88,7 +88,7 @@ const url = $computed(() => urlResolveDirectory(form.storageUrl, stringToSlug(fo
 async function submit() {
     try {
         processing = true;
-        await Cookbook.createRemote(form.name, form.storageUrl);
+        await Cookbook.initializeRemote(form.name, form.storageUrl);
         await Cloud.sync();
     } finally {
         processing = false;

@@ -1,0 +1,6 @@
+<> a <http://www.w3.org/ns/solid/terms#TypeIndex> .
+
+<#public-list>
+    a <http://www.w3.org/ns/solid/terms#TypeRegistration>;
+    <http://www.w3.org/ns/solid/terms#forClass> <https://schema.org/ItemList>;
+    <http://www.w3.org/ns/solid/terms#instance> <http://localhost:4000/alice/cookbook/public#it>.

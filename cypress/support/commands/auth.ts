@@ -39,6 +39,19 @@ export function queueAuthenticatedRequests(window: Window): void {
 
 export default {
 
+    createSolidDocument(url: string, fixture: string, replacements: Record<string, string> = {}): void {
+        cy.fixture(fixture).then(body => {
+            cy.runAuthenticatedRequest(cssPodUrl + url, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'text/turtle' },
+                body: Object.entries(replacements).reduce(
+                    (body, [name, value]) => body.replace(new RegExp(`\\[\\[${name}\\]\\]`, 'g'), value),
+                    body,
+                ),
+            });
+        });
+    },
+
     cssAuthorize(options: Partial<CSSAuthorizeOptions> = {}): void {
         const requestOptions = {
             url: 'http://localhost:4000/alice/profile/card',
@@ -60,12 +73,13 @@ export default {
         cy.queueDeletingSolidDocument('/alice/settings/privateTypeIndex');
         cy.queueDeletingSolidDocument('/alice/cookbook/ramen');
         cy.queueDeletingSolidDocument('/alice/cookbook/pisto');
+        cy.queueDeletingSolidDocument('/alice/cookbook/public');
         cy.queueDeletingSolidDocument('/alice/cookbook/');
 
         // Create new data
         if (options.typeIndex) {
-            cy.queueCreatingSolidDocument('/alice/settings/privateTypeIndex', 'type-index.ttl');
-            cy.queueUpdatingSolidDocument('/alice/profile/card', 'add-type-index.sparql');
+            cy.queueCreatingSolidDocument('/alice/settings/privateTypeIndex', 'public-type-index.ttl');
+            cy.queueUpdatingSolidDocument('/alice/profile/card', 'add-private-type-index.sparql');
         }
 
         if (options.typeIndex && options.cookbook) {
@@ -147,6 +161,16 @@ export default {
 
     runAuthenticatedRequest(url: string, options: RequestInit): void {
         cy.service('$auth').then(auth => auth.fetch(url, options));
+    },
+
+    updateSolidDocument(url: string, fixture: string): void {
+        cy.fixture(fixture).then(body => {
+            cy.runAuthenticatedRequest(cssPodUrl + url, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/sparql-update' },
+                body,
+            });
+        });
     },
 
 };

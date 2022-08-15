@@ -92,7 +92,7 @@
 import IconViewHide from '~icons/zondicons/view-hide';
 import IconViewShow from '~icons/zondicons/view-show';
 import { markRaw, onMounted, watchEffect } from 'vue';
-import { SolidDocumentPermission } from 'soukai-solid';
+import { SolidDocumentPermission } from '@noeldemartin/solid-utils';
 import type { Component } from 'vue';
 
 import Auth from '@/framework/core/facades/Auth';
@@ -100,6 +100,7 @@ import { requiredObjectProp } from '@/framework/utils/vue';
 import { translate } from '@/framework/utils/translate';
 
 import CloudStatusModal from '@/components/modals/CloudStatusModal.vue';
+import Cookbook from '@/services/facades/Cookbook';
 import type Recipe from '@/models/Recipe';
 
 interface AccessControlProfile {
@@ -155,6 +156,7 @@ async function updatePermissions(newProfile: AccessControlProfile) {
 
     try {
         await recipe.updatePublicPermissions(newProfile.publicPermissions);
+        await Cookbook.updatePublicRecipeListing(recipe, !!recipe.isPublic);
 
         profile = newProfile;
     } catch (e) {

@@ -1,0 +1,14 @@
+@prefix acl: <http://www.w3.org/ns/auth/acl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+<#public>
+    a acl:Authorization ;
+    acl:agentClass foaf:Agent ;
+    acl:accessTo <http://localhost:4000/alice/cookbook/[[document]]> ;
+    acl:mode acl:Read .
+
+<#owner>
+    a acl:Authorization ;
+    acl:agent <http://localhost:4000/alice/profile/card#me>, <mailto:alice@example.com> ;
+    acl:accessTo <http://localhost:4000/alice/cookbook/[[document]]> ;
+    acl:mode acl:Read, acl:Write, acl:Control .

@@ -4,6 +4,7 @@ import type { Relation } from 'soukai';
 import type { SolidBelongsToManyRelation } from 'soukai-solid';
 
 import RecipeInstructionsStep from '@/models/RecipeInstructionsStep';
+import RecipesList from '@/models/RecipesList';
 import { parseIngredient, sortIngredients } from '@/utils/ingredients';
 
 import Model from './Recipe.schema';
@@ -12,13 +13,23 @@ export default class Recipe extends Model {
 
     public static history = true;
     public static tombstone = false;
-    public static rdfContexts = { schema: 'https://schema.org/' };
+    public static rdfContexts = {
+        schema: 'https://schema.org/',
+        purl: 'http://purl.org/dc/terms/',
+    };
 
     declare public instructions?: RecipeInstructionsStep[];
     declare public relatedInstructions: SolidBelongsToManyRelation<
         this,
         RecipeInstructionsStep,
         typeof RecipeInstructionsStep
+    >;
+
+    declare public lists?: RecipesList[];
+    declare public relatedLists: SolidBelongsToManyRelation<
+        this,
+        RecipesList,
+        typeof RecipesList
     >;
 
     public get uuid(): string | null {
@@ -55,9 +66,13 @@ export default class Recipe extends Model {
 
     public instructionsRelationship(): Relation {
         return this
-            .belongsToMany(RecipeInstructionsStep, 'instructionSteps')
+            .belongsToMany(RecipeInstructionsStep, 'instructionStepUrls')
             .onDelete('cascade')
             .usingSameDocument(true);
+    }
+
+    public listsRelationship(): Relation {
+        return this.belongsToMany(RecipesList, 'listUrls');
     }
 
     public toExternalJsonLD(): JsonLD {

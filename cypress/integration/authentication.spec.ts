@@ -235,7 +235,7 @@ describe('Authentication', () => {
         cy.visit('/?authenticator=inrupt');
         cy.startApp();
         cy.press('disconnected');
-        cy.ariaInput('Login url').type('http://localhost:4000/alice/{enter}');
+        cy.ariaInput('Login url').clear().type('http://localhost:4000/alice/{enter}');
         cy.cssAuthorize({ reset: true });
         cy.waitForReload({ resetProfiles: true });
         cy.press('Continue');

@@ -1,6 +1,11 @@
+import {
+    SolidDocumentPermission,
+    createPrivateTypeIndex,
+    createPublicTypeIndex,
+    fetchLoginUserProfile,
+} from '@noeldemartin/solid-utils';
 import { fail, getLocationQueryParameter, objectWithout, parseBoolean, tap, urlRoot } from '@noeldemartin/utils';
-import { createPrivateTypeIndex, fetchLoginUserProfile } from '@noeldemartin/solid-utils';
-import { SolidACLAuthorization } from 'soukai-solid';
+import { SolidACLAuthorization, SolidTypeIndex } from 'soukai-solid';
 import type { Fetch, SolidUserProfile } from '@noeldemartin/solid-utils';
 
 import App from '@/framework/core/facades/App';
@@ -199,6 +204,28 @@ export default class AuthService extends Service<State, ComputedState> {
 
         return tap(typeIndexUrl, () => {
             user.privateTypeIndexUrl = typeIndexUrl;
+
+            this.rememberProfile(user);
+        });
+    }
+
+    public async createPublicTypeIndex(): Promise<string> {
+        if (!this.isLoggedIn())
+            throw new Error('Can\'t create a type index because the user is not logged in');
+
+        const user = this.user;
+        const typeIndexUrl = await createPublicTypeIndex(user, this.authenticator.requireAuthenticatedFetch());
+
+        // TODO this should be implemented in @noeldemartin/solid-utils instead,
+        // but for the time being we're doing it here.
+        await SolidTypeIndex.withEngine(this.authenticator.engine, async () => {
+            const typeIndex = await SolidTypeIndex.find(typeIndexUrl);
+
+            await typeIndex?.updatePublicPermissions([SolidDocumentPermission.Read]);
+        });
+
+        return tap(typeIndexUrl, () => {
+            user.publicTypeIndexUrl = typeIndexUrl;
 
             this.rememberProfile(user);
         });

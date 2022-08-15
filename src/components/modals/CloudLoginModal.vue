@@ -83,6 +83,7 @@ import { FormInputType, reactiveForm } from '@/framework/forms';
 const form = reactiveForm({
     url: {
         type: FormInputType.String,
+        default: 'https://',
         rules: 'required',
     },
 });

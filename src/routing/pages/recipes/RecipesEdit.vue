@@ -23,8 +23,8 @@ const { recipe } = defineProps({
     recipe: requiredObjectProp<Recipe>(),
 });
 
-function onUpdated() {
-    Network.online && Cloud.sync();
+function onUpdated(recipe: Recipe) {
+    Network.online && Cloud.sync(recipe);
 
     Router.push({
         name: 'recipes.show',

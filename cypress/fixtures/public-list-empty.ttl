@@ -1,0 +1,7 @@
+@prefix schema: <https://schema.org/> .
+@prefix purl: <http://purl.org/dc/terms/> .
+
+<#it>
+    a schema:ItemList ;
+    schema:name "Public Recipes" ;
+    purl:creator <http://localhost:4000/alice/profile/card#me> .

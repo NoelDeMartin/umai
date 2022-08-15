@@ -22,9 +22,14 @@ export default SolidModel.schema({
         rdfProperty: 'schema:recipeIngredient',
         items: FieldType.String,
     },
-    instructionSteps: {
+    instructionStepUrls: {
         type: FieldType.Array,
         rdfProperty: 'schema:recipeInstructions',
+        items: FieldType.Key,
+    },
+    listUrls: {
+        type: FieldType.Array,
+        rdfProperty: 'purl:isReferencedBy',
         items: FieldType.Key,
     },
     externalUrls: {

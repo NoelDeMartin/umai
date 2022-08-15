@@ -1,5 +1,5 @@
-import { Semaphore, after, arrayChunk, fail, isSuccessfulResponse, map, tap } from '@noeldemartin/utils';
-import { Metadata, Operation, SolidContainerModel, SolidModel, Tombstone } from 'soukai-solid';
+import { Semaphore, after, arrayChunk, arrayFilter, fail, isSuccessfulResponse, map, tap } from '@noeldemartin/utils';
+import { Metadata, Operation, SolidACLAuthorization, SolidContainerModel, SolidModel, Tombstone } from 'soukai-solid';
 import type { Engine } from 'soukai';
 import type { ObjectsMap } from '@noeldemartin/utils';
 import type { SolidModelConstructor } from 'soukai-solid';
@@ -55,7 +55,7 @@ export default class CloudService extends Service<State, ComputedState> {
     protected engine: Engine | null = null;
     protected syncInterval: number | null = null;
 
-    public async sync(): Promise<void> {
+    public async sync(model?: SolidModel): Promise<void> {
         if (!Auth.isLoggedIn())
             return;
 
@@ -65,8 +65,8 @@ export default class CloudService extends Service<State, ComputedState> {
             this.status = CloudStatus.Syncing;
 
             // TODO subscribe to server events instead of pulling remote on every sync
-            await this.pullChanges();
-            await this.pushChanges();
+            await this.pullChanges(model);
+            await this.pushChanges(model);
             await this.uploadFiles();
 
             await after({ milliseconds: Math.max(0, 1000 - (Date.now() - start)) });
@@ -217,9 +217,11 @@ export default class CloudService extends Service<State, ComputedState> {
             : null;
     }
 
-    protected async pullChanges(): Promise<void> {
-        const localModels = map(this.getLocalModels(), 'url');
-        const remoteModelsArray = await this.fetchRemoteModels(localModels.getItems());
+    protected async pullChanges(localModel?: SolidModel): Promise<void> {
+        const localModels = map(localModel ? [localModel] : this.getLocalModels(), 'url');
+        const remoteModelsArray = localModel
+            ? await this.fetchRemoteModelsForLocal(localModel)
+            : await this.fetchRemoteModels(localModels.getItems());
         const remoteModels = map(remoteModelsArray, model => {
             if (model instanceof Tombstone) {
                 return model.resourceUrl;
@@ -244,9 +246,10 @@ export default class CloudService extends Service<State, ComputedState> {
         });
     }
 
-    protected async pushChanges(): Promise<void> {
+    protected async pushChanges(localModel?: SolidModel): Promise<void> {
         const fetch = Auth.requireAuthenticator().requireAuthenticatedFetch();
-        const remoteModels = this.dirtyRemoteModels.getItems();
+        const remoteModels = this.dirtyRemoteModels.getItems()
+            .filter(model => !localModel || model.url === localModel.url);
         const localModelsWithRemoteFileUrls = map(this.getLocalModelsWithRemoteFileUrls(), (({ model }) => model.url));
 
         await Promise.all(
@@ -397,7 +400,6 @@ export default class CloudService extends Service<State, ComputedState> {
     }
 
     protected async fetchRemoteModels(localModels: SolidModel[]): Promise<SolidModel[]> {
-        const RemoteTombstone = getRemoteClass(Tombstone);
         const handlersModels = await Promise.all(
             this.handlers.map(async handler => {
                 if (!handler.isReady())
@@ -427,7 +429,18 @@ export default class CloudService extends Service<State, ComputedState> {
                 return remoteModels;
             }),
         );
-        const remoteModels = handlersModels.flat();
+
+        return this.completeRemoteModels(localModels, handlersModels.flat());
+    }
+
+    protected async fetchRemoteModelsForLocal(localModel: SolidModel): Promise<SolidModel[]> {
+        const remoteModel = await getRemoteClass(localModel.static()).find(localModel.url);
+
+        return this.completeRemoteModels([localModel], arrayFilter([remoteModel]));
+    }
+
+    protected async completeRemoteModels(localModels: SolidModel[], remoteModels: SolidModel[]): Promise<SolidModel[]> {
+        const RemoteTombstone = getRemoteClass(Tombstone);
         const remoteModelUrls = remoteModels.map(remoteModel => remoteModel.url);
         const missingModelDocumentUrls = localModels
             .filter(localModel => !remoteModelUrls.includes(localModel.url))
@@ -455,6 +468,7 @@ export default class CloudService extends Service<State, ComputedState> {
             .getRelatedModels()
             .filter(
                 model =>
+                    !(model instanceof SolidACLAuthorization) &&
                     !(model instanceof Metadata) &&
                     !(model instanceof Operation),
             );
