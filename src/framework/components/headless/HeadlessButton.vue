@@ -12,11 +12,11 @@ import { objectProp, stringProp } from '@/framework/utils/vue';
 import { focusableElement } from '@/framework/components/headless';
 import type { IFocusable } from '@/framework/components/headless';
 
-const { url, route, routeParams, queryParams } = defineProps({
+const { url, route, routeParams, routeQuery } = defineProps({
     url: stringProp(),
     route: stringProp(),
     routeParams: objectProp<RouteParams>(() => ({})),
-    queryParams: objectProp<LocationQuery>(() => ({})),
+    routeQuery: objectProp<LocationQuery>(() => ({})),
 });
 
 const $root = $ref<HTMLElement | null>(null);
@@ -28,7 +28,7 @@ const component = $computed(() => {
                 to: objectWithoutEmpty<Partial<RouteLocation>>({
                     name: route,
                     params: routeParams,
-                    query: queryParams,
+                    query: routeQuery,
                 }),
             },
         };

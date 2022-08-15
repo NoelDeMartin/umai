@@ -9,8 +9,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Added
 
 - List public recipes.
+- Show other recipes and import them from the viewer.
 - Better error handling for failed login attempts.
-- Allow using Ctrl+Enter to submit a recipe form for inputs where Enter is captured for other actions (such as adding another ingredient, or a newline on a textarea).
 
 ### Fixed
 

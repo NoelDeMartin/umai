@@ -1,5 +1,8 @@
 <template>
-    <AppPage :aria-labelledby="viewerRecipe ? '#viewer-recipe-title' : '#viewer-form-title'">
+    <AppPage :aria-labelledby="pageLabelId">
+        <ViewerRecipe v-if="$viewer.recipe" />
+        <ViewerRecipes v-else-if="$viewer.list" />
+
         <transition
             :enter-active-class="starting ? '' : 'transition duration-1000'"
             enter-from-class="opacity-0"
@@ -8,12 +11,10 @@
             leave-from-class="opacity-100"
             leave-to-class="opacity-0"
         >
-            <ViewerRecipe v-if="viewerRecipe" :recipe="viewerRecipe" />
             <ViewerForm
-                v-else
+                v-if="!$viewer.recipe && !$viewer.list"
                 v-show="!starting"
-                class="fixed inset-0 bg-white"
-                @found-recipe="(recipe: Recipe) => viewerRecipe = recipe"
+                class="fixed inset-0 bg-white z-10"
             />
         </transition>
     </AppPage>
@@ -21,12 +22,27 @@
 
 <script setup lang="ts">
 import { hasLocationQueryParameter } from '@noeldemartin/utils';
-import { onMounted } from 'vue';
+import { onMounted, watch } from 'vue';
 
-import type Recipe from '@/models/Recipe';
+import Router from '@/framework/core/facades/Router';
 
-let viewerRecipe = $ref<Recipe | null>(null);
+import Viewer from '@/services/facades/Viewer';
+
 let starting = $ref(hasLocationQueryParameter('url'));
+
+const pageLabelId = $computed(() => {
+    if (Viewer.recipe) {
+        return '#viewer-recipe-title';
+    }
+
+    if (Viewer.list) {
+        return '#viewer-recipes-list-title';
+    }
+
+    return '#viewer-form-title';
+});
+
+watch(Router.currentRoute, () => Viewer.view(Router.getQueryParam<{ url?: string }>('url')));
 
 onMounted(() => starting && setTimeout(() => starting = false, 1000));
 </script>

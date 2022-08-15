@@ -33,6 +33,14 @@ export default class FrameworkRouter {
         return this.modelBindings[model] ?? null;
     }
 
+    public getQueryParam<T = Record<string, unknown>, K extends keyof T = keyof T>(this: Router, param: K): T[K] {
+        return this.getQueryParams<T>()[param];
+    }
+
+    public getQueryParams<T = Record<string, unknown>>(this: Router): T {
+        return this.currentRoute.value.query as unknown as T;
+    }
+
     public hasNavigated(): boolean {
         return this.runtimeHistory.length > 1;
     }

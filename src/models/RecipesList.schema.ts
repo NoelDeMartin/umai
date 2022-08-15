@@ -6,7 +6,7 @@ export default SolidModel.schema({
         type: FieldType.String,
         required: true,
     },
-    creator: {
+    creatorWebId: {
         type: FieldType.Key,
         rdfProperty: 'purl:creator',
     },

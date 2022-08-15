@@ -6,13 +6,14 @@
 
 <script setup lang="ts">
 import { objectWithoutEmpty } from '@noeldemartin/utils';
-import type { RouteLocation, RouteParams } from 'vue-router';
+import type { LocationQuery, RouteLocation, RouteParams } from 'vue-router';
 
 import { booleanProp, objectProp, stringProp } from '@/framework/utils/vue';
 
-const { route, routeParams, url, internal } = defineProps({
+const { route, routeParams, routeQuery, url, internal } = defineProps({
     route: stringProp(),
     routeParams: objectProp<RouteParams>(() => ({})),
+    routeQuery: objectProp<LocationQuery>(() => ({})),
     url: stringProp(),
     internal: booleanProp(),
 });
@@ -28,6 +29,7 @@ const linkProps = $computed(() => ({
         to: objectWithoutEmpty<Partial<RouteLocation>>({
             name: route,
             params: routeParams,
+            query: routeQuery,
         }),
     },
 }));

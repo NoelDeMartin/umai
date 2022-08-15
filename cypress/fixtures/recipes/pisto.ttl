@@ -1,0 +1,15 @@
+@prefix schema: <https://schema.org/> .
+@prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
+@prefix purl: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<#it>
+    a schema:Recipe;
+    schema:name "Pisto";
+    schema:description "Pisto is the same as Ratatouille!";
+    purl:isReferencedBy <https://example.org/recipes/public#it> .
+
+<#it-metadata> a crdt:Metadata;
+    crdt:resource <#it>;
+    crdt:createdAt "2022-03-25T11:31:32.448Z"^^xsd:dateTime;
+    crdt:updatedAt "2022-03-25T11:31:32.448Z"^^xsd:dateTime.

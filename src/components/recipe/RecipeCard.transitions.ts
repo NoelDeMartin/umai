@@ -10,49 +10,22 @@ import {
     defineLeaveTransition,
 } from '@/framework/core/services/ElementTransitionsService';
 
-export const enterTransition = defineEnterTransition(async ($card, previous) => {
-    if (previous?.config.name) {
-        await delayUntil($card, ElementTransitions.waitElementsGone(previous.config.name, previous.config.id));
-
-        return;
-    }
-
-    if (Router.previousRouteWas('recipes.show')) {
-        return;
-    }
-
-    await fadeIn($card, 700);
-});
-
-export const leaveTransition = defineLeaveTransition(async wrapper => {
-    Router.currentRouteIs('recipes.show')
-        ? await ElementTransitions.waitElementsReady('recipe-details')
-        : await fadeOut(wrapper, 700);
-});
-
-export const transitionToCard = defineElementTransition(async ($wrapper, $card, { element: $nextCard }) => {
-    const duration = 700;
-    const boundingRect = $card.getBoundingClientRect();
-    const nextBoundingRect = $nextCard.getBoundingClientRect();
-
-    await animateElement($wrapper, {
-        duration,
-        boundingRects: [boundingRect, nextBoundingRect],
-    });
-});
-
-export const transitionToDetails = defineElementTransition(async ($wrapper, $card, { element: $details }) => {
+async function transitionToRecipePage(
+    $wrapper: HTMLElement,
+    $card: HTMLElement,
+    $page: HTMLElement,
+    $pageHeaderTitle: HTMLElement,
+): Promise<void> {
     const duration = 500;
     const $cardOverlay = document.createElement('div');
     const $cardTitleWrapper = requireChildElement($card, '.recipe-card--title-wrapper');
     const $cardTitleText = requireChildElement($card, '.recipe-card--title-text');
     const $cardTitleBackground = requireChildElement($card, '.recipe-card--title-background');
-    const $detailsWrapper = requireChildElement($details, '.recipe-page--wrapper');
-    const $detailsImage = requireChildElement($details, '.recipe-page--image');
-    const $detailsHeaderTitle = requireChildElement($details, '.recipe-details--header-title');
+    const $pageWrapper = requireChildElement($page, '.recipe-page--wrapper');
+    const $pageImage = requireChildElement($page, '.recipe-page--image');
     const cardBoundingRect = $card.getBoundingClientRect();
-    const detailsImageBoundingRect = $detailsImage.getBoundingClientRect();
-    const detailsHeaderTitleBoundingRect = $detailsHeaderTitle.getBoundingClientRect();
+    const pageImageBoundingRect = $pageImage.getBoundingClientRect();
+    const pageHeaderTitleBoundingRect = $pageHeaderTitle.getBoundingClientRect();
 
     await animateElements({ duration, fill: 'forwards' }, [
         {
@@ -67,7 +40,7 @@ export const transitionToDetails = defineElementTransition(async ($wrapper, $car
         {
             element: $wrapper,
             before: { addClasses: 'z-10' },
-            boundingRects: [cardBoundingRect, detailsImageBoundingRect],
+            boundingRects: [cardBoundingRect, pageImageBoundingRect],
         },
         {
             element: $cardOverlay,
@@ -77,7 +50,7 @@ export const transitionToDetails = defineElementTransition(async ($wrapper, $car
             styles: {
                 opacity: [0, 1],
                 height: [
-                    `${UI.headerHeight * cardBoundingRect.height / detailsImageBoundingRect.height}px`,
+                    `${UI.headerHeight * cardBoundingRect.height / pageImageBoundingRect.height}px`,
                     `${UI.headerHeight}px`,
                 ],
             },
@@ -93,11 +66,11 @@ export const transitionToDetails = defineElementTransition(async ($wrapper, $car
             styles: {
                 paddingLeft: [
                     TailwindCSS.css('spacing.2'),
-                    `${detailsHeaderTitleBoundingRect.left}px`,
+                    `${pageHeaderTitleBoundingRect.left}px`,
                 ],
                 paddingRight: [
                     TailwindCSS.css('spacing.2'),
-                    `${window.innerWidth - detailsHeaderTitleBoundingRect.right}px`,
+                    `${window.innerWidth - pageHeaderTitleBoundingRect.right}px`,
                 ],
             },
         },
@@ -111,11 +84,65 @@ export const transitionToDetails = defineElementTransition(async ($wrapper, $car
         },
         { element: $cardTitleBackground, styles: { opacity: [1, 0] } },
         {
-            element: $detailsWrapper,
+            element: $pageWrapper,
             before: { addClasses: '!z-20' },
             after: { removeClasses: '!z-20' },
         },
     ]);
+}
 
+export const enterTransition = defineEnterTransition(async ($card, previous) => {
+    if (previous?.config.name) {
+        await delayUntil($card, ElementTransitions.waitElementsGone(previous.config.name, previous.config.id));
+
+        return;
+    }
+
+    if (Router.previousRouteWas('recipes.show')) {
+        return;
+    }
+
+    await fadeIn($card, 700);
+});
+
+export const leaveTransition = defineLeaveTransition(async wrapper => {
+    if (Router.currentRouteIs('recipes.show')) {
+        await ElementTransitions.waitElementsReady('recipe-details');
+
+        return;
+    }
+
+    if (Router.currentRouteIs('viewer')) {
+        await ElementTransitions.waitElementsReady('viewer-recipe');
+
+        return;
+    }
+
+    await fadeOut(wrapper, 700);
+});
+
+export const transitionToCard = defineElementTransition(async ($wrapper, $card, { element: $nextCard }) => {
+    const duration = 700;
+    const boundingRect = $card.getBoundingClientRect();
+    const nextBoundingRect = $nextCard.getBoundingClientRect();
+
+    await animateElement($wrapper, {
+        duration,
+        boundingRects: [boundingRect, nextBoundingRect],
+    });
+});
+
+
+export const transitionToViewer = defineElementTransition(async ($wrapper, $card, { element: $viewer }) => {
+    const $detailsHeaderTitle = requireChildElement($viewer, '.viewer-recipe--header-title');
+
+    await transitionToRecipePage($wrapper, $card, $viewer, $detailsHeaderTitle);
+    await ElementTransitions.waitElementsReady('viewer-recipe');
+});
+
+export const transitionToDetails = defineElementTransition(async ($wrapper, $card, { element: $details }) => {
+    const $detailsHeaderTitle = requireChildElement($details, '.recipe-details--header-title');
+
+    await transitionToRecipePage($wrapper, $card, $details, $detailsHeaderTitle);
     await ElementTransitions.waitElementsReady('recipe-details');
 });

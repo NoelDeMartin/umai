@@ -303,7 +303,7 @@ export default class CookbookService extends Service<State, ComputedState> {
         return new RecipesList({
             url: `${remoteCookbookUrl}public#it`,
             name: user.name ? `${user.name}'s Public Recipes` : 'Public Recipes',
-            creator: user.webId,
+            creatorWebId: user.webId,
         });
     }
 

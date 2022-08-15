@@ -1,5 +1,5 @@
 import { fail } from '@noeldemartin/utils';
-import { customRef, inject, nextTick } from 'vue';
+import { computed, customRef, inject, nextTick, ref, watch } from 'vue';
 import type { Directive, InjectionKey, PropType, Ref } from 'vue';
 
 type Prop<T> = {
@@ -19,6 +19,15 @@ export function booleanProp(defaultValue: boolean = false): Prop<boolean> {
         type: Boolean,
         default: defaultValue,
     };
+}
+
+export function computedAsync<T>(getter: () => Promise<T>): Ref<T | undefined> {
+    const result = ref<T>();
+    const asyncValue = computed(getter);
+
+    watch(asyncValue, async () => (result.value = await asyncValue.value), { immediate: true });
+
+    return result;
 }
 
 export function defineDirective(directive: Directive): Directive {

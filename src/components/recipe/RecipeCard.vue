@@ -8,6 +8,7 @@
                 'leave': leaveTransition,
                 'recipe-card': transitionToCard,
                 'recipe-details': transitionToDetails,
+                'viewer-recipe': transitionToViewer,
             }
         }"
         :data-recipe-url="recipe.url"
@@ -22,7 +23,11 @@
             <router-link
                 v-focus-visible="setVisibleFocus"
                 class="block w-full h-clickable focus-visible:outline-none"
-                :to="{ name: 'recipes.show', params: { recipe: recipe.uuid } }"
+                :to="
+                    $router.currentRouteIs('viewer')
+                        ? { name: 'viewer', query: { url: recipe.url } }
+                        : { name: 'recipes.show', params: { recipe: recipe.uuid } }
+                "
             >
                 <span aria-hidden="true" class="absolute inset-0" />
                 <div v-if="recipe.name" class="absolute inset-x-0 bottom-0 p-2 recipe-card--title-wrapper">
@@ -39,7 +44,13 @@ import { requiredObjectProp } from '@/framework/utils/vue';
 
 import type Recipe from '@/models/Recipe';
 
-import { enterTransition, leaveTransition, transitionToCard, transitionToDetails } from './RecipeCard.transitions';
+import {
+    enterTransition,
+    leaveTransition,
+    transitionToCard,
+    transitionToDetails,
+    transitionToViewer,
+} from './RecipeCard.transitions';
 
 defineProps({
     recipe: requiredObjectProp<Recipe>(),

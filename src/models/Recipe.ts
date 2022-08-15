@@ -75,9 +75,9 @@ export default class Recipe extends Model {
         return this.belongsToMany(RecipesList, 'listUrls');
     }
 
-    public toExternalJsonLD(): JsonLD {
+    public toExternalJsonLD(includeIds?: boolean): JsonLD {
         return this.toJsonLD({
-            ids: this.url?.startsWith('http'),
+            ids: includeIds ?? this.url?.startsWith('http'),
             timestamps: false,
             history: false,
         });

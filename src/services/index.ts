@@ -7,10 +7,12 @@ import Recipe from '@/models/Recipe';
 
 import Config from './facades/Config';
 import Cookbook from './facades/Cookbook';
+import Viewer from './facades/Viewer';
 
 const services = {
     $config: Config,
     $cookbook: Cookbook,
+    $viewer: Viewer,
 };
 
 type AppServices = typeof services;
