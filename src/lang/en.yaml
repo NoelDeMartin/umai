@@ -309,7 +309,7 @@ viewer:
     creator: List created by [{name}]({url})
 
   recipe:
-    import: Save in cookbook
+    import: Save in my cookbook
     creator: Recipe created by [{name}]({url})
     viewAll: View all their recipes
     inCookbook: "[View in your cookbook](action:view-in-cookbook)"
