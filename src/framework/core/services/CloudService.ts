@@ -1,4 +1,15 @@
-import { Semaphore, after, arrayChunk, arrayFilter, fail, isSuccessfulResponse, map, tap } from '@noeldemartin/utils';
+import {
+    Semaphore,
+    after,
+    arrayChunk,
+    arrayFilter,
+    fail,
+    isEmpty,
+    isSuccessfulResponse,
+    map,
+    objectWithout,
+    tap,
+} from '@noeldemartin/utils';
 import { Metadata, Operation, SolidACLAuthorization, SolidContainerModel, SolidModel, Tombstone } from 'soukai-solid';
 import type { Engine } from 'soukai';
 import type { ObjectsMap } from '@noeldemartin/utils';
@@ -96,6 +107,19 @@ export default class CloudService extends Service<State, ComputedState> {
         this.dirtyFileUrls = tap(new Set(this.dirtyFileUrls), urls => urls.delete(url));
     }
 
+    public updateOfflineModelUrl(url: string, newUrl: string): void {
+        if (!(url in this.offlineModelUpdates)) {
+            return;
+        }
+
+        this.setState({
+            offlineModelUpdates: {
+                ...objectWithout(this.offlineModelUpdates, [url]),
+                [newUrl]: this.offlineModelUpdates,
+            },
+        });
+    }
+
     protected async boot(): Promise<void> {
         await super.boot();
 
@@ -134,7 +158,7 @@ export default class CloudService extends Service<State, ComputedState> {
     protected getComputedStateDefinitions(): ComputedStateDefinitions<State, ComputedState> {
         return {
             dirty: ({ dirtyFileUrls, dirtyRemoteModels, offlineModelUpdates }) =>
-                Object.values(offlineModelUpdates).length + dirtyFileUrls.size + dirtyRemoteModels.size > 0,
+                !isEmpty(offlineModelUpdates) || dirtyFileUrls.size + dirtyRemoteModels.size > 0,
             online: ({ status }) => status === CloudStatus.Online,
             offline: ({ status }) => status === CloudStatus.Offline,
             syncing: ({ status }) => status === CloudStatus.Syncing,

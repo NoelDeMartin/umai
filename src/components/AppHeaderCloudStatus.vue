@@ -39,7 +39,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 
-import Auth from '@/framework/core/facades/Auth';
 import Cloud from '@/framework/core/facades/Cloud';
 
 import CloudStatusModal from '@/components/modals/CloudStatusModal.vue';
@@ -49,9 +48,10 @@ const pendingUpdates = $computed(() => {
     if (!Cloud.dirty)
         return { badge: null, a11y: t('cloud.noPendingUpdates_a11y') };
 
-    const updatesCount = Auth.loggedIn
-        ? Cloud.pendingUpdates.length
-        : Object.values(Cloud.offlineModelUpdates).reduce((total, count) => total + count);
+    const updatesCount = Math.max(
+        Cloud.pendingUpdates.length,
+        Object.values(Cloud.offlineModelUpdates).reduce((total, count) => total + count, 0),
+    );
 
     if (updatesCount > 9)
         return { badge: '9+', a11y: t('cloud.manyPendingUpdates_a11y') };

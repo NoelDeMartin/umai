@@ -1,4 +1,4 @@
-import { PromisedValue, arr, isObject, requireUrlParentDirectory, tap, uuid } from '@noeldemartin/utils';
+import { PromisedValue, arr, isObject, requireUrlParentDirectory, tap, urlRoute, uuid } from '@noeldemartin/utils';
 import { SolidContainerModel, SolidTypeRegistration } from 'soukai-solid';
 import { SolidDocumentPermission, findInstanceRegistrations } from '@noeldemartin/solid-utils';
 import type { FluentArray, Obj } from '@noeldemartin/utils';
@@ -343,7 +343,10 @@ export default class CookbookService extends Service<State, ComputedState> {
             if (recipe.url.startsWith(remoteCollection))
                 continue;
 
-            const documentUrl = recipe.requireDocumentUrl();
+            const recipeUrl = recipe.url;
+            const newRecipeUrl = recipe.url.replace(Recipe.collection, remoteCollection);
+            const documentUrl = urlRoute(recipeUrl);
+            const newDocumentUrl = urlRoute(newRecipeUrl);
             const document = await engine.readOne(Recipe.collection, documentUrl);
             const fileRenames = migrateLocalUrls(document);
 
@@ -352,8 +355,13 @@ export default class CookbookService extends Service<State, ComputedState> {
 
                 Cloud.enqueueFileUpload(newUrl);
             }));
-            await engine.create(remoteCollection, document, documentUrl.replace(Recipe.collection, remoteCollection));
+            await engine.create(remoteCollection, document, newDocumentUrl);
             await engine.delete(Recipe.collection, documentUrl);
+
+            recipe.setAttribute('url', newRecipeUrl);
+            recipe.cleanDirty();
+
+            Cloud.updateOfflineModelUrl(recipeUrl, newRecipeUrl);
         }
     }
 
