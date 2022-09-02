@@ -28,6 +28,7 @@ interface State {
     dirtyFileUrls: Set<string>;
     dirtyRemoteModels: ObjectsMap<SolidModel>;
     remoteOperationUrls: Record<string, string[]>;
+    offlineModelUpdates: Record<string, number>;
 }
 
 interface ComputedState {
@@ -48,7 +49,7 @@ export interface CloudHandler<T extends SolidModel = SolidModel> {
 
 export default class CloudService extends Service<State, ComputedState> {
 
-    public static persist: Array<keyof State> = ['autoSync', 'startupSync'];
+    public static persist: Array<keyof State> = ['autoSync', 'startupSync', 'offlineModelUpdates'];
 
     protected handlers: CloudHandler[] = [];
     protected asyncLock: Semaphore = new Semaphore();
@@ -82,9 +83,9 @@ export default class CloudService extends Service<State, ComputedState> {
 
         this.handlers.push({ modelClass, ...handler });
 
-        modelClass.on('created', model => Auth.isLoggedIn() && handler.isReady() && this.createRemoteModel(model));
-        modelClass.on('updated', model => Auth.isLoggedIn() && handler.isReady() && this.updateRemoteModel(model));
-        modelClass.on('deleted', model => Auth.isLoggedIn() && handler.isReady() && this.updateRemoteModel(model));
+        modelClass.on('created', model => handler.isReady() && this.createRemoteModel(model));
+        modelClass.on('updated', model => handler.isReady() && this.updateRemoteModel(model));
+        modelClass.on('deleted', model => handler.isReady() && this.updateRemoteModel(model));
     }
 
     public enqueueFileUpload(url: string): void {
@@ -126,12 +127,14 @@ export default class CloudService extends Service<State, ComputedState> {
             dirtyFileUrls: new Set(),
             dirtyRemoteModels: map([], 'url'),
             remoteOperationUrls: {},
+            offlineModelUpdates: {},
         };
     }
 
     protected getComputedStateDefinitions(): ComputedStateDefinitions<State, ComputedState> {
         return {
-            dirty: ({ dirtyFileUrls, dirtyRemoteModels }) => dirtyFileUrls.size + dirtyRemoteModels.size > 0,
+            dirty: ({ dirtyFileUrls, dirtyRemoteModels, offlineModelUpdates }) =>
+                Object.values(offlineModelUpdates).length + dirtyFileUrls.size + dirtyRemoteModels.size > 0,
             online: ({ status }) => status === CloudStatus.Online,
             offline: ({ status }) => status === CloudStatus.Offline,
             syncing: ({ status }) => status === CloudStatus.Syncing,
@@ -274,7 +277,9 @@ export default class CloudService extends Service<State, ComputedState> {
         );
 
         this.setState({
-            dirtyRemoteModels: map([], 'url'),
+            dirtyRemoteModels: localModel
+                ? this.dirtyRemoteModels.filter((_, url) => url !== localModel.url)
+                : map([], 'url'),
             remoteOperationUrls: remoteModels.reduce((urls, model) => {
                 urls[model.url] = model
                     .getRelatedModels()
@@ -282,9 +287,15 @@ export default class CloudService extends Service<State, ComputedState> {
                     .flat()
                     .map(operation => operation.url);
 
-
                 return urls;
             }, this.remoteOperationUrls),
+            offlineModelUpdates: Object.entries(this.offlineModelUpdates).reduce((updates, [url, count]) => {
+                if ((localModel && localModel.url !== url) || !this.dirtyRemoteModels.hasKey(url)) {
+                    updates[url] = count;
+                }
+
+                return updates;
+            }, {} as Record<string, number>),
         });
     }
 
@@ -359,6 +370,15 @@ export default class CloudService extends Service<State, ComputedState> {
         dirtyRemoteModels.add(remoteModel);
 
         this.setState({ dirtyRemoteModels });
+
+        if (!Auth.loggedIn) {
+            this.setState({
+                offlineModelUpdates: {
+                    ...this.offlineModelUpdates,
+                    [localModel.url]: 1,
+                },
+            });
+        }
     }
 
     protected async updateRemoteModel(localModel: SolidModel): Promise<void> {
@@ -372,6 +392,17 @@ export default class CloudService extends Service<State, ComputedState> {
             dirtyRemoteModels.add(remoteModel);
 
             this.setState({ dirtyRemoteModels });
+        }
+
+        if (!Auth.loggedIn) {
+            const modelUpdates = this.offlineModelUpdates[localModel.url] ?? 0;
+
+            this.setState({
+                offlineModelUpdates: {
+                    ...this.offlineModelUpdates,
+                    [localModel.url]: modelUpdates + 1,
+                },
+            });
         }
     }
 
