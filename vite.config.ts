@@ -88,6 +88,12 @@ export default defineConfig({
             },
         },
         terserOptions: {
+            // Needed for image-blob-reduce
+            // See https://github.com/nodeca/image-blob-reduce#known-issues
+            compress: { evaluate: false },
+
+            // Needed to display Error titles in reports
+            // See src/components/modals/ErrorReportModal.vue
             keep_classnames: /Error$/,
             keep_fnames: /Error$/,
         },
