@@ -11,7 +11,7 @@
     "deploy": "noeldemartin-deploy-app noeldemartin/umai umai.noeldemartin.com",
     "lint": "noeldemartin-lint src cypress .storybook",
     "test": "jest --verbose",
-    "test:serve-app": "NODE_ENV=testing vite",
+    "test:serve-app": "vite --mode testing",
     "test:serve-pod": "community-solid-server -p 4000 -l warn",
     "test:coverage": "jest --coverage",
     "cy:open": "cypress open",

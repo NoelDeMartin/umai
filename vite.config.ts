@@ -13,9 +13,9 @@ import { VitePWA } from 'vite-plugin-pwa';
 import packageJson from './package.json';
 
 const version = packageJson.version;
-const env = process.env.NODE_ENV ?? 'development';
 const sourceUrl = packageJson.repository.replace('github:', 'https://github.com/');
 const sourceCommitHash = execSync('git rev-parse HEAD').toString();
+const isTesting = process.argv.join(' ').includes('--mode testing');
 
 export default defineConfig({
     plugins: [
@@ -74,7 +74,7 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': resolve(__dirname, './src'),
-            '/src/main.ts': env === 'testing'
+            '/src/main.ts': isTesting
                 ? '/src/main.testing.ts'
                 : '/src/main.ts',
         },
