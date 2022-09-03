@@ -80,15 +80,17 @@ export default defineConfig({
         },
     },
     build: {
+        minify: 'terser',
         rollupOptions: {
             input: {
                 main: resolve(__dirname, 'index.html'),
                 404: resolve(__dirname, '404.html'),
             },
         },
-    },
-    esbuild: {
-        keepNames: true,
+        terserOptions: {
+            keep_classnames: /Error$/,
+            keep_fnames: /Error$/,
+        },
     },
     define: {
         'process.env': {
