@@ -60,9 +60,10 @@ describe('Viewer', () => {
         cy.startApp();
 
         // Act
-        cy.press('Save in cookbook');
+        cy.press('Save in my cookbook');
 
         // Assert
+        cy.url().should('equal', `${Cypress.config('baseUrl')}/`);
         cy.assertLocalDocumentEquals('solid://recipes/aguachile', aguachileJsonLD);
     });
 
