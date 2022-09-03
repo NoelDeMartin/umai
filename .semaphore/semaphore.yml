@@ -31,3 +31,5 @@ blocks:
         on_fail:
           commands:
             - artifact push job cypress/screenshots
+    skip:
+      when: branch = 'gh-pages'
