@@ -358,10 +358,8 @@ export default class CookbookService extends Service<State, ComputedState> {
             await engine.create(remoteCollection, document, newDocumentUrl);
             await engine.delete(Recipe.collection, documentUrl);
 
-            recipe.setAttribute('url', newRecipeUrl);
-            recipe.cleanDirty();
-
-            Cloud.updateOfflineModelUrl(recipeUrl, newRecipeUrl);
+            recipe.onMoved(newRecipeUrl);
+            Cloud.onModelMoved(recipeUrl, newRecipeUrl);
         }
     }
 

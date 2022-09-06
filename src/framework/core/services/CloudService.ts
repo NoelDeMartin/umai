@@ -107,14 +107,14 @@ export default class CloudService extends Service<State, ComputedState> {
         this.dirtyFileUrls = tap(new Set(this.dirtyFileUrls), urls => urls.delete(url));
     }
 
-    public updateOfflineModelUrl(url: string, newUrl: string): void {
-        if (!(url in this.offlineModelUpdates)) {
+    public onModelMoved(previousUrl: string, newUrl: string): void {
+        if (!(previousUrl in this.offlineModelUpdates)) {
             return;
         }
 
         this.setState({
             offlineModelUpdates: {
-                ...objectWithout(this.offlineModelUpdates, [url]),
+                ...objectWithout(this.offlineModelUpdates, previousUrl),
                 [newUrl]: this.offlineModelUpdates,
             },
         });
