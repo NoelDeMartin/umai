@@ -18,6 +18,7 @@ import type { SolidModelConstructor } from 'soukai-solid';
 import Auth from '@/framework/core/facades/Auth';
 import Events from '@/framework/core/facades/Events';
 import Files from '@/framework/core/facades/Files';
+import Network from '@/framework/core/facades/Network';
 import Service from '@/framework/core/Service';
 import { getLocalClass, getRemoteClass } from '@/framework/cloud/remote_helpers';
 import type Authenticator from '@/framework/auth/Authenticator';
@@ -84,6 +85,14 @@ export default class CloudService extends Service<State, ComputedState> {
             await after({ milliseconds: Math.max(0, 1000 - (Date.now() - start)) });
             this.status = CloudStatus.Online;
         });
+    }
+
+    public async syncIfOnline(model?: SolidModel): Promise<void> {
+        if (!Network.online) {
+            return;
+        }
+
+        await this.sync(model);
     }
 
     public registerHandler<T extends SolidModel>(

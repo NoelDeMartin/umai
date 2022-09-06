@@ -53,6 +53,7 @@
 <script setup lang="ts">
 import type { JsonLD } from '@noeldemartin/solid-utils';
 
+import Cloud from '@/framework/core/facades/Cloud';
 import Router from '@/framework/core/facades/Router';
 import UI from '@/framework/core/facades/UI';
 
@@ -66,9 +67,11 @@ const wobblyBorder = $computed(() => UI.isMobile ? {} : { min: 200, max: 350 });
 async function importFromJsonLD(jsonld: JsonLD) {
     const recipe = await Recipe.createFromJsonLD(jsonld);
 
-    Router.push({
+    await Router.push({
         name: 'recipes.show',
         params: { recipe: recipe.uuid },
     });
+
+    await Cloud.syncIfOnline(recipe);
 }
 </script>

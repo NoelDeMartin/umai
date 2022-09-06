@@ -19,7 +19,6 @@ import { onMounted } from 'vue';
 
 import App from '@/framework/core/facades/App';
 import Cloud from '@/framework/core/facades/Cloud';
-import Network from '@/framework/core/facades/Network';
 import Router from '@/framework/core/facades/Router';
 import UI from '@/framework/core/facades/UI';
 import { translate } from '@/framework/utils/translate';
@@ -35,9 +34,9 @@ let scanning = $ref(hasLocationQueryParameter('from'));
 
 async function onCreated(recipe: Recipe) {
     UI.scrollLayout({ top: 0 });
-    Router.push({ name: 'home' });
 
-    await (Network.online && Cloud.sync(recipe));
+    await Router.push({ name: 'home' });
+    await Cloud.syncIfOnline(recipe);
 }
 
 onMounted(async () => {

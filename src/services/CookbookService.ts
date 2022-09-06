@@ -11,7 +11,6 @@ import Service from '@/framework/core/Service';
 import { setRemoteCollection } from '@/framework/cloud/remote_helpers';
 import type { ComputedStateDefinitions, IService } from '@/framework/core/Service';
 
-import Network from '@/framework/core/facades/Network';
 import Recipe from '@/models/Recipe';
 import RecipesList from '@/models/RecipesList';
 
@@ -76,7 +75,7 @@ export default class CookbookService extends Service<State, ComputedState> {
     public async deleteRecipe(recipe: Recipe): Promise<void> {
         if (this.isRemote) {
             await recipe.softDelete();
-            await (Network.online && Cloud.sync(recipe));
+            await Cloud.syncIfOnline(recipe);
 
             return;
         }

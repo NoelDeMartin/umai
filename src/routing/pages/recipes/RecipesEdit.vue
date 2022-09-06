@@ -13,7 +13,6 @@
 
 <script setup lang="ts">
 import Cloud from '@/framework/core/facades/Cloud';
-import Network from '@/framework/core/facades/Network';
 import Router from '@/framework/core/facades/Router';
 import { requiredObjectProp } from '@/framework/utils/vue';
 
@@ -23,12 +22,12 @@ const { recipe } = defineProps({
     recipe: requiredObjectProp<Recipe>(),
 });
 
-function onUpdated(recipe: Recipe) {
-    Network.online && Cloud.sync(recipe);
-
-    Router.push({
+async function onUpdated(recipe: Recipe) {
+    await Router.push({
         name: 'recipes.show',
         params: { recipe: recipe.uuid as string },
     });
+
+    await Cloud.syncIfOnline(recipe);
 }
 </script>

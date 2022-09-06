@@ -63,7 +63,6 @@ import { silenced, tap, urlClean } from '@noeldemartin/utils';
 
 import Auth from '@/framework/core/facades/Auth';
 import Cloud from '@/framework/core/facades/Cloud';
-import Network from '@/framework/core/facades/Network';
 import Router from '@/framework/core/facades/Router';
 import { computedAsync } from '@/framework/utils/vue';
 
@@ -98,6 +97,6 @@ async function importRecipe(): Promise<void> {
 
     await recipe.save();
     await Router.push({ name: 'home' });
-    await (Network.online && Cloud.sync(recipe));
+    await Cloud.syncIfOnline(recipe);
 }
 </script>
