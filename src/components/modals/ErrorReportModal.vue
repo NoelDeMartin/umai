@@ -3,7 +3,7 @@
         <div class="px-4 pt-1 pb-4">
             <div class="flex justify-between">
                 <h2 class="font-medium text-lg flex items-center">
-                    <CoreMarkdown :text="title" heading />
+                    <CoreMarkdown :text="report.title" heading />
                     <template v-if="reports.length > 1">
                         ({{ activeReportIndex + 1 }}/{{ reports.length }})
                         <CoreButton
@@ -58,8 +58,8 @@
                 </div>
             </div>
             <CoreMarkdown
-                v-if="description"
-                :text="description"
+                v-if="report.description"
+                :text="report.description"
                 class="mt-2"
             />
             <div v-if="!details" class="flex flex-row justify-end mt-4">
@@ -91,18 +91,16 @@ const { reports } = defineProps({
 
 const activeReportIndex = $ref(0);
 const report = $computed(() => reports[activeReportIndex] as ErrorReport);
-const title = $computed(() => report.error?.name ?? report.title);
-const description = $computed(() => report.error ? report.error.message : null);
-const summary = $computed(() => description ? `${title}: ${description}` : title);
-const details = $computed(() => report.error?.stack || null);
+const summary = $computed(() => report.description ? `${report.title}: ${report.description}` : report.title);
+const details = $computed(() => report.details);
 const githubReportUrl = $computed(() => {
     const issueBodyTemplate = translate('errors.githubIssueBody');
     const issueTitle = encodeURIComponent(summary);
     const issueBody = encodeURIComponent(
         issueBodyTemplate.replace(
-            '%STACKTRACE%',
+            '%DETAILS%',
             stringExcerpt(
-                details ?? 'Stack trace missing',
+                details ?? 'Details missing from report',
                 1900 - issueBodyTemplate.length - issueTitle.length - App.sourceUrl.length,
             ).trim(),
         ),
@@ -112,7 +110,7 @@ const githubReportUrl = $computed(() => {
 });
 
 function inspectInConsole() {
-    (window as { error?: Error }).error = report.error;
+    (window as { error?: unknown }).error = report.error;
 
     UI.showSnackbar(translate('errors.addedToConsole'));
 }

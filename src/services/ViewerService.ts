@@ -1,5 +1,6 @@
 import { arrayFilter, urlRoute } from '@noeldemartin/utils';
-import { NetworkError, SolidEngine } from 'soukai-solid';
+import { NetworkRequestError } from '@noeldemartin/solid-utils';
+import { SolidEngine } from 'soukai-solid';
 
 import Auth from '@/framework/core/facades/Auth';
 import Errors from '@/framework/core/facades/Errors';
@@ -103,7 +104,7 @@ export default class ViewerService extends Service<State, ComputedState> {
 
             return true;
         } catch(error) {
-            if (!(error instanceof NetworkError))
+            if (!(error instanceof NetworkRequestError))
                 Errors.report(error);
 
             return false;
@@ -133,7 +134,7 @@ export default class ViewerService extends Service<State, ComputedState> {
 
             return true;
         } catch(error) {
-            if (!(error instanceof NetworkError))
+            if (!(error instanceof NetworkRequestError))
                 Errors.report(error);
 
             return false;

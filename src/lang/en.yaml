@@ -346,8 +346,8 @@ errors:
   githubIssueBody: |
     [Please, explain here what you were trying to do when this error appeared]
 
-    Stack trace:
+    Error details:
     ```
-    %STACKTRACE%
+    %DETAILS%
     ```
   fileUpload: There was an error reading the file

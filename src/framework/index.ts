@@ -20,9 +20,9 @@ import { services as baseServices } from '@/framework/core';
 import type Authenticator from '@/framework/auth/Authenticator';
 import type Service from '@/framework/core/Service';
 import type { AuthenticatorName } from '@/framework/auth';
-import type { ErrorReason } from '@/framework/core/services/ErrorsService';
+import type { ErrorSource } from '@/framework/core/services/ErrorsService';
 
-type ErrorHandler = (error: ErrorReason) => boolean;
+type ErrorHandler = (error: ErrorSource) => boolean;
 
 const frameworkHandler: ErrorHandler = error => {
     if (!Errors.instance) {
@@ -65,7 +65,7 @@ export type BootstrapApplicationOptions = Partial<{
     services: Record<string, Service>;
     authenticators: Record<string, Authenticator>;
     defaultAuthenticator: AuthenticatorName;
-    handleError(error: ErrorReason): boolean;
+    handleError(error: ErrorSource): boolean;
     beforeLaunch(app: VueApp): Promise<unknown> | unknown;
     beforeMount(app: VueApp): Promise<unknown> | unknown;
 }>;

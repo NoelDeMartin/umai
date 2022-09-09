@@ -21,7 +21,7 @@ import type Authenticator from '@/framework/auth/Authenticator';
 import type { AuthenticatorName } from '@/framework/auth';
 import type { AuthSession } from '@/framework/auth/Authenticator';
 import type { ComputedStateDefinitions, IService } from '@/framework/core/Service';
-import type { ErrorReason } from '@/framework/core/services/ErrorsService';
+import type { ErrorSource } from '@/framework/core/services/ErrorsService';
 
 import { CoreColor } from '@/components/core';
 import { i18nTranslate } from '@/framework/plugins/i18n';
@@ -34,17 +34,17 @@ interface State {
     preferredAuthenticator: AuthenticatorName | null;
     ongoing: boolean;
     stale: boolean;
-    loginError: ErrorReason | null;
+    loginError: ErrorSource | null;
     previousSession: {
         authenticator: AuthenticatorName;
         loginUrl: string;
-        error: ErrorReason | null;
+        error: ErrorSource | null;
     } | null;
 }
 
 interface ComputedState {
     authenticator: Authenticator | null;
-    error: ErrorReason | null;
+    error: ErrorSource | null;
     fetch: Fetch;
     loggedIn: boolean;
     wasLoggedIn: boolean;

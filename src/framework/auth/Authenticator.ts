@@ -6,7 +6,7 @@ import type { Fetch } from 'soukai-solid';
 import type { SolidUserProfile } from '@noeldemartin/solid-utils';
 
 import type { AuthenticatorName } from '@/framework/auth';
-import type { ErrorReason } from '@/framework/core/services/ErrorsService';
+import type { ErrorSource } from '@/framework/core/services/ErrorsService';
 
 type ListenerEvent = keyof AuthenticatorListener;
 type ListenerEventPayload<Event extends ListenerEvent, Callback = AuthenticatorListener[Event]> =
@@ -22,7 +22,7 @@ export interface AuthSession {
 
 export interface AuthenticatorListener {
     onSessionStarted?: (session: AuthSession) => Promise<void> | void;
-    onSessionFailed?: (loginUrl: string, error: ErrorReason) => Promise<void> | void;
+    onSessionFailed?: (loginUrl: string, error: ErrorSource) => Promise<void> | void;
     onSessionEnded?: () => Promise<void> | void;
     onAuthenticatedFetchReady?: (fetch: Fetch) => Promise<void> | void;
 }
@@ -100,7 +100,7 @@ export default abstract class Authenticator {
         return session;
     }
 
-    protected async failSession(loginUrl: string, error: ErrorReason): Promise<void> {
+    protected async failSession(loginUrl: string, error: ErrorSource): Promise<void> {
         await this.notifyListeners('onSessionFailed', loginUrl, error);
     }
 

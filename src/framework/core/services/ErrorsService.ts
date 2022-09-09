@@ -1,4 +1,5 @@
-import type { JSError } from '@noeldemartin/utils';
+import { JSError } from '@noeldemartin/utils';
+import { UnsuccessfulNetworkRequestError } from '@noeldemartin/solid-utils';
 
 import App from '@/framework/core/facades/App';
 import Service from '@/framework/core/Service';
@@ -16,12 +17,13 @@ interface ComputedState {
     hasStartupErrors: boolean;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ErrorReason = string | Error | JSError | any;
+export type ErrorSource = string | Error | JSError | unknown;
 
 export interface ErrorReport {
     title: string;
-    error?: Error;
+    description?: string;
+    details?: string;
+    error?: Error | JSError | unknown;
 }
 
 export default class ErrorsService extends Service<State, ComputedState> {
@@ -36,13 +38,13 @@ export default class ErrorsService extends Service<State, ComputedState> {
         this.enabled = false;
     }
 
-    public inspect(error: ErrorReason | ErrorReport[]): void {
-        const reports = Array.isArray(error) ? error : [this.getErrorReport(error)];
+    public async inspect(error: ErrorSource | ErrorReport[]): Promise<void> {
+        const reports = Array.isArray(error) ? error : [await this.createErrorReport(error)];
 
         UI.openModal(UI.resolveComponent(ApplicationComponent.ErrorReportModal), { reports });
     }
 
-    public report(error: ErrorReason, message?: string): void {
+    public async report(error: ErrorSource, message?: string): Promise<void> {
         if (App.isDevelopment) {
             // eslint-disable-next-line no-console
             console.error(error);
@@ -53,7 +55,7 @@ export default class ErrorsService extends Service<State, ComputedState> {
         }
 
         if (!App.isMounted) {
-            const startupError = this.getStartupErrorReport(error);
+            const startupError = await this.createStartupErrorReport(error);
 
             if (startupError) {
                 this.setState({ startupErrors: this.startupErrors.concat(startupError) });
@@ -62,6 +64,8 @@ export default class ErrorsService extends Service<State, ComputedState> {
             return;
         }
 
+        const report = await this.createErrorReport(error);
+
         UI.showSnackbar(message ?? translate('errors.notice'), {
             style: SnackbarStyle.Error,
             actions: [
@@ -69,7 +73,7 @@ export default class ErrorsService extends Service<State, ComputedState> {
                     text: translate('errors.viewDetails'),
                     handler: () => UI.openModal(
                         UI.resolveComponent(ApplicationComponent.ErrorReportModal),
-                        { reports: [this.getErrorReport(error)] },
+                        { reports: [report] },
                     ),
                 },
             ],
@@ -88,24 +92,49 @@ export default class ErrorsService extends Service<State, ComputedState> {
         };
     }
 
-    private getErrorReport(reason: ErrorReason): ErrorReport {
-        return typeof reason === 'string'
-            ? { title: reason }
-            : {
-                title: reason.message ?? translate('errors.unknown'),
-                error: reason,
-            };
+    private async createErrorReport(error: ErrorSource): Promise<ErrorReport> {
+        if (typeof error === 'string') {
+            return { title: error };
+        }
+
+        if (error instanceof UnsuccessfulNetworkRequestError) {
+            const body = await error.response.text();
+
+            return this.createErrorReportFromError(error, {
+                title: 'Unsuccessful Request',
+                details: `Response body:\n${body}\n\nStack trace:\n${error.stack}`,
+            });
+        }
+
+        if (error instanceof Error || error instanceof JSError) {
+            return this.createErrorReportFromError(error);
+        }
+
+        return {
+            title: translate('errors.unknown'),
+            error,
+        };
     }
 
-    private getStartupErrorReport(error: ErrorReason): ErrorReason | null {
+    private async createStartupErrorReport(error: ErrorSource): Promise<ErrorReport | null> {
         if (error instanceof ServiceBootError) {
             // Ignore second-order boot errors in order to have a cleaner startup crash screen.
             return error.cause instanceof ServiceBootError
                 ? null
-                : this.getErrorReport(error.cause);
+                : this.createErrorReport(error.cause);
         }
 
-        return error;
+        return this.createErrorReport(error);
+    }
+
+    private createErrorReportFromError(error: Error | JSError, defaults: Partial<ErrorReport> = {}): ErrorReport {
+        return {
+            title: error.name,
+            description: error.message,
+            details: error.stack,
+            error,
+            ...defaults,
+        };
     }
 
 }
