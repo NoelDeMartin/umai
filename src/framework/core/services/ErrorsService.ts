@@ -1,3 +1,5 @@
+import type { JSError } from '@noeldemartin/utils';
+
 import App from '@/framework/core/facades/App';
 import Service from '@/framework/core/Service';
 import ServiceBootError from '@/framework/core/errors/ServiceBootError';
@@ -15,7 +17,7 @@ interface ComputedState {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ErrorReason = string | Error | any;
+export type ErrorReason = string | Error | JSError | any;
 
 export interface ErrorReport {
     title: string;

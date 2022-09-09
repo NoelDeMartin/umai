@@ -1,3 +1,3 @@
-import { Error } from '@noeldemartin/utils';
+import { JSError } from '@noeldemartin/utils';
 
-export default class AuthenticationCancelledError extends Error {}
+export default class AuthenticationCancelledError extends JSError {}
