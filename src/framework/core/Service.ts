@@ -1,6 +1,7 @@
 import { Storage, isEmpty, objectOnly } from '@noeldemartin/utils';
 import type { Constructor } from '@noeldemartin/utils';
 
+import ServiceBootError from '@/framework/core/errors/ServiceBootError';
 import Store from '@/framework/core/facades/Store';
 
 export type ServiceState = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -44,7 +45,7 @@ export default class Service<
     private _proxy!: this;
     private _ready!: Promise<void>;
     private _resolveReady!: () => void;
-    private _rejectReady!: () => void;
+    private _rejectReady!: (error: ServiceBootError) => void;
 
     constructor() {
         if (this.static('__constructingPure'))
@@ -78,9 +79,15 @@ export default class Service<
     }
 
     public launch(namespace?: string): Promise<void> {
+        const handleError = (error: unknown) => this._rejectReady(new ServiceBootError(this._namespace, error));
+
         this._namespace = namespace ?? this._namespace;
 
-        this.boot().then(this._resolveReady).catch(this._rejectReady);
+        try {
+            this.boot().then(this._resolveReady).catch(handleError);
+        } catch (error) {
+            handleError(error);
+        }
 
         return this._ready;
     }
@@ -158,11 +165,11 @@ export default class Service<
     }
 
     protected hasComputedState(property: keyof ComputedState): boolean {
-        return `${this._namespace}/${property}` in Store.getters;
+        return `${this._namespace}/${property as string}` in Store.getters;
     }
 
     protected getComputedState<P extends keyof ComputedState>(property: P): ComputedState[P] {
-        return Store.getters[`${this._namespace}/${property}`];
+        return Store.getters[`${this._namespace}/${property as string}`];
     }
 
     protected getInitialState(): State {

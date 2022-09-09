@@ -282,7 +282,7 @@ recipes:
 startupCrash:
   title: Something went wrong!
   message: |
-    It seems like something did not work as it should :/
+    Something failed trying to start the application.
 
     Here's some things you can do:
   reload: Try again

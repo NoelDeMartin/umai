@@ -99,11 +99,18 @@ export async function bootstrapApplication(
     setDefaultAuthenticator(getAuthenticator(options.defaultAuthenticator ?? 'inrupt'));
 
     await options.beforeLaunch?.(app);
-    await Promise.all(Object.entries(services).map(([name, service]) => service.launch(name.slice(1))));
+    await Promise.all(
+        Object.entries(services).map(async ([name, service]) => {
+            await service
+                .launch(name.slice(1))
+                .catch(errorHandler);
+        }),
+    );
     await options.beforeMount?.(app);
 
     app.mount(options.selector ?? '#app');
     app._container?.classList.remove('loading');
+    document.getElementById('splash')?.remove();
 
     Events.emit('application-mounted');
 }
