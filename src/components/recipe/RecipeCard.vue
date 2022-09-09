@@ -18,7 +18,7 @@
             visibleFocus && 'ring-2 ring-offset-2 ring-primary-500',
         ]"
     >
-        <RecipeImage :url="recipe.imageUrl" class="absolute inset-0" />
+        <RecipeImage :recipe="recipe" class="absolute inset-0" />
         <h2 class="z-10 text-lg font-bold text-white">
             <router-link
                 v-focus-visible="setVisibleFocus"

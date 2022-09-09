@@ -26,7 +26,7 @@
         <RecipePage class="recipe-form--recipe-page">
             <template #image>
                 <div class="absolute inset-0 group">
-                    <RecipeImage :url="form.imageUrl" class="w-full h-full" />
+                    <RecipeImage :recipe="recipe" :url="form.imageUrl" class="w-full h-full" />
                     <button
                         type="button"
                         class="group flex absolute inset-0 justify-center items-center w-full text-xl text-white opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-none focus:bg-opacity-20"
@@ -340,7 +340,7 @@ const a11yTitle = $computed(
 );
 
 async function editImage() {
-    const modal = await UI.openModal<IRecipeImageFormModal>(RecipeImageModal, { imageUrl: form.imageUrl });
+    const modal = await UI.openModal<IRecipeImageFormModal>(RecipeImageModal, { recipe, imageUrl: form.imageUrl });
     const result = await modal.beforeClose;
 
     document.querySelector<HTMLElement>(':focus')?.blur();

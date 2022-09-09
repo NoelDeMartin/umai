@@ -9,14 +9,14 @@
         </li>
         <li v-if="$slots.prepTime" class="h-10 flex items-center justify-between">
             <div class="flex items-center space-x-2">
-                <i-pepicons-clock class="w-4 h-4" aria-hidden="true" />
+                <i-pepicons-hourglass class="w-4 h-4" aria-hidden="true" />
                 <span>{{ $t('recipes.prepTime') }}</span>
             </div>
             <slot name="prepTime" />
         </li>
         <li v-if="$slots.cookTime" class="h-10 flex items-center justify-between">
             <div class="flex items-center space-x-2">
-                <i-pepicons-clock class="w-4 h-4" aria-hidden="true" />
+                <i-pepicons-stopwatch class="w-4 h-4" aria-hidden="true" />
                 <span>{{ $t('recipes.cookTime') }}</span>
             </div>
             <slot name="cookTime" />

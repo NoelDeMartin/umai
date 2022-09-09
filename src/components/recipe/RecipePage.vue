@@ -2,7 +2,7 @@
     <div class="flex flex-col flex-grow overflow-hidden w-screen min-h-full">
         <div class="recipe-page--image fixed inset-x-0 top-0 h-52 md:h-80">
             <slot name="image">
-                <RecipeImage :url="recipe?.imageUrl" class="absolute inset-0" />
+                <RecipeImage :recipe="recipe" class="absolute inset-0" />
             </slot>
         </div>
         <div

@@ -1,7 +1,7 @@
 <template>
     <AppModal :cancellable="false">
         <CoreMarkdown :text="displayText" />
-        <div class="h-4 rounded-full overflow-hidden w-full bg-primary-200 mt-2 min-w-modal-content">
+        <div class="h-4 rounded-full overflow-hidden w-full bg-primary-200 mt-2 min-w-modal-content md:min-w-modal-content-md">
             <div class="progress-bar-content bg-primary-500 rounded-full h-full" />
         </div>
     </AppModal>

@@ -9,7 +9,7 @@
                 })"
             />
             <CloudConfiguration class="mt-4" />
-            <div class="flex flex-row-reverse space-x-2 space-x-reverse mt-4">
+            <div class="flex flex-col items-end space-y-2 mt-4 md:space-x-2 md:space-x-reverse md:space-y-0 md:flex-row-reverse">
                 <CoreButton
                     v-initial-focus
                     secondary
