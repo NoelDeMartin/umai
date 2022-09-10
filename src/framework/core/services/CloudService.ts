@@ -135,7 +135,13 @@ export default class CloudService extends Service<State, ComputedState> {
         Auth.authenticator && this.initializeEngine(Auth.authenticator);
 
         Events.on('login', ({ authenticator }) => this.initializeEngine(authenticator));
-        Events.on('logout', () => this.setState({ status: CloudStatus.Disconnected }));
+        Events.on('logout', () => this.setState({
+            status: CloudStatus.Disconnected,
+            dirtyFileUrls: new Set(),
+            dirtyRemoteModels: map([], 'url'),
+            remoteOperationUrls: {},
+            offlineModelUpdates: {},
+        }));
         Events.once('application-mounted', async () => {
             if (!this.startupSync) {
                 this.status = Auth.isLoggedIn() ? CloudStatus.Online : CloudStatus.Disconnected;
@@ -322,13 +328,9 @@ export default class CloudService extends Service<State, ComputedState> {
 
                 return urls;
             }, this.remoteOperationUrls),
-            offlineModelUpdates: Object.entries(this.offlineModelUpdates).reduce((updates, [url, count]) => {
-                if ((localModel && localModel.url !== url) || !this.dirtyRemoteModels.hasKey(url)) {
-                    updates[url] = count;
-                }
-
-                return updates;
-            }, {} as Record<string, number>),
+            offlineModelUpdates: localModel
+                ? objectWithout(this.offlineModelUpdates, localModel.url)
+                : {},
         });
     }
 
