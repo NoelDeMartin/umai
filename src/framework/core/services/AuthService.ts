@@ -4,7 +4,15 @@ import {
     createPublicTypeIndex,
     fetchLoginUserProfile,
 } from '@noeldemartin/solid-utils';
-import { fail, getLocationQueryParameter, objectWithout, parseBoolean, tap, urlRoot } from '@noeldemartin/utils';
+import {
+    fail,
+    getLocationQueryParameter,
+    hasLocationQueryParameter,
+    objectWithout,
+    parseBoolean,
+    tap,
+    urlRoot,
+} from '@noeldemartin/utils';
 import { SolidACLAuthorization, SolidTypeIndex } from 'soukai-solid';
 import type { Fetch, SolidUserProfile } from '@noeldemartin/solid-utils';
 
@@ -275,8 +283,8 @@ export default class AuthService extends Service<State, ComputedState> {
             return false;
         }
 
-        if (parseBoolean(getLocationQueryParameter('autoReconnect'))) {
-            return true;
+        if (hasLocationQueryParameter('autoReconnect')) {
+            return parseBoolean(getLocationQueryParameter('autoReconnect'));
         }
 
         return this.autoReconnect;

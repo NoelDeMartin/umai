@@ -286,6 +286,7 @@ startupCrash:
 
     Here's some things you can do:
   reload: Try again
+  reloadWithoutAutoReconnect: Try again without reconnecting
   logout: Logout
   inspect: View error details
 

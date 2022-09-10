@@ -9,30 +9,40 @@
             <CoreButton
                 secondary
                 color="danger"
-                alignment="center"
-                @click="$errors.inspect($errors.startupErrors)"
-            >
-                <i-pepicons-loop class="w-5 h-5" aria-hidden="true" />
-                <span class="ml-1">{{ $t('startupCrash.inspect') }}</span>
-            </CoreButton>
-            <CoreButton
-                secondary
-                color="danger"
-                alignment="center"
                 @click="$app.reload()"
             >
-                <i-pepicons-reload class="w-5 h-5" aria-hidden="true" />
-                <span class="ml-1">{{ $t('startupCrash.reload') }}</span>
+                <span class="mr-1">{{ $t('startupCrash.reload') }}</span>
+                <div class="flex-grow" />
+                <i-pepicons-arrow-right class="w-5 h-5" aria-hidden="true" />
             </CoreButton>
             <CoreButton
                 v-if="$auth.hasLoggedIn"
                 secondary
                 color="danger"
-                alignment="center"
+                @click="$app.reload({ autoReconnect: 'false' })"
+            >
+                <span class="mr-1">{{ $t('startupCrash.reloadWithoutAutoReconnect') }}</span>
+                <div class="flex-grow" />
+                <i-pepicons-arrow-right class="w-5 h-5" aria-hidden="true" />
+            </CoreButton>
+            <CoreButton
+                v-if="$auth.hasLoggedIn"
+                secondary
+                color="danger"
                 @click="$auth.logout(true).then(() => $app.reload())"
             >
-                <i-pepicons-leave class="w-5 h-5" aria-hidden="true" />
-                <span class="ml-1">{{ $t('startupCrash.logout') }}</span>
+                <span class="mr-1">{{ $t('startupCrash.logout') }}</span>
+                <div class="flex-grow" />
+                <i-pepicons-arrow-right class="w-5 h-5" aria-hidden="true" />
+            </CoreButton>
+            <CoreButton
+                secondary
+                color="danger"
+                @click="$errors.inspect($errors.startupErrors)"
+            >
+                <span class="mr-1">{{ $t('startupCrash.inspect') }}</span>
+                <div class="flex-grow" />
+                <i-pepicons-arrow-right class="w-5 h-5" aria-hidden="true" />
             </CoreButton>
         </div>
     </AppPage>

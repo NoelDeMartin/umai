@@ -1,3 +1,5 @@
+import { updateLocationQueryParameters } from '@noeldemartin/utils';
+
 import Auth from '@/framework/core/facades/Auth';
 import Events from '@/framework/core/facades/Events';
 import Service from '@/framework/core/Service';
@@ -27,7 +29,9 @@ export default class AppService extends Service<State> {
         return import.meta.env[`VITE_${property}`] as unknown as T;
     }
 
-    public async reload(): Promise<void> {
+    public async reload(queryParameters?: Record<string, string | undefined>): Promise<void> {
+        queryParameters && updateLocationQueryParameters(queryParameters);
+
         location.reload();
 
         await new Promise(() => {
