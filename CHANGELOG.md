@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fixed
 
+- [#2](https://github.com/NoelDeMartin/umai/issues/2) Creating containers in NSS.
 - Image uploading.
 
 ## [v0.1.0-beta.1](https://github.com/NoelDeMartin/umai/releases/tag/v0.1.0-beta.1) - 2022-08-15
