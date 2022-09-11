@@ -29,7 +29,12 @@
                     <RecipeImage :recipe="recipe" :url="form.imageUrl" class="w-full h-full" />
                     <button
                         type="button"
-                        class="group flex absolute inset-0 justify-center items-center w-full text-xl text-white opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-none focus:bg-opacity-20"
+                        class="
+                            group flex absolute inset-0 justify-center items-center w-full text-xl text-white opacity-100
+                            md:opacity-0
+                            group-hover:opacity-100
+                            focus:opacity-100 focus:outline-none focus:bg-opacity-20
+                        "
                         @click="editImage"
                     >
                         <div
@@ -232,7 +237,7 @@
                         @click="deleteRecipe()"
                     >
                         <i-pepicons-trash class="w-4 h-4" aria-hidden="true" />
-                        <span class="ml-1">{{ $t('recipes.delete') }}</span>
+                        <span class="!ml-1 sr-only md:not-sr-only">{{ $t('recipes.delete') }}</span>
                     </CoreButton>
                 </div>
             </div>
