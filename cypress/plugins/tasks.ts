@@ -36,6 +36,10 @@ export default defineTasks({
     async resetSolidPOD() {
         bootSolidModels();
 
+        await fetch('http://localhost:4000/cookbook/nested/folder/ramen', { method: 'DELETE' });
+        await fetch('http://localhost:4000/cookbook/nested/folder/', { method: 'DELETE' });
+        await fetch('http://localhost:4000/cookbook/nested/', { method: 'DELETE' });
+
         await SolidContainerModel.withEngine(new SolidEngine(fetch), async () => {
             const cookbook = await SolidContainerModel.find('http://localhost:4000/cookbook/');
 

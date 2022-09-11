@@ -22,7 +22,7 @@ describe('Authentication', () => {
 
     it('Signs up using the Inrupt authenticator', () => {
         // Arrange
-        cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/').as('createCookbook');
+        cy.intercept('PUT', 'http://localhost:4000/alice/cookbook/').as('createCookbook');
         cy.intercept('PUT', 'http://localhost:4000/alice/settings/privateTypeIndex').as('createTypeIndex');
         cy.intercept('PATCH', 'http://localhost:4000/alice/settings/privateTypeIndex').as('registerCookbook');
         cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/ramen').as('patchRamen');

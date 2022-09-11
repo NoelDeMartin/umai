@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Added
 
 - Better error handling for application startup and failed network requests.
+- Interoperability improvements.
 
 ### Fixed
 

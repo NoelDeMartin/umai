@@ -471,25 +471,42 @@ export default class CloudService extends Service<State, ComputedState> {
                 if (!handler.isReady())
                     return [];
 
-                const remoteClass = getRemoteClass(handler.modelClass);
-                const container = await SolidContainerModel.withEngine(
-                    this.requireEngine(),
-                    () => SolidContainerModel.find(remoteClass.collection),
-                );
-
-                if (!container)
-                    return [];
-
                 const remoteModels = [];
-                const urlChunks = arrayChunk(
-                    container.resourceUrls.filter(url => !/\.(jpe?|pn)g$/.test(url)),
-                    MAX_REQUESTS_CHUNK_SIZE,
-                );
+                const remoteClass = getRemoteClass(handler.modelClass);
+                const recipeContainers = new Set([remoteClass.collection]);
+                const loadedContainers = new Set();
 
-                for (const urls of urlChunks) {
-                    const chunkModels = await remoteClass.all({ $in: urls });
+                while (recipeContainers.size > loadedContainers.size) {
+                    const containerUrl = [...recipeContainers].find(url => !loadedContainers.has(url));
+                    const container = await SolidContainerModel.withEngine(
+                        this.requireEngine(),
+                        () => SolidContainerModel.find(containerUrl),
+                    );
 
-                    remoteModels.push(...chunkModels);
+                    loadedContainers.add(containerUrl);
+
+                    if (!container)
+                        continue;
+
+                    const resourceUrls = container.resourceUrls.filter(url => {
+                        const isContainer = url.endsWith('/');
+
+                        if (isContainer) {
+                            recipeContainers.add(url);
+                        }
+
+                        return !isContainer;
+                    });
+                    const urlChunks = arrayChunk(
+                        resourceUrls.filter(url => !/\.(jpe?|pn)g$/.test(url)),
+                        MAX_REQUESTS_CHUNK_SIZE,
+                    );
+
+                    for (const urls of urlChunks) {
+                        const chunkModels = await remoteClass.all({ $in: urls });
+
+                        remoteModels.push(...chunkModels);
+                    }
                 }
 
                 return remoteModels;

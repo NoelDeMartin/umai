@@ -2,6 +2,7 @@ import { PromisedValue, arr, isObject, requireUrlParentDirectory, tap, urlRoute,
 import { SolidContainerModel, SolidTypeRegistration } from 'soukai-solid';
 import { SolidDocumentPermission, findInstanceRegistrations } from '@noeldemartin/solid-utils';
 import type { FluentArray, Obj } from '@noeldemartin/utils';
+import type { IndexedDBEngine } from 'soukai';
 
 import Auth from '@/framework/core/facades/Auth';
 import Cloud from '@/framework/core/facades/Cloud';
@@ -201,7 +202,19 @@ export default class CookbookService extends Service<State, ComputedState> {
     }
 
     private async loadRecipes(): Promise<void> {
-        const recipes = await Recipe.all();
+        const recipes = [];
+        const cookbookUrl = Recipe.collection;
+        const engine = Recipe.requireEngine<IndexedDBEngine>();
+        const collections = await engine.getCollections();
+        const recipeCollections = collections.filter(collection => collection.startsWith(cookbookUrl));
+
+        for (const collection of recipeCollections) {
+            const collectionRecipes = await Recipe.from(collection).all();
+
+            recipes.push(...collectionRecipes);
+        }
+
+        Recipe.collection = cookbookUrl;
 
         this.allRecipes = arr(recipes);
     }
