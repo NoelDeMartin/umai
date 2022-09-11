@@ -11,7 +11,8 @@ import {
     tap,
 } from '@noeldemartin/utils';
 import { Metadata, Operation, SolidACLAuthorization, SolidContainerModel, SolidModel, Tombstone } from 'soukai-solid';
-import type { Engine } from 'soukai';
+import { TimestampField } from 'soukai';
+import type { Attributes, Engine } from 'soukai';
 import type { ObjectsMap } from '@noeldemartin/utils';
 import type { SolidModelConstructor } from 'soukai-solid';
 
@@ -462,7 +463,24 @@ export default class CloudService extends Service<State, ComputedState> {
         const remoteClass = remoteModel.static();
         const localClass = getLocalClass(remoteClass);
 
+        this.repairRemoteModel(remoteModel, localClass);
+
         return remoteModel.clone({ constructors: [[remoteClass, localClass]] });
+    }
+
+    protected repairRemoteModel(remoteModel: SolidModel, localClass: typeof SolidModel): void {
+        if (remoteModel.metadata) {
+            return;
+        }
+
+        const now = new Date();
+        const attributes: Attributes = { createdAt: now };
+
+        if (localClass.hasAutomaticTimestamp(TimestampField.UpdatedAt)) {
+            attributes.updatedAt = now;
+        }
+
+        remoteModel.relatedMetadata.attach(attributes);
     }
 
     protected async fetchRemoteModels(localModels: SolidModel[]): Promise<SolidModel[]> {

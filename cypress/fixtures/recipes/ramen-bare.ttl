@@ -1,0 +1,5 @@
+@prefix schema: <https://schema.org/> .
+
+<#it>
+    a schema:Recipe;
+    schema:name "Ramen".
