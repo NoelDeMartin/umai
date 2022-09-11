@@ -18,12 +18,14 @@ import type { Fetch, SolidUserProfile } from '@noeldemartin/solid-utils';
 
 import App from '@/framework/core/facades/App';
 import AuthenticationCancelledError from '@/framework/auth/errors/AuthenticationCancelledError';
+import Cloud from '@/framework/core/facades/Cloud';
 import Errors from '@/framework/core/facades/Errors';
 import Events from '@/framework/core/facades/Events';
 import Router from '@/framework/core/facades/Router';
 import Service from '@/framework/core/Service';
 import UI from '@/framework/core/facades/UI';
 import { getAuthenticator } from '@/framework/auth';
+import { i18nTranslate } from '@/framework/plugins/i18n';
 import { translate } from '@/framework/utils/translate';
 import type Authenticator from '@/framework/auth/Authenticator';
 import type { AuthenticatorName } from '@/framework/auth';
@@ -32,7 +34,6 @@ import type { ComputedStateDefinitions, IService } from '@/framework/core/Servic
 import type { ErrorSource } from '@/framework/core/services/ErrorsService';
 
 import { CoreColor } from '@/components/core';
-import { i18nTranslate } from '@/framework/plugins/i18n';
 
 interface State {
     autoReconnect: boolean;
@@ -172,10 +173,11 @@ export default class AuthService extends Service<State, ComputedState> {
     }
 
     public async logout(force: boolean = false): Promise<void> {
-        // TODO show a different message if there are pending local modifications
         const confirmLogout = force || await UI.confirm({
             title: translate('menu.logOut_confirmTitle'),
-            message: translate('menu.logOut_confirmMessage'),
+            message: Cloud.dirty
+                ? translate('menu.logOut_confirmMessageWithWarning')
+                : translate('menu.logOut_confirmMessage'),
             acceptText: translate('menu.logOut'),
             acceptColor: CoreColor.Danger,
         });

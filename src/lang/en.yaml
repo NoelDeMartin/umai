@@ -103,6 +103,10 @@ menu:
   logOut: Log out
   logOut_confirmTitle: Are you sure?
   logOut_confirmMessage: Logging out will remove all the recipes from this device, but you'll still have them in your Solid POD.
+  logOut_confirmMessageWithWarning: |
+    Logging out will remove all the recipes from this device, do you want to continue?
+
+    ⚠️ **Some local changes haven't been synchronized and will be lost completely.**
   settings: Settings
   back: back to cookbook
 
