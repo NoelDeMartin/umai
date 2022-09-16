@@ -6,7 +6,7 @@
         <CoreMarkdown
             v-if="creator"
             class="text-sm mt-4"
-            :text="$t('viewer.list.creator', creator)"
+            :text="$viewer.list.description ?? $t('viewer.list.creator', creator)"
         />
         <RecipesGrid :recipes="recipes" class="w-full" />
     </div>
