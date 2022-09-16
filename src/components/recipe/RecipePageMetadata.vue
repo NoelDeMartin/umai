@@ -1,4 +1,7 @@
 <template>
+    <h2 class="sr-only">
+        {{ $t('recipes.metadata') }}
+    </h2>
     <ul class="w-full">
         <li v-if="$slots.servings" class="h-10 flex items-center justify-between">
             <div class="flex items-center space-x-2">

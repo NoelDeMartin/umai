@@ -2,6 +2,7 @@
     <header
         ref="$header"
         class="flex relative z-40 flex-col items-center self-stretch pt-edge h-24 transition-colors duration-700 shrink-0"
+        :aria-hidden="$ui.headerHidden || $app.isOnboarding ? 'true' : 'false'"
         :class="{
             'invisible': $ui.headerHidden,
             'text-white': $route.meta.fullBleedHeader && !$app.onboardingCompleting,

@@ -136,6 +136,9 @@
                     <div class="flex flex-col bg-white flex-grow">
                         <div :class="metadataRows > 0 && 'mt-6'" />
                         <slot name="urls">
+                            <h2 class="sr-only">
+                                {{ $t('recipes.externalUrls') }}
+                            </h2>
                             <ul v-if="externalUrls.length > 0" class="mb-4">
                                 <li v-for="(externalUrl, index) of externalUrls" :key="index">
                                     <CoreLink :url="externalUrl.url" class="flex items-center space-x-1">

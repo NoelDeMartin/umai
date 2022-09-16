@@ -1,5 +1,5 @@
 <template>
-    <div ref="$root" class="relative" role="searchbox">
+    <div ref="$root" class="relative" role="search">
         <transition
             :duration="300"
             @before-enter="(element: Element) => showInput(element as HTMLElement)"
@@ -9,6 +9,7 @@
                 <CoreFluidInput
                     ref="$input"
                     type="search"
+                    role="searchbox"
                     :placeholder="placeholder"
                     :model-value="modelValue"
                     @blur="onBlur"

@@ -176,6 +176,9 @@
             </template>
 
             <template #urls>
+                <h2 class="sr-only">
+                    {{ $t('recipes.externalUrls') }}
+                </h2>
                 <CoreButton
                     v-if="form.externalUrls.length === 0"
                     secondary

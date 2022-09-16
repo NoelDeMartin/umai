@@ -178,9 +178,10 @@ home:
     create: New recipe
     search_label: Filter recipes
     search_placeholder: Find recipes
-    empty: You don't have any recipes called **{search}**, try with something else
+    empty: You don't have any recipes called **"{search}"**, try with something else
 
 recipes:
+  metadata: Recipe metadata
   cookTime: Cooking time
   prepTime: Preparation time
   servings: Servings
@@ -245,8 +246,9 @@ recipes:
   instructionStep_label: "Recipe instructions step #:position"
   instructionStep_placeholder: e.g. Rinse and repeat
   instructionStep_remove: Remove step
-  instructionStep_remove_a11y: Remove step number {position}
+  instructionStep_remove_a11y: "Remove instructions step #{position}"
 
+  externalUrls: External urls
   externalUrls_set: Add urls
   externalUrl_add: Add url
   externalUrl_label: "Recipe url #:position"

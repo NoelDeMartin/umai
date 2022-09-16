@@ -24,7 +24,7 @@
                     <span class="ml-2">{{ $t('recipes.download') }}</span>
                 </CoreButton>
                 <CoreButton
-                    v-else
+                    v-else-if="$browser.supportsSharing"
                     v-initial-focus
                     @click="share(), close()"
                 >
@@ -63,8 +63,6 @@ const shareOption = $ref<RecipeShareOption>(
 const clipboardContent = $computed(() => (clipboardContents as Record<string, string>)[shareOption]);
 
 function share() {
-    // TODO Implement fallback
-
     navigator.share(objectWithoutEmpty({
         title: recipe.name,
         text: recipe.description ? stringExcerpt(recipe.description) : null,
