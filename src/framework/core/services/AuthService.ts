@@ -193,11 +193,10 @@ export default class AuthService extends Service<State, ComputedState> {
         this.setState({ previousSession: null });
 
         if (this.isLoggedIn()) {
-            Router.push({ name: 'home' });
-
             await this.authenticator.logout();
         }
 
+        Router.push({ name: 'home' });
         Events.emit('logout');
     }
 

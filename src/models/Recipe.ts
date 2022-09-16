@@ -3,6 +3,7 @@ import type { JsonLD } from '@noeldemartin/solid-utils';
 import type { Relation } from 'soukai';
 import type { SolidBelongsToManyRelation } from 'soukai-solid';
 
+import Cookbook from '@/services/facades/Cookbook';
 import RecipeInstructionsStep from '@/models/RecipeInstructionsStep';
 import RecipesList from '@/models/RecipesList';
 import { parseIngredient, sortIngredients } from '@/utils/ingredients';
@@ -32,10 +33,28 @@ export default class Recipe extends Model {
         typeof RecipesList
     >;
 
-    public get uuid(): string | null {
-        return this.url
-            ? (this.url.match(/([^/#]+)(#.*)?$/)?.[1] ?? null)
-            : null;
+    public get imageUrl(): string | undefined {
+        return this.imageUrls.length > 0 ? this.imageUrls[0] : undefined;
+    }
+
+    public get slug(): string | null {
+        if (!this.url) {
+            return null;
+        }
+
+        const getSlug = (offset: number) => {
+            return this.url.substring(offset).replaceAll('/', '-').match(/([^#]+)(#.*)?$/)?.[1] ?? null;
+        };
+
+        if (Cookbook.remoteCookbookUrl && this.url.startsWith(Cookbook.remoteCookbookUrl)) {
+            return getSlug(Cookbook.remoteCookbookUrl.length);
+        }
+
+        if (this.url.startsWith(Cookbook.localCookbookUrl)) {
+            return getSlug(Cookbook.localCookbookUrl.length);
+        }
+
+        return null;
     }
 
     public get sortedExternalUrls(): string[] {
@@ -84,7 +103,7 @@ export default class Recipe extends Model {
     }
 
     public download(): void {
-        const name = this.uuid ?? 'recipe';
+        const name = this.slug ?? 'recipe';
         const jsonld = this.toExternalJsonLD();
 
         downloadFile(`${name}.json`, JSON.stringify(jsonld), 'application/json');

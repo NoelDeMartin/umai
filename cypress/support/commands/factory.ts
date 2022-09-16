@@ -9,11 +9,11 @@ export default {
         return cy.testingRuntime().then(runtime => runtime.createRecipe(attributes));
     },
 
-    getRecipe(uuid: string): Cypress.Chainable<Recipe> {
+    getRecipe(slug: string): Cypress.Chainable<Recipe> {
         return cy.testingRuntime().then(runtime => {
-            const recipe = runtime.getRecipe(uuid);
+            const recipe = runtime.getRecipe(slug);
 
-            recipe || fail(`Couldn't find recipe with '${uuid}' uuid`);
+            recipe || fail(`Couldn't find recipe with '${slug}' slug`);
 
             return Promise.resolve(recipe as Recipe);
         });

@@ -74,7 +74,7 @@ onMounted(async () => {
         recipe = websiteRecipes[0] ?? new Recipe({
             name: websiteMetadata.title,
             description: websiteMetadata.description,
-            imageUrl: websiteMetadata.imageUrl,
+            imageUrls: websiteMetadata.imageUrls,
             externalUrls: [websiteMetadata.url],
         });
     } catch (error) {

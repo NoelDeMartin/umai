@@ -60,7 +60,7 @@ const selectedRecipe = $ref<Recipe | null>(null);
 const metadataRecipe = $computed(() => new Recipe({
     name: metadata.title,
     description: metadata.description,
-    imageUrl: metadata.imageUrl,
+    imageUrls: metadata.imageUrls,
     externalUrls: [metadata.url],
 }));
 

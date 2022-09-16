@@ -121,10 +121,7 @@ describe('Authorization', () => {
             listUrls: ['http://localhost:4000/alice/cookbook/public#it'],
         }));
 
-        cy.press('online');
-        cy.press('Synchronize now');
-        cy.see('Syncing in progress');
-        cy.see('Syncing is up to date');
+        cy.sync();
 
         cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/ramen.acl').as('patchACL');
         cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/ramen').as('patchRamen');

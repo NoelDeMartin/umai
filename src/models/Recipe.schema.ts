@@ -7,8 +7,9 @@ export default SolidModel.schema({
         required: true,
     },
     description: FieldType.String,
-    imageUrl: {
-        type: FieldType.String,
+    imageUrls: {
+        type: FieldType.Array,
+        items: FieldType.String,
         rdfProperty: 'schema:image',
     },
     servings: {

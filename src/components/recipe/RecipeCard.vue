@@ -26,7 +26,7 @@
                 :to="
                     $router.currentRouteIs('viewer')
                         ? { name: 'viewer', query: { url: recipe.url } }
-                        : { name: 'recipes.show', params: { recipe: recipe.uuid } }
+                        : { name: 'recipes.show', params: { recipe: recipe.slug } }
                 "
             >
                 <span aria-hidden="true" class="absolute inset-0" />

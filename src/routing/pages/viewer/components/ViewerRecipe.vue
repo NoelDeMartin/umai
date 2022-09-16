@@ -29,7 +29,7 @@
                 v-if="$viewer.recipeInCookbook"
                 secondary
                 route="recipes.show"
-                :route-params="{ recipe: $viewer.recipeInCookbook?.uuid }"
+                :route-params="{ recipe: $viewer.recipeInCookbook?.slug }"
             >
                 {{ $t('viewer.recipe.inCookbook') }}
             </CoreButton>

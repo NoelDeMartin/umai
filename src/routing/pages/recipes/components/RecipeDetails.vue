@@ -69,7 +69,7 @@ async function editRecipe() {
     await $page?.showPrimaryPanel();
     await Router.push({
         name: 'recipes.edit',
-        params: { recipe: recipe.uuid },
+        params: { recipe: recipe.slug },
     });
 }
 

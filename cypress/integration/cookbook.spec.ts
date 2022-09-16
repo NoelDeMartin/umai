@@ -246,7 +246,7 @@ describe('Cookbook', () => {
         cy.createFile('solid://recipes/ramen.png', 'image/png', 'img/ramen.png');
         cy.createRecipe({
             name: 'Ramen',
-            imageUrl: 'solid://recipes/ramen.png',
+            imageUrls: ['solid://recipes/ramen.png'],
         });
         cy.login({ hasCookbook: true });
 
@@ -499,7 +499,7 @@ describe('Cookbook', () => {
         cy.createFile('solid://recipes/ramen.png', 'image/png', 'img/ramen.png');
         cy.createRecipe({
             name: 'Ramen',
-            imageUrl: 'solid://recipes/ramen.png',
+            imageUrls: ['solid://recipes/ramen.png'],
         }).as('ramen');
 
         // Act
@@ -518,7 +518,7 @@ describe('Cookbook', () => {
         // Arrange
         cy.createRecipe({
             name: 'Ramen',
-            imageUrl: 'http://localhost:4000/cookbook/ramen.png',
+            imageUrls: ['http://localhost:4000/cookbook/ramen.png'],
         });
         cy.login({ hasCookbook: true });
         cy.request('http://localhost:4000/cookbook/ramen')
@@ -574,10 +574,7 @@ describe('Cookbook', () => {
         });
 
         // Act
-        cy.press('online');
-        cy.press('Synchronize now');
-        cy.see('Syncing in progress');
-        cy.see('Syncing is up to date');
+        cy.sync();
 
         // Assert
         cy.dontSee('Ramen');

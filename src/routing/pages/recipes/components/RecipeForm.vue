@@ -249,7 +249,7 @@
 </template>
 
 <script setup lang="ts">
-import { arrayFilter, objectWithoutEmpty, range, tap } from '@noeldemartin/utils';
+import { arrayFilter, arrayUnique, objectWithoutEmpty, range, tap } from '@noeldemartin/utils';
 import { nextTick, onMounted } from 'vue';
 import type { Attributes } from 'soukai';
 
@@ -419,7 +419,6 @@ async function deleteRecipe() {
 function getUpdatedRecipe() {
     const updatedAttributes = {
         name: form.name,
-        imageUrl: form.imageUrl || null,
         description: form.description || null,
         servings: form.servings || null,
         prepTime: form.prepTime || null,
@@ -476,20 +475,29 @@ function updateRecipeInstructions(recipe: Recipe) {
 }
 
 async function updateRecipeImage(recipe: Recipe) {
-    if (!recipe.imageUrl?.startsWith('tmp://')) {
+    if (!form.imageUrl) {
+        recipe.imageUrls = [];
+
         return;
     }
 
-    recipe.exists() || recipe.mintUrl();
+    if (form.imageUrl.startsWith('tmp://')) {
+        recipe.exists() || recipe.mintUrl();
 
-    const persistentImageUrl = `${recipe.getDocumentUrl()}.png`;
+        const persistentImageUrl = recipe.imageUrl ?? `${recipe.getDocumentUrl()}.png`;
 
-    await Files.rename(recipe.imageUrl, persistentImageUrl);
+        await Files.rename(form.imageUrl, persistentImageUrl);
 
-    if (Cookbook.remoteCookbookUrl && persistentImageUrl.startsWith(Cookbook.remoteCookbookUrl))
-        Cloud.enqueueFileUpload(persistentImageUrl);
+        if (Cookbook.remoteCookbookUrl && persistentImageUrl.startsWith(Cookbook.remoteCookbookUrl)) {
+            Cloud.enqueueFileUpload(persistentImageUrl);
+        }
 
-    recipe.imageUrl = persistentImageUrl;
+        recipe.imageUrls = arrayUnique([persistentImageUrl, ...recipe.imageUrls ?? []]);
+
+        return;
+    }
+
+    recipe.imageUrls = arrayUnique([form.imageUrl, ...recipe.imageUrls ?? []]);
 }
 
 async function submit() {

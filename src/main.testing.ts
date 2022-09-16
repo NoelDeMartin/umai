@@ -51,6 +51,6 @@ window.testing = {
     },
 
     createRecipe: attributes => Recipe.create(attributes),
-    getRecipe: uuid => Cookbook.allRecipes.first(recipe => recipe.uuid === uuid),
+    getRecipe: slug => Cookbook.allRecipes.first(recipe => recipe.slug === slug),
     getService: name => (services as Services)[name],
 };

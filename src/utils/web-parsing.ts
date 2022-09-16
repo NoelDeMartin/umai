@@ -131,7 +131,7 @@ function parseInstructions(instructions: string): JsonLD | JsonLD[] {
 export interface WebsiteMetadata {
     url: string;
     title: string;
-    imageUrl?: string;
+    imageUrls?: string[];
     description?: string;
 }
 
@@ -173,6 +173,6 @@ export function parseWebsiteMetadata(url: string, html: string): WebsiteMetadata
         url,
         title: titleMatch?.[1] ?? translate('webImport.defaultWebsiteTitle'),
         description: descriptionMatch?.[1] ?? null,
-        imageUrl: imageUrlMatch?.[1] ?? null,
+        imageUrls: arrayFilter([imageUrlMatch?.[1]]),
     });
 }

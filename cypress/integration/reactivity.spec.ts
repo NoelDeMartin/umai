@@ -27,9 +27,7 @@ describe('Reactivity', () => {
         }));
 
         // Act
-        cy.press('online');
-        cy.press('Synchronize now');
-        cy.see('Syncing is up to date');
+        cy.sync();
 
         // Assert
         cy.see('Ramen');

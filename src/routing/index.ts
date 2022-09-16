@@ -50,8 +50,8 @@ const routes: RouteRecordRaw[] = [
 
 export function registerRouterBindings(): void {
     Router.registerModelBinding('recipe', {
-        find: uuid => Cookbook.recipes?.find(recipe => recipe.uuid === uuid) || null,
-        subscribe: (uuid, listener) => Recipe.on('updated', recipe => recipe.uuid === uuid && listener(recipe)),
+        find: slug => Cookbook.recipes?.find(recipe => recipe.slug === slug) || null,
+        subscribe: (slug, listener) => Recipe.on('updated', recipe => recipe.slug === slug && listener(recipe)),
     });
 }
 

@@ -17,6 +17,7 @@ import type { ObjectsMap } from '@noeldemartin/utils';
 import type { SolidModelConstructor } from 'soukai-solid';
 
 import Auth from '@/framework/core/facades/Auth';
+import Cache from '@/framework/core/facades/Cache';
 import Events from '@/framework/core/facades/Events';
 import Files from '@/framework/core/facades/Files';
 import Network from '@/framework/core/facades/Network';
@@ -353,6 +354,7 @@ export default class CloudService extends Service<State, ComputedState> {
                     continue;
 
                 await Files.delete(url);
+                await Cache.replace(url, new Response(file.blob));
             }
 
             this.removeFileUpload(url);
@@ -480,7 +482,9 @@ export default class CloudService extends Service<State, ComputedState> {
             attributes.updatedAt = now;
         }
 
-        remoteModel.relatedMetadata.attach(attributes);
+        const metadata = remoteModel.relatedMetadata.attach(attributes);
+
+        metadata.mintUrl();
     }
 
     protected async fetchRemoteModels(localModels: SolidModel[]): Promise<SolidModel[]> {

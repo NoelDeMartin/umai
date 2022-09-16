@@ -69,7 +69,7 @@ async function importFromJsonLD(jsonld: JsonLD) {
 
     await Router.push({
         name: 'recipes.show',
-        params: { recipe: recipe.uuid },
+        params: { recipe: recipe.slug },
     });
 
     await Cloud.syncIfOnline(recipe);

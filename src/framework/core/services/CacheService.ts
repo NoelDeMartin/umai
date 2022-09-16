@@ -22,6 +22,17 @@ export default class CacheService extends Service<State> {
         await cache.put(url, response);
     }
 
+    public async replace(url: string, response: Response): Promise<void> {
+        const cache = await this.open();
+        const keys = await cache.keys(url);
+
+        if (keys.length === 0) {
+            return;
+        }
+
+        await cache.put(url, response);
+    }
+
     protected async open(): Promise<Cache> {
         return this.cache = this.cache
             ?? tap(new PromisedValue(), cache => {
