@@ -243,11 +243,11 @@ describe('Cookbook', () => {
         // Arrange
         cy.intercept('PUT', 'http://localhost:4000/cookbook/ramen.png').as('putRamenImage');
 
+        cy.createFile('solid://recipes/ramen.png', 'image/png', 'img/ramen.png');
         cy.createRecipe({
             name: 'Ramen',
             imageUrl: 'solid://recipes/ramen.png',
         });
-        cy.createFile('solid://recipes/ramen.png', 'image/png', 'img/ramen.png');
         cy.login({ hasCookbook: true });
 
         // Act
@@ -496,11 +496,11 @@ describe('Cookbook', () => {
 
     it('Deletes local recipes', () => {
         // Arrange
+        cy.createFile('solid://recipes/ramen.png', 'image/png', 'img/ramen.png');
         cy.createRecipe({
             name: 'Ramen',
             imageUrl: 'solid://recipes/ramen.png',
         }).as('ramen');
-        cy.createFile('solid://recipes/ramen.png', 'image/png', 'img/ramen.png');
 
         // Act
         cy.press('Ramen');

@@ -48,37 +48,37 @@ const hue = $computed(() => {
 async function resolveSourceUrl(url: string): Promise<string | undefined> {
     const cookbookDomain = urlRoot(Cookbook.remoteCookbookUrl ?? Cookbook.localCookbookUrl);
     const getExternalImageUrl = () => {
-        if (url.startsWith(cookbookDomain) || url.startsWith('tmp://'))
-            return;
+        if (url.startsWith(cookbookDomain) || url.startsWith('tmp://')) {
+            return null;
+        }
 
         return url;
     };
     const getLocalImageUrl = async () => {
         const file = await Files.get(url);
 
-        if (!file)
-            return;
-
-        return URL.createObjectURL(file.blob);
+        return file && URL.createObjectURL(file.blob);
     };
     const fetchImageUrl = async () => {
         const cachedResponse = await Cache.get(url) ?? await downloadImage();
         const blob = await cachedResponse?.blob();
 
-        if (!blob)
-            return;
-
-        return URL.createObjectURL(blob);
+        return blob && URL.createObjectURL(blob);
     };
     const downloadImage = async () => {
-        const response = await Auth.fetch(url);
+        try {
+            const response = await Auth.fetch(url);
 
-        if (response.status !== 200)
-            return;
+            if (response.status !== 200) {
+                return null;
+            }
 
-        await Cache.store(url, response);
+            await Cache.store(url, response);
 
-        return Cache.get(url);
+            return Cache.get(url);
+        } catch (error) {
+            return null;
+        }
     };
 
     return getExternalImageUrl()
