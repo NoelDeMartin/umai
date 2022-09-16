@@ -1,5 +1,5 @@
 import { createApp } from 'vue';
-import { tap } from '@noeldemartin/utils';
+import { after, tap } from '@noeldemartin/utils';
 import type { Component, Directive, Plugin, App as VueApp } from 'vue';
 import type { RouteRecordRaw } from 'vue-router';
 
@@ -110,7 +110,16 @@ export async function bootstrapApplication(
 
     app.mount(options.selector ?? '#app');
     app._container?.classList.remove('loading');
-    document.getElementById('splash')?.remove();
 
     Events.emit('application-mounted');
+
+    tap(document.getElementById('splash') as HTMLElement, async splash => {
+        if (window.getComputedStyle(splash).opacity !== '0') {
+            splash.style.opacity = '0';
+
+            await after({ ms: 600 });
+        }
+
+        splash.remove();
+    });
 }

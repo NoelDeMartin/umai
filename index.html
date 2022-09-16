@@ -23,11 +23,15 @@
                 position: absolute;
                 top: 0;
                 left: 0;
+                opacity: 0;
+                background: white;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 width: 100vw;
                 height: 100vh;
+                z-index: 99999;
+                transition: opacity 600ms ease-in-out;
             }
         </style>
     </head>
@@ -42,8 +46,18 @@
             </svg>
         </div>
         <div id="app" class="loading"></div>
-        <script>window.global = window</script>
-        <script>window.process = { version: '', env: {} }</script>
+        <script>
+            window.global = window;
+            window.process = { version: '', env: {} };
+
+            setTimeout(function() {
+                if (!document.querySelector('#app.loading')) {
+                    return;
+                }
+
+                document.getElementById('splash').style.opacity = 1;
+            }, 1000);
+        </script>
         <script type="module" src="/src/main.ts"></script>
     </body>
 </html>
