@@ -1,5 +1,6 @@
 import App from './facades/App';
 import Auth from './facades/Auth';
+import Browser from './facades/Browser';
 import Cache from './facades/Cache';
 import Cloud from './facades/Cloud';
 import ElementTransitions from './facades/ElementTransitions';
@@ -12,6 +13,7 @@ import UI from './facades/UI';
 export const services = {
     $app: App,
     $auth: Auth,
+    $browser: Browser,
     $cache: Cache,
     $cloud: Cloud,
     $elementTransitions: ElementTransitions,

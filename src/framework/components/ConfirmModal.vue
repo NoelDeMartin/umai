@@ -8,7 +8,7 @@
             <CoreButton v-initial-focus :color="acceptColor" @click="close(true)">
                 {{ acceptText || $t('ui.confirm_accept') }}
             </CoreButton>
-            <CoreButton clear @click="close(false)">
+            <CoreButton v-if="showCancel" clear @click="close(false)">
                 {{ cancelText || $t('ui.confirm_cancel') }}
             </CoreButton>
         </div>
@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { enumProp, stringProp } from '@/framework/utils/vue';
+import { booleanProp, enumProp, stringProp } from '@/framework/utils/vue';
 
 import { CoreColor } from '@/components/core';
 
@@ -26,5 +26,6 @@ defineProps({
     acceptText: stringProp(),
     acceptColor: enumProp(CoreColor),
     cancelText: stringProp(),
+    showCancel: booleanProp(true),
 });
 </script>

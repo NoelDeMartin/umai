@@ -25,16 +25,15 @@
         </template>
 
         <template #actions>
-            <CoreMarkdown
+            <CoreButton
                 v-if="$viewer.recipeInCookbook"
-                :text="$t('viewer.recipe.inCookbook')"
-                :actions="{
-                    'view-in-cookbook': () => Router.push({
-                        name: 'recipes.show',
-                        params: { recipe: $viewer.recipeInCookbook?.uuid },
-                    }),
-                }"
-            />
+                secondary
+                route="recipes.show"
+                :route-params="{ recipe: $viewer.recipeInCookbook?.uuid }"
+            >
+                {{ $t('viewer.recipe.inCookbook') }}
+            </CoreButton>
+
             <CoreButton v-else secondary @click="importRecipe()">
                 <i-pepicons-plus class="w-5 h-5" aria-hidden="true" />
                 <span class="ml-1">{{ $t('viewer.recipe.import') }}</span>
@@ -62,9 +61,12 @@
 import { silenced, tap, urlClean } from '@noeldemartin/utils';
 
 import Auth from '@/framework/core/facades/Auth';
+import Browser from '@/framework/core/facades/Browser';
 import Cloud from '@/framework/core/facades/Cloud';
 import Router from '@/framework/core/facades/Router';
+import UI from '@/framework/core/facades/UI';
 import { computedAsync } from '@/framework/utils/vue';
+import { translate } from '@/framework/utils/translate';
 
 import Recipe from '@/models/Recipe';
 import Viewer from '@/services/facades/Viewer';
@@ -85,8 +87,27 @@ const creator = $(computedAsync(async () => {
     };
 }));
 
+function showUnsupportedIndexedDBAlert() {
+    const message = translate('errors.unsupportedBrowser_indexedDBFeature');
+    const firefoxMessage = translate('errors.unsupportedBrowser_indexedDBFeatureFirefox');
+    const small = (text: string) => `<span class="text-sm">${text}</span>`;
+
+    UI.alert(
+        translate('errors.unsupportedBrowser'),
+        Browser.isFirefox
+            ? `${message}\n\n${small(firefoxMessage)}`
+            : message,
+    );
+}
+
 async function importRecipe(): Promise<void> {
     if (!Viewer.recipe) {
+        return;
+    }
+
+    if (!Browser.supportsIndexedDB) {
+        showUnsupportedIndexedDBAlert();
+
         return;
     }
 

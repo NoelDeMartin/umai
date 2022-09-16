@@ -44,7 +44,7 @@ const routes: RouteRecordRaw[] = [
         name: 'viewer',
         path: '/viewer',
         component: Viewer,
-        meta: { header: false, reconnect: false },
+        meta: { header: false, reconnect: false, requiresIndexedDB: false },
     },
 ];
 

@@ -317,7 +317,7 @@ viewer:
     import: Save in my cookbook
     creator: Recipe created by [{name}]({url})
     viewAll: View all their recipes
-    inCookbook: "[View in your cookbook](action:view-in-cookbook)"
+    inCookbook: View in your cookbook
 
 validation:
   required: This is required
@@ -340,6 +340,12 @@ ui:
 errors:
   notFound: "404: Not Found"
   notFound_goHome: go home
+  unsupportedBrowser: Unsupported browser
+  unsupportedBrowser_indexedDB: Unfortunately, this browser doesn't have IndexedDB support.
+  unsupportedBrowser_indexedDBFeature: Unfortunately, this browser doesn't have IndexedDB support. If you want this feature, you'll have to use [a compatible browser](https://caniuse.com/#feat=indexeddb).
+  unsupportedBrowser_indexedDBFeatureFirefox: Are you using Firefox in private mode? This is [a known bug](https://bugzilla.mozilla.org/show_bug.cgi?id=1639542).
+  unsupportedBrowser_indexedDBHelp: Find a compatible browser
+  unsupportedBrowser_indexedDBHelpFirefox: If you are using Firefox in private browsing mode, this is a <CoreLink color="danger" url="https://bugzilla.mozilla.org/show_bug.cgi?id=1639542">known bug</CoreLink>.
   notice: Something went wrong, but it's not your fault. Try again!
   viewDetails: View details
   unknown: Unknown error

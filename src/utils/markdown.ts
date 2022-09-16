@@ -24,6 +24,8 @@ function getCoreLinkColorClasses(color?: string | null): string {
     switch (color) {
         case CoreColor.Solid:
             return 'text-brand-solid-700 focus-visible:ring-brand-solid-100 focus-visible:bg-brand-solid-100';
+        case CoreColor.Danger:
+            return 'text-red-700 focus-visible:ring-red-100 focus-visible:bg-red-100';
         default:
             return 'text-primary-700 focus-visible:ring-primary-200 focus-visible:bg-primary-200';
     }

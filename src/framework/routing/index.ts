@@ -8,7 +8,11 @@ const routes: RouteRecordRaw[] = [
     {
         name: 'errors.404',
         path: '/:path(.*)*',
-        component: { render: () => h(UI.resolveComponent(ApplicationComponent.NotFound)) },
+        component: {
+            created: () => UI.hideHeader(),
+            beforeRouteLeave: () => UI.showHeader(),
+            render: () => h(UI.resolveComponent(ApplicationComponent.NotFound)),
+        },
     },
 ];
 

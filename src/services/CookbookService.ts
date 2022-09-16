@@ -5,6 +5,7 @@ import type { FluentArray, Obj } from '@noeldemartin/utils';
 import type { IndexedDBEngine } from 'soukai';
 
 import Auth from '@/framework/core/facades/Auth';
+import Browser from '@/framework/core/facades/Browser';
 import Cloud from '@/framework/core/facades/Cloud';
 import Events from '@/framework/core/facades/Events';
 import Files from '@/framework/core/facades/Files';
@@ -125,6 +126,12 @@ export default class CookbookService extends Service<State, ComputedState> {
     protected async boot(): Promise<void> {
         await super.boot();
         await Auth.ready;
+        await Browser.ready;
+
+        if (!Browser.supportsIndexedDB) {
+            return;
+        }
+
         await this.loadCookbook();
         await this.loadRecipes();
         await this.enqueueFileUploads();

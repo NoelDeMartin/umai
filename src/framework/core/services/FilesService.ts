@@ -102,7 +102,9 @@ export default class FilesService extends Service<State> {
                     db.createObjectStore('files', { keyPath: 'url' });
                 },
                 blocked: () => reject(new Error(`Could not open '${DATABASE}' database because it is blocked`)),
-            }).then(resolve);
+            })
+                .then(resolve)
+                .catch(reject);
         });
     }
 

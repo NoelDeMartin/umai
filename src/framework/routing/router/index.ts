@@ -1,17 +1,20 @@
 import { applyMixins, fail, tap } from '@noeldemartin/utils';
 import { createRouter } from 'vue-router';
 import { defineComponent, h } from 'vue';
-import type { Component, ComponentOptions } from 'vue';
+import type { Component, ConcreteComponent } from 'vue';
 import type { Constructor } from '@noeldemartin/utils';
 import type { RouteRecordRaw, Router, RouterOptions } from 'vue-router';
 
+import Browser from '@/framework/core/facades/Browser';
 import FrameworkRouter from '@/framework/routing/router/FrameworkRouter';
 import UI from '@/framework/core/facades/UI';
 import { ApplicationComponent } from '@/framework/core/services/UIService';
+import { translate } from '@/framework/utils/translate';
+import type { ErrorReport } from '@/framework/core/services/ErrorsService';
 
 function enhanceRoute(route: RouteRecordRaw): RouteRecordRaw {
     if (route.component)
-        route.component = enhanceRouteComponent(route.component);
+        route.component = enhanceRouteComponent(route, route.component as ConcreteComponent);
 
     return route;
 }
@@ -31,16 +34,14 @@ function callMethod<T extends string>(
     return target[method]?.call(scope, ...args);
 }
 
-function enhanceRouteComponent<P>(pageComponent: Component<P>): Component {
+function enhanceRouteComponent(route: RouteRecordRaw, pageComponent: ConcreteComponent): Component {
     return defineComponent({
         data: () => ({
             subscriptions: [] as Function[],
             routeParameters: null as Record<string, unknown> | null,
         }),
         created() {
-            this.routeParameters = this.resolveRouteParameters();
-
-            // TODO watch route params
+            this.updateRouteParameters();
         },
         unmounted() {
             this.clearSubscriptions();
@@ -49,15 +50,26 @@ function enhanceRouteComponent<P>(pageComponent: Component<P>): Component {
             return callMethod(pageComponent, 'beforeRouteEnter', this, args);
         },
         beforeRouteUpdate(...args) {
+            this.updateRouteParameters();
+
             return callMethod(pageComponent, 'beforeRouteUpdate', this, args);
         },
         beforeRouteLeave(...args) {
+            UI.showHeader();
+
             return callMethod(pageComponent, 'beforeRouteLeave', this, args);
         },
         methods: {
             clearSubscriptions() {
                 this.subscriptions.forEach(unsubscribe => unsubscribe());
                 this.subscriptions = [];
+            },
+            updateRouteParameters(): void {
+                this.routeParameters = this.resolveRouteParameters();
+
+                if (!this.routeParameters) {
+                    UI.hideHeader();
+                }
             },
             resolveRouteParameters(): Record<string, unknown> | null {
                 try {
@@ -100,9 +112,22 @@ function enhanceRouteComponent<P>(pageComponent: Component<P>): Component {
             },
         },
         render() {
-            return this.routeParameters
-                ? h(pageComponent as ComponentOptions<P>, this.routeParameters as P)
-                : h(UI.resolveComponent(ApplicationComponent.NotFound));
+            const requiredIndexedDB = route.meta?.requiresIndexedDB ?? true;
+
+            if (requiredIndexedDB && !Browser.supportsIndexedDB) {
+                const report: ErrorReport = {
+                    title: translate('errors.unsupportedBrowser'),
+                    description: translate('errors.unsupportedBrowser_indexedDB'),
+                };
+
+                return h(UI.resolveComponent<ConcreteComponent>(ApplicationComponent.ErrorReport), { report });
+            }
+
+            if (!this.routeParameters) {
+                return h(UI.resolveComponent(ApplicationComponent.NotFound));
+            }
+
+            return h(pageComponent, this.routeParameters);
         },
     });
 }

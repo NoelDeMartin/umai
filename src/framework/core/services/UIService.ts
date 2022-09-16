@@ -3,6 +3,7 @@ import { markRaw, nextTick } from 'vue';
 import type { Component } from 'vue';
 
 import ConfirmModal from '@/framework/components/ConfirmModal.vue';
+import ErrorReport from '@/framework/components/ErrorReport.vue';
 import Events from '@/framework/core/facades/Events';
 import LoadingModal from '@/framework/components/LoadingModal.vue';
 import MarkdownModal from '@/framework/components/MarkdownModal.vue';
@@ -105,6 +106,7 @@ export interface SnackbarOptions {
 export const enum ApplicationComponent {
     ConfirmModal = 'confirm-modal',
     ErrorReportModal = 'error-report-modal',
+    ErrorReport = 'error-report',
     LoadingModal = 'loading-modal',
     MarkdownModal = 'markdown-modal',
     NotFound = 'not-found',
@@ -121,6 +123,7 @@ export default class UIService extends Service<State, ComputedState> {
     private modalCallbacks: Record<string, Partial<ModalCallbacks>> = {};
     private components: Record<ApplicationComponent, Component> = {
         [ApplicationComponent.ConfirmModal]: markRaw(ConfirmModal),
+        [ApplicationComponent.ErrorReport]: markRaw(ErrorReport),
         [ApplicationComponent.ErrorReportModal]: markRaw(ErrorReportModal),
         [ApplicationComponent.LoadingModal]: markRaw(LoadingModal),
         [ApplicationComponent.MarkdownModal]: markRaw(MarkdownModal),
@@ -129,6 +132,19 @@ export default class UIService extends Service<State, ComputedState> {
 
     public setLayoutElement($layout: HTMLElement): void {
         this.$layout = $layout;
+    }
+
+    public alert(title: string): void;
+    public alert(title: string, message: string): void;
+    public alert(titleOrMessage: string, message?: string): void {
+        const title = typeof message === 'string' ? titleOrMessage : undefined;
+        message = message ?? titleOrMessage;
+
+        this.openModal(this.components[ApplicationComponent.ConfirmModal], {
+            title,
+            message,
+            showCancel: false,
+        });
     }
 
     public async confirm(options: Partial<ConfirmOptions> = {}): Promise<boolean> {
@@ -254,8 +270,8 @@ export default class UIService extends Service<State, ComputedState> {
         await this.closeModal(loadingModal.id);
     }
 
-    public resolveComponent(name: ApplicationComponent): Component {
-        return this.components[name];
+    public resolveComponent<T extends Component = Component>(name: ApplicationComponent): T {
+        return this.components[name] as T;
     }
 
     public registerComponent(name: ApplicationComponent, component: Component): void {
