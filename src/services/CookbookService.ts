@@ -1,4 +1,14 @@
-import { PromisedValue, arr, isObject, requireUrlParentDirectory, tap, urlRoute, uuid } from '@noeldemartin/utils';
+import {
+    PromisedValue,
+    arr,
+    isObject,
+    range,
+    requireUrlParentDirectory,
+    requireUrlParse,
+    tap,
+    urlRoute,
+    uuid,
+} from '@noeldemartin/utils';
 import { SolidContainerModel, SolidTypeRegistration } from 'soukai-solid';
 import { SolidDocumentPermission, findInstanceRegistrations } from '@noeldemartin/solid-utils';
 import type { FluentArray, Obj } from '@noeldemartin/utils';
@@ -121,6 +131,11 @@ export default class CookbookService extends Service<State, ComputedState> {
             await recipe.save();
             await Cloud.sync(recipe);
         }
+    }
+
+    public mendRecipe(recipe: Recipe): void {
+        this.mendRecipeMetadata(recipe);
+        this.mendRecipeInstructions(recipe);
     }
 
     protected async boot(): Promise<void> {
@@ -421,6 +436,49 @@ export default class CookbookService extends Service<State, ComputedState> {
         );
 
         publicRecipesList.isRegistered = true;
+    }
+
+    private mendRecipeMetadata(recipe: Recipe): void {
+        if (recipe.metadata) {
+            return;
+        }
+
+        const now = new Date();
+        const metadata = recipe.relatedMetadata.attach({
+            createdAt: now,
+            updatedAt: now,
+        });
+
+        metadata.mintUrl();
+    }
+
+    private mendRecipeInstructions(recipe: Recipe): void {
+        if (!recipe.instructions) {
+            recipe.setRelationModels('instructions', []);
+        }
+
+        if (recipe.instructions?.length === recipe.instructionStepUrls.length) {
+            return;
+        }
+
+        const { protocol } = requireUrlParse(recipe.url);
+
+        recipe.instructionStepUrls = range(recipe.instructionStepUrls.length).map(index => {
+            const instructionStep = recipe.instructionStepUrls[index];
+
+            if (instructionStep.startsWith(protocol)) {
+                return instructionStep;
+            }
+
+            const newInstructionStep = recipe.relatedInstructions.attach({
+                text: instructionStep,
+                position: index + 1,
+            });
+
+            newInstructionStep.mintUrl(recipe.requireDocumentUrl(), true, uuid());
+
+            return newInstructionStep.url;
+        });
     }
 
 }

@@ -36,6 +36,7 @@ export function registerServices(): void {
                         ? [recipe.imageUrl]
                         : [],
             })),
+        mendRemoteModel: recipe => Cookbook.mendRecipe(recipe),
     });
 
     UI.registerComponent(ApplicationComponent.LoadingModal, AppLoadingModal);

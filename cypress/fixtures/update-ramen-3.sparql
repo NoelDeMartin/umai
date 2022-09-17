@@ -13,12 +13,12 @@ INSERT DATA {
     @prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
     @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-    <#it-metadata> crdt:updatedAt "[[.*]]"^^xsd:dateTime .
+    <#it-metadata> crdt:updatedAt "[[date][.*]]"^^xsd:dateTime .
 
     <#it-operation-[[%uuid%]]>
         a crdt:RemovePropertyOperation ;
         crdt:resource <#it> ;
-        crdt:date "[[.*]]"^^xsd:dateTime ;
+        crdt:date "[[date][.*]]"^^xsd:dateTime ;
         crdt:property schema:recipeInstructions ;
         crdt:value <#[[instruction-step-3][%uuid%]]> .
 

@@ -1,0 +1,10 @@
+INSERT DATA {
+    @prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
+    @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+    <#it-metadata>
+        a crdt:Metadata ;
+        crdt:resource <#it> ;
+        crdt:createdAt  "[[date][.*]]"^^xsd:dateTime ;
+        crdt:updatedAt  "[[date][.*]]"^^xsd:dateTime .
+} .

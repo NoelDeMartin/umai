@@ -49,6 +49,7 @@ describe('Cloud Service', () => {
             isReady: () => true,
             getLocalModels: () => localModels,
             getLocalModelsWithRemoteFileUrls: () => localModels.map(model => ({ model, remoteFileUrls: [] })),
+            mendRemoteModel: () => undefined,
         });
 
         await cloud.launch();
