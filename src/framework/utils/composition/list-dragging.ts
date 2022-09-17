@@ -43,7 +43,7 @@ export function useListDragging(
                 return;
 
             active = true;
-            listY = list.getBoundingClientRect().y;
+            listY = window.scrollY + list.getBoundingClientRect().y;
             itemsHeight = Array.from(list.children).map(item => item.clientHeight);
             currentItem = getHoveringItem(event, listY, itemsHeight);
         },
