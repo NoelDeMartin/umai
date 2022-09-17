@@ -1,7 +1,7 @@
 <template>
     <AppPage
         :style="`margin-top: -${$ui.headerHeight}px`"
-        aria-labelledby="#recipe-form-title"
+        aria-labelledby="recipe-form-title"
     >
         <WebImportScanning v-if="scanning" />
         <RecipeForm

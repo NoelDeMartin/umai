@@ -18,6 +18,10 @@ export interface FocusOptions {
     scrollIntoView: boolean;
 }
 
+export interface A11y {
+    hidden: Ref<boolean>;
+}
+
 export function element(element: Ref<HTMLElement | null>): IElement {
     return {
         getRootElement: () => element.value,

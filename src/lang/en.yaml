@@ -219,6 +219,7 @@ recipes:
   prepTime_placeholder: '?? minutes'
   cookTime_placeholder: '?? minutes'
 
+  imageA11y: Image for "{recipe}" recipe
   image_edit_placeholder: Write image url...
   image_edit_title: Change recipe image
   image_edit_upload: Upload an image

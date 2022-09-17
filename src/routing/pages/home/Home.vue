@@ -13,7 +13,7 @@
             },
         }"
         class="px-edge"
-        aria-labelledby="#home-title"
+        aria-labelledby="home-title"
     >
         <HomeOnboarding v-if="$app.isOnboarding" />
         <HomeCreateCookbook v-else-if="$auth.loggedIn && !$cookbook.isReady" />

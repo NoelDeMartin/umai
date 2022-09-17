@@ -32,14 +32,14 @@ let starting = $ref(hasLocationQueryParameter('url'));
 
 const pageLabelId = $computed(() => {
     if (Viewer.recipe) {
-        return '#viewer-recipe-title';
+        return 'viewer-recipe-title';
     }
 
     if (Viewer.list) {
-        return '#viewer-recipes-list-title';
+        return 'viewer-recipes-list-title';
     }
 
-    return '#viewer-form-title';
+    return 'viewer-form-title';
 });
 
 watch(Router.currentRoute, () => Viewer.view(Router.getQueryParam<{ url?: string }>('url')));

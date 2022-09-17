@@ -9,6 +9,7 @@
             v-if="sourceUrl && !failed"
             :src="sourceUrl"
             class="absolute inset-0 object-cover w-full h-full"
+            :alt="recipe ? $t('recipes.imageA11y', { recipe: recipe.name }) : ''"
             @error="failed = true"
         >
     </div>
