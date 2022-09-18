@@ -7,6 +7,7 @@ import firstRamenJsonLD from '@cy/fixtures/ramen-1.json';
 import jaimiesHummusJsonLD from '@cy/fixtures/jaimies-hummus.json';
 import junsRamenJsonLD from '@cy/fixtures/juns-ramen.json';
 import pistoJsonLD from '@cy/fixtures/pisto.json';
+import ramenJsonLD from '@cy/fixtures/ramen.json';
 import secondRamenJsonLD from '@cy/fixtures/ramen-2.json';
 
 describe('Cookbook', () => {
@@ -170,6 +171,29 @@ describe('Cookbook', () => {
         cy.assertLocalDocumentEquals('http://localhost:4000/cookbook/ramen', secondRamenJsonLD);
     });
 
+    it('Edits metadata', () => {
+        // Arrange
+        cy.see('How would you like to begin?');
+
+        // Act
+        cy.press('Create your first recipe');
+        cy.press('Create from scratch');
+        cy.ariaInput('Recipe name').type('Ramen');
+        cy.ariaLabel('Servings').type('3 persons');
+        cy.ariaLabel('Preparation time').type('1 day');
+        cy.ariaLabel('Cooking time').type('1h 30m');
+        cy.press('Create recipe');
+        cy.url().should('equal', `${Cypress.config('baseUrl')}/`);
+        cy.press('Ramen');
+
+        // Assert
+        cy.see('3 persons');
+        cy.see('1 day');
+        cy.see('1 hour 30 min');
+
+        cy.assertLocalDocumentEquals('solid://recipes/ramen', ramenJsonLD);
+    });
+
     it('Stores local images', () => {
         // Arrange
         cy.see('How would you like to begin?');
@@ -312,6 +336,7 @@ describe('Cookbook', () => {
 
         // Assert
         cy.url().should('contain', 'houmous');
+        cy.see('10 min');
         cy.see('Chickpeas – the star ingredient in houmous – are incredibly good for you.');
         cy.see('1 lemon');
         cy.see('recipe on recipes.example.com');
@@ -373,6 +398,7 @@ describe('Cookbook', () => {
         cy.dontSee('Marinated Olives');
         cy.press('Pisto Manchego');
         cy.url().should('contain', 'pisto-manchego');
+        cy.see('1 hour');
         cy.see('Pisto Manchego With Olive Oil');
         cy.see('4 zucchini small, cubed');
         cy.see('recipe on recipes.example.com');

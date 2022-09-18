@@ -124,10 +124,10 @@
                                         {{ recipe.servings }}
                                     </template>
                                     <template v-if="recipe.prepTime" #prepTime>
-                                        {{ recipe.prepTime }}
+                                        {{ $ui.renderDuration(recipe.prepTime) }}
                                     </template>
                                     <template v-if="recipe.cookTime" #cookTime>
-                                        {{ recipe.cookTime }}
+                                        {{ $ui.renderDuration(recipe.cookTime) }}
                                     </template>
                                 </RecipePageMetadata>
                             </slot>

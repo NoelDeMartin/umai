@@ -12,6 +12,9 @@ import Service from '@/framework/core/Service';
 import type { ComputedStateDefinitions, IService } from '@/framework/core/Service';
 
 import ErrorReportModal from '@/components/modals/ErrorReportModal.vue';
+import { memoize } from '@/framework/utils/memoize';
+import { parseISO8601Duration, renderHumanReadableDuration } from '@/framework/utils/datetime';
+
 import type { CoreColor } from '@/components/core';
 
 interface State {
@@ -186,6 +189,14 @@ export default class UIService extends Service<State, ComputedState> {
 
     public async closeModal(id: string, result?: unknown): Promise<void> {
         await Events.emit('close-modal', { id, result });
+    }
+
+    public renderDuration(text?: string): string | undefined {
+        return text && memoize(text, text => {
+            const duration = parseISO8601Duration(text);
+
+            return duration ? renderHumanReadableDuration(duration) : text;
+        });
     }
 
     public async runOperation(

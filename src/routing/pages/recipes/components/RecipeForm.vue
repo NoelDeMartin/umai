@@ -155,6 +155,7 @@
                         <CoreFluidInput
                             name="servings"
                             class="text-right bg-transparent"
+                            :aria-label="$t('recipes.servings')"
                             :placeholder="$t('recipes.servings_placeholder')"
                         />
                     </template>
@@ -162,6 +163,7 @@
                         <CoreFluidInput
                             name="prepTime"
                             class="text-right bg-transparent"
+                            :aria-label="$t('recipes.prepTime')"
                             :placeholder="$t('recipes.prepTime_placeholder')"
                         />
                     </template>
@@ -169,6 +171,7 @@
                         <CoreFluidInput
                             name="cookTime"
                             class="text-right bg-transparent"
+                            :aria-label="$t('recipes.cookTime')"
                             :placeholder="$t('recipes.cookTime_placeholder')"
                         />
                     </template>
@@ -260,6 +263,7 @@ import Router from '@/framework/core/facades/Router';
 import UI from '@/framework/core/facades/UI';
 import { FormInputType, reactiveForm } from '@/framework/forms';
 import { objectProp } from '@/framework/utils/vue';
+import { parseHumanReadableDuration, renderISO8601Duration } from '@/framework/utils/datetime';
 import { translate } from '@/framework/utils/translate';
 import type { FormObjectInput } from '@/framework/forms';
 import type { IFocusable } from '@/framework/components/headless';
@@ -308,11 +312,11 @@ const form = reactiveForm({
     },
     prepTime: {
         type: FormInputType.String,
-        default: recipe?.prepTime ?? '',
+        default: UI.renderDuration(recipe?.prepTime) ?? '',
     },
     cookTime: {
         type: FormInputType.String,
-        default: recipe?.cookTime ?? '',
+        default: UI.renderDuration(recipe?.cookTime) ?? '',
     },
     ingredients: {
         type: FormInputType.Object as FormObjectInput<CoreListItemValue>,
@@ -416,13 +420,19 @@ async function deleteRecipe() {
     });
 }
 
+function formatDuration(duration: string) {
+    const isoDuration = parseHumanReadableDuration(duration);
+
+    return isoDuration ? renderISO8601Duration(isoDuration) : duration;
+}
+
 function getUpdatedRecipe() {
     const updatedAttributes = {
         name: form.name,
         description: form.description || null,
         servings: form.servings || null,
-        prepTime: form.prepTime || null,
-        cookTime: form.cookTime || null,
+        prepTime: formatDuration(form.prepTime) || null,
+        cookTime: formatDuration(form.cookTime) || null,
         ingredients: arrayFilter(form.ingredients.map(({ value }) => value)),
         externalUrls: arrayFilter(form.externalUrls.map(({ value }) => value)),
     };
