@@ -11,13 +11,13 @@
     "deploy": "noeldemartin-deploy-app noeldemartin/umai umai.noeldemartin.com",
     "lint": "noeldemartin-lint src cypress .storybook",
     "test": "jest --verbose",
-    "test:serve-app": "vite --mode testing",
+    "test:serve-app": "vite --mode testing --port 5001",
     "test:serve-pod": "community-solid-server -p 4000 -l warn",
     "test:coverage": "jest --coverage",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
     "cy:dev": "concurrently --kill-others \"npm run test:serve-app\" \"npm run test:serve-pod\" \"npm run cy:open\"",
-    "cy:test": "start-server-and-test test:serve-app http-get://localhost:5173 test:serve-pod http-get://localhost:4000 cy:run",
+    "cy:test": "start-server-and-test test:serve-app http-get://localhost:5001 test:serve-pod http-get://localhost:4000 cy:run",
     "storybook": "start-storybook -p 6006"
   },
   "dependencies": {
