@@ -263,16 +263,16 @@ describe('Cookbook', () => {
         cy.get('@putRamenImage').its('request.headers.content-type').should('eq', 'image/png');
     });
 
-    it('Updates images', () => {
+    it('Replaces uploaded images', () => {
         // Arrange
-        cy.intercept('PUT', 'http://localhost:4000/cookbook/ramen.png').as('putRamenImage');
-
-        cy.createFile('solid://recipes/ramen.png', 'image/png', 'img/ramen.png');
         cy.createRecipe({
             name: 'Ramen',
             imageUrls: ['solid://recipes/ramen.png'],
         });
         cy.login({ hasCookbook: true });
+
+        cy.intercept('PATCH', 'http://localhost:4000/cookbook/ramen').as('patchRamen');
+        cy.intercept('PUT', 'http://localhost:4000/cookbook/ramen.png').as('putRamenImage');
 
         // Act
         cy.press('Ramen');
@@ -287,10 +287,38 @@ describe('Cookbook', () => {
         cy.see('online');
 
         // Assert
-        cy.get('@putRamenImage.all').should('have.length', 2);
+        cy.get('@putRamenImage').its('request.headers.content-type').should('eq', 'image/png');
+        cy.get('@patchRamen').should('be.null');
+    });
 
-        cy.get('@putRamenImage.0').its('request.headers.content-type').should('eq', 'image/png');
-        cy.get('@putRamenImage.1').its('request.headers.content-type').should('eq', 'image/png');
+    it('Replaces image urls with uploads', () => {
+        // Arrange
+        cy.createRecipe({
+            name: 'Ramen',
+            imageUrls: ['https://images.recipes.com/ramen.png'],
+        });
+        cy.login({ hasCookbook: true });
+
+        cy.intercept('PATCH', 'http://localhost:4000/cookbook/ramen').as('patchRamen');
+        cy.intercept('PUT', 'http://localhost:4000/cookbook/ramen.png').as('putRamenImage');
+
+        // Act
+        cy.press('Ramen');
+        cy.press('Edit');
+        cy.press('Change image');
+        cy.press('Remove image');
+        cy.uploadFixture('Upload an image', 'img/ramen.png');
+        cy.see('Remove image');
+        cy.press('Update');
+        cy.press('Save');
+        cy.see('syncing');
+        cy.see('online');
+
+        // Assert
+        cy.get('@putRamenImage').its('request.headers.content-type').should('eq', 'image/png');
+        cy.fixture('update-image.sparql').then(sparql => {
+            cy.get('@patchRamen').its('request.body').should('be.sparql', sparql);
+        });
     });
 
     it('Imports recipes from JSON-LD', () => {

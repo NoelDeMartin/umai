@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations) durations support.
 
+### Fixed
+
+- Updating images.
+
 ## [v0.1.0-beta.2](https://github.com/NoelDeMartin/umai/releases/tag/v0.1.0-beta.2) - 2022-09-17
 
 ### Added

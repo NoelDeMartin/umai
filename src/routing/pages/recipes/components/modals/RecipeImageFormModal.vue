@@ -48,7 +48,7 @@
                     placeholder="https://..."
                 />
             </template>
-            <div class="flex flex-row mt-4 space-x-2 w-full self-end">
+            <div class="flex flex-col mt-4 space-y-2 w-full self-end md:flex-row md:space-x-2 md:space-y-0">
                 <CoreButton
                     v-if="url"
                     clear
@@ -59,10 +59,18 @@
                     {{ $t('recipes.image_edit_remove') }}
                 </CoreButton>
                 <div class="flex-grow" />
-                <CoreButton secondary @click="$root?.close(null)">
+                <CoreButton
+                    class="self-end"
+                    secondary
+                    @click="$root?.close(null)"
+                >
                     {{ $t('recipes.image_edit_discard') }}
                 </CoreButton>
-                <CoreButton v-initial-focus type="submit">
+                <CoreButton
+                    v-initial-focus
+                    class="self-end"
+                    type="submit"
+                >
                     {{ $t('recipes.image_edit_submit') }}
                 </CoreButton>
             </div>

@@ -494,7 +494,9 @@ async function updateRecipeImage(recipe: Recipe) {
     if (form.imageUrl.startsWith('tmp://')) {
         recipe.exists() || recipe.mintUrl();
 
-        const persistentImageUrl = recipe.imageUrl ?? `${recipe.getDocumentUrl()}.png`;
+        const persistentImageUrl = recipe.imageUrl?.startsWith(recipe.requireContainerUrl())
+            ? recipe.imageUrl
+            : `${recipe.getDocumentUrl()}.png`;
 
         await Files.rename(form.imageUrl, persistentImageUrl);
 
@@ -502,7 +504,7 @@ async function updateRecipeImage(recipe: Recipe) {
             Cloud.enqueueFileUpload(persistentImageUrl);
         }
 
-        recipe.imageUrls = arrayUnique([persistentImageUrl, ...recipe.imageUrls ?? []]);
+        recipe.imageUrls = [persistentImageUrl, ...recipe.imageUrls?.slice(1)];
 
         return;
     }
