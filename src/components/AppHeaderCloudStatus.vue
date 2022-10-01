@@ -1,24 +1,19 @@
 <template>
     <AppHeaderButton @click="$ui.openModal(CloudStatusModal)">
-        <div role="status" class="flex justify-center items-center space-x-2">
+        <div
+            role="status"
+            class="flex justify-center items-center space-x-2"
+            :class="{ 'opacity-75': $auth.hasLoggedIn && $cloud.disconnected }"
+        >
             <div class="relative w-8 h-8" aria-hidden="true">
                 <i-zondicons-cloud
                     class="absolute inset-0 w-full h-full"
-                    :class="{
-                        'transition-colors duration-700': $cloud.online,
-                        'text-red-600': $auth.error,
-                        'text-green-400': $cloud.online && !$route.meta.fullBleedHeader,
-                        'text-white': $cloud.online && $route.meta.fullBleedHeader,
-                    }"
+                    :class="{ 'text-red-600': $auth.error }"
                     aria-hidden="true"
                 />
                 <div
                     class="flex absolute inset-0 justify-center items-center transition-colors duration-700"
-                    :class="{
-                        'text-gray-900': $route.meta.fullBleedHeader,
-                        'text-green-900': !$route.meta.fullBleedHeader && $cloud.online,
-                        'text-white': !$route.meta.fullBleedHeader && !$cloud.online,
-                    }"
+                    :class="$route.meta.fullBleedHeader ? 'text-gray-900' : 'text-white'"
                 >
                     <i-pepicons-refresh v-if="$cloud.syncing" class="w-4 h-4 animate-spin" aria-hidden="true" />
                     <span v-else-if="$cloud.offline">!</span>
