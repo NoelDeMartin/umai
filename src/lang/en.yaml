@@ -63,7 +63,7 @@ webImport:
     If you want, you can still try importing recipes without a proxy, but if it fails you'll have to copy & paste
     the source HTML into a text box.
 
-    [learn more]({url})
+    [learn more](https://github.com/NoelDeMartin/umai/blob/main/docs/using-a-proxy.md)
   submit: Scan
   scanning: Looking for recipes...
   defaultWebsiteTitle: Unknown
