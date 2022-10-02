@@ -3,7 +3,7 @@
         :is="component.tag"
         ref="$root"
         v-bind="component.props"
-        :tabindex="a11y?.hidden ? -1 : undefined"
+        :tabindex="a11y?.hidden.value ? -1 : undefined"
     >
         <slot />
     </component>

@@ -2,7 +2,7 @@
     <component
         :is="linkComponent"
         v-bind="linkProps[linkComponent]"
-        :tabindex="a11y?.hidden ? -1 : undefined"
+        :tabindex="a11y?.hidden.value ? -1 : undefined"
     >
         <slot />
     </component>

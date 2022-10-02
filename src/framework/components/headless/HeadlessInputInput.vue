@@ -8,7 +8,7 @@
         :type="input.type"
         :aria-invalid="input.error ? 'true' : 'false'"
         :aria-describedby="input.error ? `${input.id}-error` : undefined"
-        :tabindex="a11y?.hidden ? -1 : undefined"
+        :tabindex="a11y?.hidden.value ? -1 : undefined"
         @input="input.update()"
     >
 </template>
