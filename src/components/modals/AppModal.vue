@@ -69,7 +69,7 @@ const { modal, title, childIndex, noPadding } = defineProps({
     modal: requiredObjectProp<Modal>(),
     title: stringProp(),
     childIndex: requiredNumberProp(),
-    noPadding: booleanProp(false),
+    noPadding: booleanProp(),
     cancellable: booleanProp(true),
 });
 

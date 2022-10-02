@@ -284,14 +284,6 @@ export default class UIService extends Service<State, ComputedState> {
         await this.closeModal(loadingModal.id);
     }
 
-    public enableAnimations(): void {
-        this.setState({ animations: true });
-    }
-
-    public disableAnimations(): void {
-        this.setState({ animations: false });
-    }
-
     public resolveComponent<T extends Component = Component>(name: ApplicationComponent): T {
         return this.components[name] as T;
     }

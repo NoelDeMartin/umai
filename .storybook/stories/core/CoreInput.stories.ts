@@ -10,6 +10,8 @@ interface Args {
     placeholder: string;
     error: string;
     color: keyof typeof CoreColor;
+    disabled: boolean;
+    bordered: boolean;
 }
 
 const Meta = meta<Args>({
@@ -20,6 +22,8 @@ const Meta = meta<Args>({
         placeholder: 'Enter text...',
         error: '',
         color: 'Primary',
+        disabled: false,
+        bordered: false,
     },
     argTypes: {
         value: { type: 'string' },
@@ -29,6 +33,8 @@ const Meta = meta<Args>({
             control: { type: 'radio' },
             options: Object.keys(CoreColor),
         },
+        disabled: { type: 'boolean' },
+        bordered: { type: 'boolean' },
     },
 });
 
@@ -49,6 +55,8 @@ const UseCase = defineComponent({
             :placeholder="placeholder"
             :error="error"
             :color="colorValue"
+            :disabled="disabled"
+            :bordered="bordered"
             :modelValue="value"
             @update:modelValue="$emit('update:modelValue', $event)"
         />

@@ -23,6 +23,7 @@ const {
     type,
     error: errorProp,
     initialFocus,
+    disabled,
 } = defineProps({
     id: stringProp(),
     name: stringProp(),
@@ -31,6 +32,7 @@ const {
     type: stringProp('text'),
     error: stringProp(),
     initialFocus: booleanProp(),
+    disabled: booleanProp(),
 });
 const emit = defineEmits(['update:modelValue']);
 
@@ -78,6 +80,9 @@ const controller: HeadlessInputController = {
     placeholder: placeholder ?? undefined,
     get error() {
         return error;
+    },
+    get disabled() {
+        return disabled;
     },
     get value() {
         return inputValue instanceof FormValue ? inputValue.value : inputValue;

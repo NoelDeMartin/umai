@@ -9,6 +9,7 @@
         :aria-invalid="input.error ? 'true' : 'false'"
         :aria-describedby="input.error ? `${input.id}-error` : undefined"
         :tabindex="a11y?.hidden.value ? -1 : undefined"
+        :disabled="input.disabled"
         @input="input.update()"
     >
 </template>

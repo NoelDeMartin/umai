@@ -7,6 +7,7 @@
         :model-value="modelValue"
         :error="error"
         :initial-focus="initialFocus"
+        :disabled="disabled"
         @update:modelValue="$emit('update:modelValue', $event)"
     >
         <HeadlessInputLabel v-if="label" class="sr-only">
@@ -15,9 +16,11 @@
         <HeadlessInputInput
             v-wobbly-border="wobblyBorder"
             :class="[
-                'bg-gray-100 px-3 py-2 text-gray-700 focus:outline-none',
+                'bg-gray-100 px-3 py-2 focus:outline-none',
                 computedClasses,
-                hasErrors && 'ring-2 ring-inset ring-red-500',
+                disabled ? 'text-gray-400 opacity-75' : 'text-gray-700',
+                hasErrors && 'ring-1 ring-inset ring-red-500',
+                bordered && !hasErrors && 'ring-1 ring-inset ring-gray-300',
             ]"
             v-bind="$attrs"
         />
@@ -48,15 +51,17 @@ const { color } = defineProps({
     modelValue: mixedProp<string | number>([String, Number]),
     showErrors: booleanProp(),
     error: stringProp(),
+    disabled: booleanProp(),
+    bordered: booleanProp(),
     wobblyBorder: objectProp<WobblyBorderOptions>(),
     initialFocus: booleanProp(),
 });
 defineEmits(['update:modelValue']);
 
 const colorsClasses: Record<CoreColor, string> = {
-    [CoreColor.Primary]: 'focus:placeholder:text-primary-500 focus:bg-primary-100',
-    [CoreColor.Solid]: 'focus:placeholder:text-brand-solid-400 focus:bg-brand-solid-100',
-    [CoreColor.Danger]: 'focus:placeholder:text-red-400 focus:bg-red-100',
+    [CoreColor.Primary]: 'focus:placeholder:text-primary-500 focus:bg-primary-100 focus:ring-primary-500',
+    [CoreColor.Solid]: 'focus:placeholder:text-brand-solid-400 focus:bg-brand-solid-100 focus:ring-brand-solid-500',
+    [CoreColor.Danger]: 'focus:placeholder:text-red-400 focus:bg-red-100 focus:ring-red-500',
 };
 const $root = $ref<IFocusable | null>(null);
 const computedClasses = $computed(() => colorsClasses[color]);

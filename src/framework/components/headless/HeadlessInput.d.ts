@@ -9,6 +9,7 @@ export interface HeadlessInputController {
     id: string;
     type: string;
     value: unknown | null;
+    disabled: boolean;
     name?: string;
     placeholder?: string;
     error?: string | null;

@@ -31,7 +31,7 @@ export function useUrlForm(modal: IWebImportModal): {
         },
         useProxy: {
             type: FormInputType.Boolean,
-            default: Config.proxyUrl !== false,
+            default: Config.useProxy,
         },
         proxyUrl: {
             type: FormInputType.String,
@@ -43,6 +43,9 @@ export function useUrlForm(modal: IWebImportModal): {
         try {
             const url = form.url;
             const proxyUrl = form.useProxy ? form.proxyUrl : false;
+
+            Config.updateProxy(form.useProxy, form.proxyUrl);
+
             const response = proxyUrl
                 ? await fetch(proxyUrl, {
                     method: 'POST',

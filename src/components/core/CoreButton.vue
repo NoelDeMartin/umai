@@ -20,7 +20,7 @@ import type { WobblyBorderOptions } from '@/directives/wobbly-border';
 import { CoreAlignment, CoreColor } from './index';
 
 const { disabled, color, class: customClasses, alignment, secondary, tinted, clear } = defineProps({
-    disabled: booleanProp(false),
+    disabled: booleanProp(),
     color: enumProp(CoreColor),
     class: stringProp(''),
     alignment: enumProp(CoreAlignment),

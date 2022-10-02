@@ -45,6 +45,12 @@ settings:
   title: Settings
   animations: Animations
   animations_description: Animations are cool, but it's also cool to have a long battery life. If you want to save battery or your device is struggling to keep up, turn off the animations for a simpler experience.
+  proxy: Use a proxy when importing from the web
+  proxy_description: |
+    Whenever you try to import recipes from other websites, you will need a proxy or you will run into
+    [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing) issues. This application comes with a default
+    proxy, or you can also [configure your own](https://github.com/NoelDeMartin/umai/blob/main/docs/using-a-proxy.md).
+  proxyUrl: Proxy url
 
 webImport:
   title: Import recipes from the Web
