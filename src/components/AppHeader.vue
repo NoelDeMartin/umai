@@ -1,22 +1,23 @@
 <template>
     <header
         ref="$header"
-        class="flex relative z-40 flex-col items-center self-stretch pt-edge h-24 transition-colors duration-700 shrink-0"
+        class="flex relative z-40 flex-col items-center self-stretch pt-edge h-24 shrink-0"
         :aria-hidden="hidden ? 'true' : 'false'"
         :class="{
             'invisible': $ui.headerHidden,
             'text-white': $route.meta.fullBleedHeader && !$app.onboardingCompleting,
             'opacity-0 pointer-events-none': $app.isOnboarding,
-            'transition-opacity opacity-100 duration-500': $app.onboardingCompleting,
+            'transition-colors duration-700': $ui.animations,
+            'transition-opacity opacity-100': $ui.animations && $app.onboardingCompleting,
         }"
     >
         <div class="flex relative z-10 justify-between items-center w-full max-w-content px-edge">
             <div class="relative flex-grow h-full">
                 <transition
-                    enter-active-class="transition duration-700"
+                    :enter-active-class="$ui.animations ? 'transition duration-700' : ''"
                     :enter-from-class="navigationButtonClasses.enterFrom"
                     enter-to-class="opacity-100"
-                    leave-active-class="transition duration-700"
+                    :leave-active-class="$ui.animations ? 'transition duration-700' : ''"
                     leave-from-class="opacity-100"
                     :leave-to-class="navigationButtonClasses.leaveTo"
                 >

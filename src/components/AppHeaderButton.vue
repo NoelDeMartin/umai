@@ -1,8 +1,10 @@
 <template>
     <CoreButton
         clear
-        class="transition-[color] duration-700"
-        :class="classes"
+        :class="[
+            classes,
+            $ui.animations && 'transition-colors duration-700',
+        ]"
     >
         <slot />
     </CoreButton>

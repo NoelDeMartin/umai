@@ -18,6 +18,7 @@ import { parseISO8601Duration, renderHumanReadableDuration } from '@/framework/u
 import type { CoreColor } from '@/components/core';
 
 interface State {
+    animations: boolean;
     headerHeight: number;
     headerHidden: boolean;
     loadingModal: PromisedValue<Modal> | null;
@@ -121,6 +122,8 @@ export enum SnackbarStyle {
 }
 
 export default class UIService extends Service<State, ComputedState> {
+
+    public static persist: Array<keyof State> = ['animations'];
 
     private $layout: HTMLElement | null = null;
     private modalCallbacks: Record<string, Partial<ModalCallbacks>> = {};
@@ -281,6 +284,14 @@ export default class UIService extends Service<State, ComputedState> {
         await this.closeModal(loadingModal.id);
     }
 
+    public enableAnimations(): void {
+        this.setState({ animations: true });
+    }
+
+    public disableAnimations(): void {
+        this.setState({ animations: false });
+    }
+
     public resolveComponent<T extends Component = Component>(name: ApplicationComponent): T {
         return this.components[name] as T;
     }
@@ -314,6 +325,7 @@ export default class UIService extends Service<State, ComputedState> {
 
     protected getInitialState(): State {
         return {
+            animations: true,
             headerHeight: 0,
             headerHidden: false,
             loadingModal: null,

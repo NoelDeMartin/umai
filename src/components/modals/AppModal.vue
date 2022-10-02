@@ -65,11 +65,11 @@ import type { Modal } from '@/framework/core/services/UIService';
 import { hideModal, showModal } from './AppModal.transitions';
 import type IAppModal from './AppModal';
 
-const { modal, title, childIndex } = defineProps({
+const { modal, title, childIndex, noPadding } = defineProps({
     modal: requiredObjectProp<Modal>(),
     title: stringProp(),
     childIndex: requiredNumberProp(),
-    padding: booleanProp(true),
+    noPadding: booleanProp(false),
     cancellable: booleanProp(true),
 });
 
@@ -77,6 +77,7 @@ let hidden = $ref(true);
 let closed = $ref(false);
 const slots = useSlots();
 const $root = $ref<{ $el?: HTMLElement } | null>(null);
+const padding = $computed(() => !noPadding);
 const childModal = $computed(() => UI.modals[childIndex] ?? null);
 const hasTitle = $computed(() => title || slots.title);
 

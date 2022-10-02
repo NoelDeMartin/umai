@@ -8,7 +8,7 @@
         <div
             class="recipe-page--wrapper flex flex-col flex-grow w-[200vw] z-10 md:w-full pointer-events-none"
             :class="{
-                'transition-transform duration-300': $ui.isMobile,
+                'transition-transform duration-300': $ui.animations && $ui.isMobile,
                 '-translate-x-screen': $ui.isMobile && showSecondaryPanel,
                 'translate-x-0': $ui.isMobile && !showSecondaryPanel,
             }"

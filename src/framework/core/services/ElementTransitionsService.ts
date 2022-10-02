@@ -6,6 +6,7 @@ import App from '@/framework/core/facades/App';
 import Errors from '@/framework/core/facades/Errors';
 import Router from '@/framework/core/facades/Router';
 import Service from '@/framework/core/Service';
+import UI from '@/framework/core/facades/UI';
 import { fadeIn, fadeOut } from '@/framework/utils/transitions';
 
 interface ElementData {
@@ -149,8 +150,13 @@ export default class ElementTransitionsService extends Service {
     }
 
     private async addElement(element: HTMLElement): Promise<void> {
-        if (!Router.hasNavigated())
+        if (!UI.animations) {
             return;
+        }
+
+        if (!Router.hasNavigated()) {
+            return;
+        }
 
         element.style.opacity = '0';
 
@@ -163,6 +169,10 @@ export default class ElementTransitionsService extends Service {
     }
 
     private async removeElement(element: HTMLElement, config: TransitionalElementConfig): Promise<void> {
+        if (!UI.animations) {
+            return;
+        }
+
         const wrapper = await this.freezeElement(element);
 
         if (!wrapper)

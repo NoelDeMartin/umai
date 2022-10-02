@@ -12,8 +12,11 @@
                     aria-hidden="true"
                 />
                 <div
-                    class="flex absolute inset-0 justify-center items-center transition-colors duration-700"
-                    :class="$route.meta.fullBleedHeader ? 'text-gray-900' : 'text-white'"
+                    class="flex absolute inset-0 justify-center items-center"
+                    :class="[
+                        $route.meta.fullBleedHeader ? 'text-gray-900' : 'text-white',
+                        $ui.animations ? 'transition-colors duration-700' : '',
+                    ]"
                 >
                     <i-pepicons-refresh v-if="$cloud.syncing" class="w-4 h-4 animate-spin" aria-hidden="true" />
                     <span v-else-if="$cloud.offline">!</span>

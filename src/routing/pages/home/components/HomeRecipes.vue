@@ -6,10 +6,10 @@
             </HomeHeading>
             <div class="flex-grow" />
             <transition
-                enter-active-class="transition duration-300"
+                :enter-active-class="$ui.animations ? 'transition duration-300' : ''"
                 enter-from-class="opacity-0"
                 enter-to-class="opacity-100"
-                leave-active-class="transition duration-300"
+                :leave-active-class="$ui.animations ? 'transition duration-300' : ''"
                 leave-from-class="opacity-100"
                 leave-to-class="opacity-0"
             >
@@ -34,10 +34,10 @@
         <RecipesGrid :recipes="filteredRecipes" class="w-full" />
         <transition
             enter-to-class="opacity-100"
-            enter-active-class="transition-opacity duration-500"
+            :enter-active-class="$ui.animations ? 'transition-opacity duration-500' : ''"
             enter-from-class="opacity-0"
             leave-to-class="opacity-0"
-            leave-active-class="transition-opacity duration-500"
+            :leave-active-class="$ui.animations ? 'transition-opacity duration-500' : ''"
             leave-from-class="opacity-100"
         >
             <div

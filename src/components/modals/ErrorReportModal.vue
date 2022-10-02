@@ -1,5 +1,5 @@
 <template>
-    <AppModal v-slot="{ close }" :padding="false" :cancellable="!!details">
+    <AppModal v-slot="{ close }" no-padding :cancellable="!!details">
         <div class="px-4 pt-1 pb-4">
             <div class="flex justify-between">
                 <h2 class="font-medium text-lg flex items-center">

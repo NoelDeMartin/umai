@@ -1,11 +1,11 @@
 <template>
     <transition-group
         tag="ul"
-        enter-active-class="transition-all duration-300"
+        :enter-active-class="$ui.animations ? 'transition-all duration-300' : ''"
         enter-from-class="opacity-0"
-        leave-active-class="!absolute transition-all duration-300"
+        :leave-active-class="$ui.animations ? '!absolute transition-all duration-300' : ''"
         leave-to-class="opacity-0"
-        move-class="transition-all duration-300"
+        :move-class="$ui.animations ? 'transition-all duration-300' : ''"
         class="grid grid-cols-1 gap-3 my-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
         @before-leave="element => $elementTransitions.freezeInPlace(element as HTMLElement)"
     >
