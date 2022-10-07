@@ -8,6 +8,15 @@
             :description="$t('settings.animations_description')"
         />
         <hr>
+        <template v-if="$errors.sentryConfigured">
+            <CoreToggle
+                v-model="$errors.reporting"
+                class="p-4"
+                :label="$t('settings.errorReporting')"
+                :description="$t('settings.errorReporting_description')"
+            />
+            <hr>
+        </template>
         <div class="p-4">
             <CoreToggle
                 v-model="$config.useProxy"

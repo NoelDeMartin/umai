@@ -10,6 +10,8 @@
                             clear
                             :wobbly-border="{ topRight: false, bottomRight: false }"
                             :disabled="activeReportIndex === 0"
+                            :title="$t('errors.previousReport')"
+                            :aria-label="$t('errors.previousReport')"
                             @click="activeReportIndex--"
                         >
                             <i-pepicons-angle-left class="w-6 h-6" aria-hidden="true" />
@@ -18,6 +20,8 @@
                             clear
                             :wobbly-border="{ topLeft: false, bottomLeft: false }"
                             :disabled="activeReportIndex === reports.length - 1"
+                            :title="$t('errors.nextReport')"
+                            :aria-label="$t('errors.nextReport')"
                             @click="activeReportIndex++"
                         >
                             <i-pepicons-angle-right class="w-6 h-6" aria-hidden="true" />
@@ -34,6 +38,19 @@
                     >
                         <i-mdi-github class="w-6 h-6" aria-hidden="true" />
                         <span class="hidden group-hover:block group-hover:ml-2 group-focus:block group-focus:ml-2">{{ $t('errors.reportToGithub') }}</span>
+                    </CoreButton>
+                    <CoreButton
+                        v-if="$errors.sentryConfigured && report.sentryId !== null"
+                        clear
+                        class="group"
+                        :title="report.sentryId ? $t('errors.viewSentryId') : $t('errors.reportToSentry')"
+                        :aria-label="report.sentryId ? $t('errors.viewSentryId') : $t('errors.reportToSentry')"
+                        @click="() => report.sentryId ? viewSentryReport(report.sentryId) : reportToSentry()"
+                    >
+                        <i-zondicons-bug class="w-6 h-6" aria-hidden="true" />
+                        <span class="hidden group-hover:block group-hover:ml-2 group-focus:block group-focus:ml-2">
+                            {{ report.sentryId ? $t('errors.viewSentryId') : $t('errors.reportToSentry') }}
+                        </span>
                     </CoreButton>
                     <CoreButton
                         clear
@@ -80,6 +97,7 @@
 import { stringExcerpt } from '@noeldemartin/utils';
 
 import App from '@/framework/core/facades/App';
+import Errors from '@/framework/core/facades/Errors';
 import UI from '@/framework/core/facades/UI';
 import { translate } from '@/framework/utils/translate';
 import { requiredArrayProp } from '@/framework/utils/vue';
@@ -108,6 +126,18 @@ const githubReportUrl = $computed(() => {
 
     return `${App.sourceUrl}/issues/new?title=${issueTitle}&body=${issueBody}`;
 });
+
+function viewSentryReport(sentryId: string) {
+    UI.showSnackbar(translate('errors.viewSentryIdSuccess', { sentryId }));
+}
+
+function reportToSentry() {
+    const sentryId = report.sentryId = Errors.reportToSentry(report.error);
+
+    sentryId
+        ? UI.showSnackbar(translate('errors.reportToSentrySuccess', { sentryId }))
+        : UI.showSnackbar(translate('errors.reportToSentryFailed'));
+}
 
 function inspectInConsole() {
     (window as { error?: unknown }).error = report.error;
