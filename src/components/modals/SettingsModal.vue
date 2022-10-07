@@ -15,12 +15,8 @@
                 :description="$t('settings.proxy_description')"
             />
 
-            <div class="flex flex-col mt-2">
-                <label
-                    for="proxy-url"
-                    class="font-medium text-sm text-gray-700"
-                    :class="$config.useProxy || 'opacity-50'"
-                >
+            <div v-if="$config.useProxy" class="flex flex-col mt-2">
+                <label for="proxy-url" class="font-medium text-sm text-gray-700">
                     {{ $t('settings.proxyUrl') }}
                 </label>
                 <CoreInput
@@ -29,7 +25,6 @@
                     bordered
                     class="mt-2"
                     :placeholder="$app.env('DEFAULT_PROXY_URL')"
-                    :disabled="!$config.useProxy"
                 />
             </div>
         </div>
