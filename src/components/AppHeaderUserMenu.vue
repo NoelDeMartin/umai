@@ -2,7 +2,16 @@
     <Menu as="div" class="flex relative items-center">
         <div>
             <MenuButton as="template">
+                <HeadlessButton
+                    v-if="$auth.userAvatarUrl"
+                    :aria-label="$t('menu.open')"
+                    :title="$t('menu.open')"
+                    class="rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                >
+                    <img :src="$auth.userAvatarUrl" class="h-8 w-8 rounded-full object-cover" alt="">
+                </HeadlessButton>
                 <AppHeaderButton
+                    v-else
                     :aria-label="$t('menu.open')"
                     :title="$t('menu.open')"
                 >

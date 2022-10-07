@@ -48,6 +48,7 @@ interface State {
     previousSession: {
         authenticator: AuthenticatorName;
         loginUrl: string;
+        avatarUrl?: string;
         error: ErrorSource | null;
     } | null;
 }
@@ -57,6 +58,7 @@ interface ComputedState {
     error: ErrorSource | null;
     fetch: Fetch;
     loggedIn: boolean;
+    userAvatarUrl: string | null;
     wasLoggedIn: boolean;
     hasLoggedIn: boolean;
     user: SolidUserProfile | null;
@@ -136,6 +138,7 @@ export default class AuthService extends Service<State, ComputedState> {
                 ignorePreviousSessionError: true,
                 previousSession: {
                     loginUrl,
+                    avatarUrl: profile?.avatarUrl,
                     authenticator: authenticatorName,
                     error: i18nTranslate('auth.stuckConnecting'),
                 },
@@ -286,6 +289,7 @@ export default class AuthService extends Service<State, ComputedState> {
             },
             fetch: (_, { authenticator }) => authenticator?.getAuthenticatedFetch() ?? window.fetch.bind(window),
             loggedIn: state => !!state.session,
+            userAvatarUrl: state => state.session?.user?.avatarUrl ?? state.previousSession?.avatarUrl ?? null,
             wasLoggedIn: state => !!state.previousSession?.loginUrl,
             hasLoggedIn: (_, state) => state.loggedIn || state.wasLoggedIn,
             user: state => state.session?.user ?? null,
@@ -322,6 +326,7 @@ export default class AuthService extends Service<State, ComputedState> {
                     previousSession: {
                         authenticator: authenticator.name,
                         loginUrl: session.loginUrl,
+                        avatarUrl: session.user.avatarUrl,
                         error: null,
                     },
                 });

@@ -21,7 +21,7 @@
     "storybook": "start-storybook -p 6006"
   },
   "dependencies": {
-    "@headlessui/vue": "^0.0.0-insiders.90aa478",
+    "@headlessui/vue": "^1.7.3",
     "@inrupt/solid-client-authn-browser": "^1.11.6",
     "@noeldemartin/solid-utils": "^0.1.1-next.00786be551b573c73063ce30259689c2b183531f",
     "@noeldemartin/utils": "^0.2.1-next.9dca1131badcdf7e51828a07ba72e4a428503066",
