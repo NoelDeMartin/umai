@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Fixed
 
 - Updating images.
+- `schema:image` and `schema:sameAs` properties are now written as links instead of plain strings.
 
 ## [v0.1.0-beta.2](https://github.com/NoelDeMartin/umai/releases/tag/v0.1.0-beta.2) - 2022-09-17
 

@@ -3,7 +3,7 @@ DELETE DATA {
     @prefix schema: <https://schema.org/> .
     @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-    <#it> schema:image "https://images.recipes.com/ramen.png" .
+    <#it> schema:image <https://images.recipes.com/ramen.png> .
     <#it-metadata> crdt:updatedAt "[[created-date][.*]]"^^xsd:dateTime .
 } ;
 
@@ -26,20 +26,20 @@ INSERT DATA {
         a crdt:SetPropertyOperation ;
         crdt:resource <#it> ;
         crdt:property schema:image ;
-        crdt:value "https://images.recipes.com/ramen.png" ;
+        crdt:value <https://images.recipes.com/ramen.png> ;
         crdt:date "[[created-date][.*]]"^^xsd:dateTime .
 
     <#it-operation-[[operation-3][.*]]>
         a crdt:RemovePropertyOperation ;
         crdt:resource <#it> ;
         crdt:property schema:image ;
-        crdt:value "https://images.recipes.com/ramen.png" ;
+        crdt:value <https://images.recipes.com/ramen.png> ;
         crdt:date "[[updated-date][.*]]"^^xsd:dateTime .
 
     <#it-operation-[[operation-4][.*]]>
         a crdt:AddPropertyOperation ;
         crdt:resource <#it> ;
         crdt:property schema:image ;
-        crdt:value "http://localhost:4000/cookbook/ramen.png" ;
+        crdt:value <http://localhost:4000/cookbook/ramen.png> ;
         crdt:date "[[updated-date][.*]]"^^xsd:dateTime .
 }

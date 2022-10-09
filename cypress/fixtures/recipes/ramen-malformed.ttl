@@ -1,0 +1,8 @@
+@prefix schema: <https://schema.org/> .
+
+<#it>
+    a schema:Recipe;
+    schema:name "Ramen";
+    schema:image "https://example.org/ramen.png";
+    schema:recipeInstructions "Step 1", "Step 2", "Step 3";
+    schema:sameAs "https://1.example.org/recipes/ramen", "https://2.example.org/recipes/ramen".

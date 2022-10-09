@@ -5,12 +5,12 @@
 <#it> a schema:Recipe;
     schema:name "Aguachile";
     schema:description "Aguachile (\"chile water\" in Spanish) is a Mexican dish that you are going to love!\n## Variations\n- You can replace or mix Jalapeños with Rocoto, Habanero, Chiltepín, ... Pretty much any chili pepper you can find. If you don't like spicy dishes stick with Jalapeños or, god forbid, only Black Pepper (won't be as good though!).\n- Crackers should be flat and long, because they'll be used as platforms to transport the aguachile to your mouth. I have tried different types of crackers and the ones I like the most are salty without other spices.\n- Cilantro is a controversial ingredient. Some people say it tastes like soap, and it seems to come down to genetic predisposition. If you don't know whether you like it or not, give it a test run with some avocado and a squirt of lemon juice on top of a cracker.\n- You can make the dish vegetarian replacing Shrimps with Heart of Palm, Mushrooms or Cauliflower. Although I haven't tried it myself.";
-    schema:image "https://noeldemartin.com/img/recipes/aguachile.jpg";
+    schema:image <https://noeldemartin.com/img/recipes/aguachile.jpg>;
     schema:prepTime "30 minutes";
     schema:recipeYield "2 persons";
     schema:recipeIngredient "200g Shrimps", "5 lemons", "1 Onion", "1 Cucumber", "1 Avocado", "Jalapeños", "Cilantro", "Black pepper", "Grated garlic", "Mayonnaise", "Crackers";
     schema:recipeInstructions <#instruction-1>, <#instruction-2>, <#instruction-3>;
-    schema:sameAs "https://noeldemartin.com/recipes/aguachile", "https://www.youtube.com/watch?v=hV57FtlbO28".
+    schema:sameAs <https://noeldemartin.com/recipes/aguachile>, <https://www.youtube.com/watch?v=hV57FtlbO28>.
 <#it-metadata> a crdt:Metadata;
     crdt:resource <#it>;
     crdt:createdAt "2022-03-25T11:31:32.448Z"^^xsd:dateTime;

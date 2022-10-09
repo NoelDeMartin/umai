@@ -136,6 +136,7 @@ export default class CookbookService extends Service<State, ComputedState> {
     public mendRecipe(recipe: Recipe): void {
         this.mendRecipeMetadata(recipe);
         this.mendRecipeInstructions(recipe);
+        recipe.fixMalformedAttributes();
     }
 
     protected async boot(): Promise<void> {

@@ -9,7 +9,7 @@ export default SolidModel.schema({
     description: FieldType.String,
     imageUrls: {
         type: FieldType.Array,
-        items: FieldType.String,
+        items: FieldType.Key,
         rdfProperty: 'schema:image',
     },
     servings: {
@@ -20,22 +20,22 @@ export default SolidModel.schema({
     cookTime: FieldType.String,
     ingredients: {
         type: FieldType.Array,
-        rdfProperty: 'schema:recipeIngredient',
         items: FieldType.String,
+        rdfProperty: 'schema:recipeIngredient',
     },
     instructionStepUrls: {
         type: FieldType.Array,
-        rdfProperty: 'schema:recipeInstructions',
         items: FieldType.Key,
+        rdfProperty: 'schema:recipeInstructions',
     },
     listUrls: {
         type: FieldType.Array,
-        rdfProperty: 'purl:isReferencedBy',
         items: FieldType.Key,
+        rdfProperty: 'purl:isReferencedBy',
     },
     externalUrls: {
         type: FieldType.Array,
+        items: FieldType.Key,
         rdfProperty: 'schema:sameAs',
-        items: FieldType.String,
     },
 });

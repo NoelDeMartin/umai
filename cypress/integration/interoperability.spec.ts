@@ -62,10 +62,10 @@ describe('Interoperability', () => {
         cy.get('@patchRamen').should('be.null');
     });
 
-    it('Mends recipes with plain text instructions', () => {
+    it('Mends recipe attributes', () => {
         // Arrange.
         cy.login();
-        cy.createSolidDocument('/cookbook/ramen', 'recipes/ramen-bare-instructions.ttl');
+        cy.createSolidDocument('/cookbook/ramen', 'recipes/ramen-malformed.ttl');
 
         cy.intercept('PATCH', 'http://localhost:4000/cookbook/ramen').as('patchRamen');
 
@@ -78,8 +78,10 @@ describe('Interoperability', () => {
         cy.see('Step 1');
         cy.see('Step 2');
         cy.see('Step 3');
+        cy.see('recipe on 1.example.org');
+        cy.see('recipe on 2.example.org');
 
-        cy.fixture('mend-ramen-bare-instructions.sparql').then(sparql => {
+        cy.fixture('mend-ramen-malformed.sparql').then(sparql => {
             cy.get('@patchRamen').its('request.body').should('be.sparql', sparql);
         });
     });
