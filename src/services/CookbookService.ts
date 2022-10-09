@@ -11,7 +11,7 @@ import {
 } from '@noeldemartin/utils';
 import { SolidContainerModel, SolidTypeRegistration } from 'soukai-solid';
 import { SolidDocumentPermission, findInstanceRegistrations } from '@noeldemartin/solid-utils';
-import type { FluentArray, Obj } from '@noeldemartin/utils';
+import type { FluentArray, Obj, Tuple } from '@noeldemartin/utils';
 import type { IndexedDBEngine } from 'soukai';
 
 import Auth from '@/framework/core/facades/Auth';
@@ -218,8 +218,9 @@ export default class CookbookService extends Service<State, ComputedState> {
 
         setRemoteCollection(Recipe, cookbook.url);
 
-        if (cookbook.url !== this.remoteCookbookUrl)
+        if (cookbook.url !== this.remoteCookbookUrl) {
             this.setState({ remoteCookbookUrl: cookbook.url });
+        }
 
         this.cookbook.resolve(cookbook);
     }
@@ -343,40 +344,50 @@ export default class CookbookService extends Service<State, ComputedState> {
     }
 
     private async migrateLocalRecipes(remoteCollection: string): Promise<void> {
+        type UrlObject = { '@id': string };
+
         const recipes = await Recipe.all();
         const engine = Recipe.requireEngine();
-        const migrateLocalUrls = (document: Obj): [string, string][] => {
-            const fileRenames: [string, string][] = [];
+        const isLocalUrlObject = (obj: Obj): obj is UrlObject => {
+            return '@id' in obj && (obj['@id'] as string).startsWith(Recipe.collection);
+        };
+        const migrateLocalUrl = (urlObject: UrlObject): Tuple<string, 2> => {
+            const localUrl = urlObject['@id'];
+            const remoteUrl = localUrl.replace(Recipe.collection, remoteCollection);
 
-            for (const [field, value] of Object.entries(document)) {
-                if (isObject(value)) {
-                    fileRenames.push(...migrateLocalUrls(value));
+            urlObject['@id'] = remoteUrl;
 
-                    continue;
-                }
+            return [localUrl, remoteUrl];
+        };
+        const migrateLocalUrls = (document: Obj): Tuple<string, 2>[] => {
+            const entries = Object.entries(document);
+            if (isLocalUrlObject(document)) {
+                migrateLocalUrl(document);
 
-                if (typeof value !== 'string' || !value.startsWith(Recipe.collection))
-                    continue;
-
-                switch (field) {
-                    case '@id':
-                        document[field] = value.replace(Recipe.collection, remoteCollection);
-
-                        continue;
-                    case 'image':
-                        document[field] = value.replace(Recipe.collection, remoteCollection);
-                        fileRenames.push([value, document[field] as string]);
-
-                        continue;
+                if (entries.length === 1) {
+                    return [];
                 }
             }
 
-            return fileRenames;
+            return entries.reduce((fileRenames, [field, value]) => {
+                if (isObject(value)) {
+                    fileRenames.push(
+                        ...(
+                            field === 'image' && isLocalUrlObject(value)
+                                ? [migrateLocalUrl(value)]
+                                : migrateLocalUrls(value)
+                        ),
+                    );
+                }
+
+                return fileRenames;
+            }, [] as Tuple<string, 2>[]);
         };
 
         for (const recipe of recipes) {
-            if (recipe.url.startsWith(remoteCollection))
+            if (recipe.url.startsWith(remoteCollection)) {
                 continue;
+            }
 
             const recipeUrl = recipe.url;
             const newRecipeUrl = recipe.url.replace(Recipe.collection, remoteCollection);
