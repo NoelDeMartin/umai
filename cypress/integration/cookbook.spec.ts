@@ -536,15 +536,13 @@ describe('Cookbook', () => {
 
         // Assert
         cy.getRecipe('ramen').then(ramen => {
-            cy.see('Public', 'button');
+            cy.see('Unlisted', 'button');
             cy.ariaLabel('Umai').should('match', '[aria-checked="true"]');
             cy.see(`${Cypress.config('baseUrl')}/viewer?url=${ramen.getDocumentUrl()}`);
 
             cy.ariaLabel('Solid url').click();
             cy.ariaLabel('Solid url').should('match', '[aria-checked="true"]');
             cy.see(ramen.url);
-
-            // TODO test sharing button
         });
     });
 

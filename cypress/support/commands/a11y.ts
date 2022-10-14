@@ -1,7 +1,19 @@
+function see(text: string, options?: Partial<Cypress.Timeoutable>): Cypress.Chainable;
+function see(text: string, selector: string, options?: Partial<Cypress.Timeoutable>): Cypress.Chainable;
+function see(
+    text: string,
+    selectorOrOptions: string | Partial<Cypress.Timeoutable> = {},
+    options: Partial<Cypress.Timeoutable> = {},
+): Cypress.Chainable {
+    return typeof selectorOrOptions === 'string'
+        ? cy.contains(selectorOrOptions, text, options).scrollIntoView().should('be.visible')
+        : cy.a11yGet(text, selectorOrOptions).scrollIntoView().should('be.visible');
+}
+
 export default {
 
-    a11yGet(text: string): Cypress.Chainable {
-        return cy.contains(text);
+    a11yGet(text: string, options: Partial<Cypress.Timeoutable> = {}): Cypress.Chainable {
+        return cy.contains(text, options);
     },
 
     ariaLabel(label: string): Cypress.Chainable {
@@ -31,11 +43,7 @@ export default {
         cy.contains(selector, label).click();
     },
 
-    see(text: string, selector: string | null = null): Cypress.Chainable {
-        return selector
-            ? cy.contains(selector, text).scrollIntoView().should('be.visible')
-            : cy.a11yGet(text).scrollIntoView().should('be.visible');
-    },
+    see,
 
     details(text: string): Cypress.Chainable {
         return cy.contains('summary', text).parent();

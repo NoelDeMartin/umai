@@ -277,7 +277,9 @@ recipes:
 
   accessControl:
     profile_public: Public
-    profile_publicDescription: Anyone with the link can view this recipe
+    profile_publicDescription: Anyone with the link can view this recipe, and it will be listed along with all your public recipes
+    profile_unlisted: Unlisted
+    profile_unlistedDescription: Anyone with the link can view this recipe, but it won't be listed with public recipes
     profile_private: Private
     profile_privateDescription: Only you can view this recipe
     change_label_a11y: Public permissions

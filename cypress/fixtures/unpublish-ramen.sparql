@@ -1,0 +1,24 @@
+DELETE DATA {
+    @prefix schema: <https://schema.org/> .
+    @prefix purl: <http://purl.org/dc/terms/> .
+    @prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
+    @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+    <#it> purl:isReferencedBy <http://localhost:4000/alice/cookbook/public#it> .
+    <#it-metadata> crdt:updatedAt "[[.*]]"^^xsd:dateTime .
+} ;
+INSERT DATA {
+    @prefix schema: <https://schema.org/> .
+    @prefix purl: <http://purl.org/dc/terms/> .
+    @prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
+    @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+    <#it-metadata> crdt:updatedAt "[[updatedAt][.*]]"^^xsd:dateTime .
+
+    <#it-operation-[[listing][%uuid%]]>
+        a crdt:RemovePropertyOperation ;
+        crdt:resource <#it> ;
+        crdt:date "[[updatedAt][.*]]"^^xsd:dateTime ;
+        crdt:property purl:isReferencedBy ;
+        crdt:value <http://localhost:4000/alice/cookbook/public#it> .
+}

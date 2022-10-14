@@ -1,0 +1,14 @@
+INSERT DATA {
+    @prefix schema: <https://schema.org/> .
+    @prefix purl: <http://purl.org/dc/terms/> .
+
+    <#it>
+        a schema:ItemList ;
+        schema:name "Public Recipes" ;
+        purl:creator <http://localhost:4000/alice/profile/card#me> ;
+        schema:itemListElement <#[[item][%uuid%]]> .
+
+    <#[[item][%uuid%]]>
+        a schema:ListItem ;
+        schema:item <http://localhost:4000/alice/cookbook/ramen#it> .
+}

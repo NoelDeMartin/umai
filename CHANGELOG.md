@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Added
 
 - Settings modal.
+- Publish unlisted recipes.
 - Error reporting to [Sentry](https://sentry.io/) (opt-in).
 - [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations) durations support.
 

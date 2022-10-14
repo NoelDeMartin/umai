@@ -62,7 +62,7 @@
                         <li
                             :class="[
                                 active ? 'text-white bg-brand-solid-500' : 'text-gray-900',
-                                'select-none relative p-4 text-sm flex items-center cursor-pointer'
+                                'select-none relative p-4 text-sm flex items-center cursor-pointer max-w-sm'
                             ]"
                         >
                             <div class="flex flex-col">
@@ -108,6 +108,7 @@ interface AccessControlProfile {
     description: string;
     iconComponent: Component;
     publicPermissions: SolidDocumentPermission[];
+    publicListing: boolean;
 }
 
 const { recipe } = defineProps({
@@ -119,14 +120,23 @@ const publicProfile: AccessControlProfile = markRaw({
     description: translate('recipes.accessControl.profile_publicDescription'),
     iconComponent: IconViewShow,
     publicPermissions: [SolidDocumentPermission.Read],
+    publicListing: true,
+});
+const unlistedProfile: AccessControlProfile = markRaw({
+    name: translate('recipes.accessControl.profile_unlisted'),
+    description: translate('recipes.accessControl.profile_unlistedDescription'),
+    iconComponent: IconViewShow,
+    publicPermissions: [SolidDocumentPermission.Read],
+    publicListing: false,
 });
 const privateProfile: AccessControlProfile = markRaw({
     name: translate('recipes.accessControl.profile_private'),
     description: translate('recipes.accessControl.profile_privateDescription'),
     iconComponent: IconViewHide,
     publicPermissions: [],
+    publicListing: false,
 });
-const profiles: AccessControlProfile[] = [publicProfile, privateProfile];
+const profiles: AccessControlProfile[] = [publicProfile, unlistedProfile, privateProfile];
 
 let error = $ref<Error | null>(null);
 let updatingPermissions = $ref(false);
@@ -136,11 +146,13 @@ const button = $ref<{ el: HTMLButtonElement } | undefined>();
 
 function optionIconClasses(active: boolean, selected: boolean): string {
     const conditionalClasses = () => {
-        if (active)
+        if (active) {
             return 'text-white';
+        }
 
-        if (selected)
+        if (selected) {
             return 'text-gray-600';
+        }
 
         return 'text-gray-400';
     };
@@ -149,14 +161,15 @@ function optionIconClasses(active: boolean, selected: boolean): string {
 }
 
 async function updatePermissions(newProfile: AccessControlProfile) {
-    if (newProfile === profile)
+    if (newProfile === profile) {
         return;
+    }
 
     updatingPermissions = true;
 
     try {
         await recipe.updatePublicPermissions(newProfile.publicPermissions);
-        await Cookbook.updatePublicRecipeListing(recipe, !!recipe.isPublic);
+        await Cookbook.updatePublicRecipeListing(recipe, newProfile.publicListing);
 
         profile = newProfile;
     } catch (e) {
@@ -170,7 +183,9 @@ async function initializePermissionsProfile() {
     try {
         await recipe.fetchPublicPermissionsIfMissing();
 
-        profile = recipe.isPublic ? publicProfile : privateProfile;
+        profile = recipe.isPublic
+            ? (recipe.listUrls.length > 0 ? publicProfile : unlistedProfile)
+            : privateProfile;
     } catch (e) {
         error = e as Error;
     }

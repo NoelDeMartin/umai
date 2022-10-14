@@ -1,0 +1,36 @@
+DELETE DATA {
+    @prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
+    @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+    <#it-metadata> crdt:updatedAt "[[createdAt][.*]]"^^xsd:dateTime .
+} ;
+INSERT DATA {
+    @prefix schema: <https://schema.org/> .
+    @prefix purl: <http://purl.org/dc/terms/> .
+    @prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
+    @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+    <#it> purl:isReferencedBy <http://localhost:4000/alice/cookbook/public#it> .
+    <#it-metadata> crdt:updatedAt "[[updatedAt][.*]]"^^xsd:dateTime .
+
+    <#it-operation-[[name][%uuid%]]>
+        a crdt:SetPropertyOperation ;
+        crdt:resource <#it> ;
+        crdt:date "[[createdAt][.*]]"^^xsd:dateTime ;
+        crdt:property schema:name ;
+        crdt:value "Ramen" .
+
+    <#it-operation-[[image][%uuid%]]>
+        a crdt:SetPropertyOperation ;
+        crdt:resource <#it> ;
+        crdt:date "[[createdAt][.*]]"^^xsd:dateTime ;
+        crdt:property schema:image ;
+        crdt:value <http://localhost:4000/alice/cookbook/ramen.png> .
+
+    <#it-operation-[[listing][%uuid%]]>
+        a crdt:AddPropertyOperation ;
+        crdt:resource <#it> ;
+        crdt:date "[[updatedAt][.*]]"^^xsd:dateTime ;
+        crdt:property purl:isReferencedBy ;
+        crdt:value <http://localhost:4000/alice/cookbook/public#it> .
+}
