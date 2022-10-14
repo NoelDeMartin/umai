@@ -45,7 +45,7 @@ describe('Viewer', () => {
         cy.startApp();
 
         // Act
-        cy.see('Recipe created by Alice');
+        cy.see('Alice');
         cy.press('View all their recipes');
         cy.press('Pisto');
 

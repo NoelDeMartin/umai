@@ -327,11 +327,11 @@ viewer:
 
   list:
     titleFallback: Recipes
-    creator: List created by [{name}]({url})
+    creatorPrefix: List created by
 
   recipe:
     import: Save in my cookbook
-    creator: Recipe created by [{name}]({url})
+    creatorPrefix: Recipe created by
     viewAll: View all their recipes
     inCookbook: View in your cookbook
 

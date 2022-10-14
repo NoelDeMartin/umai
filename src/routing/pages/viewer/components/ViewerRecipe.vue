@@ -39,10 +39,10 @@
                 <span class="ml-1">{{ $t('viewer.recipe.import') }}</span>
             </CoreButton>
 
-            <CoreMarkdown
-                v-if="creator"
-                class="text-sm mt-4"
-                :text="$t('viewer.recipe.creator', creator)"
+            <ViewerRecipeCreator
+                v-if="list"
+                :prefix="$t('viewer.recipe.creatorPrefix')"
+                :list="list"
             />
 
             <CoreLink
@@ -58,14 +58,12 @@
 </template>
 
 <script setup lang="ts">
-import { silenced, tap, urlClean } from '@noeldemartin/utils';
+import { tap } from '@noeldemartin/utils';
 
-import Auth from '@/framework/core/facades/Auth';
 import Browser from '@/framework/core/facades/Browser';
 import Cloud from '@/framework/core/facades/Cloud';
 import Router from '@/framework/core/facades/Router';
 import UI from '@/framework/core/facades/UI';
-import { computedAsync } from '@/framework/utils/vue';
 import { translate } from '@/framework/utils/translate';
 
 import Recipe from '@/models/Recipe';
@@ -74,18 +72,6 @@ import Viewer from '@/services/facades/Viewer';
 import { enterTransition, transitionToCard } from './ViewerRecipe.transitions';
 
 const list = $computed(() => Viewer.recipe?.lists?.[0]);
-const creator = $(computedAsync(async () => {
-    if (!list) {
-        return null;
-    }
-
-    const user = await silenced(Auth.getUserProfile(list.creatorWebId));
-
-    return {
-        name: user?.name ?? urlClean(user?.webId ?? list.creatorWebId, { protocol: false }),
-        url: user?.webId ?? list.creatorWebId,
-    };
-}));
 
 function showUnsupportedIndexedDBAlert() {
     const message = translate('errors.unsupportedBrowser_indexedDBFeature');
