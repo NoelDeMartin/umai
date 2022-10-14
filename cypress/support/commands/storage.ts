@@ -4,6 +4,14 @@ import { deleteDB, openDB } from 'idb';
 import type Bluebird from 'cypress/types/bluebird';
 import type { JsonLD } from '@noeldemartin/solid-utils';
 
+const MIME_TYPE_EXTENSIONS: Record<string, string> = {
+    '.png': 'image/png',
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.json': 'application/json',
+    '.jsonld': 'application/json',
+};
+
 async function createIndexedDBObject(database: string, store: string, record: object): Promise<void> {
     // TODO refactor this to remove duplication
     const db = await openDB(database, 1, {
@@ -23,6 +31,14 @@ async function createIndexedDBObject(database: string, store: string, record: ob
 
 async function deleteIndexedDBDatabase(database: string): Promise<void> {
     return new Promise(resolve => deleteDB(database, { blocked: resolve }).then(resolve));
+}
+
+function getFileMimeType(filename: string): string {
+    const extensionMatch = Object
+        .keys(MIME_TYPE_EXTENSIONS)
+        .find(extension => filename.toLowerCase().endsWith(extension));
+
+    return MIME_TYPE_EXTENSIONS[extensionMatch ?? ''] ?? 'text/plain';
 }
 
 async function getIndexedDBObject<T = object>(database: string, store: string, id: string): Promise<T | null> {
@@ -101,13 +117,8 @@ export default {
             });
     },
 
-    createFile(url: string, mimeType: string, fixture: string): void {
-        cy.fixture(fixture).then(content => {
-            if (mimeType === 'application/json')
-                content = btoa(content);
-
-            const blob = Cypress.Blob.base64StringToBlob(content, mimeType);
-
+    createFile(url: string, fixture: string): void {
+        cy.fixtureBlob(fixture).then(({ blob, mimeType }) => {
             return createIndexedDBObject('app', 'files', {
                 url,
                 mimeType,
@@ -115,6 +126,20 @@ export default {
                 dirty: true,
                 expiresAt: new Date(Date.now() + 10000000),
             });
+        });
+    },
+
+    fixtureBlob(filename: string): Cypress.Chainable<{ blob: Blob; mimeType: string }> {
+        return cy.fixture(filename).then(content => {
+            const mimeType = getFileMimeType(filename);
+
+            if (mimeType === 'application/json')
+                content = btoa(content);
+
+            return {
+                blob: Cypress.Blob.base64StringToBlob(content, mimeType),
+                mimeType,
+            };
         });
     },
 

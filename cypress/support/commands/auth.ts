@@ -71,6 +71,7 @@ export default {
         // Delete previous data
         cy.queueUpdatingSolidDocument('/alice/profile/card', 'remove-type-index.sparql');
         cy.queueDeletingSolidDocument('/alice/settings/privateTypeIndex');
+        cy.queueDeletingSolidDocument('/alice/cookbook/ramen.png');
         cy.queueDeletingSolidDocument('/alice/cookbook/ramen');
         cy.queueDeletingSolidDocument('/alice/cookbook/pisto');
         cy.queueDeletingSolidDocument('/alice/cookbook/public');
@@ -169,6 +170,16 @@ export default {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/sparql-update' },
                 body,
+            });
+        });
+    },
+
+    uploadFile(url: string, fixture: string): void {
+        cy.fixtureBlob(fixture).then(({ blob, mimeType }) => {
+            return cy.runAuthenticatedRequest(url, {
+                method: 'PUT',
+                headers: { 'Content-Type': mimeType },
+                body: blob,
             });
         });
     },

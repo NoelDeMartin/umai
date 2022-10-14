@@ -550,7 +550,7 @@ describe('Cookbook', () => {
 
     it('Deletes local recipes', () => {
         // Arrange
-        cy.createFile('solid://recipes/ramen.png', 'image/png', 'img/ramen.png');
+        cy.createFile('solid://recipes/ramen.png', 'img/ramen.png');
         cy.createRecipe({
             name: 'Ramen',
             imageUrls: ['solid://recipes/ramen.png'],

@@ -3,13 +3,17 @@ describe('Authorization', () => {
     beforeEach(() => {
         cy.visit('/?authenticator=inrupt');
         cy.startApp();
-        cy.createRecipe({ name: 'Ramen' });
+        cy.createRecipe({
+            name: 'Ramen',
+            imageUrls: ['http://localhost:4000/alice/cookbook/ramen.png'],
+        });
         cy.login({ authenticator: 'inrupt', hasCookbook: true });
+        cy.uploadFile('http://localhost:4000/alice/cookbook/ramen.png', 'img/ramen.png');
     });
 
     it('Publishes recipes', () => {
         // Arrange
-        const publicDocuments = ['ramen', 'public'];
+        const publicDocuments = ['ramen', 'ramen.png', 'public'];
 
         cy.intercept('PATCH', 'http://localhost:4000/alice/settings/publicTypeIndex').as('createTypeIndex');
         cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/public').as('createPublicList');
@@ -72,6 +76,13 @@ describe('Authorization', () => {
                     crdt:property schema:name ;
                     crdt:value "Ramen" .
 
+                <#it-operation-[[image][%uuid%]]>
+                    a crdt:SetPropertyOperation ;
+                    crdt:resource <#it> ;
+                    crdt:date "[[createdAt][.*]]"^^xsd:dateTime ;
+                    crdt:property schema:image ;
+                    crdt:value <http://localhost:4000/alice/cookbook/ramen.png> .
+
                 <#it-operation-[[listing][%uuid%]]>
                     a crdt:AddPropertyOperation ;
                     crdt:resource <#it> ;
@@ -116,6 +127,7 @@ describe('Authorization', () => {
         cy.updateSolidDocument('/alice/profile/card', 'add-public-type-index.sparql');
         cy.createSolidDocument('/alice/cookbook/public.acl', 'public-acls.ttl', { document: 'public' });
         cy.createSolidDocument('/alice/cookbook/ramen.acl', 'public-acls.ttl', { document: 'ramen' });
+        cy.createSolidDocument('/alice/cookbook/ramen.png.acl', 'public-acls.ttl', { document: 'ramen.png' });
         cy.service('$auth').then(Auth => Auth.refreshUserProfile());
         cy.getRecipe('ramen').then(ramen => ramen.update({
             listUrls: ['http://localhost:4000/alice/cookbook/public#it'],
@@ -123,7 +135,8 @@ describe('Authorization', () => {
 
         cy.sync();
 
-        cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/ramen.acl').as('patchACL');
+        cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/ramen.acl').as('patchRamenACL');
+        cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/ramen.png.acl').as('patchImageACL');
         cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/ramen').as('patchRamen');
         cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/public').as('patchList');
 
@@ -140,7 +153,7 @@ describe('Authorization', () => {
         cy.see('Private');
         cy.see('This recipe is private');
 
-        cy.get('@patchACL').its('request.body').should('be.sparql', `
+        cy.get('@patchRamenACL').its('request.body').should('be.sparql', `
             DELETE DATA {
                 @prefix acl: <http://www.w3.org/ns/auth/acl#> .
                 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
@@ -149,6 +162,18 @@ describe('Authorization', () => {
                     a acl:Authorization ;
                     acl:agentClass foaf:Agent ;
                     acl:accessTo <http://localhost:4000/alice/cookbook/ramen> ;
+                    acl:mode acl:Read .
+            }
+        `);
+        cy.get('@patchImageACL').its('request.body').should('be.sparql', `
+            DELETE DATA {
+                @prefix acl: <http://www.w3.org/ns/auth/acl#> .
+                @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+                <#public>
+                    a acl:Authorization ;
+                    acl:agentClass foaf:Agent ;
+                    acl:accessTo <http://localhost:4000/alice/cookbook/ramen.png> ;
                     acl:mode acl:Read .
             }
         `);
@@ -198,9 +223,11 @@ describe('Authorization', () => {
         cy.updateSolidDocument('/alice/profile/card', 'add-public-type-index.sparql');
         cy.createSolidDocument('/alice/cookbook/public.acl', 'public-acls.ttl', { document: 'public' });
         cy.createSolidDocument('/alice/cookbook/ramen.acl', 'private-acls.ttl', { document: 'ramen' });
+        cy.createSolidDocument('/alice/cookbook/ramen.png.acl', 'private-acls.ttl', { document: 'ramen.png' });
         cy.service('$auth').then(Auth => Auth.refreshUserProfile());
 
-        cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/ramen.acl').as('patchACL');
+        cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/ramen.acl').as('patchRamenACL');
+        cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/ramen.png.acl').as('patchImageACL');
         cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/ramen').as('patchRamen');
         cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/public').as('patchList');
 
@@ -217,7 +244,7 @@ describe('Authorization', () => {
         cy.see('Public', 'button');
         cy.dontSee('This recipe is private');
 
-        cy.get('@patchACL').its('request.body').should('be.sparql', `
+        cy.get('@patchRamenACL').its('request.body').should('be.sparql', `
             INSERT DATA {
                 @prefix acl: <http://www.w3.org/ns/auth/acl#> .
                 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
@@ -226,6 +253,18 @@ describe('Authorization', () => {
                     a acl:Authorization ;
                     acl:agentClass foaf:Agent ;
                     acl:accessTo <http://localhost:4000/alice/cookbook/ramen> ;
+                    acl:mode acl:Read .
+            }
+        `);
+        cy.get('@patchImageACL').its('request.body').should('be.sparql', `
+            INSERT DATA {
+                @prefix acl: <http://www.w3.org/ns/auth/acl#> .
+                @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+                <#public>
+                    a acl:Authorization ;
+                    acl:agentClass foaf:Agent ;
+                    acl:accessTo <http://localhost:4000/alice/cookbook/ramen.png> ;
                     acl:mode acl:Read .
             }
         `);
@@ -251,6 +290,13 @@ describe('Authorization', () => {
                     crdt:date "[[createdAt][.*]]"^^xsd:dateTime ;
                     crdt:property schema:name ;
                     crdt:value "Ramen" .
+
+                <#it-operation-[[image][%uuid%]]>
+                    a crdt:SetPropertyOperation ;
+                    crdt:resource <#it> ;
+                    crdt:date "[[createdAt][.*]]"^^xsd:dateTime ;
+                    crdt:property schema:image ;
+                    crdt:value <http://localhost:4000/alice/cookbook/ramen.png> .
 
                 <#it-operation-[[listing][%uuid%]]>
                     a crdt:AddPropertyOperation ;

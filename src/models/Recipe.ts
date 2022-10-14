@@ -1,5 +1,6 @@
 import { arraySorted, compare, downloadFile, stringToSlug, urlParse, urlResolve } from '@noeldemartin/utils';
-import type { JsonLD } from '@noeldemartin/solid-utils';
+import { SolidDocument } from 'soukai-solid';
+import type { JsonLD, SolidDocumentPermission } from '@noeldemartin/solid-utils';
 import type { Relation } from 'soukai';
 import type { SolidBelongsToManyRelation } from 'soukai-solid';
 
@@ -107,6 +108,16 @@ export default class Recipe extends Model {
         const jsonld = this.toExternalJsonLD();
 
         downloadFile(`${name}.json`, JSON.stringify(jsonld), 'application/json');
+    }
+
+    public async updatePublicPermissions(permissions: SolidDocumentPermission[]): Promise<void> {
+        await super.updatePublicPermissions(permissions);
+
+        if (!this.imageUrl?.startsWith(this.requireContainerUrl())) {
+            return;
+        }
+
+        await new SolidDocument({ url: this.imageUrl }).updatePublicPermissions(permissions);
     }
 
     protected newUrl(documentUrl?: string, resourceHash?: string): string {
