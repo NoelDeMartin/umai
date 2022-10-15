@@ -10,11 +10,13 @@ export enum IngredientUnit {
 export interface IngredientBreakdown {
     name: string;
     original: string;
+    originalUnit?: string;
     quantity?: IngredientQuantity;
     unit?: IngredientUnit;
+    unitMultiplier?: number;
 }
 
-type IngredientQuantityParser = (quantity: IngredientQuantity) => [IngredientQuantity, IngredientUnit];
+type IngredientQuantityParser = (quantity: IngredientQuantity) => [IngredientQuantity, IngredientUnit, number];
 
 const INGREDIENT_UNIT_QUANTITIES: Record<IngredientUnit, Record<string, number>> = {
     [IngredientUnit.Grams]: {
@@ -64,10 +66,13 @@ function initializeHelpers(): [RegExp, RegExp, Record<string, IngredientQuantity
         Object
             .entries(INGREDIENT_UNIT_QUANTITIES)
             .reduce((parsers, [unit, quantities]) => {
-                Object.entries(quantities).forEach(([alias, quantity]) => {
-                    parsers[alias] = q => [
-                        Array.isArray(q) ? [q[0] * quantity, q[1] * quantity] : q * quantity,
+                Object.entries(quantities).forEach(([alias, multiplier]) => {
+                    parsers[alias] = quantity => [
+                        Array.isArray(quantity)
+                            ? [quantity[0] * multiplier, quantity[1] * multiplier]
+                            : quantity * multiplier,
                         unit as IngredientUnit,
+                        multiplier,
                     ];
                 });
 
@@ -76,7 +81,7 @@ function initializeHelpers(): [RegExp, RegExp, Record<string, IngredientQuantity
     ];
 }
 
-function parseIngredientQuantity(quantity?: string, unit?: string): [(IngredientQuantity)?, IngredientUnit?] {
+function parseIngredientQuantity(quantity?: string, unit?: string): [(IngredientQuantity)?, IngredientUnit?, number?] {
     if (!quantity)
         return [];
 
@@ -91,9 +96,17 @@ export function parseIngredient(ingredient: string): IngredientBreakdown {
     const original = ingredient;
     const matches = ingredient.match(INGREDIENT_REGEX);
     const name = (matches?.[3] ?? ingredient).trim();
-    const [quantity, unit] = parseIngredientQuantity(matches?.[1], matches?.[2]);
+    const originalUnit = matches?.[2];
+    const [quantity, unit, unitMultiplier] = parseIngredientQuantity(matches?.[1], originalUnit);
 
-    return objectWithoutEmpty({ original, name, unit, quantity });
+    return objectWithoutEmpty({
+        name,
+        original,
+        originalUnit,
+        quantity,
+        unit,
+        unitMultiplier,
+    });
 }
 
 export function sortIngredients(ingredients: IngredientBreakdown[]): IngredientBreakdown[] {

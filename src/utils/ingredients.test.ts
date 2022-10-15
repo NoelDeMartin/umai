@@ -6,22 +6,28 @@ describe('Ingredients helpers', () => {
         expect(parseIngredient('100g Cheese')).toEqual({
             name: 'Cheese',
             original: '100g Cheese',
-            unit: IngredientUnit.Grams,
+            originalUnit: 'g',
             quantity: 100,
+            unit: IngredientUnit.Grams,
+            unitMultiplier: 1,
         });
 
         expect(parseIngredient('2kg Zucchini')).toEqual({
             name: 'Zucchini',
             original: '2kg Zucchini',
-            unit: IngredientUnit.Grams,
+            originalUnit: 'kg',
             quantity: 2000,
+            unit: IngredientUnit.Grams,
+            unitMultiplier: 1000,
         });
 
         expect(parseIngredient('1,2L Milk')).toEqual({
             name: 'Milk',
             original: '1,2L Milk',
-            unit: IngredientUnit.Milliliters,
+            originalUnit: 'L',
             quantity: 1200,
+            unit: IngredientUnit.Milliliters,
+            unitMultiplier: 1000,
         });
 
         expect(parseIngredient('3 Eggs')).toEqual({

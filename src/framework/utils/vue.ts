@@ -96,6 +96,13 @@ export function requiredEnumProp<Enum>(enumeration: Enum): Prop<Enum[keyof Enum]
     };
 }
 
+export function requiredMixedProp<T>(type: PropType<T>): Prop<T> {
+    return {
+        type,
+        required: true,
+    };
+}
+
 export function requiredNumberProp(): Prop<number> {
     return {
         type: Number,

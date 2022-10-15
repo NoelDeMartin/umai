@@ -9,8 +9,8 @@
             class="recipe-page--wrapper flex flex-col flex-grow w-[200vw] z-10 md:w-full pointer-events-none"
             :class="{
                 'transition-transform duration-300': $ui.animations && $ui.isMobile,
-                '-translate-x-screen': $ui.isMobile && showSecondaryPanel,
-                'translate-x-0': $ui.isMobile && !showSecondaryPanel,
+                '-translate-x-screen': $ui.isMobile && showingSecondaryPanel,
+                'translate-x-0': $ui.isMobile && !showingSecondaryPanel,
             }"
         >
             <div class="recipe-page--header flex relative justify-start items-end h-52 md:h-80 md:justify-center">
@@ -43,7 +43,7 @@
                         class="p-2 z-10 active:text-primary-900 focus:text-primary-900"
                         :aria-label="$t('recipes.showMainPanel')"
                         :title="$t('recipes.showMainPanel')"
-                        @click="showSecondaryPanel = true"
+                        @click="showingSecondaryPanel = true"
                     >
                         <i-pepicons-triangle-left-filled class="w-8 h-8" aria-hidden="true" />
                     </button>
@@ -52,7 +52,7 @@
                         class="p-2 z-10 active:text-primary-900 focus:text-primary-900"
                         :aria-label="$t('recipes.showSecondaryPanel')"
                         :title="$t('recipes.showSecondaryPanel')"
-                        @click="showSecondaryPanel = false"
+                        @click="showingSecondaryPanel = false"
                     >
                         <i-pepicons-triangle-right-filled class="w-8 h-8" aria-hidden="true" />
                     </button>
@@ -120,8 +120,16 @@
                         <div class="relative">
                             <slot name="metadata">
                                 <RecipePageMetadata v-if="recipe?.servings || recipe?.prepTime || recipe?.cookTime" class="w-full">
-                                    <template v-if="recipe.servings" #servings>
-                                        {{ recipe.servings }}
+                                    <template v-if="recipe.servingsBreakdown" #servings>
+                                        <div class="flex items-center space-x-1">
+                                            <CoreSelect
+                                                v-if="servingsOptions"
+                                                v-model="servings"
+                                                :label="$t('recipes.servings_change')"
+                                                :options="servingsOptions"
+                                            />
+                                            <span v-else>{{ recipe.servings }}</span>
+                                        </div>
                                     </template>
                                     <template v-if="recipe.prepTime" #prepTime>
                                         {{ $ui.renderDuration(recipe.prepTime) }}
@@ -162,22 +170,51 @@
 </template>
 
 <script setup lang="ts">
-import { arrayFilter, arraySorted, urlParse } from '@noeldemartin/utils';
+import { arrayFilter, arraySorted, arrayUnique, range, urlParse } from '@noeldemartin/utils';
+import { nextTick, watchEffect } from 'vue';
 
 import TailwindCSS from '@/framework/utils/tailwindcss';
 import UI from '@/framework/core/facades/UI';
 import { afterAnimationTime } from '@/framework/utils/dom';
 import { objectProp } from '@/framework/utils/vue';
+import { translate } from '@/framework/utils/translate';
+import type { SelectOption } from '@/framework/components/headless/HeadlessSelect';
 
 import type Recipe from '@/models/Recipe';
 
 import type IRecipePage from './RecipePage';
 
+const CUSTOM_SERVINGS = -1;
+
 const { recipe } = defineProps({
     recipe: objectProp<Recipe>(),
 });
 
-let showSecondaryPanel = $ref(false);
+let showingSecondaryPanel = $ref<boolean>(false);
+let servings = $ref(recipe?.servingsBreakdown?.quantity);
+const servingsQuantities = $ref([
+    ...range(10).map(quantity => quantity + 1),
+    servings,
+    recipe?.servingsBreakdown?.quantity ?? 1,
+]);
+const servingsOptions = $computed((): SelectOption<number>[] | null => {
+    if (!recipe?.servingsBreakdown) {
+        return null;
+    }
+
+    const options = arraySorted(arrayUnique(servingsQuantities), (a, b) => a > b ? 1 : -1)
+        .map((quantity: number): SelectOption<number> => ({
+            text: `${quantity} ${recipe.servingsBreakdown?.name ?? ''}`.trim(),
+            value: quantity,
+        }));
+
+    options.push({
+        text: translate('recipes.servings_custom'),
+        value: CUSTOM_SERVINGS,
+    });
+
+    return options;
+});
 const metadataRows = $computed(
     () =>
         recipe
@@ -190,7 +227,25 @@ const metadataHeight = $computed(
             ? metadataRows * TailwindCSS.pixels('spacing.10') + 2 * TailwindCSS.pixels('spacing.4')
             : 0,
 );
-const ingredients = $computed(() => recipe?.sortedIngredients ?? []);
+const ingredients = $computed(() => {
+    const ingredientsBreakdown = recipe?.sortedIngredientsBreakdown;
+    const originalServings = recipe?.servingsBreakdown?.quantity;
+    const ingredientsMultiplier = servings / (originalServings ?? servings);
+
+    return ingredientsBreakdown?.map(({ quantity, name, original, unitMultiplier, originalUnit }) => {
+        if (!quantity || servings === CUSTOM_SERVINGS) {
+            return original;
+        }
+
+        if (Array.isArray(quantity)) {
+            return quantity.map(q => Math.round(q * ingredientsMultiplier * 100) / 100).join(' - ') + ` ${name}`;
+        }
+
+        const computedQuantity = Math.round(quantity * ingredientsMultiplier / (unitMultiplier ?? 1) * 100) / 100;
+
+        return `${computedQuantity}${originalUnit ?? ''} ${name}`;
+    }) ?? [];
+});
 const instructions = $computed(() => arraySorted(recipe?.instructions ?? [], 'position'));
 const externalUrls = $computed(
     () => (recipe?.sortedExternalUrls ?? []).map(url => ({
@@ -199,16 +254,36 @@ const externalUrls = $computed(
     })),
 );
 
+watchEffect(async () => {
+    if (servings !== CUSTOM_SERVINGS) {
+        return;
+    }
+
+    const newServings = parseInt(prompt(translate('recipes.servings_customPrompt')) || 'NaN');
+
+    if (!newServings) {
+        servings = recipe?.servingsBreakdown?.quantity ?? 1;
+
+        return;
+    }
+
+    servingsQuantities.push(newServings);
+
+    await nextTick();
+
+    servings = newServings;
+});
+
 defineExpose<IRecipePage>({
     showPrimaryPanel: async () => {
-        showSecondaryPanel = false;
+        showingSecondaryPanel = false;
 
         if (UI.isMobile) {
             await afterAnimationTime(300);
         }
     },
     showSecondaryPanel: async () => {
-        showSecondaryPanel = true;
+        showingSecondaryPanel = true;
 
         if (UI.isMobile) {
             await afterAnimationTime(300);

@@ -198,6 +198,9 @@ recipes:
   cookTime: Cooking time
   prepTime: Preparation time
   servings: Servings
+  servings_change: Change servings
+  servings_custom: Custom quantity
+  servings_customPrompt: How many servings do you want?
   externalUrl: recipe on {domain}
   showMainPanel: Show main content
   showSecondaryPanel: Show extra content

@@ -194,6 +194,32 @@ describe('Cookbook', () => {
         cy.assertLocalDocumentEquals('solid://recipes/ramen', ramenJsonLD);
     });
 
+    it('Changes servings', () => {
+        // Arrange
+        cy.see('How would you like to begin?');
+
+        cy.press('Create your first recipe');
+        cy.press('Create from scratch');
+        cy.ariaInput('Recipe name').type('Ramen');
+        cy.press('Add ingredients');
+        cy.currentElement().type('500g Boston Butt Pork{enter}');
+        cy.currentElement().type('200ml Soy Sauce{enter}');
+        cy.currentElement().type('3-5 slices of Ginger{enter}');
+        cy.currentElement().type('2 Dried Shiitake Mushrooms');
+        cy.ariaLabel('Servings').type('3 persons');
+        cy.press('Create recipe');
+        cy.press('Ramen', 'a');
+
+        // Act
+        cy.ariaSelect('Change servings').select('9 persons');
+
+        // Assert
+        cy.see('1500g Boston Butt Pork');
+        cy.see('600ml Soy Sauce');
+        cy.see('9 - 15 slices of Ginger');
+        cy.see('6 Dried Shiitake Mushrooms');
+    });
+
     it('Stores local images', () => {
         // Arrange
         cy.see('How would you like to begin?');

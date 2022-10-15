@@ -1,4 +1,13 @@
-import { arraySorted, compare, downloadFile, stringToSlug, urlParse, urlResolve } from '@noeldemartin/utils';
+import {
+    arraySorted,
+    compare,
+    downloadFile,
+    objectWithoutEmpty,
+    stringMatch,
+    stringToSlug,
+    urlParse,
+    urlResolve,
+} from '@noeldemartin/utils';
 import { SolidDocument } from 'soukai-solid';
 import type { JsonLD, SolidDocumentPermission } from '@noeldemartin/solid-utils';
 import type { Relation } from 'soukai';
@@ -8,8 +17,15 @@ import Cookbook from '@/services/facades/Cookbook';
 import RecipeInstructionsStep from '@/models/RecipeInstructionsStep';
 import RecipesList from '@/models/RecipesList';
 import { parseIngredient, sortIngredients } from '@/utils/ingredients';
+import type { IngredientBreakdown } from '@/utils/ingredients';
 
 import Model from './Recipe.schema';
+
+export interface RecipeServingsBreakdown {
+    name: string;
+    original: string;
+    quantity?: number;
+}
 
 export default class Recipe extends Model {
 
@@ -68,11 +84,29 @@ export default class Recipe extends Model {
     }
 
     public get sortedIngredients(): string[] {
+        return this.sortedIngredientsBreakdown.map(({ original }) => original);
+    }
+
+    public get sortedIngredientsBreakdown(): IngredientBreakdown[] {
         const ingredients = this.ingredients.map(parseIngredient);
 
         sortIngredients(ingredients);
 
-        return ingredients.map(({ original }) => original);
+        return ingredients;
+    }
+
+    public get servingsBreakdown(): RecipeServingsBreakdown | null {
+        if (!this.servings) {
+            return null;
+        }
+
+        const quantity = stringMatch<3>(this.servings, /^(\d+)\s*(.*)/);
+
+        return objectWithoutEmpty({
+            original: this.servings,
+            name: quantity ? quantity[2] : this.servings,
+            quantity: quantity ? parseInt(quantity[1]) : null,
+        });
     }
 
     public get sortedInstructions(): RecipeInstructionsStep[] {

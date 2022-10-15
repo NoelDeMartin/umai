@@ -20,6 +20,10 @@ export default {
         return cy.get(`[aria-label="${label}"]`);
     },
 
+    ariaSelect(label: string): Cypress.Chainable {
+        return cy.contains('label', label).get('select');
+    },
+
     ariaInput(label: string): Cypress.Chainable {
         return cy.contains(label).then(matches => {
             const labelElement = (matches as unknown as HTMLElement[])[0];
