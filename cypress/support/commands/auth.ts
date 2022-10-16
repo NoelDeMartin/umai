@@ -1,4 +1,5 @@
 import { arr, stringToSlug } from '@noeldemartin/utils';
+import { normalizeSparql } from '@noeldemartin/solid-utils';
 
 import type { AuthenticatorName } from '@/framework/auth';
 
@@ -164,12 +165,16 @@ export default {
         cy.service('$auth').then(auth => auth.fetch(url, options));
     },
 
-    updateSolidDocument(url: string, fixture: string): void {
-        cy.fixture(fixture).then(body => {
+    updateSolidDocument(url: string, fixture: string, replacements: Record<string, string> = {}): void {
+        cy.fixture(fixture).then((body: string) => {
             cy.runAuthenticatedRequest(cssPodUrl + url, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/sparql-update' },
-                body,
+                body: normalizeSparql(
+                    Object
+                        .entries(replacements)
+                        .reduce((body, [name, value]) => body.replaceAll(`{{${name}}}`, value), body),
+                ),
             });
         });
     },

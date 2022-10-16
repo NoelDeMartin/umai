@@ -18,6 +18,10 @@ export default {
     sync(): void {
         cy.press('online');
         cy.press('Synchronize now');
+        cy.waitSync();
+    },
+
+    waitSync(): void {
         cy.see('Syncing in progress');
         cy.see('Syncing is up to date');
     },

@@ -129,6 +129,14 @@ export default {
         });
     },
 
+    fixtureWithReplacements(filename: string, replacements: Record<string, unknown>): Cypress.Chainable<string> {
+        return cy.fixture(filename).then(text => {
+            return Object
+                .entries(replacements)
+                .reduce((text, [name, value]) => text.replaceAll(`{{${name}}}`, value), text);
+        });
+    },
+
     fixtureBlob(filename: string): Cypress.Chainable<{ blob: Blob; mimeType: string }> {
         return cy.fixture(filename).then(content => {
             const mimeType = getFileMimeType(filename);

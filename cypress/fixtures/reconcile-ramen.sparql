@@ -1,0 +1,24 @@
+DELETE DATA {
+    @prefix schema: <https://schema.org/> .
+    @prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
+    @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+    <#it> schema:description "is good" .
+    <#it-metadata> crdt:updatedAt "{{updatedAt}}"^^xsd:dateTime .
+}
+
+; INSERT DATA {
+    @prefix schema: <https://schema.org/> .
+    @prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
+    @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+    <#it> schema:description "is good!" .
+    <#it-metadata> crdt:updatedAt "[[updatedAt][.*]]"^^xsd:dateTime .
+
+    <#it-operation-[[operation][.*]]>
+        a crdt:SetPropertyOperation ;
+        crdt:date "[[updatedAt][.*]]"^^xsd:dateTime ;
+        crdt:property schema:description ;
+        crdt:resource <#it> ;
+        crdt:value "is good!" .
+}

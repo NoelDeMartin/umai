@@ -171,6 +171,42 @@ describe('Cookbook', () => {
         cy.assertLocalDocumentEquals('http://localhost:4000/cookbook/ramen', secondRamenJsonLD);
     });
 
+    it('Reconciles remote and local changes', () => {
+        // Arrange
+        cy.login();
+        cy.createRecipe({ name: 'Ramen', description: 'is good' }).then(ramen => {
+            const updatedAt = new Date();
+
+            cy.wrap(updatedAt).as('updatedAt');
+            cy.sync();
+            cy.updateSolidDocument('/cookbook/ramen', 'update-ramen-name.sparql', {
+                createdAt: ramen.createdAt.toISOString(),
+                updatedAt: updatedAt.toISOString(),
+            });
+        });
+
+        cy.intercept('PATCH', 'http://localhost:4000/cookbook/ramen').as('patchRamen');
+
+        // Act
+        cy.press('Ramen');
+        cy.press('Edit');
+        cy.ariaInput('description').type('!');
+        cy.press('Save');
+        cy.waitSync();
+
+        // Assert
+        cy.see('Ramen!');
+        cy.see('is good!');
+
+        cy.get<Date>('@updatedAt').then(updatedAt => {
+            const replacements = { updatedAt: updatedAt.toISOString() };
+
+            cy.fixtureWithReplacements('reconcile-ramen.sparql', replacements).then(sparql => {
+                cy.get('@patchRamen').its('request.body').should('be.sparql', sparql);
+            });
+        });
+    });
+
     it('Edits metadata', () => {
         // Arrange
         cy.see('How would you like to begin?');
