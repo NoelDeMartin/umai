@@ -1,57 +1,83 @@
 import { IngredientUnit, parseIngredient, sortIngredients } from './ingredients';
+import type { IngredientBreakdown } from './ingredients';
+
+function testParsingIngredients(
+    raw: string,
+    quantity: number | [number, number],
+    expected: Omit<IngredientBreakdown, 'renderQuantity'> & { rendered: string },
+): void {
+    it(`parses ingredients [${raw}]`, () => {
+        const { renderQuantity, ...actualIngredient } = parseIngredient(raw);
+        const { rendered, ...expectedIngredient } = expected;
+
+        expect(actualIngredient).toEqual(expectedIngredient);
+        expect(renderQuantity(quantity)).toEqual(rendered);
+    });
+}
 
 describe('Ingredients helpers', () => {
 
-    it('parses ingredients', () => {
-        expect(parseIngredient('100g Cheese')).toEqual({
-            name: 'Cheese',
-            original: '100g Cheese',
-            originalUnit: 'g',
-            quantity: 100,
-            unit: IngredientUnit.Grams,
-            unitMultiplier: 1,
-        });
+    testParsingIngredients('100g Cheese', 50, {
+        name: 'Cheese',
+        original: '100g Cheese',
+        quantity: 100,
+        unit: IngredientUnit.Grams,
+        unitMultiplier: 1,
+        rendered: '50g Cheese',
+    });
 
-        expect(parseIngredient('2kg Zucchini')).toEqual({
-            name: 'Zucchini',
-            original: '2kg Zucchini',
-            originalUnit: 'kg',
-            quantity: 2000,
-            unit: IngredientUnit.Grams,
-            unitMultiplier: 1000,
-        });
+    testParsingIngredients('2kg Zucchini', 3, {
+        name: 'Zucchini',
+        original: '2kg Zucchini',
+        quantity: 2000,
+        unit: IngredientUnit.Grams,
+        unitMultiplier: 1000,
+        rendered: '3kg Zucchini',
+    });
 
-        expect(parseIngredient('1,2L Milk')).toEqual({
-            name: 'Milk',
-            original: '1,2L Milk',
-            originalUnit: 'L',
-            quantity: 1200,
-            unit: IngredientUnit.Milliliters,
-            unitMultiplier: 1000,
-        });
+    testParsingIngredients('1,2L Milk', 4, {
+        name: 'Milk',
+        original: '1,2L Milk',
+        quantity: 1200,
+        unit: IngredientUnit.Milliliters,
+        unitMultiplier: 1000,
+        rendered: '4L Milk',
+    });
 
-        expect(parseIngredient('3 Eggs')).toEqual({
-            name: 'Eggs',
-            original: '3 Eggs',
-            quantity: 3,
-        });
+    testParsingIngredients('3 Eggs', 20, {
+        name: 'Eggs',
+        original: '3 Eggs',
+        quantity: 3,
+        rendered: '20 Eggs',
+    });
 
-        expect(parseIngredient('3 to 6 Tomatoes')).toEqual({
-            name: 'Tomatoes',
-            original: '3 to 6 Tomatoes',
-            quantity: [3, 6],
-        });
+    testParsingIngredients('3 to 6 Tomatoes', [6, 9], {
+        name: 'Tomatoes',
+        original: '3 to 6 Tomatoes',
+        quantity: [3, 6],
+        rendered: '6 - 9 Tomatoes',
+    });
 
-        expect(parseIngredient('3 Lemons')).toEqual({
-            name: 'Lemons',
-            original: '3 Lemons',
-            quantity: 3,
-        });
+    testParsingIngredients('3 Lemons', 5, {
+        name: 'Lemons',
+        original: '3 Lemons',
+        quantity: 3,
+        rendered: '5 Lemons',
+    });
 
-        expect(parseIngredient('S&P')).toEqual({
-            name: 'S&P',
-            original: 'S&P',
-        });
+    testParsingIngredients('S&P', 0, {
+        name: 'S&P',
+        original: 'S&P',
+        rendered: 'S&P',
+    });
+
+    testParsingIngredients('¼ tsp salt', .5, {
+        name: 'salt',
+        original: '¼ tsp salt',
+        quantity: 3.75,
+        unit: IngredientUnit.Grams,
+        unitMultiplier: 15,
+        rendered: '½ tsp salt',
     });
 
     it('sorts ingredients', () => {

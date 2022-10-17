@@ -192,19 +192,25 @@ const { recipe } = defineProps({
 
 let showingSecondaryPanel = $ref<boolean>(false);
 let servings = $ref(recipe?.servingsBreakdown?.quantity);
-const servingsQuantities = $ref([
-    ...range(10).map(quantity => quantity + 1),
-    servings,
-    recipe?.servingsBreakdown?.quantity ?? 1,
-]);
+const customServingsQuantities = $ref<number[]>([]);
 const servingsOptions = $computed((): SelectOption<number>[] | null => {
-    if (!recipe?.servingsBreakdown) {
+    const servingsBreakdown = recipe?.servingsBreakdown;
+
+    if (!servingsBreakdown) {
         return null;
     }
 
-    const options = arraySorted(arrayUnique(servingsQuantities), (a, b) => a > b ? 1 : -1)
+    const defaultQuantity = recipe?.servingsBreakdown?.quantity ?? 1;
+    const options = arraySorted(arrayUnique([
+        ...range(10)
+            .map(quantity => quantity + 1)
+            .map(quantity => quantity * 10 ** Math.floor(Math.log10(defaultQuantity))),
+        ...customServingsQuantities,
+        defaultQuantity,
+        servings,
+    ]), (a, b) => a > b ? 1 : -1)
         .map((quantity: number): SelectOption<number> => ({
-            text: `${quantity} ${recipe.servingsBreakdown?.name ?? ''}`.trim(),
+            text: servingsBreakdown.renderQuantity(quantity),
             value: quantity,
         }));
 
@@ -232,18 +238,14 @@ const ingredients = $computed(() => {
     const originalServings = recipe?.servingsBreakdown?.quantity;
     const ingredientsMultiplier = servings / (originalServings ?? servings);
 
-    return ingredientsBreakdown?.map(({ quantity, name, original, unitMultiplier, originalUnit }) => {
+    return ingredientsBreakdown?.map(({ quantity, original, unitMultiplier, renderQuantity }) => {
         if (!quantity || servings === CUSTOM_SERVINGS) {
             return original;
         }
 
-        if (Array.isArray(quantity)) {
-            return quantity.map(q => Math.round(q * ingredientsMultiplier * 100) / 100).join(' - ') + ` ${name}`;
-        }
-
-        const computedQuantity = Math.round(quantity * ingredientsMultiplier / (unitMultiplier ?? 1) * 100) / 100;
-
-        return `${computedQuantity}${originalUnit ?? ''} ${name}`;
+        return Array.isArray(quantity)
+            ? renderQuantity(quantity.map(q => roundIngredientQuantity(q * ingredientsMultiplier)) as [number, number])
+            : renderQuantity(roundIngredientQuantity(quantity * ingredientsMultiplier / (unitMultiplier ?? 1)));
     }) ?? [];
 });
 const instructions = $computed(() => arraySorted(recipe?.instructions ?? [], 'position'));
@@ -253,6 +255,14 @@ const externalUrls = $computed(
         domain: urlParse(url)?.domain?.replace(/^www\./, ''),
     })),
 );
+
+function roundIngredientQuantity(quantity: number): number {
+    if (quantity < 10) {
+        return Math.round(quantity * 100) / 100;
+    }
+
+    return Math.round(quantity);
+}
 
 watchEffect(async () => {
     if (servings !== CUSTOM_SERVINGS) {
@@ -267,7 +277,7 @@ watchEffect(async () => {
         return;
     }
 
-    servingsQuantities.push(newServings);
+    customServingsQuantities.push(newServings);
 
     await nextTick();
 

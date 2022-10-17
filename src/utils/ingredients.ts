@@ -7,16 +7,33 @@ export enum IngredientUnit {
     Milliliters = 'milliliters',
 }
 
-export interface IngredientBreakdown {
+export type IngredientBreakdown<Q extends IngredientQuantity = IngredientQuantity> = {
     name: string;
     original: string;
-    originalUnit?: string;
-    quantity?: IngredientQuantity;
+    quantity?: Q;
     unit?: IngredientUnit;
     unitMultiplier?: number;
-}
 
-type IngredientQuantityParser = (quantity: IngredientQuantity) => [IngredientQuantity, IngredientUnit, number];
+    renderQuantity(quantity: Q): string;
+};
+
+type IngredientQuantityParser = (quantity: IngredientQuantity, originalUnit?: string) =>
+    [IngredientQuantity, IngredientUnit, number, string];
+
+const SPECIAL_QUANTITIES: Record<string, number> = {
+    '½': .5,
+    '¼': .25,
+};
+const SPECIAL_QUANTITIES_VALUES: Record<string, string> = Object
+    .entries(SPECIAL_QUANTITIES)
+    .reduce(
+        (values, [name, value]) => {
+            values[value.toString()] = name;
+
+            return values;
+        },
+        {} as Record<string, string>,
+    );
 
 const INGREDIENT_UNIT_QUANTITIES: Record<IngredientUnit, Record<string, number>> = {
     [IngredientUnit.Grams]: {
@@ -24,6 +41,7 @@ const INGREDIENT_UNIT_QUANTITIES: Record<IngredientUnit, Record<string, number>>
         grams: 1,
         kg: 1000,
         kilograms: 1000,
+        tsp: 15,
     },
     [IngredientUnit.Milliliters]: {
         ml: 1,
@@ -31,6 +49,10 @@ const INGREDIENT_UNIT_QUANTITIES: Record<IngredientUnit, Record<string, number>>
         l: 1000,
         liters: 1000,
     },
+};
+
+const RENDERED_UNITS: Record<string, string> = {
+    tsp: ' tsp',
 };
 
 const [INGREDIENT_REGEX, QUANTITY_RANGE_SEPARATOR_REGEX, QUANTITY_PARSERS] = initializeHelpers();
@@ -52,7 +74,7 @@ function compareIngredients(a: IngredientBreakdown, b: IngredientBreakdown): num
 }
 
 function initializeHelpers(): [RegExp, RegExp, Record<string, IngredientQuantityParser>] {
-    const quantityRegex = '\\d[.,\\d]*';
+    const quantityRegex = `(?:(?:\\d+[.,\\d]*)|${Object.keys(SPECIAL_QUANTITIES).join('|')})`;
     const quantityRangeSeparator = 'to|-|~';
     const quantityRangeRegex = `${quantityRegex}\\s*(?:${quantityRangeSeparator})\\s*${quantityRegex}`;
     const unitsRegex = Object
@@ -67,12 +89,13 @@ function initializeHelpers(): [RegExp, RegExp, Record<string, IngredientQuantity
             .entries(INGREDIENT_UNIT_QUANTITIES)
             .reduce((parsers, [unit, quantities]) => {
                 Object.entries(quantities).forEach(([alias, multiplier]) => {
-                    parsers[alias] = quantity => [
+                    parsers[alias] = (quantity, originalUnit) => [
                         Array.isArray(quantity)
                             ? [quantity[0] * multiplier, quantity[1] * multiplier]
                             : quantity * multiplier,
                         unit as IngredientUnit,
                         multiplier,
+                        RENDERED_UNITS[originalUnit ?? ''] ?? originalUnit ?? '',
                     ];
                 });
 
@@ -81,15 +104,30 @@ function initializeHelpers(): [RegExp, RegExp, Record<string, IngredientQuantity
     ];
 }
 
-function parseIngredientQuantity(quantity?: string, unit?: string): [(IngredientQuantity)?, IngredientUnit?, number?] {
+function parseQuantityString(raw: string): number {
+    return SPECIAL_QUANTITIES[raw] ?? parseFloat(raw.replace(',', '.'));
+}
+
+function renderQuantityString(quantity: number): string {
+    const raw = quantity.toString();
+
+    return SPECIAL_QUANTITIES_VALUES[raw] ?? raw;
+}
+
+function parseIngredientQuantity(quantity?: string, unit?: string): [
+    (IngredientQuantity)?,
+    IngredientUnit?,
+    number?,
+    string?,
+] {
     if (!quantity)
         return [];
 
     const parsedQuantity = quantity.match(QUANTITY_RANGE_SEPARATOR_REGEX)
-        ? quantity.split(QUANTITY_RANGE_SEPARATOR_REGEX).map(q => parseFloat(q.replace(',', '.'))) as [number, number]
-        : parseFloat(quantity.replace(',', '.'));
+        ? quantity.split(QUANTITY_RANGE_SEPARATOR_REGEX).map(parseQuantityString) as [number, number]
+        : parseQuantityString(quantity);
 
-    return QUANTITY_PARSERS[unit?.trim().toLowerCase() ?? '']?.(parsedQuantity) ?? [parsedQuantity];
+    return QUANTITY_PARSERS[unit?.trim().toLowerCase() ?? '']?.(parsedQuantity, unit) ?? [parsedQuantity];
 }
 
 export function parseIngredient(ingredient: string): IngredientBreakdown {
@@ -97,15 +135,20 @@ export function parseIngredient(ingredient: string): IngredientBreakdown {
     const matches = ingredient.match(INGREDIENT_REGEX);
     const name = (matches?.[3] ?? ingredient).trim();
     const originalUnit = matches?.[2];
-    const [quantity, unit, unitMultiplier] = parseIngredientQuantity(matches?.[1], originalUnit);
+    const [quantity, unit, unitMultiplier, displayUnit] = parseIngredientQuantity(matches?.[1], originalUnit);
 
     return objectWithoutEmpty({
         name,
         original,
-        originalUnit,
         quantity,
         unit,
         unitMultiplier,
+
+        renderQuantity: typeof quantity !== 'undefined'
+            ? Array.isArray(quantity)
+                ? (quantity: [number, number]) => quantity.map(renderQuantityString).join(' - ') + ` ${name}`
+                : (quantity: number) => `${renderQuantityString(quantity)}${displayUnit ?? ''} ${name}`
+            : () => original,
     });
 }
 
