@@ -17,11 +17,13 @@ import type { SolidModelConstructor } from 'soukai-solid';
 
 import Auth from '@/framework/core/facades/Auth';
 import Cache from '@/framework/core/facades/Cache';
+import Errors from '@/framework/core/facades/Errors';
 import Events from '@/framework/core/facades/Events';
 import Files from '@/framework/core/facades/Files';
 import Network from '@/framework/core/facades/Network';
 import Service from '@/framework/core/Service';
 import { getLocalClass, getRemoteClass } from '@/framework/cloud/remote_helpers';
+import { translate } from '@/framework/utils/translate';
 import type Authenticator from '@/framework/auth/Authenticator';
 import type { ComputedStateDefinitions, IService } from '@/framework/core/Service';
 
@@ -79,13 +81,18 @@ export default class CloudService extends Service<State, ComputedState> {
 
             this.status = CloudStatus.Syncing;
 
-            // TODO subscribe to server events instead of pulling remote on every sync
-            await this.pullChanges(model);
-            await this.pushChanges(model);
-            await this.uploadFiles();
+            try {
+                // TODO subscribe to server events instead of pulling remote on every sync
+                await this.pullChanges(model);
+                await this.pushChanges(model);
+                await this.uploadFiles();
 
-            await after({ milliseconds: Math.max(0, 1000 - (Date.now() - start)) });
-            this.status = CloudStatus.Online;
+                await after({ milliseconds: Math.max(0, 1000 - (Date.now() - start)) });
+            } catch (error) {
+                Errors.report(error, translate('errors.sync'));
+            } finally {
+                this.status = CloudStatus.Online;
+            }
         });
     }
 

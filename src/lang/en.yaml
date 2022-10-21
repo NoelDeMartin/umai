@@ -368,6 +368,7 @@ errors:
   unsupportedBrowser_indexedDBHelp: Find a compatible browser
   unsupportedBrowser_indexedDBHelpFirefox: If you are using Firefox in private browsing mode, this is a <CoreLink color="danger" url="https://bugzilla.mozilla.org/show_bug.cgi?id=1639542">known bug</CoreLink>.
   notice: Something went wrong, but it's not your fault. Try again!
+  sync: Synchronization failed, please try again later
   viewDetails: View details
   unknown: Unknown error
   nextReport: Show next report
