@@ -19,12 +19,7 @@ describe('Reactivity', () => {
     it('Reacts to new remote recipes', () => {
         // Arrange
         cy.login();
-        cy.fixture('ramen.ttl').then(body => cy.request({
-            url: 'http://localhost:4000/cookbook/ramen',
-            method: 'PUT',
-            headers: { 'Content-Type': 'text/turtle' },
-            body,
-        }));
+        cy.createSolidDocument('/cookbook/ramen', 'recipes/ramen.ttl');
 
         // Act
         cy.sync();

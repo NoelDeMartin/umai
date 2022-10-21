@@ -4,14 +4,17 @@ DELETE DATA {
     @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
     <#it-metadata> crdt:updatedAt "[[createdAt][.*]]"^^xsd:dateTime .
+    <#instruction-step-2-metadata> crdt:updatedAt "[[createdAt][.*]]"^^xsd:dateTime .
 }
 
 ; INSERT DATA {
     @prefix schema: <https://schema.org/> .
     @prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
     @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+    @prefix purl: <http://purl.org/dc/terms/> .
 
     <#it-metadata> crdt:updatedAt "[[updatedAt][.*]]"^^xsd:dateTime .
+    <#instruction-step-2-metadata> crdt:updatedAt "[[updatedAt][.*]]"^^xsd:dateTime .
 
     <#it-operation-[[operation-1][.*]]>
         a crdt:SetPropertyOperation ;
@@ -29,22 +32,57 @@ DELETE DATA {
 
     <#it-operation-[[operation-3][.*]]>
         a crdt:SetPropertyOperation ;
+        crdt:date "[[createdAt][.*]]"^^xsd:dateTime ;
+        crdt:property schema:recipeInstructions ;
+        crdt:resource <#it> ;
+        crdt:value <#instruction-step-1>, <#instruction-step-2> .
+
+    <#it-operation-[[operation-4][.*]]>
+        a crdt:SetPropertyOperation ;
+        crdt:date "[[createdAt][.*]]"^^xsd:dateTime ;
+        crdt:property purl:isReferencedBy ;
+        crdt:resource <#it> ;
+        crdt:value <https://example.org/recipes/public#it> .
+
+    <#it-operation-[[operation-5][.*]]>
+        a crdt:SetPropertyOperation ;
         crdt:date "[[updatedAt][.*]]"^^xsd:dateTime ;
         crdt:property schema:name ;
         crdt:resource <#it> ;
         crdt:value "Ramen!" .
 
-    <#it-operation-[[operation-4][.*]]>
+    <#it-operation-[[operation-6][.*]]>
         a crdt:RemovePropertyOperation ;
         crdt:date "[[updatedAt][.*]]"^^xsd:dateTime ;
         crdt:property schema:recipeIngredient ;
         crdt:resource <#it> ;
         crdt:value "Broth" .
 
-    <#it-operation-[[operation-5][.*]]>
+    <#it-operation-[[operation-7][.*]]>
         a crdt:AddPropertyOperation ;
         crdt:date "[[updatedAt][.*]]"^^xsd:dateTime ;
         crdt:property schema:recipeIngredient ;
         crdt:resource <#it> ;
         crdt:value "Shiitake" .
+
+    <#instruction-step-2-operation-[[operation-8][.*]]>
+        a crdt:SetPropertyOperation ;
+        crdt:date "[[createdAt][.*]]"^^xsd:dateTime ;
+        crdt:property schema:text ;
+        crdt:resource <#instruction-step-2> ;
+        crdt:value "Step 2" .
+
+    <#instruction-step-2-operation-[[operation-9][.*]]>
+        a crdt:SetPropertyOperation ;
+        crdt:date "[[createdAt][.*]]"^^xsd:dateTime ;
+        crdt:property schema:position ;
+        crdt:resource <#instruction-step-2> ;
+        crdt:value 2 .
+
+    <#instruction-step-2-operation-[[operation-10][.*]]>
+        a crdt:SetPropertyOperation ;
+        crdt:date "[[updatedAt][.*]]"^^xsd:dateTime ;
+        crdt:property schema:text ;
+        crdt:resource <#instruction-step-2> ;
+        crdt:value "Step two" .
 }

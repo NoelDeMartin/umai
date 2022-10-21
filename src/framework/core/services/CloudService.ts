@@ -10,7 +10,15 @@ import {
     objectWithout,
     tap,
 } from '@noeldemartin/utils';
-import { Metadata, Operation, SolidACLAuthorization, SolidContainerModel, SolidModel, Tombstone } from 'soukai-solid';
+import {
+    Metadata,
+    Operation,
+    SolidACLAuthorization,
+    SolidContainerModel,
+    SolidModel,
+    Tombstone,
+    isSolidDocumentRelation,
+} from 'soukai-solid';
 import type { Engine } from 'soukai';
 import type { ObjectsMap } from '@noeldemartin/utils';
 import type { SolidModelConstructor } from 'soukai-solid';
@@ -66,6 +74,8 @@ export interface CloudHandler<T extends SolidModel = SolidModel> {
 export default class CloudService extends Service<State, ComputedState> {
 
     public static persist: Array<keyof State> = ['autoSync', 'startupSync', 'offlineModelUpdates'];
+
+    protected static sameDocumentRelations: WeakMap<typeof SolidModel, string[]> = new WeakMap();
 
     protected handlers: CloudHandler[] = [];
     protected asyncLock: Semaphore = new Semaphore();
@@ -550,6 +560,20 @@ export default class CloudService extends Service<State, ComputedState> {
         localModel.rebuildAttributesFromHistory();
         localModel.setAttributes(remoteModel.getAttributes());
 
+        this.getSameDocumentRelations(localModel.static()).forEach(relation => {
+            const localRelationModels = localModel.getRelationModels(relation) ?? [];
+            const remoteRelationModels = remoteModel.getRelationModels(relation) ?? [];
+
+            localRelationModels.forEach((localRelatedModel, index) => {
+                if (!localRelatedModel.isRelationLoaded('operations')) {
+                    return;
+                }
+
+                localRelatedModel.rebuildAttributesFromHistory();
+                localRelatedModel.setAttributes(remoteRelationModels[index]?.getAttributes() ?? {});
+            });
+        });
+
         if (localModel.isDirty()) {
             await localModel.save();
             await SolidModel.synchronize(localModel, remoteModel);
@@ -562,6 +586,22 @@ export default class CloudService extends Service<State, ComputedState> {
 
     protected getLocalModelsWithRemoteFileUrls(): Iterable<{ model: SolidModel; remoteFileUrls: string[] }> {
         return this.handlers.map(handler => handler.isReady() ? handler.getLocalModelsWithRemoteFileUrls() : []).flat();
+    }
+
+    protected getSameDocumentRelations(modelClass: typeof SolidModel): string[] {
+        if (!CloudService.sameDocumentRelations.has(modelClass)) {
+            CloudService.sameDocumentRelations.set(modelClass, modelClass.relations.filter(relation => {
+                if (SolidModel.reservedRelations.includes(relation)) {
+                    return false;
+                }
+
+                const relationInstance = modelClass.instance().requireRelation(relation);
+
+                return isSolidDocumentRelation(relationInstance) && relationInstance.useSameDocument;
+            }));
+        }
+
+        return CloudService.sameDocumentRelations.get(modelClass) ?? [];
     }
 
     protected cleanRemoteModel(remoteModel: SolidModel): void {

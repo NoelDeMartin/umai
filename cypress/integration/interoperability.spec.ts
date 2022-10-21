@@ -89,7 +89,7 @@ describe('Interoperability', () => {
     it('Reconciles remote changes without history', () => {
         // Arrange.
         cy.login();
-        cy.createSolidDocument('/cookbook/ramen', 'ramen.ttl');
+        cy.createSolidDocument('/cookbook/ramen', 'recipes/ramen.ttl');
         cy.sync();
         cy.updateSolidDocument('/cookbook/ramen', 'update-ramen-without-history.sparql');
 
@@ -102,7 +102,9 @@ describe('Interoperability', () => {
         // Assert.
         cy.see('Ramen!');
         cy.see('Shiitake');
+        cy.see('Step two');
         cy.dontSee('Broth');
+        cy.dontSee('Step 2');
 
         cy.fixture('reconcile-ramen-history.sparql').then(sparql => {
             cy.get('@patchRamen').its('request.body').should('be.sparql', sparql);
