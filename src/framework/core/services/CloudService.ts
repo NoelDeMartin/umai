@@ -390,6 +390,7 @@ export default class CloudService extends Service<State, ComputedState> {
             const localModel = this.getLocalModel(remoteModel, localModels);
 
             await SolidModel.synchronize(localModel, remoteModel);
+            await this.reconcileInconsistencies(localModel, remoteModel);
             await localModel.save();
 
             localModels.add(localModel);
@@ -543,6 +544,16 @@ export default class CloudService extends Service<State, ComputedState> {
         const tombstones = await RemoteTombstone.all({ $in: missingModelDocumentUrls });
 
         return remoteModels.concat(tombstones);
+    }
+
+    protected async reconcileInconsistencies(localModel: SolidModel, remoteModel: SolidModel): Promise<void> {
+        localModel.rebuildAttributesFromHistory();
+        localModel.setAttributes(remoteModel.getAttributes());
+
+        if (localModel.isDirty()) {
+            await localModel.save();
+            await SolidModel.synchronize(localModel, remoteModel);
+        }
     }
 
     protected getLocalModels(): Iterable<SolidModel> {

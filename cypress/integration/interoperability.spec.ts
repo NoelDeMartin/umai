@@ -86,4 +86,26 @@ describe('Interoperability', () => {
         });
     });
 
+    it('Reconciles remote changes without history', () => {
+        // Arrange.
+        cy.login();
+        cy.createSolidDocument('/cookbook/ramen', 'ramen.ttl');
+        cy.sync();
+        cy.updateSolidDocument('/cookbook/ramen', 'update-ramen-without-history.sparql');
+
+        cy.intercept('PATCH', 'http://localhost:4000/cookbook/ramen').as('patchRamen');
+
+        // Act.
+        cy.press('Ramen');
+        cy.sync();
+
+        // Assert.
+        cy.see('Ramen!');
+        cy.see('Shiitake');
+        cy.dontSee('Broth');
+
+        cy.fixture('reconcile-ramen-history.sparql').then(sparql => {
+            cy.get('@patchRamen').its('request.body').should('be.sparql', sparql);
+        });
+    });
 });

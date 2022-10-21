@@ -1,0 +1,50 @@
+DELETE DATA {
+    @prefix schema: <https://schema.org/> .
+    @prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
+    @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+    <#it-metadata> crdt:updatedAt "[[createdAt][.*]]"^^xsd:dateTime .
+}
+
+; INSERT DATA {
+    @prefix schema: <https://schema.org/> .
+    @prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
+    @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+    <#it-metadata> crdt:updatedAt "[[updatedAt][.*]]"^^xsd:dateTime .
+
+    <#it-operation-[[operation-1][.*]]>
+        a crdt:SetPropertyOperation ;
+        crdt:date "[[createdAt][.*]]"^^xsd:dateTime ;
+        crdt:property schema:name ;
+        crdt:resource <#it> ;
+        crdt:value "Ramen" .
+
+    <#it-operation-[[operation-2][.*]]>
+        a crdt:SetPropertyOperation ;
+        crdt:date "[[createdAt][.*]]"^^xsd:dateTime ;
+        crdt:property schema:recipeIngredient ;
+        crdt:resource <#it> ;
+        crdt:value "Broth", "Noodles" .
+
+    <#it-operation-[[operation-3][.*]]>
+        a crdt:SetPropertyOperation ;
+        crdt:date "[[updatedAt][.*]]"^^xsd:dateTime ;
+        crdt:property schema:name ;
+        crdt:resource <#it> ;
+        crdt:value "Ramen!" .
+
+    <#it-operation-[[operation-4][.*]]>
+        a crdt:RemovePropertyOperation ;
+        crdt:date "[[updatedAt][.*]]"^^xsd:dateTime ;
+        crdt:property schema:recipeIngredient ;
+        crdt:resource <#it> ;
+        crdt:value "Broth" .
+
+    <#it-operation-[[operation-5][.*]]>
+        a crdt:AddPropertyOperation ;
+        crdt:date "[[updatedAt][.*]]"^^xsd:dateTime ;
+        crdt:property schema:recipeIngredient ;
+        crdt:resource <#it> ;
+        crdt:value "Shiitake" .
+}

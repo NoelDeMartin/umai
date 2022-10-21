@@ -1,0 +1,15 @@
+DELETE DATA {
+    @prefix schema: <https://schema.org/> .
+
+	<#it>
+        schema:name "Ramen" ;
+        schema:recipeIngredient "Broth" .
+} ;
+
+INSERT DATA {
+    @prefix schema: <https://schema.org/> .
+
+    <#it>
+        schema:name "Ramen!" ;
+        schema:recipeIngredient "Shiitake" .
+}
