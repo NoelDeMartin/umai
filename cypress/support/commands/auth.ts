@@ -70,7 +70,7 @@ export default {
 
     cssReset(options: Partial<ResetOptions> = {}): void {
         // Delete previous data
-        cy.queueUpdatingSolidDocument('/alice/profile/card', 'remove-type-index.sparql');
+        cy.queueUpdatingSolidDocument('/alice/profile/card', 'sparql/remove-type-index.sparql');
         cy.queueDeletingSolidDocument('/alice/settings/privateTypeIndex');
         cy.queueDeletingSolidDocument('/alice/cookbook/ramen.png');
         cy.queueDeletingSolidDocument('/alice/cookbook/ramen');
@@ -80,17 +80,17 @@ export default {
 
         // Create new data
         if (options.typeIndex) {
-            cy.queueCreatingSolidDocument('/alice/settings/privateTypeIndex', 'public-type-index.ttl');
-            cy.queueUpdatingSolidDocument('/alice/profile/card', 'add-private-type-index.sparql');
+            cy.queueCreatingSolidDocument('/alice/settings/privateTypeIndex', 'turtle/public-type-index.ttl');
+            cy.queueUpdatingSolidDocument('/alice/profile/card', 'sparql/add-private-type-index.sparql');
         }
 
         if (options.typeIndex && options.cookbook) {
             cy.queueCreatingSolidContainer('/alice/', 'Cookbook');
-            cy.queueUpdatingSolidDocument('/alice/settings/privateTypeIndex', 'register-cookbook.sparql');
+            cy.queueUpdatingSolidDocument('/alice/settings/privateTypeIndex', 'sparql/register-cookbook.sparql');
         }
 
         if (options.typeIndex && options.cookbook && options.recipe) {
-            cy.queueCreatingSolidDocument(`/alice/cookbook/${options.recipe}`, `${options.recipe}.ttl`);
+            cy.queueCreatingSolidDocument(`/alice/cookbook/${options.recipe}`, `recipes/${options.recipe}.ttl`);
         }
     },
 
@@ -107,7 +107,7 @@ export default {
             default:
             case 'localStorage':
                 cy.intercept('https://alice.example.com', { statusCode: 404 });
-                cy.intercept('https://alice.example.com/profile/card', { fixture: 'profile.ttl' });
+                cy.intercept('https://alice.example.com/profile/card', { fixture: 'turtle/profile.ttl' });
                 cy.press(options.hasCookbook ? 'disconnected' : 'Connect your Solid POD');
                 cy.ariaInput('Login url').clear().type('https://alice.example.com{enter}');
                 cy.waitForReload();

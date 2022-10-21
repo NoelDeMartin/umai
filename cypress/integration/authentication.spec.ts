@@ -1,11 +1,11 @@
-import ramenJsonLD from '@cy/fixtures/ramen-3.json';
+import ramenJsonLD from '@cy/fixtures/recipes/ramen-3.json';
 
 describe('Authentication', () => {
 
     it('Logs in using the localStorage authenticator', () => {
         // Arrange
         cy.intercept('https://alice.example.com', { statusCode: 404 });
-        cy.intercept('https://alice.example.com/profile/card', { fixture: 'profile.ttl' });
+        cy.intercept('https://alice.example.com/profile/card', { fixture: 'turtle/profile.ttl' });
         cy.task('resetSolidPOD');
         cy.visit('/?authenticator=localStorage');
         cy.startApp();

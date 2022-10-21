@@ -4,12 +4,14 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <#it>
-    a schema:Recipe;
-    schema:name "Pisto";
+    a schema:Recipe ;
+    schema:name "Pisto" ;
     schema:description "Pisto is the same as Ratatouille!";
+    schema:recipeIngredient "Eggplant", "Zucchini", "Onion", "Tomatoes" ;
     purl:isReferencedBy <https://example.org/recipes/public#it> .
 
-<#it-metadata> a crdt:Metadata;
-    crdt:resource <#it>;
-    crdt:createdAt "2022-03-25T11:31:32.448Z"^^xsd:dateTime;
-    crdt:updatedAt "2022-03-25T11:31:32.448Z"^^xsd:dateTime.
+<#it-metadata>
+    a crdt:Metadata ;
+    crdt:resource <#it> ;
+    crdt:createdAt "2021-07-24T00:00:00.000Z"^^xsd:dateTime ;
+    crdt:updatedAt "2021-07-24T00:00:00.000Z"^^xsd:dateTime .

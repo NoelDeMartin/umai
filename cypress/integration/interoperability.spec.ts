@@ -31,7 +31,7 @@ describe('Interoperability', () => {
         // Assert.
         cy.see('Ramen');
 
-        cy.fixture('mend-ramen-bare.sparql').then(sparql => {
+        cy.fixture('sparql/mend-ramen-bare.sparql').then(sparql => {
             cy.get('@patchRamen').its('request.body').should('be.sparql', sparql);
         });
     });
@@ -81,7 +81,7 @@ describe('Interoperability', () => {
         cy.see('recipe on 1.example.org');
         cy.see('recipe on 2.example.org');
 
-        cy.fixture('mend-ramen-malformed.sparql').then(sparql => {
+        cy.fixture('sparql/mend-ramen-malformed.sparql').then(sparql => {
             cy.get('@patchRamen').its('request.body').should('be.sparql', sparql);
         });
     });
@@ -91,7 +91,7 @@ describe('Interoperability', () => {
         cy.login();
         cy.createSolidDocument('/cookbook/ramen', 'recipes/ramen.ttl');
         cy.sync();
-        cy.updateSolidDocument('/cookbook/ramen', 'update-ramen-without-history.sparql');
+        cy.updateSolidDocument('/cookbook/ramen', 'sparql/update-ramen-without-history.sparql');
 
         cy.intercept('PATCH', 'http://localhost:4000/cookbook/ramen').as('patchRamen');
 
@@ -106,7 +106,7 @@ describe('Interoperability', () => {
         cy.dontSee('Broth');
         cy.dontSee('Step 2');
 
-        cy.fixture('reconcile-ramen-history.sparql').then(sparql => {
+        cy.fixture('sparql/reconcile-ramen-history.sparql').then(sparql => {
             cy.get('@patchRamen').its('request.body').should('be.sparql', sparql);
         });
     });

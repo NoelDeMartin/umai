@@ -81,10 +81,10 @@ describe('Authorization', () => {
         cy.dontSee('This recipe is private');
 
         cy.get('@createTypeIndex').should('not.be.null');
-        cy.fixture('create-recipes-list.sparql').then(sparql => {
+        cy.fixture('sparql/create-recipes-list.sparql').then(sparql => {
             cy.get('@createPublicList').its('request.body').should('be.sparql', sparql);
         });
-        cy.fixture('publish-ramen.sparql').then(sparql => {
+        cy.fixture('sparql/publish-ramen.sparql').then(sparql => {
             cy.get('@updateRamen').its('request.body').should('be.sparql', sparql);
         });
 
@@ -133,12 +133,12 @@ describe('Authorization', () => {
 
     it('Makes public recipes private', () => {
         // Arrange
-        cy.createSolidDocument('/alice/cookbook/public', 'public-list-with-ramen.ttl');
-        cy.createSolidDocument('/alice/settings/publicTypeIndex', 'public-type-index.ttl');
-        cy.updateSolidDocument('/alice/profile/card', 'add-public-type-index.sparql');
-        cy.createSolidDocument('/alice/cookbook/public.acl', 'public-acls.ttl', { document: 'public' });
-        cy.createSolidDocument('/alice/cookbook/ramen.acl', 'public-acls.ttl', { document: 'ramen' });
-        cy.createSolidDocument('/alice/cookbook/ramen.png.acl', 'public-acls.ttl', { document: 'ramen.png' });
+        cy.createSolidDocument('/alice/cookbook/public', 'turtle/public-list-with-ramen.ttl');
+        cy.createSolidDocument('/alice/settings/publicTypeIndex', 'turtle/public-type-index.ttl');
+        cy.updateSolidDocument('/alice/profile/card', 'sparql/add-public-type-index.sparql');
+        cy.createSolidDocument('/alice/cookbook/public.acl', 'turtle/public-acls.ttl', { document: 'public' });
+        cy.createSolidDocument('/alice/cookbook/ramen.acl', 'turtle/public-acls.ttl', { document: 'ramen' });
+        cy.createSolidDocument('/alice/cookbook/ramen.png.acl', 'turtle/public-acls.ttl', { document: 'ramen.png' });
         cy.service('$auth').then(Auth => Auth.refreshUserProfile());
         cy.getRecipe('ramen').then(ramen => ramen.update({
             listUrls: ['http://localhost:4000/alice/cookbook/public#it'],
@@ -166,7 +166,7 @@ describe('Authorization', () => {
 
         cy.get('@patchRamenACL').its('request.body').should('be.sparql', unpublishACLSparql('ramen'));
         cy.get('@patchImageACL').its('request.body').should('be.sparql', unpublishACLSparql('ramen.png'));
-        cy.fixture('unpublish-ramen.sparql').then(sparql => {
+        cy.fixture('sparql/unpublish-ramen.sparql').then(sparql => {
             cy.get('@patchRamen').its('request.body').should('be.sparql', sparql);
         });
         cy.get('@patchList').its('request.body').should('be.sparql', `
@@ -184,12 +184,12 @@ describe('Authorization', () => {
 
     it('Makes private recipes public', () => {
         // Arrange
-        cy.createSolidDocument('/alice/cookbook/public', 'public-list-empty.ttl');
-        cy.createSolidDocument('/alice/settings/publicTypeIndex', 'public-type-index.ttl');
-        cy.updateSolidDocument('/alice/profile/card', 'add-public-type-index.sparql');
-        cy.createSolidDocument('/alice/cookbook/public.acl', 'public-acls.ttl', { document: 'public' });
-        cy.createSolidDocument('/alice/cookbook/ramen.acl', 'private-acls.ttl', { document: 'ramen' });
-        cy.createSolidDocument('/alice/cookbook/ramen.png.acl', 'private-acls.ttl', { document: 'ramen.png' });
+        cy.createSolidDocument('/alice/cookbook/public', 'turtle/public-list-empty.ttl');
+        cy.createSolidDocument('/alice/settings/publicTypeIndex', 'turtle/public-type-index.ttl');
+        cy.updateSolidDocument('/alice/profile/card', 'sparql/add-public-type-index.sparql');
+        cy.createSolidDocument('/alice/cookbook/public.acl', 'turtle/public-acls.ttl', { document: 'public' });
+        cy.createSolidDocument('/alice/cookbook/ramen.acl', 'turtle/private-acls.ttl', { document: 'ramen' });
+        cy.createSolidDocument('/alice/cookbook/ramen.png.acl', 'turtle/private-acls.ttl', { document: 'ramen.png' });
         cy.service('$auth').then(Auth => Auth.refreshUserProfile());
 
         cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/ramen.acl').as('patchRamenACL');
@@ -212,7 +212,7 @@ describe('Authorization', () => {
 
         cy.get('@patchRamenACL').its('request.body').should('be.sparql', publishACLSparql('ramen'));
         cy.get('@patchImageACL').its('request.body').should('be.sparql', publishACLSparql('ramen.png'));
-        cy.fixture('publish-ramen.sparql').then(sparql => {
+        cy.fixture('sparql/publish-ramen.sparql').then(sparql => {
             cy.get('@patchRamen').its('request.body').should('be.sparql', sparql);
         });
         cy.get('@patchList').its('request.body').should('be.sparql', `

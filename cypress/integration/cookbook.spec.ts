@@ -3,12 +3,12 @@ import path from 'path';
 
 import type { Services } from '@/framework/core';
 
-import firstRamenJsonLD from '@cy/fixtures/ramen-1.json';
-import jaimiesHummusJsonLD from '@cy/fixtures/jaimies-hummus.json';
-import junsRamenJsonLD from '@cy/fixtures/juns-ramen.json';
-import pistoJsonLD from '@cy/fixtures/pisto.json';
-import ramenJsonLD from '@cy/fixtures/ramen.json';
-import secondRamenJsonLD from '@cy/fixtures/ramen-2.json';
+import firstRamenJsonLD from '@cy/fixtures/recipes/ramen-1.json';
+import jaimiesHummusJsonLD from '@cy/fixtures/recipes/jaimies-hummus.json';
+import junsRamenJsonLD from '@cy/fixtures/recipes/juns-ramen.json';
+import pistoJsonLD from '@cy/fixtures/recipes/pisto.json';
+import ramenJsonLD from '@cy/fixtures/recipes/ramen.json';
+import secondRamenJsonLD from '@cy/fixtures/recipes/ramen-2.json';
 
 describe('Cookbook', () => {
 
@@ -158,10 +158,10 @@ describe('Cookbook', () => {
         const fixtures: string[] = [];
 
         Cypress.Promise.all([
-            cy.fixture('create-ramen.sparql').then(fixture => fixtures.push(fixture)),
-            cy.fixture('update-ramen-1.sparql').then(fixture => fixtures.push(fixture)),
-            cy.fixture('update-ramen-2.sparql').then(fixture => fixtures.push(fixture)),
-            cy.fixture('update-ramen-3.sparql').then(fixture => fixtures.push(fixture)),
+            cy.fixture('sparql/create-ramen.sparql').then(fixture => fixtures.push(fixture)),
+            cy.fixture('sparql/update-ramen-1.sparql').then(fixture => fixtures.push(fixture)),
+            cy.fixture('sparql/update-ramen-2.sparql').then(fixture => fixtures.push(fixture)),
+            cy.fixture('sparql/update-ramen-3.sparql').then(fixture => fixtures.push(fixture)),
         ]).then(() => {
             fixtures.forEach(fixture => cy.wait('@patchRamen').its('request.body').should('be.sparql', fixture));
 
@@ -179,7 +179,7 @@ describe('Cookbook', () => {
 
             cy.wrap(updatedAt).as('updatedAt');
             cy.sync();
-            cy.updateSolidDocument('/cookbook/ramen', 'update-ramen-name.sparql', {
+            cy.updateSolidDocument('/cookbook/ramen', 'sparql/update-ramen-name.sparql', {
                 createdAt: ramen.createdAt.toISOString(),
                 updatedAt: updatedAt.toISOString(),
             });
@@ -201,7 +201,7 @@ describe('Cookbook', () => {
         cy.get<Date>('@updatedAt').then(updatedAt => {
             const replacements = { updatedAt: updatedAt.toISOString() };
 
-            cy.fixtureWithReplacements('reconcile-ramen.sparql', replacements).then(sparql => {
+            cy.fixtureWithReplacements('sparql/reconcile-ramen.sparql', replacements).then(sparql => {
                 cy.get('@patchRamen').its('request.body').should('be.sparql', sparql);
             });
         });
@@ -378,7 +378,7 @@ describe('Cookbook', () => {
 
         // Assert
         cy.get('@putRamenImage').its('request.headers.content-type').should('eq', 'image/png');
-        cy.fixture('update-image.sparql').then(sparql => {
+        cy.fixture('sparql/update-image.sparql').then(sparql => {
             cy.get('@patchRamen').its('request.body').should('be.sparql', sparql);
         });
     });
