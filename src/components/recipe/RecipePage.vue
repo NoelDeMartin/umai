@@ -272,6 +272,8 @@ watchEffect(async () => {
     const newServings = parseInt(prompt(translate('recipes.servings_customPrompt')) || 'NaN');
 
     if (!newServings) {
+        await nextTick();
+
         servings = recipe?.servingsBreakdown?.quantity ?? 1;
 
         return;
