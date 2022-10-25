@@ -192,7 +192,7 @@ describe('Cookbook', () => {
         cy.press('Edit');
         cy.ariaInput('description').type('!');
         cy.press('Save');
-        cy.waitSync();
+        cy.waitForSync();
 
         // Assert
         cy.see('Ramen!');

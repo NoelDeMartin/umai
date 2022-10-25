@@ -20,7 +20,7 @@ import {
     isSolidDocumentRelation,
 } from 'soukai-solid';
 import type { Engine } from 'soukai';
-import type { ObjectsMap } from '@noeldemartin/utils';
+import type { ObjectsMap, PromisedValue } from '@noeldemartin/utils';
 import type { SolidModelConstructor } from 'soukai-solid';
 
 import Auth from '@/framework/core/facades/Auth';
@@ -64,11 +64,13 @@ interface ComputedState {
 }
 
 export interface CloudHandler<T extends SolidModel = SolidModel> {
-    modelClass: SolidModelConstructor<T>;
-    isReady(): boolean;
+    ready: PromisedValue<void>;
+    enabled: boolean;
+    initialize(): Promise<void>;
     getLocalModels(): T[];
     getLocalModelsWithRemoteFileUrls(): { model: T; remoteFileUrls: string[] }[];
     mendRemoteModel(model: T): void;
+    foundModelUsingRdfAliases(): void;
 }
 
 export default class CloudService extends Service<State, ComputedState> {
@@ -77,7 +79,7 @@ export default class CloudService extends Service<State, ComputedState> {
 
     protected static sameDocumentRelations: WeakMap<typeof SolidModel, string[]> = new WeakMap();
 
-    protected handlers: CloudHandler[] = [];
+    protected handlers: Map<SolidModelConstructor, CloudHandler> = new Map();
     protected asyncLock: Semaphore = new Semaphore();
     protected engine: Engine | null = null;
     protected syncInterval: number | null = null;
@@ -114,17 +116,19 @@ export default class CloudService extends Service<State, ComputedState> {
         await this.sync(model);
     }
 
-    public registerHandler<T extends SolidModel>(
+    public async registerHandler<T extends SolidModel>(
         modelClass: SolidModelConstructor<T>,
-        handler: Omit<CloudHandler<T>, 'modelClass'>,
-    ): void {
+        handler: CloudHandler<T>,
+    ): Promise<void> {
+        await handler.initialize();
+
         this.engine && getRemoteClass(modelClass).setEngine(this.engine);
 
-        this.handlers.push({ modelClass, ...handler });
+        this.handlers.set(modelClass, handler);
 
-        modelClass.on('created', model => handler.isReady() && this.createRemoteModel(model));
-        modelClass.on('updated', model => handler.isReady() && this.updateRemoteModel(model));
-        modelClass.on('deleted', model => handler.isReady() && this.updateRemoteModel(model));
+        modelClass.on('created', model => handler.enabled && this.createRemoteModel(model));
+        modelClass.on('updated', model => handler.enabled && this.updateRemoteModel(model));
+        modelClass.on('deleted', model => handler.enabled && this.updateRemoteModel(model));
     }
 
     public enqueueFileUpload(url: string): void {
@@ -150,6 +154,7 @@ export default class CloudService extends Service<State, ComputedState> {
 
     protected async boot(): Promise<void> {
         await super.boot();
+        await Promise.all([...this.handlers.values()].map(handler => handler.ready));
 
         Auth.authenticator && this.initializeEngine(Auth.authenticator);
 
@@ -260,8 +265,8 @@ export default class CloudService extends Service<State, ComputedState> {
 
         getRemoteClass(Tombstone).setEngine(this.requireEngine());
 
-        for (const handler of this.handlers) {
-            getRemoteClass(handler.modelClass).setEngine(this.engine);
+        for (const modelClass of this.handlers.keys()) {
+            getRemoteClass(modelClass).setEngine(this.engine);
         }
     }
 
@@ -483,19 +488,28 @@ export default class CloudService extends Service<State, ComputedState> {
         const remoteClass = remoteModel.static();
         const localClass = getLocalClass(remoteClass);
 
-        this.handlers.find(handler => handler.modelClass === localClass)?.mendRemoteModel(remoteModel);
+        for (const modelClass of this.handlers.keys()) {
+            if (modelClass !== localClass) {
+                continue;
+            }
+
+            this.handlers.get(modelClass)?.mendRemoteModel(remoteModel);
+
+            break;
+        }
 
         return remoteModel.clone({ constructors: [[remoteClass, localClass]] });
     }
 
     protected async fetchRemoteModels(localModels: SolidModel[]): Promise<SolidModel[]> {
         const handlersModels = await Promise.all(
-            this.handlers.map(async handler => {
-                if (!handler.isReady())
+            [...this.handlers.entries()].map(async ([modelClass, handler]) => {
+                if (!handler.enabled) {
                     return [];
+                }
 
                 const remoteModels = [];
-                const remoteClass = getRemoteClass(handler.modelClass);
+                const remoteClass = getRemoteClass(modelClass);
                 const recipeContainers = new Set([remoteClass.collection]);
                 const loadedContainers = new Set();
 
@@ -527,6 +541,10 @@ export default class CloudService extends Service<State, ComputedState> {
 
                     for (const urls of urlChunks) {
                         const chunkModels = await remoteClass.all({ $in: urls });
+
+                        if (chunkModels.some(model => model.usesRdfAliases())) {
+                            handler.foundModelUsingRdfAliases();
+                        }
 
                         remoteModels.push(...chunkModels);
                     }
@@ -581,11 +599,15 @@ export default class CloudService extends Service<State, ComputedState> {
     }
 
     protected getLocalModels(): Iterable<SolidModel> {
-        return this.handlers.map(handler => handler.isReady() ? handler.getLocalModels() : []).flat();
+        return [...this.handlers.values()]
+            .map(handler => handler.enabled ? handler.getLocalModels() : [])
+            .flat();
     }
 
     protected getLocalModelsWithRemoteFileUrls(): Iterable<{ model: SolidModel; remoteFileUrls: string[] }> {
-        return this.handlers.map(handler => handler.isReady() ? handler.getLocalModelsWithRemoteFileUrls() : []).flat();
+        return [...this.handlers.values()]
+            .map(handler => handler.enabled ? handler.getLocalModelsWithRemoteFileUrls() : [])
+            .flat();
     }
 
     protected getSameDocumentRelations(modelClass: typeof SolidModel): string[] {

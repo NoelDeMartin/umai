@@ -13,6 +13,7 @@ import { SolidContainerModel, SolidTypeRegistration } from 'soukai-solid';
 import { SolidDocumentPermission, findInstanceRegistrations } from '@noeldemartin/solid-utils';
 import type { FluentArray, Obj, Tuple } from '@noeldemartin/utils';
 import type { IndexedDBEngine } from 'soukai';
+import type { SolidModel } from 'soukai-solid';
 
 import Auth from '@/framework/core/facades/Auth';
 import Browser from '@/framework/core/facades/Browser';
@@ -24,7 +25,9 @@ import { setRemoteCollection } from '@/framework/cloud/remote_helpers';
 import type { ComputedStateDefinitions, IService } from '@/framework/core/Service';
 
 import Recipe from '@/models/Recipe';
+import RecipeInstructionsStep from '@/models/RecipeInstructionsStep';
 import RecipesList from '@/models/RecipesList';
+import RecipesListItem from '@/models/RecipesListItem';
 
 declare module '@/framework/core/services/EventsService' {
 
@@ -36,11 +39,12 @@ declare module '@/framework/core/services/EventsService' {
 }
 
 interface State {
+    created: boolean;
     localCookbookUrl: string;
     remoteCookbookUrl: string | null;
-    cookbook: PromisedValue<SolidContainerModel>;
     publicRecipesList: RecipesList | null;
     allRecipes: FluentArray<Recipe>;
+    usingRdfAliases: boolean;
 }
 
 interface ComputedState {
@@ -51,13 +55,11 @@ interface ComputedState {
 
 export default class CookbookService extends Service<State, ComputedState> {
 
-    public static persist: Array<keyof State> = ['remoteCookbookUrl'];
+    public static persist: Array<keyof State> = ['remoteCookbookUrl', 'usingRdfAliases'];
+
+    public cookbook: PromisedValue<SolidContainerModel> = new PromisedValue;
 
     private tmpRecipes: Record<string, Recipe> = {};
-
-    public get isReady(): boolean {
-        return this.cookbook.isResolved();
-    }
 
     public async initializeRemote(name: string, storageUrl: string): Promise<void> {
         const user = Auth.requireUser();
@@ -139,10 +141,21 @@ export default class CookbookService extends Service<State, ComputedState> {
         recipe.fixMalformedAttributes();
     }
 
+    public foundRecipeUsingRdfAliases(): void {
+        this.setState({ usingRdfAliases: true });
+        this.replaceRdfAliases();
+    }
+
     protected async boot(): Promise<void> {
         await super.boot();
         await Auth.ready;
         await Browser.ready;
+
+        this.cookbook.onResolve(() => this.setState({ created: true }));
+        this.cookbook.onReset(() => this.setState({ created: false }));
+        this.cookbook.onReject(() => this.setState({ created: false }));
+
+        this.aliasRdfPrefixes();
 
         if (!Browser.supportsIndexedDB) {
             return;
@@ -163,20 +176,13 @@ export default class CookbookService extends Service<State, ComputedState> {
         });
 
         Events.on('logout', async () => {
-            Recipe.collection = this.localCookbookUrl;
+            await this.deleteLocalModels();
 
-            await Promise.all(this.allRecipes.map(async recipe => {
-                if (recipe.imageUrl?.startsWith(this.localCookbookUrl)) {
-                    await Files.delete(recipe.imageUrl);
-                }
-
-                await recipe.delete();
-            }));
-
+            this.resetModelDefinitions();
             this.setState({
                 remoteCookbookUrl: null,
-                cookbook: new PromisedValue,
                 allRecipes: arr<Recipe>(),
+                usingRdfAliases: false,
             });
         });
 
@@ -197,11 +203,12 @@ export default class CookbookService extends Service<State, ComputedState> {
 
     protected getInitialState(): State {
         return {
+            created: this.cookbook.isResolved(),
             localCookbookUrl: Recipe.collection,
             remoteCookbookUrl: null,
-            cookbook: new PromisedValue,
             publicRecipesList: null,
             allRecipes: arr<Recipe>([]),
+            usingRdfAliases: false,
         };
     }
 
@@ -225,6 +232,35 @@ export default class CookbookService extends Service<State, ComputedState> {
         this.cookbook.resolve(cookbook);
     }
 
+    private getCookbookModels(): Array<typeof SolidModel> {
+        return [
+            Recipe,
+            RecipeInstructionsStep,
+            RecipesList,
+            RecipesListItem,
+        ];
+    }
+
+    private aliasRdfPrefixes(): void {
+        if (this.usingRdfAliases) {
+            this.replaceRdfAliases();
+
+            return;
+        }
+
+        this.getCookbookModels().forEach(modelClass => modelClass.aliasRdfPrefixes({
+            'https://schema.org/': 'http://schema.org/',
+        }));
+    }
+
+    private replaceRdfAliases(): void {
+        this.getCookbookModels().forEach(modelClass => {
+            modelClass.resetRdfAliases();
+            modelClass.replaceRdfPrefixes({ 'https://schema.org/': 'http://schema.org/' });
+            modelClass.aliasRdfPrefixes({ 'http://schema.org/': 'https://schema.org/' });
+        });
+    }
+
     private async loadRecipes(): Promise<void> {
         const recipes = [];
         const cookbookUrl = Recipe.collection;
@@ -246,12 +282,11 @@ export default class CookbookService extends Service<State, ComputedState> {
     private async loadCookbook(): Promise<void> {
         if (Auth.isLoggedIn()) {
             const engine = Auth.authenticator.engine;
-            const cookbook = await SolidContainerModel.withEngine(engine, async () => tap(
+
+            await SolidContainerModel.withEngine(engine, async () => tap(
                 await this.findCookbook(),
                 cookbook => cookbook && this.initializeRemoteCookbook(cookbook),
             ));
-
-            cookbook && this.cookbook.resolve(cookbook);
 
             return;
         }
@@ -490,6 +525,28 @@ export default class CookbookService extends Service<State, ComputedState> {
             newInstructionStep.mintUrl(recipe.requireDocumentUrl(), true, uuid());
 
             return newInstructionStep.url;
+        });
+    }
+
+    private async deleteLocalModels(): Promise<void> {
+        await Promise.all(this.allRecipes.map(async recipe => {
+            if (recipe.imageUrl?.startsWith(this.localCookbookUrl)) {
+                await Files.delete(recipe.imageUrl);
+            }
+
+            await recipe.delete();
+        }));
+
+        this.cookbook.reset();
+    }
+
+    private resetModelDefinitions(): void {
+        Recipe.collection = this.localCookbookUrl;
+
+        this.getCookbookModels().forEach(modelClass => {
+            modelClass.resetRdfAliases();
+            modelClass.replaceRdfPrefixes({ 'http://schema.org/': 'https://schema.org/' });
+            modelClass.aliasRdfPrefixes({ 'https://schema.org/': 'http://schema.org/' });
         });
     }
 

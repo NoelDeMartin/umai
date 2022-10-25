@@ -110,4 +110,30 @@ describe('Interoperability', () => {
             cy.get('@patchRamen').its('request.body').should('be.sparql', sparql);
         });
     });
+
+    it('Works using RDF prefix aliases', () => {
+        // Arrange
+        cy.login();
+        cy.createSolidDocument('/cookbook/ramen', 'recipes/ramen-http.ttl');
+
+        cy.intercept('PATCH', 'http://localhost:4000/cookbook/ramen').as('patchRamen');
+
+        // Act
+        cy.sync();
+        cy.press('Ramen');
+        cy.press('Edit');
+        cy.press('Write a description');
+        cy.currentElement().type('is life');
+        cy.press('Save');
+        cy.waitForSync();
+
+        // Assert
+        cy.see('Ramen');
+        cy.see('is life');
+        cy.see('Step 2');
+
+        cy.fixture('sparql/update-ramen-http.sparql').then(sparql => {
+            cy.get('@patchRamen').its('request.body').should('be.sparql', sparql);
+        });
+    });
 });

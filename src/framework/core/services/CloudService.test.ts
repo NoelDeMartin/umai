@@ -6,7 +6,7 @@ import Recipe from '@/models/Recipe';
 import { SolidContainerModel, bootSolidModels } from 'soukai-solid';
 import { createStore } from 'vuex';
 import { InMemoryEngine, bootModels, setEngine } from 'soukai';
-import { mock } from '@noeldemartin/utils';
+import { PromisedValue, mock } from '@noeldemartin/utils';
 
 import Auth from '@/framework/core/facades/Auth';
 import Store from '@/framework/core/facades/Store';
@@ -46,10 +46,13 @@ describe('Cloud Service', () => {
             authenticator,
         }));
         cloud.registerHandler(Recipe, {
-            isReady: () => true,
+            ready: PromisedValue.from(Promise.resolve()),
+            enabled: true,
+            initialize: () => Promise.resolve(),
             getLocalModels: () => localModels,
             getLocalModelsWithRemoteFileUrls: () => localModels.map(model => ({ model, remoteFileUrls: [] })),
             mendRemoteModel: () => undefined,
+            foundModelUsingRdfAliases: () => undefined,
         });
 
         await cloud.launch();

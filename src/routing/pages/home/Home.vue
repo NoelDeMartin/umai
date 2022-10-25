@@ -16,7 +16,7 @@
         aria-labelledby="home-title"
     >
         <HomeOnboarding v-if="$app.isOnboarding" />
-        <HomeCreateCookbook v-else-if="$auth.loggedIn && !$cookbook.isReady" />
+        <HomeCreateCookbook v-else-if="$auth.loggedIn && !$cookbook.created" />
         <HomeCreateRecipe v-else-if="$cookbook.recipes.isEmpty()" />
         <HomeRecipes v-else />
     </AppPage>

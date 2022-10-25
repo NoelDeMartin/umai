@@ -1,4 +1,4 @@
-import { Storage, isEmpty, objectOnly } from '@noeldemartin/utils';
+import { PromisedValue, Storage, isEmpty, objectOnly } from '@noeldemartin/utils';
 import type { Constructor } from '@noeldemartin/utils';
 
 import ServiceBootError from '@/framework/core/errors/ServiceBootError';
@@ -22,7 +22,7 @@ export type ServiceConstructor<T extends Service> = Constructor<T> & typeof Serv
 export default class Service<
     State extends ServiceState = DefaultServiceState,
     ComputedState extends ServiceState = DefaultServiceState,
-    ServiceStorage = Partial<State>
+    ServiceStorage extends Partial<State> = Partial<State>
 > {
 
     public static persist: string[] = [];
@@ -43,26 +43,21 @@ export default class Service<
     protected _namespace!: string;
 
     private _proxy!: this;
-    private _ready!: Promise<void>;
-    private _resolveReady!: () => void;
-    private _rejectReady!: (error: ServiceBootError) => void;
+    private _ready!: PromisedValue<void>;
 
     constructor() {
         if (this.static('__constructingPure'))
             return;
 
         this._namespace = new.target.name;
-        this._ready = new Promise((resolve, reject) => {
-            this._resolveReady = resolve;
-            this._rejectReady = reject;
-        });
+        this._ready = new PromisedValue();
 
         this.initialize();
 
         return this._proxy;
     }
 
-    public get ready(): Promise<void> {
+    public get ready(): PromisedValue<void> {
         return this._ready;
     }
 
@@ -79,12 +74,12 @@ export default class Service<
     }
 
     public launch(namespace?: string): Promise<void> {
-        const handleError = (error: unknown) => this._rejectReady(new ServiceBootError(this._namespace, error));
+        const handleError = (error: unknown) => this._ready.reject(new ServiceBootError(this._namespace, error));
 
         this._namespace = namespace ?? this._namespace;
 
         try {
-            this.boot().then(this._resolveReady).catch(handleError);
+            this.boot().then(() => this._ready.resolve()).catch(handleError);
         } catch (error) {
             handleError(error);
         }

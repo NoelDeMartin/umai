@@ -9,6 +9,8 @@ import Config from './facades/Config';
 import Cookbook from './facades/Cookbook';
 import Viewer from './facades/Viewer';
 
+import RecipesCloudHandler from './cloud-handlers/recipes';
+
 const services = {
     $config: Config,
     $cookbook: Cookbook,
@@ -23,21 +25,8 @@ declare module '@/framework/core' {
 
 }
 
-export function registerServices(): void {
-    Cloud.registerHandler(Recipe, {
-        isReady: () => !!Cookbook.cookbook.value,
-        getLocalModels: () => Cookbook.allRecipes.toArray(),
-        getLocalModelsWithRemoteFileUrls: () =>
-            Cookbook.allRecipes.toArray().map(recipe => ({
-                model: recipe,
-                remoteFileUrls:
-                    Cookbook.remoteCookbookUrl &&
-                    recipe.imageUrl?.startsWith(Cookbook.remoteCookbookUrl)
-                        ? [recipe.imageUrl]
-                        : [],
-            })),
-        mendRemoteModel: recipe => Cookbook.mendRecipe(recipe),
-    });
+export async function registerServices(): Promise<void> {
+    await Cloud.registerHandler(Recipe, new RecipesCloudHandler());
 
     UI.registerComponent(ApplicationComponent.LoadingModal, AppLoadingModal);
 }
