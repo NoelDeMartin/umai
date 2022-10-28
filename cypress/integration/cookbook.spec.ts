@@ -115,7 +115,7 @@ describe('Cookbook', () => {
         cy.currentElement().type('Boil the noodles{enter}');
         cy.currentElement().type('Dip them into the broth');
         cy.press('Save');
-        cy.see('There are 2 pending updates');
+        cy.see('There is one pending update');
         cy.comeBackOnline();
 
         // Act - Second update
@@ -130,7 +130,7 @@ describe('Cookbook', () => {
         cy.currentElement().type('!{enter}');
         cy.currentElement().type('Add toppings');
         cy.press('Save');
-        cy.see('There are 3 pending updates');
+        cy.see('There is one pending update');
         cy.comeBackOnline();
 
         // Act - Third update

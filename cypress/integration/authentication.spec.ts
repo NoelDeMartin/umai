@@ -81,7 +81,7 @@ describe('Authentication', () => {
         cy.press('Edit');
         cy.ariaInput('Recipe name').type('!');
         cy.press('Save');
-        cy.see('There are 2 pending updates');
+        cy.see('There is one pending update');
         cy.comeBackOnline();
 
         // Assert

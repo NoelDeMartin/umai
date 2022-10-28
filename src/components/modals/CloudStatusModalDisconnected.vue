@@ -24,7 +24,11 @@
             />
             <CoreMarkdown
                 v-else
-                :text="$t('cloud.login.info_reconnect', { url: $auth.previousSession?.loginUrl })"
+                :text="$t(
+                    'cloud.login.info_reconnect',
+                    { url: $auth.previousSession?.loginUrl },
+                    { plural: $cloud.pendingUpdates },
+                )"
             />
             <CloudConfiguration class="mt-4" />
             <div class="flex flex-col items-end space-y-2 mt-4 md:space-x-2 md:space-x-reverse md:space-y-0 md:flex-row-reverse">

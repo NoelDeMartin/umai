@@ -18,8 +18,7 @@ cloud:
   reconnect_now: Reconnect
   reconnect_onStartup: Reconnect on startup
 
-  noPendingUpdates_a11y: Syncing is up to date
-  somePendingUpdates_a11y: '_ | There is one pending update | There are {n} pending updates'
+  pendingUpdates_a11y: 'Syncing is up to date | There is one pending update | There are {n} pending updates'
   manyPendingUpdates_a11y: There are many pending updates
 
   login:
@@ -27,7 +26,7 @@ cloud:
     info: |
       You can keep your data safe across devices with a
       <CoreLink url="https://solidproject.org" color="brand-solid">Solid account</CoreLink>, use the input below to log in.
-    info_reconnect: You need to reconnect to `{url}`.
+    info_reconnect: 'Syncing is up to date, reconnect to `{url}` to get new changes. | There is one pending update, reconnect to `{url}` to synchronize. | There are {n} pending updates, reconnect to `{url}` to synchronize.'
     info_authError: |
       There was a problem connecting to `{url}`.
 

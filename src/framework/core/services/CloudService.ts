@@ -4,7 +4,6 @@ import {
     arrayChunk,
     arrayFilter,
     fail,
-    isEmpty,
     isSuccessfulResponse,
     map,
     objectWithout,
@@ -51,7 +50,7 @@ interface State {
     dirtyFileUrls: Set<string>;
     dirtyRemoteModels: ObjectsMap<SolidModel>;
     remoteOperationUrls: Record<string, string[]>;
-    offlineModelUpdates: Record<string, number>;
+    localModelUpdates: Record<string, number>;
 }
 
 interface ComputedState {
@@ -60,7 +59,7 @@ interface ComputedState {
     offline: boolean;
     syncing: boolean;
     disconnected: boolean;
-    pendingUpdates: ([SolidModel, Operation[]] | string)[];
+    pendingUpdates: number;
 }
 
 export interface CloudHandler<T extends SolidModel = SolidModel> {
@@ -75,7 +74,7 @@ export interface CloudHandler<T extends SolidModel = SolidModel> {
 
 export default class CloudService extends Service<State, ComputedState> {
 
-    public static persist: Array<keyof State> = ['autoSync', 'startupSync', 'offlineModelUpdates'];
+    public static persist: Array<keyof State> = ['autoSync', 'startupSync', 'localModelUpdates'];
 
     protected static sameDocumentRelations: WeakMap<typeof SolidModel, string[]> = new WeakMap();
 
@@ -140,14 +139,14 @@ export default class CloudService extends Service<State, ComputedState> {
     }
 
     public onModelMoved(previousUrl: string, newUrl: string): void {
-        if (!(previousUrl in this.offlineModelUpdates)) {
+        if (!(previousUrl in this.localModelUpdates)) {
             return;
         }
 
         this.setState({
-            offlineModelUpdates: {
-                ...objectWithout(this.offlineModelUpdates, previousUrl),
-                [newUrl]: this.offlineModelUpdates,
+            localModelUpdates: {
+                ...objectWithout(this.localModelUpdates, previousUrl),
+                [newUrl]: this.localModelUpdates[previousUrl],
             },
         });
     }
@@ -164,7 +163,7 @@ export default class CloudService extends Service<State, ComputedState> {
             dirtyFileUrls: new Set(),
             dirtyRemoteModels: map([], 'url'),
             remoteOperationUrls: {},
-            offlineModelUpdates: {},
+            localModelUpdates: {},
         }));
         Events.once('application-mounted', async () => {
             if (!this.startupSync) {
@@ -190,66 +189,19 @@ export default class CloudService extends Service<State, ComputedState> {
             dirtyFileUrls: new Set(),
             dirtyRemoteModels: map([], 'url'),
             remoteOperationUrls: {},
-            offlineModelUpdates: {},
+            localModelUpdates: {},
         };
     }
 
     protected getComputedStateDefinitions(): ComputedStateDefinitions<State, ComputedState> {
         return {
-            dirty: ({ dirtyFileUrls, dirtyRemoteModels, offlineModelUpdates }) =>
-                !isEmpty(offlineModelUpdates) || dirtyFileUrls.size + dirtyRemoteModels.size > 0,
+            dirty: (_, { pendingUpdates }) => pendingUpdates > 0,
             online: ({ status }) => status === CloudStatus.Online,
             offline: ({ status }) => status === CloudStatus.Offline,
             syncing: ({ status }) => status === CloudStatus.Syncing,
             disconnected: ({ status }) => status === CloudStatus.Disconnected,
-            pendingUpdates: ({ dirtyFileUrls, dirtyRemoteModels }) => {
-                const pendingUpdates: Record<string, Operation[]> = {};
-
-                for (const remoteModel of dirtyRemoteModels.items()) {
-                    const modelPendingUpdates =
-                        pendingUpdates[remoteModel.url] =
-                        remoteModel.operations.filter(operation => !operation.exists());
-
-                    for (const relatedModel of remoteModel.getRelatedModels()) {
-                        modelPendingUpdates.push(
-                            ...(relatedModel.operations?.filter(operation => !operation.exists()) ?? []),
-                        );
-                    }
-                }
-
-                const pendingModelUpdates = Object.entries(pendingUpdates).reduce(
-                    (pendingUpdates, [url, operations]) => {
-                        const operationsMap: Record<string, Operation[]> = {};
-
-                        if (operations.length === 0) {
-                            pendingUpdates.push([dirtyRemoteModels.get(url) as SolidModel, []]);
-
-                            return pendingUpdates;
-                        }
-
-                        for (const operation of operations) {
-                            const date = operation.date.toISOString();
-
-                            (operationsMap[date] ??= []).push(operation);
-                        }
-
-                        Object.values(operationsMap).forEach(
-                            dateOperations => pendingUpdates.push([
-                            dirtyRemoteModels.get(url) as SolidModel,
-                            dateOperations,
-                            ]),
-                        );
-
-                        return pendingUpdates;
-                    },
-                    [] as [SolidModel, Operation[]][],
-                );
-
-                return [
-                    ...pendingModelUpdates,
-                    ...dirtyFileUrls,
-                ];
-            },
+            pendingUpdates: ({ dirtyFileUrls, localModelUpdates }) =>
+                Object.values(localModelUpdates).reduce((total, count) => total + count, dirtyFileUrls.size),
         };
     }
 
@@ -352,8 +304,8 @@ export default class CloudService extends Service<State, ComputedState> {
 
                 return urls;
             }, this.remoteOperationUrls),
-            offlineModelUpdates: localModel
-                ? objectWithout(this.offlineModelUpdates, localModel.url)
+            localModelUpdates: localModel
+                ? objectWithout(this.localModelUpdates, localModel.url)
                 : {},
         });
     }
@@ -430,20 +382,18 @@ export default class CloudService extends Service<State, ComputedState> {
 
         dirtyRemoteModels.add(remoteModel);
 
-        this.setState({ dirtyRemoteModels });
-
-        if (!Auth.loggedIn) {
-            this.setState({
-                offlineModelUpdates: {
-                    ...this.offlineModelUpdates,
-                    [localModel.url]: 1,
-                },
-            });
-        }
+        this.setState({
+            dirtyRemoteModels,
+            localModelUpdates: {
+                ...this.localModelUpdates,
+                [localModel.url]: 1,
+            },
+        });
     }
 
     protected async updateRemoteModel(localModel: SolidModel): Promise<void> {
         const remoteModel = this.getRemoteModel(localModel, this.dirtyRemoteModels);
+        const modelUpdates = this.localModelUpdates[localModel.url] ?? 0;
 
         await SolidModel.synchronize(localModel, remoteModel);
 
@@ -455,16 +405,12 @@ export default class CloudService extends Service<State, ComputedState> {
             this.setState({ dirtyRemoteModels });
         }
 
-        if (!Auth.loggedIn) {
-            const modelUpdates = this.offlineModelUpdates[localModel.url] ?? 0;
-
-            this.setState({
-                offlineModelUpdates: {
-                    ...this.offlineModelUpdates,
-                    [localModel.url]: modelUpdates + 1,
-                },
-            });
-        }
+        this.setState({
+            localModelUpdates: {
+                ...this.localModelUpdates,
+                [localModel.url]: modelUpdates + 1,
+            },
+        });
     }
 
     protected getLocalModel(remoteModel: SolidModel, localModels: ObjectsMap<SolidModel>): SolidModel {
