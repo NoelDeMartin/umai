@@ -1,13 +1,14 @@
 <template>
     <HeadlessSelect
         class="
-            form-select cursor-pointer border-0 pt-0 p-1 -mr-1.5 bg-left text-right
+            form-select cursor-pointer border-0
             hover:bg-gray-100
             focus:ring-primary-600 focus:bg-primary-gray-100
         "
         :label="label"
         :model-value="modelValue"
         :options="options"
+        v-bind="$attrs"
         @update:modelValue="$emit('update:modelValue', $event)"
     />
 </template>

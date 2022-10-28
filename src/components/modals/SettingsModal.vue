@@ -1,6 +1,18 @@
 <template>
     <AppModal :title="$t('settings.title')" no-padding>
         <hr class="mt-3">
+        <div class="flex flex-col items-start p-4">
+            <CoreSelect
+                label-class="flex self-stretch justify-between items-center"
+                label-text-class="font-medium text-gray-900"
+                :label="$t('settings.language')"
+                :model-value="$i18n.locale"
+                :options="localesOptions"
+                @update:modelValue="(locale: string) => $lang.change(locale)"
+            />
+            <CoreMarkdown :text="$t('settings.language_description')" class="text-sm text-gray-500" />
+        </div>
+        <hr>
         <CoreToggle
             v-model="$ui.animations"
             class="p-4"
@@ -40,4 +52,14 @@
     </AppModal>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import Lang from '@/framework/core/facades/Lang';
+import { defineSelectOption } from '@/framework/components/headless/HeadlessSelect';
+
+const localesOptions = $computed(() => {
+    return Lang.locales.map(locale => defineSelectOption<string>({
+        text: Lang.displayNames[locale] ?? locale,
+        value: locale,
+    }));
+});
+</script>

@@ -1,0 +1,8 @@
+home:
+
+  onboarding:
+    welcome: Amb {umai}, podràs guardar totes les teves receptes i compartir-les amb altres. Pren control de la teva dieta, i comença la teva aventura culinària!
+    umai_title: Umai (うまい) vol dir "deliciós" en Japonès 😋
+
+  recipes:
+    create: Nova recepta

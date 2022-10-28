@@ -1,6 +1,8 @@
 import { createI18n } from 'vue-i18n';
 import type { Plugin } from 'vue';
 
+import Lang from '@/framework/core/facades/Lang';
+
 // TODO this should be refactored to be able to translate strings
 // before mounting the app instead of hard-coding messages here.
 const MESSAGES: Record<string, string> = {
@@ -18,12 +20,12 @@ export function i18nTranslate(key: string, params: Record<string, string> = {}):
 }
 
 export default async function(): Promise<Plugin> {
-    const { default: messages } = await import('@/lang/en.yaml');
+    const messages = await Lang.getDefaultLocalesMessages();
 
     return createI18n({
-        locale: 'en',
-        fallbackLocale: 'en',
+        locale: Lang.defaultLocale,
+        fallbackLocale: Lang.fallbackLocale,
         globalInjection: true,
-        messages: { en: messages },
+        messages,
     });
 }

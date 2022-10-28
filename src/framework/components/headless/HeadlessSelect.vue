@@ -1,6 +1,6 @@
 <template>
-    <label>
-        <span v-if="label" class="sr-only">{{ label }}</span>
+    <label :class="labelClass">
+        <span v-if="label" :class="[labelTextClass || showLabel || 'sr-only']">{{ label }}</span>
         <select
             ref="$select"
             v-wobbly-border
@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { requiredArrayProp, requiredMixedProp, stringProp } from '@/framework/utils/vue';
+import { booleanProp, requiredArrayProp, requiredMixedProp, stringProp } from '@/framework/utils/vue';
 
 import type { SelectOption } from './HeadlessSelect';
 
@@ -32,8 +32,11 @@ export default defineComponent({ inheritAttrs: false });
 <script setup lang="ts">
 const { options } = defineProps({
     label: stringProp(),
+    labelClass: stringProp(),
+    labelTextClass: stringProp(),
     options: requiredArrayProp<SelectOption>(),
     modelValue: requiredMixedProp<string | number>([String, Number]),
+    showLabel: booleanProp(false),
 });
 
 const emit = defineEmits(['update:modelValue']);

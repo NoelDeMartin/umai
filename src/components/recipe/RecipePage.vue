@@ -125,6 +125,7 @@
                                             <CoreSelect
                                                 v-if="servingsOptions"
                                                 v-model="servings"
+                                                class="pt-0 p-1 -mr-1.5 bg-left text-right"
                                                 :label="$t('recipes.servings_change')"
                                                 :options="servingsOptions"
                                             />
@@ -176,6 +177,7 @@ import { nextTick, watchEffect } from 'vue';
 import TailwindCSS from '@/framework/utils/tailwindcss';
 import UI from '@/framework/core/facades/UI';
 import { afterAnimationTime } from '@/framework/utils/dom';
+import { defineSelectOption } from '@/framework/components/headless/HeadlessSelect';
 import { objectProp } from '@/framework/utils/vue';
 import { translate } from '@/framework/utils/translate';
 import type { SelectOption } from '@/framework/components/headless/HeadlessSelect';
@@ -209,7 +211,7 @@ const servingsOptions = $computed((): SelectOption<number>[] | null => {
         defaultQuantity,
         servings,
     ]), (a, b) => a > b ? 1 : -1)
-        .map((quantity: number): SelectOption<number> => ({
+        .map(quantity => defineSelectOption<number>({
             text: servingsBreakdown.renderQuantity(quantity),
             value: quantity,
         }));
