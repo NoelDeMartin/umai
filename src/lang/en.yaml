@@ -177,6 +177,9 @@ home:
       this app does it.
     submit: Continue
     processing: Your cookbook is being created at<br>`{url}`...
+    exists: Container already in use
+    exists_info: There is already a container at `{url}`. Are you sure you want to use it to store your recipes?
+    exists_accept: "Yes"
 
   createRecipe:
     title: Create your first recipe

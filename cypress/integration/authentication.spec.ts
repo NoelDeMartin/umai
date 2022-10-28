@@ -22,6 +22,11 @@ describe('Authentication', () => {
 
     it('Signs up using the Inrupt authenticator', () => {
         // Arrange
+        const registerCookbookReplacements = {
+            resourceHash: '[[cookbook-registration][.*]]',
+            cookbookUrl: 'http://localhost:4000/alice/cookbook/',
+        };
+
         cy.intercept('PUT', 'http://localhost:4000/alice/cookbook/').as('createCookbook');
         cy.intercept('PUT', 'http://localhost:4000/alice/settings/privateTypeIndex').as('createTypeIndex');
         cy.intercept('PATCH', 'http://localhost:4000/alice/settings/privateTypeIndex').as('registerCookbook');
@@ -55,6 +60,10 @@ describe('Authentication', () => {
         cy.get('@registerCookbook').its('request.headers.authorization').should('match', /DPoP .*/);
         cy.get('@patchRamen').its('request.headers.authorization').should('match', /DPoP .*/);
         cy.get('@patchRamen').its('request.headers.if-none-match').should('equal', '*');
+
+        cy.fixtureWithReplacements('sparql/register-cookbook.sparql', registerCookbookReplacements).then(sparql => {
+            cy.get('@registerCookbook').its('request.body').should('be.sparql', sparql);
+        });
     });
 
     it('Logs in using the Inrupt authenticator', () => {

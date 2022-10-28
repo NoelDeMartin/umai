@@ -59,13 +59,17 @@
 
 <script setup lang="ts">
 import { stringToSlug, urlResolveDirectory } from '@noeldemartin/utils';
+import type { SolidContainerModel } from 'soukai-solid';
 
 import Auth from '@/framework/core/facades/Auth';
 import Cloud from '@/framework/core/facades/Cloud';
+import UI from '@/framework/core/facades/UI';
+import { translate } from '@/framework/utils/translate';
 import { FormInputType, reactiveForm } from '@/framework/forms';
 import type { IFocusable } from '@/framework/components/headless';
 
 import Cookbook from '@/services/facades/Cookbook';
+import CookbookExistsError from '@/services/errors/cookbook-exists-error';
 
 let processing = $ref(false);
 const form = reactiveForm({
@@ -85,14 +89,38 @@ const $nameLabel = $ref<HTMLElement | null>(null);
 const $storageUrlLabel = $ref<HTMLElement | null>(null);
 const url = $computed(() => urlResolveDirectory(form.storageUrl, stringToSlug(form.name)));
 
-async function submit() {
+async function submit(cookbook?: SolidContainerModel) {
     try {
         processing = true;
-        await Cookbook.initializeRemote(form.name, form.storageUrl);
+        cookbook
+            ? await Cookbook.initializeRemoteUsing(cookbook)
+            : await Cookbook.initializeRemote(form.name, form.storageUrl);
         await Cloud.sync();
+    } catch (error) {
+        if (error instanceof CookbookExistsError) {
+            confirmExisting(error.cookbook);
+
+            return;
+        }
+
+        throw error;
     } finally {
         processing = false;
     }
+}
+
+async function confirmExisting(cookbook: SolidContainerModel) {
+    const confirmed = await UI.confirm({
+        title: translate('home.createCookbook.exists'),
+        message: translate('home.createCookbook.exists_info', { url: cookbook.url }),
+        acceptText: translate('home.createCookbook.exists_accept'),
+    });
+
+    if (!confirmed) {
+        return;
+    }
+
+    submit(cookbook);
 }
 
 async function alignInputs() {

@@ -1,6 +1,6 @@
 INSERT DATA {
-    <#cookbook-registration>
+    <#{{resourceHash}}>
         a <http://www.w3.org/ns/solid/terms#TypeRegistration> ;
         <http://www.w3.org/ns/solid/terms#forClass> <https://schema.org/Recipe> ;
-        <http://www.w3.org/ns/solid/terms#instanceContainer> <http://localhost:4000/alice/cookbook/> .
+        <http://www.w3.org/ns/solid/terms#instanceContainer> <{{cookbookUrl}}> .
 }

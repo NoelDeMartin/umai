@@ -9,6 +9,12 @@ interface ResetOptions {
     recipe: string;
 }
 
+interface LoginOptions {
+    authenticator: AuthenticatorName;
+    hasCookbook: boolean;
+    useExistingCookbook: boolean;
+}
+
 interface CSSAuthorizeOptions {
     reset: boolean | Partial<ResetOptions>;
 }
@@ -40,9 +46,36 @@ export function queueAuthenticatedRequests(window: Window): void {
 
 export default {
 
+    createSolidContainerAnonymously(url: string, name: string): void {
+        cy.request({
+            url: cssPodUrl + url,
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'text/turtle',
+                'Link': '<http://www.w3.org/ns/ldp#BasicContainer>; rel="type"',
+                'If-None-Match': '*',
+            },
+            body: `<> <http://www.w3.org/2000/01/rdf-schema#label> "${name}" .`,
+        });
+    },
+
     createSolidDocument(url: string, fixture: string, replacements: Record<string, string> = {}): void {
         cy.fixture(fixture).then(body => {
             cy.runAuthenticatedRequest(cssPodUrl + url, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'text/turtle' },
+                body: Object.entries(replacements).reduce(
+                    (body, [name, value]) => body.replace(new RegExp(`\\[\\[${name}\\]\\]`, 'g'), value),
+                    body,
+                ),
+            });
+        });
+    },
+
+    createSolidDocumentAnonymously(url: string, fixture: string, replacements: Record<string, string> = {}): void {
+        cy.fixture(fixture).then(body => {
+            cy.request({
+                url: cssPodUrl + url,
                 method: 'PUT',
                 headers: { 'Content-Type': 'text/turtle' },
                 body: Object.entries(replacements).reduce(
@@ -86,7 +119,10 @@ export default {
 
         if (options.typeIndex && options.cookbook) {
             cy.queueCreatingSolidContainer('/alice/', 'Cookbook');
-            cy.queueUpdatingSolidDocument('/alice/settings/privateTypeIndex', 'sparql/register-cookbook.sparql');
+            cy.queueUpdatingSolidDocument('/alice/settings/privateTypeIndex', 'sparql/register-cookbook.sparql', {
+                resourceHash: 'cookbook-registration',
+                cookbookUrl: 'http://localhost:4000/alice/cookbook/',
+            });
         }
 
         if (options.typeIndex && options.cookbook && options.recipe) {
@@ -94,7 +130,7 @@ export default {
         }
     },
 
-    login(options: Partial<{ authenticator: AuthenticatorName; hasCookbook: boolean }> = {}): void {
+    login(options: Partial<LoginOptions> = {}): void {
         // TODO use shortcut instead of logging in with the UI
 
         switch (options.authenticator) {
@@ -117,6 +153,11 @@ export default {
         cy.see('Syncing in progress');
         cy.dontSee('Syncing in progress');
         cy.press('Continue');
+
+        if (options.useExistingCookbook) {
+            cy.press('Yes');
+        }
+
         cy.see('Syncing in progress');
         cy.see('Syncing is up to date');
     },
@@ -151,12 +192,16 @@ export default {
         cy.queueAuthenticatedRequest(cssPodUrl + url, { method: 'DELETE' });
     },
 
-    queueUpdatingSolidDocument(url: string, fixture: string): void {
+    queueUpdatingSolidDocument(url: string, fixture: string, replacements: Record<string, string> = {}): void {
         cy.fixture(fixture).then(body => {
             cy.queueAuthenticatedRequest(cssPodUrl + url, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/sparql-update' },
-                body,
+                body: normalizeSparql(
+                    Object
+                        .entries(replacements)
+                        .reduce((body, [name, value]) => body.replaceAll(`{{${name}}}`, value), body),
+                ),
             });
         });
     },

@@ -5,7 +5,9 @@ import {
     range,
     requireUrlParentDirectory,
     requireUrlParse,
+    stringToSlug,
     tap,
+    urlResolveDirectory,
     urlRoute,
     uuid,
 } from '@noeldemartin/utils';
@@ -24,6 +26,7 @@ import Service from '@/framework/core/Service';
 import { setRemoteCollection } from '@/framework/cloud/remote_helpers';
 import type { ComputedStateDefinitions, IService } from '@/framework/core/Service';
 
+import CookbookExistsError from '@/services/errors/cookbook-exists-error';
 import Recipe from '@/models/Recipe';
 import RecipeInstructionsStep from '@/models/RecipeInstructionsStep';
 import RecipesList from '@/models/RecipesList';
@@ -62,17 +65,31 @@ export default class CookbookService extends Service<State, ComputedState> {
     private tmpRecipes: Record<string, Recipe> = {};
 
     public async initializeRemote(name: string, storageUrl: string): Promise<void> {
+        const engine = Auth.requireAuthenticator().engine;
+        const cookbook = await SolidContainerModel.withEngine(engine, async () => {
+            const url = urlResolveDirectory(storageUrl, stringToSlug(name));
+            const cookbook = await SolidContainerModel.find(url);
+
+            if (cookbook) {
+                throw new CookbookExistsError(cookbook);
+            }
+
+            return new SolidContainerModel({ url, name });
+        });
+
+        await this.initializeRemoteUsing(cookbook);
+    }
+
+    public async initializeRemoteUsing(cookbook: SolidContainerModel): Promise<void> {
         const user = Auth.requireUser();
         const engine = Auth.requireAuthenticator().engine;
-        const cookbook = await SolidContainerModel.withEngine(engine, async () => tap(
-            new SolidContainerModel({ name }),
-            async cookbook => {
-                const typeIndexUrl = user.privateTypeIndexUrl ?? await Auth.createPrivateTypeIndex();
 
-                await cookbook.save(storageUrl);
-                await cookbook.register(typeIndexUrl, Recipe);
-            },
-        ));
+        await SolidContainerModel.withEngine(engine, async () => {
+            const typeIndexUrl = user.privateTypeIndexUrl ?? await Auth.createPrivateTypeIndex();
+
+            await cookbook.save();
+            await cookbook.register(typeIndexUrl, Recipe);
+        });
 
         await this.initializeRemoteCookbook(cookbook);
         await this.reloadRecipes();

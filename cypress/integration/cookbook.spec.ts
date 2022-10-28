@@ -671,21 +671,7 @@ describe('Cookbook', () => {
         // Arrange
         cy.createRecipe({ name: 'Ramen' });
         cy.login({ hasCookbook: true });
-
-        cy.request({
-            method: 'PUT',
-            url: 'http://localhost:4000/cookbook/ramen',
-            headers: { 'Content-Type': 'text/turtle' },
-            body: `
-                @prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
-                @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-
-                <#it-metadata>
-                    a crdt:Tombstone ;
-                    crdt:resource <#it> ;
-                    crdt:deletedAt "2022-06-12T00:00:00.000Z"^^xsd:dateTime .
-            `,
-        });
+        cy.createSolidDocumentAnonymously('/cookbook/ramen', 'recipes/tombstone.ttl');
 
         // Act
         cy.sync();

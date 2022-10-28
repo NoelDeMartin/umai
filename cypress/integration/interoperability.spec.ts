@@ -136,4 +136,28 @@ describe('Interoperability', () => {
             cy.get('@patchRamen').its('request.body').should('be.sparql', sparql);
         });
     });
+
+    it('Registers existing containers in the type index', () => {
+        // Arrange
+        const registerCookbookReplacements = {
+            resourceHash: '[[cookbook-registration][.*]]',
+            cookbookUrl: 'http://localhost:4000/cookbook/',
+        };
+
+        cy.createSolidContainerAnonymously('/cookbook/', 'Cookbook');
+        cy.createSolidDocumentAnonymously('/cookbook/ramen', 'recipes/ramen.ttl');
+
+        cy.intercept('PATCH', 'http://localhost:4000/settings/privateTypeIndex').as('registerCookbook');
+
+        // Act
+        cy.login({ useExistingCookbook: true });
+
+        // Assert
+        cy.see('Ramen');
+
+        cy.fixtureWithReplacements('sparql/register-cookbook.sparql', registerCookbookReplacements).then(sparql => {
+            cy.get('@registerCookbook').its('request.body').should('be.sparql', sparql);
+        });
+    });
+
 });

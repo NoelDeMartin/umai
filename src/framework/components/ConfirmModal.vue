@@ -3,7 +3,7 @@
         <h2 v-if="title" class="text-xl font-semibold">
             {{ title }}
         </h2>
-        <CoreMarkdown :text="message || $t('ui.confirm')" />
+        <CoreMarkdown class="mt-2" :text="message || $t('ui.confirm')" />
         <div class="flex flex-row-reverse items-end space-x-2 space-x-reverse mt-4">
             <CoreButton v-initial-focus :color="acceptColor" @click="close(true)">
                 {{ acceptText || $t('ui.confirm_accept') }}

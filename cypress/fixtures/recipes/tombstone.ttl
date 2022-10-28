@@ -1,0 +1,7 @@
+@prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<#it-metadata>
+    a crdt:Tombstone ;
+    crdt:resource <#it> ;
+    crdt:deletedAt "2022-06-12T00:00:00.000Z"^^xsd:dateTime .
