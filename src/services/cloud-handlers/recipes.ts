@@ -7,17 +7,17 @@ import type Recipe from '@/models/Recipe';
 
 export default class RecipesCloudHandler implements CloudHandler<Recipe> {
 
-    public ready: PromisedValue<void>;
-    public enabled: boolean;
+    public booted: PromisedValue<void>;
+    public active: boolean;
 
     constructor() {
-        this.ready = Cookbook.ready;
-        this.enabled = Cookbook.cookbook.isResolved();
+        this.booted = Cookbook.booted;
+        this.active = Cookbook.cookbook.isResolved();
     }
 
     public async initialize(): Promise<void> {
-        Cookbook.cookbook.onResolve(() => this.enabled = true);
-        Cookbook.cookbook.onReject(() => this.enabled = false);
+        Cookbook.cookbook.onResolve(() => this.active = true);
+        Cookbook.cookbook.onReject(() => this.active = false);
     }
 
     public getLocalModels(): Recipe[] {

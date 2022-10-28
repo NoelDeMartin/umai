@@ -47,8 +47,8 @@ describe('Cloud Service', () => {
             authenticator,
         }));
         cloud.registerHandler(Recipe, {
-            ready: PromisedValue.from(Promise.resolve()),
-            enabled: true,
+            booted: PromisedValue.from(Promise.resolve()),
+            active: true,
             initialize: () => Promise.resolve(),
             getLocalModels: () => localModels,
             getLocalModelsWithRemoteFileUrls: () => localModels.map(model => ({ model, remoteFileUrls: [] })),

@@ -247,7 +247,7 @@ export default class AuthService extends Service<State, ComputedState> {
 
     protected async boot(): Promise<void> {
         await super.boot();
-        await Errors.ready;
+        await Errors.booted;
 
         const url = new URL(location.href);
 

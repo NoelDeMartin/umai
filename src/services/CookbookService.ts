@@ -165,8 +165,8 @@ export default class CookbookService extends Service<State, ComputedState> {
 
     protected async boot(): Promise<void> {
         await super.boot();
-        await Auth.ready;
-        await Browser.ready;
+        await Auth.booted;
+        await Browser.booted;
 
         this.cookbook.onResolve(() => this.setState({ created: true }));
         this.cookbook.onReset(() => this.setState({ created: false }));

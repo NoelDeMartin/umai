@@ -43,22 +43,22 @@ export default class Service<
     protected _namespace!: string;
 
     private _proxy!: this;
-    private _ready!: PromisedValue<void>;
+    private _booted!: PromisedValue<void>;
 
     constructor() {
         if (this.static('__constructingPure'))
             return;
 
         this._namespace = new.target.name;
-        this._ready = new PromisedValue();
+        this._booted = new PromisedValue();
 
         this.initialize();
 
         return this._proxy;
     }
 
-    public get ready(): PromisedValue<void> {
-        return this._ready;
+    public get booted(): PromisedValue<void> {
+        return this._booted;
     }
 
     public static(): ServiceConstructor<this>;
@@ -74,17 +74,17 @@ export default class Service<
     }
 
     public launch(namespace?: string): Promise<void> {
-        const handleError = (error: unknown) => this._ready.reject(new ServiceBootError(this._namespace, error));
+        const handleError = (error: unknown) => this._booted.reject(new ServiceBootError(this._namespace, error));
 
         this._namespace = namespace ?? this._namespace;
 
         try {
-            this.boot().then(() => this._ready.resolve()).catch(handleError);
+            this.boot().then(() => this._booted.resolve()).catch(handleError);
         } catch (error) {
             handleError(error);
         }
 
-        return this._ready;
+        return this._booted;
     }
 
     protected initialize(): void {

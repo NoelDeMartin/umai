@@ -63,8 +63,8 @@ interface ComputedState {
 }
 
 export interface CloudHandler<T extends SolidModel = SolidModel> {
-    ready: PromisedValue<void>;
-    enabled: boolean;
+    booted: PromisedValue<void>;
+    active: boolean;
     initialize(): Promise<void>;
     getLocalModels(): T[];
     getLocalModelsWithRemoteFileUrls(): { model: T; remoteFileUrls: string[] }[];
@@ -125,9 +125,9 @@ export default class CloudService extends Service<State, ComputedState> {
 
         this.handlers.set(modelClass, handler);
 
-        modelClass.on('created', model => handler.enabled && this.createRemoteModel(model));
-        modelClass.on('updated', model => handler.enabled && this.updateRemoteModel(model));
-        modelClass.on('deleted', model => handler.enabled && this.updateRemoteModel(model));
+        modelClass.on('created', model => handler.active && this.createRemoteModel(model));
+        modelClass.on('updated', model => handler.active && this.updateRemoteModel(model));
+        modelClass.on('deleted', model => handler.active && this.updateRemoteModel(model));
     }
 
     public enqueueFileUpload(url: string): void {
@@ -153,7 +153,7 @@ export default class CloudService extends Service<State, ComputedState> {
 
     protected async boot(): Promise<void> {
         await super.boot();
-        await Promise.all([...this.handlers.values()].map(handler => handler.ready));
+        await Promise.all([...this.handlers.values()].map(handler => handler.booted));
 
         Auth.authenticator && this.initializeEngine(Auth.authenticator);
 
@@ -450,7 +450,7 @@ export default class CloudService extends Service<State, ComputedState> {
     protected async fetchRemoteModels(localModels: SolidModel[]): Promise<SolidModel[]> {
         const handlersModels = await Promise.all(
             [...this.handlers.entries()].map(async ([modelClass, handler]) => {
-                if (!handler.enabled) {
+                if (!handler.active) {
                     return [];
                 }
 
@@ -546,13 +546,13 @@ export default class CloudService extends Service<State, ComputedState> {
 
     protected getLocalModels(): Iterable<SolidModel> {
         return [...this.handlers.values()]
-            .map(handler => handler.enabled ? handler.getLocalModels() : [])
+            .map(handler => handler.active ? handler.getLocalModels() : [])
             .flat();
     }
 
     protected getLocalModelsWithRemoteFileUrls(): Iterable<{ model: SolidModel; remoteFileUrls: string[] }> {
         return [...this.handlers.values()]
-            .map(handler => handler.enabled ? handler.getLocalModelsWithRemoteFileUrls() : [])
+            .map(handler => handler.active ? handler.getLocalModelsWithRemoteFileUrls() : [])
             .flat();
     }
 

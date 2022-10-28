@@ -41,8 +41,8 @@ export default class AppService extends Service<State> {
 
     protected async boot(): Promise<void> {
         await super.boot();
-        await Auth.ready;
-        await Cookbook.ready;
+        await Auth.booted;
+        await Cookbook.booted;
 
         const sourceCommitHash = process.env.VUE_APP_SOURCE_COMMIT_HASH as string;
 
