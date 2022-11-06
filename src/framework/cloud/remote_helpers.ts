@@ -1,5 +1,6 @@
 import { bootModels } from 'soukai';
 import { fail } from '@noeldemartin/utils';
+import type { Attributes } from 'soukai';
 import type { SolidModel, SolidModelConstructor } from 'soukai-solid';
 
 const remoteClasses: WeakMap<SolidModelConstructor, SolidModelConstructor> = new WeakMap;
@@ -7,12 +8,35 @@ const localClasses: WeakMap<SolidModelConstructor, SolidModelConstructor> = new 
 
 function makeRemoteClass<T extends SolidModelConstructor>(localClass: T): T {
     const LocalClass = localClass as typeof SolidModel;
+    const withLocalHistoryConfig = (modelClass: typeof SolidModel, operation: () => unknown) => {
+        modelClass.timestamps = LocalClass.timestamps;
+        modelClass.history = LocalClass.history;
+
+        operation();
+
+        modelClass.timestamps = [];
+        modelClass.history = false;
+    };
     const RemoteClass = class extends LocalClass {
 
         public static timestamps = false;
         public static history = false;
 
-    } as T;
+        protected initialize(attributes: Attributes, exists: boolean): void {
+            withLocalHistoryConfig(
+                this._proxy.static(),
+                () => super.initialize(attributes, exists),
+            );
+        }
+
+        public fixMalformedAttributes(): void {
+            withLocalHistoryConfig(
+                this.static(),
+                () => super.fixMalformedAttributes(),
+            );
+        }
+
+    } as unknown as T;
 
     remoteClasses.set(LocalClass, RemoteClass);
     localClasses.set(RemoteClass, LocalClass);

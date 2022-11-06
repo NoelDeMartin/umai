@@ -153,7 +153,6 @@ export default class CookbookService extends Service<State, ComputedState> {
     }
 
     public mendRecipe(recipe: Recipe): void {
-        this.mendRecipeMetadata(recipe);
         this.mendRecipeInstructions(recipe);
         recipe.fixMalformedAttributes();
     }
@@ -500,20 +499,6 @@ export default class CookbookService extends Service<State, ComputedState> {
         );
 
         publicRecipesList.isRegistered = true;
-    }
-
-    private mendRecipeMetadata(recipe: Recipe): void {
-        if (recipe.metadata) {
-            return;
-        }
-
-        const now = new Date();
-        const metadata = recipe.relatedMetadata.attach({
-            createdAt: now,
-            updatedAt: now,
-        });
-
-        metadata.mintUrl();
     }
 
     private mendRecipeInstructions(recipe: Recipe): void {
