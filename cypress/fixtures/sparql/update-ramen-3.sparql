@@ -4,7 +4,13 @@ DELETE DATA {
     @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 	<#it> schema:recipeInstructions <#[[instruction-step-3][%uuid%]]> .
-    <#it-metadata> crdt:updatedAt "[[.*]]"^^xsd:dateTime .
+    <#it-metadata> crdt:updatedAt "[[previous-date][.*]]"^^xsd:dateTime .
+
+    <#[[instruction-step-4][%uuid%]]>
+        schema:position 4 ;
+        schema:text "Add nori topping" .
+
+    <#[[instruction-step-4][%uuid%]]-metadata> crdt:updatedAt "[[previous-date][.*]]"^^xsd:dateTime .
 
 } ;
 
@@ -13,13 +19,47 @@ INSERT DATA {
     @prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
     @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-    <#it-metadata> crdt:updatedAt "[[date][.*]]"^^xsd:dateTime .
+    <#it-metadata> crdt:updatedAt "[[update-date][.*]]"^^xsd:dateTime .
+
+    <#[[instruction-step-4][%uuid%]]>
+        schema:position 3 ;
+        schema:text "Add shiitake and nori toppings" .
+
+    <#[[instruction-step-4][%uuid%]]-metadata> crdt:updatedAt "[[update-date][.*]]"^^xsd:dateTime .
 
     <#it-operation-[[%uuid%]]>
         a crdt:RemovePropertyOperation ;
         crdt:resource <#it> ;
-        crdt:date "[[date][.*]]"^^xsd:dateTime ;
+        crdt:date "[[update-date][.*]]"^^xsd:dateTime ;
         crdt:property schema:recipeInstructions ;
         crdt:value <#[[instruction-step-3][%uuid%]]> .
+
+    <#[[instruction-step-4][%uuid%]]-operation-[[%uuid%]]>
+        a crdt:SetPropertyOperation ;
+        crdt:resource <#[[instruction-step-4][%uuid%]]> ;
+        crdt:date "[[previous-date][.*]]"^^xsd:dateTime ;
+        crdt:property schema:position ;
+        crdt:value 4 .
+
+    <#[[instruction-step-4][%uuid%]]-operation-[[%uuid%]]>
+        a crdt:SetPropertyOperation ;
+        crdt:resource <#[[instruction-step-4][%uuid%]]> ;
+        crdt:date "[[previous-date][.*]]"^^xsd:dateTime ;
+        crdt:property schema:text ;
+        crdt:value "Add nori topping" .
+
+    <#[[instruction-step-4][%uuid%]]-operation-[[%uuid%]]>
+        a crdt:SetPropertyOperation ;
+        crdt:resource <#[[instruction-step-4][%uuid%]]> ;
+        crdt:date "[[update-date][.*]]"^^xsd:dateTime ;
+        crdt:property schema:position ;
+        crdt:value 3 .
+
+    <#[[instruction-step-4][%uuid%]]-operation-[[%uuid%]]>
+        a crdt:SetPropertyOperation ;
+        crdt:resource <#[[instruction-step-4][%uuid%]]> ;
+        crdt:date "[[update-date][.*]]"^^xsd:dateTime ;
+        crdt:property schema:text ;
+        crdt:value "Add shiitake and nori toppings" .
 
 }

@@ -127,7 +127,6 @@ export default class CloudService extends Service<State, ComputedState> {
 
         modelClass.on('created', model => handler.active && this.createRemoteModel(model));
         modelClass.on('updated', model => handler.active && this.updateRemoteModel(model));
-        modelClass.on('deleted', model => handler.active && this.updateRemoteModel(model));
     }
 
     public enqueueFileUpload(url: string): void {
@@ -526,15 +525,15 @@ export default class CloudService extends Service<State, ComputedState> {
 
         this.getSameDocumentRelations(localModel.static()).forEach(relation => {
             const localRelationModels = localModel.getRelationModels(relation) ?? [];
-            const remoteRelationModels = remoteModel.getRelationModels(relation) ?? [];
+            const remoteRelationModels = map(remoteModel.getRelationModels(relation) ?? [], 'url');
 
-            localRelationModels.forEach((localRelatedModel, index) => {
+            localRelationModels.forEach(localRelatedModel => {
                 if (!localRelatedModel.isRelationLoaded('operations')) {
                     return;
                 }
 
                 localRelatedModel.rebuildAttributesFromHistory();
-                localRelatedModel.setAttributes(remoteRelationModels[index]?.getAttributes() ?? {});
+                localRelatedModel.setAttributes(remoteRelationModels.get(localRelatedModel.url)?.getAttributes() ?? {});
             });
         });
 

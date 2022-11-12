@@ -7,11 +7,34 @@ INSERT DATA {
     <#it>
         a schema:Recipe ;
         schema:name "Ramen" ;
-        schema:recipeIngredient "Broth", "Noodles" .
+        schema:recipeIngredient "Broth", "Noodles" ;
+        schema:recipeInstructions <#[[instruction-step-1][%uuid%]]>, <#[[instruction-step-2][%uuid%]]> .
 
     <#it-metadata>
         a crdt:Metadata ;
         crdt:resource <#it> ;
-        crdt:createdAt "[[.*]]"^^xsd:dateTime ;
-        crdt:updatedAt "[[.*]]"^^xsd:dateTime .
+        crdt:createdAt "[[date][.*]]"^^xsd:dateTime ;
+        crdt:updatedAt "[[date][.*]]"^^xsd:dateTime .
+
+    <#[[instruction-step-1][%uuid%]]>
+        a schema:HowToStep ;
+        schema:text "Boil the noodles" ;
+        schema:position 1 .
+
+    <#[[instruction-step-1][%uuid%]]-metadata>
+        a crdt:Metadata ;
+        crdt:resource <#[[instruction-step-1][%uuid%]]> ;
+        crdt:createdAt "[[date][.*]]"^^xsd:dateTime ;
+        crdt:updatedAt "[[date][.*]]"^^xsd:dateTime .
+
+    <#[[instruction-step-2][%uuid%]]>
+        a schema:HowToStep ;
+        schema:text "Dip them into the broth" ;
+        schema:position 2 .
+
+    <#[[instruction-step-2][%uuid%]]-metadata>
+        a crdt:Metadata ;
+        crdt:resource <#[[instruction-step-2][%uuid%]]> ;
+        crdt:createdAt "[[date][.*]]"^^xsd:dateTime ;
+        crdt:updatedAt "[[date][.*]]"^^xsd:dateTime .
 }

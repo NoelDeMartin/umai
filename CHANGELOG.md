@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Improved performance for recipes with long changes history.
 
+### Fixed
+
+- Fixed a bug where invalid history operations would be created (without a `crdt:property` triple). This could result in recipes having more history operations than necessary, you may want to check out your RDF data just in case.
+
 ## [v0.1.0-beta.3](https://github.com/NoelDeMartin/umai/releases/tag/v0.1.0-beta.3) - 2022-10-28
 
 ### Added

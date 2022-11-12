@@ -19,7 +19,7 @@ INSERT DATA {
         schema:name "Ramen!" ;
         schema:description "is life" ;
 	    schema:recipeIngredient "Toppings" ;
-        schema:recipeInstructions <#[[instruction-step-1][%uuid%]]>, <#[[instruction-step-2][%uuid%]]> .
+        schema:recipeInstructions <#[[instruction-step-3][%uuid%]]> .
 
     <#it-metadata>
         crdt:updatedAt "[[updated-date][.*]]"^^xsd:dateTime .
@@ -37,6 +37,13 @@ INSERT DATA {
         crdt:date "[[created-date][.*]]"^^xsd:dateTime ;
         crdt:property schema:recipeIngredient ;
         crdt:value "Broth", "Noodles" .
+
+    <#it-operation-[[%uuid%]]>
+        a crdt:SetPropertyOperation ;
+        crdt:resource <#it> ;
+        crdt:date "[[created-date][.*]]"^^xsd:dateTime ;
+        crdt:property schema:recipeInstructions ;
+        crdt:value <#[[instruction-step-1][%uuid%]]>, <#[[instruction-step-2][%uuid%]]> .
 
     <#it-operation-[[%uuid%]]>
         a crdt:SetPropertyOperation ;
@@ -64,27 +71,17 @@ INSERT DATA {
         crdt:resource <#it> ;
         crdt:date "[[updated-date][.*]]"^^xsd:dateTime ;
         crdt:property schema:recipeInstructions ;
-        crdt:value <#[[instruction-step-1][%uuid%]]>, <#[[instruction-step-2][%uuid%]]> .
+        crdt:value <#[[instruction-step-3][%uuid%]]> .
 
-    <#[[instruction-step-1][%uuid%]]>
+    <#[[instruction-step-3][%uuid%]]>
         a schema:HowToStep ;
-        schema:text "Boil the noodles" ;
-        schema:position 1 .
+        schema:position 3 ;
+        schema:text "Add toppings" .
 
-    <#[[instruction-step-1][%uuid%]]-metadata>
+    <#[[instruction-step-3][%uuid%]]-metadata>
         a crdt:Metadata ;
-        crdt:resource <#[[instruction-step-1][%uuid%]]> ;
+        crdt:resource <#[[instruction-step-3][%uuid%]]> ;
         crdt:createdAt "[[updated-date][.*]]"^^xsd:dateTime ;
         crdt:updatedAt "[[updated-date][.*]]"^^xsd:dateTime .
 
-    <#[[instruction-step-2][%uuid%]]>
-        a schema:HowToStep ;
-        schema:text "Dip them into the broth" ;
-        schema:position 2 .
-
-    <#[[instruction-step-2][%uuid%]]-metadata>
-        a crdt:Metadata ;
-        crdt:resource <#[[instruction-step-2][%uuid%]]> ;
-        crdt:createdAt "[[updated-date][.*]]"^^xsd:dateTime ;
-        crdt:updatedAt "[[updated-date][.*]]"^^xsd:dateTime .
 }

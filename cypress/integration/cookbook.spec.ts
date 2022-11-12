@@ -98,6 +98,9 @@ describe('Cookbook', () => {
         cy.press('Add ingredients');
         cy.currentElement().type('Broth{enter}');
         cy.currentElement().type('Noodles');
+        cy.press('Add instructions');
+        cy.currentElement().type('Boil the noodles{enter}');
+        cy.currentElement().type('Dip them into the broth');
         cy.press('Create recipe');
         cy.see('There is one pending update');
         cy.comeBackOnline();
@@ -111,9 +114,9 @@ describe('Cookbook', () => {
         cy.currentElement().type('is life');
         cy.press('Add ingredient');
         cy.currentElement().type('Toppings');
-        cy.press('Add instructions');
-        cy.currentElement().type('Boil the noodles{enter}');
-        cy.currentElement().type('Dip them into the broth');
+        cy.ariaInput('Recipe instructions step #2').click();
+        cy.currentElement().type('{enter}');
+        cy.currentElement().type('Add toppings');
         cy.press('Save');
         cy.see('There is one pending update');
         cy.comeBackOnline();
@@ -122,13 +125,14 @@ describe('Cookbook', () => {
         cy.goOffline();
         cy.press('Edit');
         cy.ariaInput('Recipe name').clear().type('Jun\'s Ramen');
-        cy.ariaInput('Recipe description').clear().type('Instructions: https://www.youtube.com/watch?v=9WXIrnWsaCo');
+        cy.press('Add urls');
+        cy.currentElement().type('https://www.youtube.com/watch?v=9WXIrnWsaCo');
         cy.ariaInput('Recipe ingredient #3').click();
         cy.currentElement().clear().type('Shiitake{enter}');
         cy.currentElement().type('Nori');
-        cy.ariaInput('Recipe instructions step #2').click();
-        cy.currentElement().type('!{enter}');
-        cy.currentElement().type('Add toppings');
+        cy.ariaInput('Recipe instructions step #3').click();
+        cy.currentElement().clear().type('Add shiitake topping{enter}');
+        cy.currentElement().type('Add nori topping');
         cy.press('Save');
         cy.see('There is one pending update');
         cy.comeBackOnline();
@@ -139,21 +143,28 @@ describe('Cookbook', () => {
         cy.ariaInput('Recipe instructions step #3').click();
         cy.currentElement().tab();
         cy.currentElement().click();
-        cy.get('label:contains("Recipe instructions step")').should('have.length', 2);
+        cy.get('label:contains("Recipe instructions step")').should('have.length', 3);
+        cy.ariaInput('Recipe instructions step #3').click();
+        cy.currentElement().clear().type('Add shiitake and nori toppings');
         cy.press('Save');
         cy.see('There is one pending update');
         cy.comeBackOnline();
 
         // Assert
         cy.see('Jun\'s Ramen');
-        cy.see('Instructions: https://www.youtube.com/watch?v=9WXIrnWsaCo');
+        cy.see('is life');
+        cy.see('recipe on youtube.com');
         cy.see('Broth');
         cy.see('Noodles');
         cy.see('Shiitake');
         cy.see('Nori');
-        cy.see('Dip them into the broth!');
         cy.see('Boil the noodles');
+        cy.see('Dip them into the broth');
+        cy.see('Add shiitake and nori toppings');
         cy.dontSee('Toppings');
+        cy.dontSee('Add toppings');
+        cy.dontSee('Add nori topping');
+        cy.dontSee('Add shiitake topping');
 
         const fixtures: string[] = [];
 
