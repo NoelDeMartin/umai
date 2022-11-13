@@ -240,8 +240,12 @@ const ingredients = $computed(() => {
     const originalServings = recipe?.servingsBreakdown?.quantity;
     const ingredientsMultiplier = servings / (originalServings ?? servings);
 
+    if (!recipe?.servings || servings === CUSTOM_SERVINGS) {
+        return ingredientsBreakdown?.map(({ original }) => original) ?? [];
+    }
+
     return ingredientsBreakdown?.map(({ quantity, original, unitMultiplier, renderQuantity }) => {
-        if (!quantity || servings === CUSTOM_SERVINGS) {
+        if (!quantity) {
             return original;
         }
 
