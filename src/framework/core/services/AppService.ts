@@ -83,6 +83,7 @@ export default class AppService extends Service<State> {
             this.setState({ isOnboarding: true });
         });
 
+        Events.on('logout', () => this.setState({ isOnboarding: true }));
         Events.once('application-mounted', () => this.setState({ isMounted: true }));
     }
 

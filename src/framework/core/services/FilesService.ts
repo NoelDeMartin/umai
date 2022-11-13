@@ -1,7 +1,8 @@
 import { openDB } from 'idb';
 import { tap } from '@noeldemartin/utils';
-import type { DBSchema, IDBPDatabase , IDBPTransaction } from 'idb';
+import type { DBSchema, IDBPDatabase, IDBPTransaction } from 'idb';
 
+import Events from '@/framework/core/facades/Events';
 import Service from '@/framework/core/Service';
 import type { IService } from '@/framework/core/Service';
 
@@ -77,6 +78,20 @@ export default class FilesService extends Service<State> {
         await connection.delete(STORE, url);
     }
 
+    public async deleteAll(): Promise<void> {
+        const transaction = await this.transaction('readwrite');
+        const urls = await transaction.store.getAllKeys();
+
+        await Promise.all(urls.map(url => transaction.store.delete(url)));
+        await transaction.done;
+    }
+
+    protected async boot(): Promise<void> {
+        await super.boot();
+
+        Events.on('logout', () => this.deleteAll());
+    }
+
     protected async transaction<Mode extends IDBTransactionMode>(
         mode: Mode,
     ): Promise<IDBPTransaction<FilesDatabaseSchema, ['files'], Mode>> {
@@ -95,11 +110,11 @@ export default class FilesService extends Service<State> {
         return new Promise((resolve, reject) => {
             openDB<FilesDatabaseSchema>(DATABASE, 1, {
                 upgrade(db) {
-                    if (db.objectStoreNames.contains('files')) {
+                    if (db.objectStoreNames.contains(STORE)) {
                         return;
                     }
 
-                    db.createObjectStore('files', { keyPath: 'url' });
+                    db.createObjectStore(STORE, { keyPath: 'url' });
                 },
                 blocked: () => reject(new Error(`Could not open '${DATABASE}' database because it is blocked`)),
             })

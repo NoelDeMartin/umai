@@ -13,8 +13,10 @@ import {
     tap,
     urlRoot,
 } from '@noeldemartin/utils';
+import { requireEngine } from 'soukai';
 import { SolidACLAuthorization, SolidTypeIndex } from 'soukai-solid';
 import type { Fetch, SolidUserProfile } from '@noeldemartin/solid-utils';
+import type { IndexedDBEngine } from 'soukai';
 
 import App from '@/framework/core/facades/App';
 import AuthenticationCancelledError from '@/framework/auth/errors/AuthenticationCancelledError';
@@ -196,13 +198,10 @@ export default class AuthService extends Service<State, ComputedState> {
         }
 
         this.setState({ previousSession: null });
-
-        if (this.isLoggedIn()) {
-            await this.authenticator.logout();
-        }
-
-        Router.push({ name: 'home' });
-        Events.emit('logout');
+        this.isLoggedIn() && await this.authenticator.logout();
+        await requireEngine<IndexedDBEngine>().purgeDatabase();
+        await Router.push({ name: 'home' });
+        await Events.emit('logout');
     }
 
     public dismiss(): void {
@@ -348,11 +347,7 @@ export default class AuthService extends Service<State, ComputedState> {
                     },
                 });
             },
-            onSessionEnded: async () => {
-                this.setState({ session: null, previousSession: null });
-
-                await Events.emit('logout');
-            },
+            onSessionEnded: () => this.setState({ session: null }),
             onAuthenticatedFetchReady: fetch => Events.emit('authenticated-fetch-ready', fetch),
         });
 

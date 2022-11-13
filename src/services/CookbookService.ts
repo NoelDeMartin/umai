@@ -192,8 +192,7 @@ export default class CookbookService extends Service<State, ComputedState> {
         });
 
         Events.on('logout', async () => {
-            await this.deleteLocalModels();
-
+            this.cookbook.reset();
             this.resetModelDefinitions();
             this.setState({
                 remoteCookbookUrl: null,
@@ -528,18 +527,6 @@ export default class CookbookService extends Service<State, ComputedState> {
 
             return newInstructionStep.url;
         });
-    }
-
-    private async deleteLocalModels(): Promise<void> {
-        await Promise.all(this.allRecipes.map(async recipe => {
-            if (recipe.imageUrl?.startsWith(this.localCookbookUrl)) {
-                await Files.delete(recipe.imageUrl);
-            }
-
-            await recipe.delete();
-        }));
-
-        this.cookbook.reset();
     }
 
     private resetModelDefinitions(): void {
