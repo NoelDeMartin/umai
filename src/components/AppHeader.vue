@@ -59,6 +59,7 @@
 </template>
 
 <script setup lang="ts">
+import { debounce } from '@noeldemartin/utils';
 import { provide, watch } from 'vue';
 
 import App from '@/framework/core/facades/App';
@@ -109,7 +110,7 @@ watch($$(navigationButton), (newValue, oldValue) => {
     })();
 });
 
-useResizeObserver($$($header), $header => UI.updateHeaderHeight($header.clientHeight));
+useResizeObserver($$($header), debounce($header => UI.updateHeaderHeight($header.clientHeight), 50));
 
 provide<A11y>('a11y', { hidden: $$(hidden) });
 </script>
