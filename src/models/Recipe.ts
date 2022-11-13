@@ -19,6 +19,11 @@ export interface RecipeServingsBreakdown {
     renderQuantity(quantity: number): string;
 }
 
+export type RecipeExportOptions = {
+    includeIds: boolean;
+    includeHistory: boolean;
+};
+
 export default class Recipe extends Model {
 
     public static history = true;
@@ -122,17 +127,17 @@ export default class Recipe extends Model {
         return this.belongsToMany(RecipesList, 'listUrls');
     }
 
-    public toExternalJsonLD(includeIds?: boolean): JsonLD {
+    public toExternalJsonLD(options: Partial<RecipeExportOptions> = {}): JsonLD {
         return this.toJsonLD({
-            ids: includeIds ?? this.url?.startsWith('http'),
-            timestamps: false,
-            history: false,
+            ids: options.includeIds ?? this.url?.startsWith('http'),
+            timestamps: options.includeHistory ?? false,
+            history: options.includeHistory ?? false,
         });
     }
 
-    public download(): void {
+    public download(options: Partial<RecipeExportOptions> = {}): void {
         const name = this.slug ?? 'recipe';
-        const jsonld = this.toExternalJsonLD();
+        const jsonld = this.toExternalJsonLD(options);
 
         downloadFile(`${name}.json`, JSON.stringify(jsonld), 'application/json');
     }

@@ -98,7 +98,7 @@ async function importRecipe(): Promise<void> {
     }
 
     const remoteRecipe = tap(Viewer.recipe.clone(), recipe => recipe.unloadRelation('lists'));
-    const recipe = await Recipe.newFromJsonLD(remoteRecipe.toExternalJsonLD(false));
+    const recipe = await Recipe.newFromJsonLD(remoteRecipe.toExternalJsonLD({ includeIds: false }));
 
     recipe.externalUrls = [...recipe.externalUrls, remoteRecipe.url];
 

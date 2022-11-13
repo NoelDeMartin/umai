@@ -14,11 +14,16 @@
                 <i-zondicons-exclamation-outline class="w-4 h-4 mt-1 mr-2 flex-shrink-0" />
                 {{ $t('recipes.accessControl.warning') }}
             </p>
-            <div class="flex justify-end mt-4">
+            <div class="flex justify-between mt-4">
+                <label v-if="shareOption === 'jsonld'" class="cursor-pointer flex items-center">
+                    <BaseCheckbox v-model="includeHistory" />
+                    <p class="ml-2">{{ $t('recipes.download_includeHistory') }}</p>
+                </label>
+                <span v-else />
                 <CoreButton
                     v-if="shareOption === 'jsonld'"
                     v-initial-focus
-                    @click="recipe.download(), close()"
+                    @click="() => (recipe.download({ includeHistory }), close())"
                 >
                     <i-pepicons-cloud-down class="w-6 h-6" aria-hidden="true" />
                     <span class="ml-2">{{ $t('recipes.download') }}</span>
@@ -50,16 +55,15 @@ const { recipe } = defineProps({
     recipe: requiredObjectProp<Recipe>(),
 });
 
-const clipboardContents: Record<RecipeShareOption, string> = {
+const includeHistory = $ref(false);
+const shareOption = $ref<RecipeShareOption>(Cookbook.isRemote ? RecipeShareOption.Umai : RecipeShareOption.JsonLD);
+const clipboardContents: Record<RecipeShareOption, string> = $computed(() => ({
     [RecipeShareOption.Umai]:
         urlRoot(location.href) +
         Router.resolve({ name: 'viewer', query: { url: recipe.getDocumentUrl() } }).href,
     [RecipeShareOption.Solid]: recipe.url,
-    [RecipeShareOption.JsonLD]: JSON.stringify(recipe.toExternalJsonLD(), null, 2),
-};
-const shareOption = $ref<RecipeShareOption>(
-    Cookbook.isRemote ? RecipeShareOption.Umai : RecipeShareOption.JsonLD,
-);
+    [RecipeShareOption.JsonLD]: JSON.stringify(recipe.toExternalJsonLD({ includeHistory }), null, 2),
+}));
 const clipboardContent = $computed(() => (clipboardContents as Record<string, string>)[shareOption]);
 
 function share() {

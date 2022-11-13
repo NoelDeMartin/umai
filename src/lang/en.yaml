@@ -219,6 +219,7 @@ recipes:
   delete_ongoing: Deleting **{name}**...
   delete_success: "**{name}** has been deleted"
   download: Download
+  download_includeHistory: Include changes history
   share: Share
   drag_instructions_a11y: Use ctrl + up/down to change instruction positions
 
