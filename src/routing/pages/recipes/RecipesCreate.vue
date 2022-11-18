@@ -29,7 +29,7 @@ import Recipe from '@/models/Recipe';
 import WebImportModal from '@/components/modals/WebImportModal.vue';
 import { parseWebsiteMetadata, parseWebsiteRecipes } from '@/utils/web-parsing';
 
-let recipe = $ref(Cookbook.getTmpRecipe(history.state.tmpRecipe));
+let recipe = $ref(Cookbook.getTmpRecipe(history.state?.tmpRecipe));
 let scanning = $ref(hasLocationQueryParameter('from'));
 
 async function onCreated(recipe: Recipe) {

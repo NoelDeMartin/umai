@@ -144,10 +144,12 @@ export function useRouteState<T>(name: string, defaultValue: T): Ref<T> {
                 return value;
             },
             set(newValue) {
+                const state = history.state ?? {};
+
                 value = newValue;
 
                 history.replaceState({
-                    ...history.state,
+                    ...state,
                     [name]: value,
                 }, '');
 
