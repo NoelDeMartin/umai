@@ -153,7 +153,11 @@ export default class UIService extends Service<State, ComputedState> {
         });
     }
 
-    public async confirm(options: Partial<ConfirmOptions> = {}): Promise<boolean> {
+    public async confirm(): Promise<boolean>;
+    public async confirm(message: string): Promise<boolean>;
+    public async confirm(options: Partial<ConfirmOptions>): Promise<boolean>;
+    public async confirm(optionsOrMessage: string | Partial<ConfirmOptions> = {}): Promise<boolean> {
+        const options = typeof optionsOrMessage === 'string' ? { message: optionsOrMessage } : optionsOrMessage;
         const modal = await this.openModal(this.components[ApplicationComponent.ConfirmModal], options);
         const result = await modal.afterClose;
 
