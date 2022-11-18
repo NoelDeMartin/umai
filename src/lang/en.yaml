@@ -345,6 +345,13 @@ viewer:
     viewAll: View all their recipes
     inCookbook: View in your cookbook
 
+history:
+  title: "{recipe}'s history"
+  description: |
+    Using this secret page, you'll be able to see the history of changes done to this recipe! This can also be helpful to diagnose bugs or performance issues.
+
+    The UX is not great at the moment, but if you have some doubts or need some help, [let me know](https://github.com/NoelDeMartin/umai/issues).
+
 validation:
   required: This is required
 

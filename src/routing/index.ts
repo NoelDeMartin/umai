@@ -41,6 +41,12 @@ const routes: RouteRecordRaw[] = [
         meta: { fullBleedHeader: true, pageFooter: true },
     },
     {
+        name: 'recipes.history',
+        path: '/recipes/:recipe/history',
+        component: () => import('./pages/recipes/RecipesHistory.vue'),
+        meta: { header: false, footer: false },
+    },
+    {
         name: 'viewer',
         path: '/viewer',
         component: Viewer,

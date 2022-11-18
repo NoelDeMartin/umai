@@ -4,7 +4,7 @@
         <div class="flex flex-col flex-grow self-stretch items-center">
             <slot />
         </div>
-        <AppFooter />
+        <AppFooter v-if="$route.meta.footer ?? true" />
         <AppOverlays />
 
         <div id="element-transitions-container" />

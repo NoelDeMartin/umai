@@ -3,7 +3,7 @@ import { createRouter } from 'vue-router';
 import { defineComponent, h } from 'vue';
 import type { Component, ConcreteComponent } from 'vue';
 import type { Constructor } from '@noeldemartin/utils';
-import type { RouteRecordRaw, Router, RouterOptions } from 'vue-router';
+import type { RouteMeta, RouteRecordRaw, Router, RouterOptions } from 'vue-router';
 
 import Browser from '@/framework/core/facades/Browser';
 import FrameworkRouter from '@/framework/routing/router/FrameworkRouter';
@@ -13,8 +13,23 @@ import { translate } from '@/framework/utils/translate';
 import type { ErrorReport } from '@/framework/core/services/ErrorsService';
 
 function enhanceRoute(route: RouteRecordRaw): RouteRecordRaw {
-    if (route.component)
-        route.component = enhanceRouteComponent(route, route.component as ConcreteComponent);
+    if (typeof route.component === 'function') {
+        const lazyComponent = route.component as () => Promise<{ default: ConcreteComponent }>;
+
+        return tap(route, route => {
+            route.component = async () => {
+                const { default: component } = await lazyComponent();
+
+                return enhanceRouteComponent(component, route.meta);
+            };
+        });
+    }
+
+    if (route.component) {
+        return tap(route, route => {
+            route.component = enhanceRouteComponent(route.component as ConcreteComponent, route.meta);
+        });
+    }
 
     return route;
 }
@@ -34,7 +49,7 @@ function callMethod<T extends string>(
     return target[method]?.call(scope, ...args);
 }
 
-function enhanceRouteComponent(route: RouteRecordRaw, pageComponent: ConcreteComponent): Component {
+function enhanceRouteComponent(pageComponent: ConcreteComponent, meta?: RouteMeta): Component {
     return defineComponent({
         data: () => ({
             subscriptions: [] as Function[],
@@ -112,7 +127,7 @@ function enhanceRouteComponent(route: RouteRecordRaw, pageComponent: ConcreteCom
             },
         },
         render() {
-            const requiredIndexedDB = route.meta?.requiresIndexedDB ?? true;
+            const requiredIndexedDB = meta?.requiresIndexedDB ?? true;
 
             if (requiredIndexedDB && !Browser.supportsIndexedDB) {
                 const report: ErrorReport = {
