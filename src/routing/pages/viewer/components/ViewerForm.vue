@@ -1,6 +1,6 @@
 <template>
-    <CoreForm :form="form" class="flex" @submit="submit()">
-        <div class="flex flex-col items-center justify-center max-w-prose px-edge mx-auto">
+    <CoreForm :form="form" class="flex max-w-full pt-edge" @submit="submit()">
+        <div class="flex flex-col items-center justify-center max-w-prose px-edge mx-auto w-full">
             <div v-if="searching" class="flex flex-col justify-center items-center p-4 space-y-4">
                 <i-app-scanning class="w-12 h-12 text-primary-500" />
                 <p class="text-xl text-gray-700">
@@ -8,7 +8,7 @@
                 </p>
             </div>
             <template v-else>
-                <i-app-umai class="h-auto w-[250px] max-w-[60vw] fill-primary-500" aria-hidden="true" />
+                <i-app-umai class="h-auto w-[250px] max-w-[60vw] fill-primary-500 flex-shrink-0" aria-hidden="true" />
                 <h1 id="viewer-form-title" class="text-2xl font-medium mt-6">
                     {{ $t('viewer.form.title') }}
                 </h1>
@@ -23,7 +23,7 @@
                 </CoreInputSubmit>
                 <CoreMarkdown
                     v-if="notFound"
-                    class="mt-2 text-center text-red-700 opacity-75"
+                    class="mt-2 text-center text-red-700 opacity-75 w-full"
                     :text="$t('viewer.form.notFound', { url: notFound })"
                 />
             </template>

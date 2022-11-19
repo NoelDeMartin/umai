@@ -14,7 +14,6 @@
             <ViewerForm
                 v-if="!$viewer.recipe && !$viewer.list"
                 v-show="!starting"
-                class="fixed inset-0 bg-white z-10"
             />
         </transition>
     </AppPage>

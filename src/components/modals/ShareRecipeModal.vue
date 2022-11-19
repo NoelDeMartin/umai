@@ -10,9 +10,9 @@
         <template #default="{ close }">
             <RecipeShareOptions v-model="shareOption" />
             <CoreClipboard class="mt-4 max-w-prose" :text="clipboardContent" />
-            <p v-if="shareOption === 'umai' && recipe.isPrivate" class="text-red-500 flex self-end mt-2">
+            <p v-if="warning" class="text-red-500 flex self-start mt-2 max-w-prose">
                 <i-zondicons-exclamation-outline class="w-4 h-4 mt-1 mr-2 flex-shrink-0" />
-                {{ $t('recipes.accessControl.warning') }}
+                {{ warning }}
             </p>
             <div class="flex justify-between mt-4">
                 <label v-if="shareOption === 'jsonld'" class="cursor-pointer flex items-center">
@@ -46,6 +46,7 @@ import { objectWithoutEmpty, stringExcerpt, urlRoot } from '@noeldemartin/utils'
 
 import Router from '@/framework/core/facades/Router';
 import { requiredObjectProp } from '@/framework/utils/vue';
+import { translate } from '@/framework/utils/translate';
 
 import Cookbook from '@/services/facades/Cookbook';
 import { RecipeShareOption } from '@/components/recipe/RecipeShareOptions';
@@ -65,6 +66,15 @@ const clipboardContents: Record<RecipeShareOption, string> = $computed(() => ({
     [RecipeShareOption.JsonLD]: JSON.stringify(recipe.toExternalJsonLD({ includeHistory }), null, 2),
 }));
 const clipboardContent = $computed(() => (clipboardContents as Record<string, string>)[shareOption]);
+const warning = $computed(() => {
+    if (shareOption !== RecipeShareOption.Umai || recipe.isPrivate === false) {
+        return;
+    }
+
+    return recipe.isPrivate
+        ? translate('recipes.accessControl.warning_private')
+        : translate('recipes.accessControl.warning_unknown');
+});
 
 function share() {
     navigator.share(objectWithoutEmpty({

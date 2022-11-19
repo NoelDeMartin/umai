@@ -36,3 +36,9 @@ function onClick({ target }: Event) {
     actions[target.dataset.markdownAction]?.();
 }
 </script>
+
+<style>
+code {
+    word-break: break-word;
+}
+</style>

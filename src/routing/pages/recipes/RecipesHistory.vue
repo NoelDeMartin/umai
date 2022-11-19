@@ -4,7 +4,7 @@
             {{ $t('history.title', { recipe: recipe.name }) }}
         </h1>
         <CoreMarkdown :text="$t('history.description')" class="mt-3" />
-        <table class="mt-4 w-full">
+        <table v-if="history.length > 0" class="mt-4 w-full">
             <tr v-for="{ timestamp, date, datetime, changes } of history" :key="timestamp">
                 <th class="w-0 whitespace-nowrap px-2">
                     <time :datetime="datetime">{{ date }}</time>
@@ -14,6 +14,9 @@
                 </td>
             </tr>
         </table>
+        <p v-else class="bg-green-200 font-medium tracking-wide p-4 rounded-md text-green-800 max-w-prose mt-4">
+            {{ $t('history.empty') }}
+        </p>
     </AppPage>
 </template>
 
