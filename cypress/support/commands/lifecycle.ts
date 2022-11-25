@@ -25,7 +25,7 @@ export default {
                     return;
                 }
 
-                cy.press('Consent');
+                cy.press('Authorize');
                 cy.startApp(options);
             });
 

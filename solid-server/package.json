@@ -1,0 +1,7 @@
+{
+  "name": "solid-server",
+  "version": "0.0.0",
+  "devDependencies": {
+    "@solid/community-server": "^5.1.0"
+  }
+}

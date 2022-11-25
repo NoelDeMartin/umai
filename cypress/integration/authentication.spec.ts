@@ -118,7 +118,7 @@ describe('Authentication', () => {
         // Act
         cy.press('disconnected');
         cy.press('Reconnect', 'button');
-        cy.press('Consent');
+        cy.press('Authorize');
         cy.cssReset();
         cy.waitForReload();
 

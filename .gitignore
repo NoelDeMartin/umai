@@ -5,4 +5,4 @@ cypress/downloads
 cypress/screenshots
 dist/
 node_modules/
-pod/
+solid-server/data

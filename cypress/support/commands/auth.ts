@@ -26,7 +26,7 @@ function cssLogin() {
     cy.get('#email').type('alice@example.com');
     cy.get('#password').type('secret');
     cy.contains('button', 'Log in').click();
-    cy.contains('button', 'Consent').click();
+    cy.contains('button', 'Authorize').click();
 }
 
 function cssRegister() {
