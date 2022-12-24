@@ -18,17 +18,17 @@ interface Args {
 const profiles: Record<User, SolidUserProfile> = {
     [User.Alice]: {
         name: 'Alice',
-        webId: 'https://example.com/alice/profile/card#me',
+        webId: 'https://pod.example.com/alice/profile/card#me',
         storageUrls: [],
         avatarUrl: 'https://thispersondoesnotexist.com/image',
     },
     [User.Bob]: {
         name: 'Bob',
-        webId: 'https://example.com/bob/profile/card#me',
+        webId: 'https://pod.example.com/bob/profile/card#me',
         storageUrls: [],
     },
     [User.Anonymous]: {
-        webId: 'https://example.com/anonymous/profile/card#me',
+        webId: 'https://pod.example.com/anonymous/profile/card#me',
         storageUrls: [],
     },
 };
@@ -38,7 +38,7 @@ const Template = template<Args>(({ user }) => {
         session: user
             ? {
                 user: profiles[user],
-                loginUrl: 'https://example.com',
+                loginUrl: 'https://pod.example.com',
                 authenticator: new LocalStorageAuthenticator,
             }
             : null,

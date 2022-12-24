@@ -4,13 +4,13 @@
 <#it>
     a schema:ItemList ;
     schema:name "Alice's Public Recipes" ;
-    purl:creator <https://example.org/alice/profile/card#me> ;
+    purl:creator <https://pod.example.com/alice/profile/card#me> ;
     schema:itemListElement <#ramen>, <#pisto> .
 
 <#ramen>
     a schema:ListItem ;
-    schema:item <https://example.org/recipes/ramen#it> .
+    schema:item <https://pod.example.com/recipes/ramen#it> .
 
 <#pisto>
     a schema:ListItem ;
-    schema:item <https://example.org/recipes/pisto#it> .
+    schema:item <https://pod.example.com/recipes/pisto#it> .

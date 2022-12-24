@@ -78,8 +78,8 @@ describe('Interoperability', () => {
         cy.see('Step 1');
         cy.see('Step 2');
         cy.see('Step 3');
-        cy.see('recipe on 1.example.org');
-        cy.see('recipe on 2.example.org');
+        cy.see('recipe on 1.example.com');
+        cy.see('recipe on 2.example.com');
 
         cy.fixture('sparql/mend-ramen-malformed.sparql').then(sparql => {
             cy.get('@patchRamen').its('request.body').should('be.sparql', sparql);

@@ -8,7 +8,7 @@
     schema:name "Ramen";
     schema:recipeIngredient "Broth", "Noodles";
     schema:recipeInstructions <#instruction-step-1>, <#instruction-step-2>;
-    purl:isReferencedBy <https://example.org/recipes/public#it> .
+    purl:isReferencedBy <https://pod.example.com/recipes/public#it> .
 
 <#it-metadata>
     a crdt:Metadata ;

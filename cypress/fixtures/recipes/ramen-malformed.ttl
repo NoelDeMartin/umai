@@ -3,6 +3,6 @@
 <#it>
     a schema:Recipe;
     schema:name "Ramen";
-    schema:image "https://example.org/ramen.png";
+    schema:image "https://example.com/ramen.png";
     schema:recipeInstructions "Step 1", "Step 2", "Step 3";
-    schema:sameAs "https://1.example.org/recipes/ramen", "https://2.example.org/recipes/ramen".
+    schema:sameAs "https://1.example.com/recipes/ramen", "https://2.example.com/recipes/ramen".

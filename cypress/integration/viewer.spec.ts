@@ -4,10 +4,10 @@ describe('Viewer', () => {
 
     it('Views public recipes', () => {
         // Arrange
-        cy.intercept('https://example.org/recipes/aguachile', { fixture: 'recipes/aguachile.ttl' });
+        cy.intercept('https://pod.example.com/recipes/aguachile', { fixture: 'recipes/aguachile.ttl' });
 
         // Act
-        cy.visit('viewer?url=https://example.org/recipes/aguachile');
+        cy.visit('viewer?url=https://pod.example.com/recipes/aguachile');
         cy.startApp();
 
         // Assert
@@ -19,12 +19,12 @@ describe('Viewer', () => {
 
     it('Views public recipes using the form', () => {
         // Arrange
-        cy.intercept('https://example.org/recipes/aguachile', { fixture: 'recipes/aguachile.ttl' });
+        cy.intercept('https://pod.example.com/recipes/aguachile', { fixture: 'recipes/aguachile.ttl' });
 
         // Act
         cy.visit('viewer');
         cy.startApp();
-        cy.ariaInput('Solid document URL').type('https://example.org/recipes/aguachile');
+        cy.ariaInput('Solid document URL').type('https://pod.example.com/recipes/aguachile');
         cy.press('View');
 
         // Assert
@@ -36,12 +36,16 @@ describe('Viewer', () => {
 
     it('Views all public recipes', () => {
         // Arrange
-        cy.intercept('https://example.org/alice/profile/card', { fixture: 'webids/alice.ttl' });
-        cy.intercept('https://example.org/recipes/ramen', { fixture: 'recipes/ramen.ttl' });
-        cy.intercept('https://example.org/recipes/pisto', { fixture: 'recipes/pisto.ttl' });
-        cy.intercept('https://example.org/recipes/public', { fixture: 'recipes/public.ttl' });
+        cy.intercept('https://pod.example.com/alice/profile', {
+            headers: { Link: '<http://www.w3.org/ns/pim/space#Storage>; rel="type"' },
+            body: '',
+        });
+        cy.intercept('https://pod.example.com/alice/profile/card', { fixture: 'webids/alice.ttl' });
+        cy.intercept('https://pod.example.com/recipes/ramen', { fixture: 'recipes/ramen.ttl' });
+        cy.intercept('https://pod.example.com/recipes/pisto', { fixture: 'recipes/pisto.ttl' });
+        cy.intercept('https://pod.example.com/recipes/public', { fixture: 'recipes/public.ttl' });
 
-        cy.visit('viewer?url=https://example.org/recipes/ramen');
+        cy.visit('viewer?url=https://pod.example.com/recipes/ramen');
         cy.startApp();
 
         // Act
@@ -55,8 +59,8 @@ describe('Viewer', () => {
 
     it('Saves recipes in cookbook', () => {
         // Arrange
-        cy.intercept('https://example.org/recipes/aguachile', { fixture: 'recipes/aguachile.ttl' });
-        cy.visit('viewer?url=https://example.org/recipes/aguachile');
+        cy.intercept('https://pod.example.com/recipes/aguachile', { fixture: 'recipes/aguachile.ttl' });
+        cy.visit('viewer?url=https://pod.example.com/recipes/aguachile');
         cy.startApp();
 
         // Act

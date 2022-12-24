@@ -105,7 +105,7 @@ describe('Cloud Service', () => {
 });
 
 async function createRemoteRamen(remoteEngine: InMemoryEngine): Promise<Recipe> {
-    Recipe.collection = 'https://example.com/cookbook/';
+    Recipe.collection = 'https://pod.example.com/cookbook/';
 
     const remoteRamen = await Recipe.withEngine(remoteEngine, async () => {
         const ramen = await Recipe.create({ name: 'Small Ramen' });

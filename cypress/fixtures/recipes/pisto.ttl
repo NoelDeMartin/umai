@@ -8,7 +8,7 @@
     schema:name "Pisto" ;
     schema:description "Pisto is the same as Ratatouille!";
     schema:recipeIngredient "Eggplant", "Zucchini", "Onion", "Tomatoes" ;
-    purl:isReferencedBy <https://example.org/recipes/public#it> .
+    purl:isReferencedBy <https://pod.example.com/recipes/public#it> .
 
 <#it-metadata>
     a crdt:Metadata ;

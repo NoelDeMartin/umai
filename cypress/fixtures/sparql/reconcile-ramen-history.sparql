@@ -42,7 +42,7 @@ DELETE DATA {
         crdt:date "[[createdAt][.*]]"^^xsd:dateTime ;
         crdt:property purl:isReferencedBy ;
         crdt:resource <#it> ;
-        crdt:value <https://example.org/recipes/public#it> .
+        crdt:value <https://pod.example.com/recipes/public#it> .
 
     <#it-operation-[[operation-5][.*]]>
         a crdt:SetPropertyOperation ;
