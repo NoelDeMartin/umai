@@ -2,6 +2,7 @@ import { arraySorted, compare, downloadFile, stringToSlug, urlParse, urlResolve 
 import { SolidDocument } from 'soukai-solid';
 import type { JsonLD, SolidDocumentPermission } from '@noeldemartin/solid-utils';
 import type { Relation } from 'soukai';
+import type { RouteLocationRaw } from 'vue-router';
 import type { SolidBelongsToManyRelation } from 'soukai-solid';
 
 import Cookbook from '@/services/facades/Cookbook';
@@ -109,6 +110,14 @@ export default class Recipe extends Model {
 
     public get sortedInstructions(): RecipeInstructionsStep[] {
         return arraySorted(this.instructions ?? [], 'position');
+    }
+
+    public route(type: string = 'show'): RouteLocationRaw {
+        if (type === 'viewer') {
+            return { name: 'viewer', query: { url: this.url } };
+        }
+
+        return { name: `recipes.${type}`, params: { recipe: this.slug } };
     }
 
     public is(other: Recipe): boolean {

@@ -6,7 +6,7 @@
         <RecipeForm
             :recipe="recipe"
             @done="onUpdated"
-            @cancel="$router.push({ name: 'recipes.show', params: { recipe: recipe.slug as string } })"
+            @cancel="$router.push(recipe.route())"
         />
     </AppPage>
 </template>
@@ -23,11 +23,7 @@ const { recipe } = defineProps({
 });
 
 async function onUpdated(recipe: Recipe) {
-    await Router.push({
-        name: 'recipes.show',
-        params: { recipe: recipe.slug as string },
-    });
-
+    await Router.push(recipe.route());
     await Cloud.syncIfOnline(recipe);
 }
 </script>

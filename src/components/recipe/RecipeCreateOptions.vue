@@ -67,11 +67,7 @@ const wobblyBorder = $computed(() => UI.isMobile ? {} : { min: 200, max: 350 });
 async function importFromJsonLD(jsonld: JsonLD) {
     const recipe = await Recipe.createFromJsonLD(jsonld);
 
-    await Router.push({
-        name: 'recipes.show',
-        params: { recipe: recipe.slug },
-    });
-
+    await Router.push(recipe.route());
     await Cloud.syncIfOnline(recipe);
 }
 </script>

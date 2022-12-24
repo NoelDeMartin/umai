@@ -67,10 +67,7 @@ const $page = $ref<IRecipePage | null>(null);
 
 async function editRecipe() {
     await $page?.showPrimaryPanel();
-    await Router.push({
-        name: 'recipes.edit',
-        params: { recipe: recipe.slug },
-    });
+    await Router.push(recipe.route('edit'));
 }
 
 onMounted(() => window.scrollTo({ top: 0 }));
