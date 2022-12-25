@@ -1,0 +1,55 @@
+@prefix schema: <https://schema.org/> .
+@prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
+@prefix purl: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<#it>
+    a schema:Recipe;
+    schema:name "Ramen";
+    schema:description "The best food ever.";
+    schema:recipeIngredient
+        "[Dashi (resource id)](https://pod.example.com/recipes/dashi#it)",
+        "[Dashi (document url)](https://pod.example.com/recipes/dashi)",
+        "[Dashi (external url)](https://recipes.example.com/dashi)",
+        "[Noodles](https://recipes.example.com/noodles)";
+    schema:recipeInstructions <#instruction-step-1>, <#instruction-step-2>, <#instruction-step-3>;
+    purl:isReferencedBy <https://pod.example.com/recipes/public#it> .
+
+<#it-metadata>
+    a crdt:Metadata ;
+    crdt:resource <#it> ;
+    crdt:createdAt "2021-07-24T00:00:00.000Z"^^xsd:dateTime ;
+    crdt:updatedAt "2021-07-24T00:00:00.000Z"^^xsd:dateTime .
+
+<#instruction-step-1>
+    a schema:HowToStep ;
+    schema:text "Introduce the [Dashi](https://pod.example.com/recipes/dashi#it)" ;
+    schema:position 1 .
+
+<#instruction-step-1-metadata>
+    a crdt:Metadata ;
+    crdt:resource <#instruction-step-1> ;
+    crdt:createdAt "2021-07-24T00:00:00.000Z"^^xsd:dateTime ;
+    crdt:updatedAt "2021-07-24T00:00:00.000Z"^^xsd:dateTime .
+
+<#instruction-step-2>
+    a schema:HowToStep ;
+    schema:text "???" ;
+    schema:position 2 .
+
+<#instruction-step-2-metadata>
+    a crdt:Metadata ;
+    crdt:resource <#instruction-step-2> ;
+    crdt:createdAt "2021-07-24T00:00:00.000Z"^^xsd:dateTime ;
+    crdt:updatedAt "2021-07-24T00:00:00.000Z"^^xsd:dateTime .
+
+<#instruction-step-3>
+    a schema:HowToStep ;
+    schema:text "Profit" ;
+    schema:position 3 .
+
+<#instruction-step-3-metadata>
+    a crdt:Metadata ;
+    crdt:resource <#instruction-step-3> ;
+    crdt:createdAt "2021-07-24T00:00:00.000Z"^^xsd:dateTime ;
+    crdt:updatedAt "2021-07-24T00:00:00.000Z"^^xsd:dateTime .

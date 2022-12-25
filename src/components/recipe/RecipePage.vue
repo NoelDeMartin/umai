@@ -57,9 +57,9 @@
                         <i-pepicons-triangle-right-filled class="w-8 h-8" aria-hidden="true" />
                     </button>
                 </div>
-                <div class="prose prose-h2:mt-6 px-edge w-screen md:mr-8 md:px-0 md:w-auto">
+                <div class="prose prose-h2:mt-6 px-edge w-screen overflow-hidden md:mr-8 md:px-0 md:w-auto">
                     <slot name="description">
-                        <CoreMarkdown v-if="recipe?.description" :text="recipe.description" />
+                        <CoreMarkdown v-if="recipe?.description" auto-link="recipes" :text="recipe.description" />
                     </slot>
                     <template v-if="$slots.ingredients || ingredients.length > 0">
                         <h2>{{ $t('recipes.ingredients') }}</h2>
@@ -74,9 +74,13 @@
                                         <span class="flex justify-center items-center w-8">
                                             <span class="w-2 h-2 bg-gray-300 rounded-full" />
                                         </span>
-                                        <span class="border-b-2 border-transparent">
-                                            {{ ingredient }}
-                                        </span>
+                                        <CoreMarkdown
+                                            class="border-b-2 border-transparent"
+                                            inline
+                                            tag="span"
+                                            auto-link="recipes"
+                                            :text="ingredient"
+                                        />
                                     </li>
                                 </ul>
                             </div>
@@ -95,7 +99,7 @@
                                         <span class="flex justify-center text-lg font-semibold min-w-clickable text-primary-600" aria-hidden="true">
                                             {{ index + 1 }}.
                                         </span>
-                                        <CoreMarkdown :text="instructionStep.text" />
+                                        <CoreMarkdown :text="instructionStep.text" auto-link="recipes" />
                                     </div>
                                 </li>
                             </ol>

@@ -65,6 +65,7 @@ import Cloud from '@/framework/core/facades/Cloud';
 import Router from '@/framework/core/facades/Router';
 import UI from '@/framework/core/facades/UI';
 import { translate } from '@/framework/utils/translate';
+import { watchDebouncedEffect } from '@/framework/utils/vue';
 
 import Recipe from '@/models/Recipe';
 import Viewer from '@/services/facades/Viewer';
@@ -106,4 +107,6 @@ async function importRecipe(): Promise<void> {
     await Router.push({ name: 'home' });
     await Cloud.syncIfOnline(recipe);
 }
+
+watchDebouncedEffect($$(list), 300, () => list && Viewer.preload(list.url));
 </script>

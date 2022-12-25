@@ -13,7 +13,7 @@ describe('Markdown', () => {
                 href="https://example.com"
                 style="border-radius:\\d{1,3}px \\d{1,3}px \\d{1,3}px \\d{1,3}px / \\d{1,3}px \\d{1,3}px \\d{1,3}px \\d{1,3}px"
                 target="_blank"
-                class="no-underline hover:underline focus-visible:outline-none focus-visible:ring-2 text-primary-700 focus-visible:ring-primary-200 focus-visible:bg-primary-200 "
+                class="md-anchor no-underline hover:underline focus-visible:outline-none focus-visible:ring-2 text-primary-700 focus-visible:ring-primary-200 focus-visible:bg-primary-200 "
             >link</a></p>
             <ul>
                 <li>One</li>
@@ -41,7 +41,7 @@ describe('Markdown', () => {
             <p><button
                 type="button"
                 style="border-radius:\\d{1,3}px \\d{1,3}px \\d{1,3}px \\d{1,3}px / \\d{1,3}px \\d{1,3}px \\d{1,3}px \\d{1,3}px"
-                class="no-underline hover:underline focus-visible:outline-none focus-visible:ring-2 text-primary-700 focus-visible:ring-primary-200 focus-visible:bg-primary-200 "
+                class="md-button no-underline hover:underline focus-visible:outline-none focus-visible:ring-2 text-primary-700 focus-visible:ring-primary-200 focus-visible:bg-primary-200 "
                 data-markdown-action="do-something"
             >link</button></p>
         `;

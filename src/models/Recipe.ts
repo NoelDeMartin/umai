@@ -1,4 +1,12 @@
-import { arraySorted, compare, downloadFile, stringToSlug, urlParse, urlResolve } from '@noeldemartin/utils';
+import {
+    arrayFilter,
+    arraySorted,
+    compare,
+    downloadFile,
+    stringToSlug,
+    urlParse,
+    urlResolve,
+} from '@noeldemartin/utils';
 import { SolidDocument } from 'soukai-solid';
 import type { JsonLD, SolidDocumentPermission } from '@noeldemartin/solid-utils';
 import type { Relation } from 'soukai';
@@ -110,6 +118,14 @@ export default class Recipe extends Model {
 
     public get sortedInstructions(): RecipeInstructionsStep[] {
         return arraySorted(this.instructions ?? [], 'position');
+    }
+
+    public get autoLinks(): string[] {
+        return arrayFilter([
+            this.url,
+            this.getDocumentUrl(),
+            ...this.externalUrls,
+        ]);
     }
 
     public route(type: string = 'show'): RouteLocationRaw {

@@ -20,6 +20,7 @@ export default class AppService extends Service<State> {
     public isDevelopment: boolean = false;
     public isProduction: boolean = false;
     public isStaging: boolean = false;
+    public isTesting: boolean = false;
     public sourceUrl: string = '';
     public version: string = '';
     public versionName: string = '';
@@ -50,6 +51,7 @@ export default class AppService extends Service<State> {
         this.isDevelopment = import.meta.env.DEV;
         this.isProduction = import.meta.env.PROD;
         this.isStaging = import.meta.env.MODE === 'staging';
+        this.isTesting = import.meta.env.MODE === 'testing';
         this.version = process.env.VUE_APP_VERSION as string;
         this.versionName = this.formatVersionName(
             (this.isStaging || this.isDevelopment)

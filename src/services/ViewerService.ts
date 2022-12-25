@@ -1,4 +1,4 @@
-import { arrayFilter, urlRoute } from '@noeldemartin/utils';
+import { arrayFilter, tap, urlRoute } from '@noeldemartin/utils';
 import { NetworkRequestError } from '@noeldemartin/solid-utils';
 import { SolidEngine } from 'soukai-solid';
 
@@ -11,6 +11,7 @@ import Cookbook from '@/services/facades/Cookbook';
 import Recipe from '@/models/Recipe';
 import RecipesList from '@/models/RecipesList';
 import RecipesListItem from '@/models/RecipesListItem';
+import { urlWithoutProtocol } from '@/utils/urls';
 
 interface State {
     recipe: Recipe | null;
@@ -24,17 +25,14 @@ interface ComputedState {
 export default class ViewerService extends Service<State, ComputedState> {
 
     private engine: SolidEngine = new SolidEngine((...args: [RequestInfo, RequestInit]) => Auth.fetch(...args));
+    private listsAutoLinks: WeakMap<RecipesList, Record<string, Recipe>> = new WeakMap();
 
     public async view(url?: string): Promise<void> {
         const list = this.recipe?.lists?.find(list => list.url === url);
         const recipe = this.list?.items?.map(item => item.recipe).find(recipe => recipe?.url === url);
 
         if (list) {
-            await RecipesList.withEngine(this.engine, () => list.loadRelationIfUnloaded('items'));
-            await RecipesListItem.withEngine(
-                this.engine,
-                () => Promise.all(list.items?.map(item => item.loadRelationIfUnloaded('recipe')) ?? []),
-            );
+            await this.loadRecipesList(list);
 
             this.setState({ list, recipe: null });
 
@@ -58,6 +56,27 @@ export default class ViewerService extends Service<State, ComputedState> {
     public async search(url: string): Promise<boolean> {
         return await this.findRecipe(url)
             || await this.findRecipesList(url);
+    }
+
+    public async preload(url: string): Promise<void> {
+        const list = this.recipe?.lists?.find(list => list.url === url);
+
+        if (list) {
+            await this.loadRecipesList(list);
+
+            return;
+        }
+    }
+
+    public autoLink(url: string): { recipe: Recipe; list: RecipesList } | null {
+        const list = this.list ?? this.recipe?.lists?.[0];
+        const recipe = list && this.listsAutoLinks.get(list)?.[urlWithoutProtocol(url)];
+
+        if (!list || !recipe) {
+            return null;
+        }
+
+        return { recipe, list };
     }
 
     protected async boot(): Promise<void> {
@@ -139,6 +158,31 @@ export default class ViewerService extends Service<State, ComputedState> {
 
             return false;
         }
+    }
+
+    private async loadRecipesList(list: RecipesList): Promise<void> {
+        if (this.listsAutoLinks.has(list)) {
+            return;
+        }
+
+        await RecipesList.withEngine(this.engine, () => list.loadRelationIfUnloaded('items'));
+        await RecipesListItem.withEngine(
+            this.engine,
+            () => Promise.all(list.items?.map(item => item.loadRelationIfUnloaded('recipe')) ?? []),
+        );
+
+        this.listsAutoLinks.set(list, (list.items ?? [])?.reduce(
+            (recipes, item) => tap(recipes, recipes => {
+                const recipe = item.recipe;
+
+                if (!recipe) {
+                    return;
+                }
+
+                recipe.autoLinks.forEach(autoLink => recipes[urlWithoutProtocol(autoLink)] = recipe);
+            }),
+            {} as Record<string, Recipe>,
+        ));
     }
 
 }

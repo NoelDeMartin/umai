@@ -1,5 +1,6 @@
 import App from './facades/App';
 import Auth from './facades/Auth';
+import AutoLinking from './facades/AutoLinking';
 import Browser from './facades/Browser';
 import Cache from './facades/Cache';
 import Cloud from './facades/Cloud';
@@ -14,6 +15,7 @@ import UI from './facades/UI';
 export const services = {
     $app: App,
     $auth: Auth,
+    $autoLinking: AutoLinking,
     $browser: Browser,
     $cache: Cache,
     $cloud: Cloud,

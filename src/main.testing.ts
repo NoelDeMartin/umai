@@ -50,7 +50,15 @@ window.testing = {
         authenticatedRequests.push({ url, options });
     },
 
-    createRecipe: attributes => Recipe.create(attributes),
+    createRecipe: async (attributes, instructions) => {
+        const recipe = new Recipe(attributes);
+
+        instructions?.forEach((text, index) => recipe.relatedInstructions.attach({ position: index + 1, text }));
+
+        await recipe.save();
+
+        return recipe;
+    },
     getRecipe: slug => Cookbook.allRecipes.first(recipe => recipe.slug === slug),
     getService: name => (services as Services)[name],
 };

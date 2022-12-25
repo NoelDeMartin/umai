@@ -31,6 +31,7 @@ import Recipe from '@/models/Recipe';
 import RecipeInstructionsStep from '@/models/RecipeInstructionsStep';
 import RecipesList from '@/models/RecipesList';
 import RecipesListItem from '@/models/RecipesListItem';
+import { urlWithoutProtocol } from '@/utils/urls';
 
 declare module '@/framework/core/services/EventsService' {
 
@@ -54,6 +55,7 @@ interface ComputedState {
     isLocal: boolean;
     isRemote: boolean;
     recipes: FluentArray<Recipe>;
+    recipesAutoLinks: Record<string, Recipe>;
 }
 
 export default class CookbookService extends Service<State, ComputedState> {
@@ -162,6 +164,10 @@ export default class CookbookService extends Service<State, ComputedState> {
         this.replaceRdfAliases();
     }
 
+    public autoLink(url: string): Recipe | null {
+        return this.recipesAutoLinks[urlWithoutProtocol(url)] ?? null;
+    }
+
     protected async boot(): Promise<void> {
         await super.boot();
         await Auth.booted;
@@ -232,6 +238,12 @@ export default class CookbookService extends Service<State, ComputedState> {
             isLocal: ({ remoteCookbookUrl }) => !remoteCookbookUrl,
             isRemote: ({ remoteCookbookUrl }) => !!remoteCookbookUrl,
             recipes: ({ allRecipes }) => allRecipes.filter(recipe => !recipe.isSoftDeleted()),
+            recipesAutoLinks: (_, { recipes }) => recipes.toArray().reduce(
+                (recipes, recipe) => tap(recipes, recipes => {
+                    recipe.autoLinks.forEach(autoLink => recipes[urlWithoutProtocol(autoLink)] = recipe);
+                }),
+                {} as Record<string, Recipe>,
+            ),
         };
     }
 

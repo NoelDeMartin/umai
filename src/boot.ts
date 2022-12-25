@@ -5,7 +5,7 @@ import { bootstrapApplication } from '@/framework';
 import './assets/styles/main.css';
 import App from './App.vue';
 import plugins from './plugins';
-import routes, { registerRouterBindings } from './routing';
+import routes, { registerAutoLinkingScopes, registerRouterBindings } from './routing';
 import services, { registerServices } from './services';
 
 interface BootOptions {
@@ -20,6 +20,7 @@ export default async function boot({ beforeMount }: Partial<BootOptions> = {}): 
         routes,
         beforeLaunch: () => registerServices(),
         async beforeMount(app) {
+            registerAutoLinkingScopes();
             registerRouterBindings();
 
             await beforeMount?.(app);

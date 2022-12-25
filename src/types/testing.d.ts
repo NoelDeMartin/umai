@@ -14,7 +14,7 @@ interface TestingRuntime {
     start(options?: Partial<TestingStartOptions>): Promise<boolean>;
     stop(): Promise<void>;
     queueAuthenticatedRequest(url: string, options: RequestInit): void;
-    createRecipe(attributes: Attributes): Promise<Recipe>;
+    createRecipe(attributes: Attributes, instructions?: string[]): Promise<Recipe>;
     getRecipe(slug: string): Recipe | null;
     getService<T extends keyof Services>(name: T): Services[T];
 }

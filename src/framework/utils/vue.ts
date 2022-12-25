@@ -1,6 +1,6 @@
-import { fail } from '@noeldemartin/utils';
 import { computed, customRef, inject, nextTick, ref, watch } from 'vue';
-import type { Directive, InjectionKey, PropType, Ref } from 'vue';
+import { debounce, fail } from '@noeldemartin/utils';
+import type { Directive, InjectionKey, PropType, Ref, WatchSource } from 'vue';
 
 type Prop<T> = {
     type: PropType<T>;
@@ -157,4 +157,11 @@ export function useRouteState<T>(name: string, defaultValue: T): Ref<T> {
             },
         };
     });
+}
+
+export function watchDebouncedEffect(source: WatchSource, delay: number, effect: () => unknown): void {
+    const debouncedEffect = debounce(effect, delay);
+
+    debouncedEffect();
+    watch(source, debouncedEffect);
 }

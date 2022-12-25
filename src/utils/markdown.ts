@@ -56,10 +56,12 @@ export function renderCoreLink({ url, text, title, color, classes }: CoreLinkAtt
     const extraClasses = `${getCoreLinkColorClasses(color)} ${classes ?? ''}`;
 
     if (url.startsWith('action:')) {
+        const baseClasses = 'md-button no-underline hover:underline focus-visible:outline-none focus-visible:ring-2';
+
         return `<button
             type="button"
             style="border-radius:${borderRadius}" ${(title && `title="${title}"`) || ''}
-            class="no-underline hover:underline focus-visible:outline-none focus-visible:ring-2 ${extraClasses}"
+            class="${baseClasses} ${extraClasses}"
             data-markdown-action="${url.substring('action:'.length)}"
         >${text}</button>`;
     }
@@ -68,7 +70,7 @@ export function renderCoreLink({ url, text, title, color, classes }: CoreLinkAtt
         href="${url}"
         style="border-radius:${borderRadius}" ${(title && `title="${title}"`) || ''}
         ${ url.startsWith('/') ? '' : 'target="_blank"' }
-        class="no-underline hover:underline focus-visible:outline-none focus-visible:ring-2 ${extraClasses}"
+        class="md-anchor no-underline hover:underline focus-visible:outline-none focus-visible:ring-2 ${extraClasses}"
     >${text}</a>`;
 }
 

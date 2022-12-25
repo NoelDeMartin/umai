@@ -10,6 +10,10 @@
       -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     }
 
+    code {
+        word-break: break-word;
+    }
+
 }
 
 @layer utilities {
@@ -29,6 +33,14 @@
     input[type=number].show-spinners::-webkit-inner-spin-button,
     input[type=number].show-spinners::-webkit-outer-spin-button {
         opacity: 1
+    }
+
+}
+
+@layer components {
+
+    .prose a:not(.md-anchor) {
+        @apply no-underline hover:underline focus-visible:outline-none focus-visible:ring-2 text-primary-700 focus-visible:ring-primary-200 focus-visible:bg-primary-200;
     }
 
 }

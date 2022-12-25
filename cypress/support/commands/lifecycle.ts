@@ -37,4 +37,8 @@ export default {
         cy.get('#app.loading').then(() => cy.startApp(options));
     },
 
+    waitTick(): void {
+        cy.wait(50);
+    },
+
 };

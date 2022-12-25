@@ -1,0 +1,15 @@
+@prefix schema: <https://schema.org/> .
+@prefix purl: <http://purl.org/dc/terms/> .
+
+<#it>
+    a schema:ItemList ;
+    schema:name "Ingredients for Dashi" ;
+    schema:itemListElement <#ramen>, <#dashi> .
+
+<#ramen>
+    a schema:ListItem ;
+    schema:item <https://pod.example.com/recipes/ramen#it> .
+
+<#dashi>
+    a schema:ListItem ;
+    schema:item <https://pod.example.com/recipes/dashi#it> .

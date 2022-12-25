@@ -1,11 +1,8 @@
-import DOMPurify from 'dompurify';
-
 import { defineDirective } from '@/framework/utils/vue';
+import { safeHtml } from '@/framework/utils/sanitization';
 
 function render(element: HTMLElement, html: string): void {
-    // TODO improve target="_blank" exception
-    // See https://github.com/cure53/DOMPurify/issues/317
-    element.innerHTML = DOMPurify.sanitize(html, { ADD_ATTR: ['target'] });
+    element.innerHTML = safeHtml(html);
 }
 
 export default defineDirective({

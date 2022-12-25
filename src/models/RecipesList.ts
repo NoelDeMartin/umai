@@ -1,4 +1,5 @@
 import type { Relation } from 'soukai';
+import type { RouteLocationRaw } from 'vue-router';
 import type { SolidBelongsToManyRelation } from 'soukai-solid';
 
 import Model from './RecipesList.schema';
@@ -29,6 +30,10 @@ export default class RecipesList extends Model {
             .belongsToMany(RecipesListItem, 'itemUrls')
             .onDelete('cascade')
             .usingSameDocument(true);
+    }
+
+    public route(): RouteLocationRaw {
+        return { name: 'viewer', query: { url: this.url } };
     }
 
     public has(recipe: Recipe): boolean {

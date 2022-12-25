@@ -1,0 +1,17 @@
+@prefix schema: <https://schema.org/> .
+@prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
+@prefix purl: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<#it>
+    a schema:Recipe;
+    schema:name "Dashi";
+    schema:description "A basic ingredient for [Ramen](https://pod.example.com/recipes/ramen#it).";
+    schema:sameAs "https://recipes.example.com/dashi" ;
+    purl:isReferencedBy <https://pod.example.com/recipes/public#it> .
+
+<#it-metadata>
+    a crdt:Metadata ;
+    crdt:resource <#it> ;
+    crdt:createdAt "2021-07-24T00:00:00.000Z"^^xsd:dateTime ;
+    crdt:updatedAt "2021-07-24T00:00:00.000Z"^^xsd:dateTime .

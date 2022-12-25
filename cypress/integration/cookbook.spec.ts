@@ -713,4 +713,84 @@ describe('Cookbook', () => {
         });
     });
 
+    it('Auto-links recipes', () => {
+        // Arrange
+        const seeDashi = () => {
+            cy.see('A basic ingredient for Ramen');
+            cy.dontSee('The best food ever');
+        };
+        const goBackToRamen = () => {
+            cy.press('Ramen');
+            cy.dontSee('A basic ingredient for Ramen');
+        };
+
+        cy.login();
+        cy.createRecipe({
+            name: 'Dashi',
+            description: 'A basic ingredient for [Ramen](/recipes/ramen).',
+            externalUrls: ['https://recipes.example.com/dashi'],
+        });
+        cy.createRecipe({
+            name: 'Ramen',
+            description: 'The best food ever.',
+            ingredients: [
+                '[Dashi (relative app url)](/recipes/dashi)',
+                `[Dashi (hard-coded app url)](${Cypress.config('baseUrl')}/recipes/dashi)`,
+                '[Dashi (resource id)](http://localhost:4000/cookbook/dashi#it)',
+                '[Dashi (document url)](http://localhost:4000/cookbook/dashi)',
+                '[Dashi (external url)](https://recipes.example.com/dashi)',
+                '[Noodles](https://recipes.example.com/noodles)',
+            ],
+        }, [
+            'Introduce the [Dashi](/recipes/dashi)',
+            '???',
+            'Profit',
+        ]);
+
+        cy.press('Ramen');
+        cy.dontSee('New recipe');
+
+        // Test relative urls
+        cy.press('Dashi (relative app url)');
+
+        seeDashi();
+        goBackToRamen();
+
+        // Test hard-coded urls
+        cy.press('Dashi (hard-coded app url)');
+
+        seeDashi();
+        goBackToRamen();
+
+        // Test resource id
+        cy.press('Dashi (resource id)');
+
+        seeDashi();
+        goBackToRamen();
+
+        // Test document url
+        cy.press('Dashi (document url)');
+
+        seeDashi();
+        goBackToRamen();
+
+        // Test external url
+        cy.press('Dashi (external url)');
+
+        seeDashi();
+        goBackToRamen();
+
+        // Test instructions
+        cy.contains('Introduce the Dashi').within(() => cy.press('Dashi'));
+
+        seeDashi();
+        goBackToRamen();
+
+        // Test other urls
+        cy.press('Noodles');
+        cy.service('$autoLinking')
+            .then(AutoLinking => AutoLinking.hasCapturedDuringTesting('https://recipes.example.com/noodles'))
+            .should('be.true');
+    });
+
 });
