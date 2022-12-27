@@ -1,7 +1,7 @@
-import { arrayFilter, isEmpty, objectWithoutEmpty } from '@noeldemartin/utils';
+import { arrayFilter, isEmpty, objectWithoutEmpty, range } from '@noeldemartin/utils';
 
 const iso8601DurationUnit = (unit: string) => `(?:(\\d+(?:(?:.|,)\\d+)?)${unit})?`;
-const humanReadableDurationUnit = (unit: string) => `(?:(\\d+)\\s*${unit})?`;
+const humanReadableDurationUnit = (unit: string) => `(?:([\\d:]+)\\s*${unit})?`;
 const ISO6801_DATE_UNITS = [
     iso8601DurationUnit('Y'),
     iso8601DurationUnit('M'),
@@ -42,10 +42,23 @@ function parseDuration(text: string, regExp: RegExp): ISO8601Duration | null {
         return null;
     }
 
+    const rawCarryValues = range(8).map(() => [] as string[]);
     const parseValue = (index: number) => {
-        const value = matches[index];
+        const rawValue = matches[index];
+        const [unitRawValue, ...unitRawCarryValues] = rawValue?.split(':').map(value => value.trim()) ?? [];
+        const rawValues = arrayFilter([unitRawValue, ...rawCarryValues?.[index] ?? []]);
 
-        return value ? parseFloat(value.replace(',', '.')) : null;
+        if (rawValues.length === 0) {
+            return null;
+        }
+
+        unitRawCarryValues.forEach((rawCarryValue, carryIndex) => {
+            rawCarryValues[index + carryIndex + 1]?.push(rawCarryValue);
+        });
+
+        return rawValues
+            .map(rawValue => rawValue ? parseFloat(rawValue.replace(',', '.')) : 0)
+            .reduce((total, value) => total + value, 0);
     };
     const duration = objectWithoutEmpty({
         years: parseValue(1),

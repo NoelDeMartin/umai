@@ -7,6 +7,7 @@ describe('DateTime', () => {
         expect(parseHumanReadableDuration('1h 30min')).toEqual({ hours: 1, minutes: 30 });
         expect(parseHumanReadableDuration('1 hour 30 minutes')).toEqual({ hours: 1, minutes: 30 });
         expect(parseHumanReadableDuration('1 hour, 30 minutes')).toEqual({ hours: 1, minutes: 30 });
+        expect(parseHumanReadableDuration('1:30 hours')).toEqual({ hours: 1, minutes: 30 });
         expect(parseHumanReadableDuration('10m')).toEqual({ minutes: 10 });
         expect(parseHumanReadableDuration('3 hours 20m')).toEqual({ hours: 3, minutes: 20 });
     });
