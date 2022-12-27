@@ -35,13 +35,6 @@ export type RecipeExportOptions = {
 
 export default class Recipe extends Model {
 
-    public static history = true;
-    public static tombstone = false;
-    public static rdfContexts = {
-        schema: 'https://schema.org/',
-        purl: 'http://purl.org/dc/terms/',
-    };
-
     declare public instructions?: RecipeInstructionsStep[];
     declare public relatedInstructions: SolidBelongsToManyRelation<
         this,

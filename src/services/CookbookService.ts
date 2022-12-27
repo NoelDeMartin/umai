@@ -11,7 +11,7 @@ import {
     urlRoute,
     uuid,
 } from '@noeldemartin/utils';
-import { SolidContainerModel, SolidTypeRegistration } from 'soukai-solid';
+import { SolidContainer, SolidTypeRegistration } from 'soukai-solid';
 import { SolidDocumentPermission, findInstanceRegistrations } from '@noeldemartin/solid-utils';
 import type { FluentArray, Obj, Tuple } from '@noeldemartin/utils';
 import type { IndexedDBEngine } from 'soukai';
@@ -62,31 +62,31 @@ export default class CookbookService extends Service<State, ComputedState> {
 
     public static persist: Array<keyof State> = ['remoteCookbookUrl', 'usingRdfAliases'];
 
-    public cookbook: PromisedValue<SolidContainerModel> = new PromisedValue;
+    public cookbook: PromisedValue<SolidContainer> = new PromisedValue;
 
     private tmpRecipes: Record<string, Recipe> = {};
 
     public async initializeRemote(name: string, storageUrl: string): Promise<void> {
         const engine = Auth.requireAuthenticator().engine;
-        const cookbook = await SolidContainerModel.withEngine(engine, async () => {
+        const cookbook = await SolidContainer.withEngine(engine, async () => {
             const url = urlResolveDirectory(storageUrl, stringToSlug(name));
-            const cookbook = await SolidContainerModel.find(url);
+            const cookbook = await SolidContainer.find(url);
 
             if (cookbook) {
                 throw new CookbookExistsError(cookbook);
             }
 
-            return new SolidContainerModel({ url, name });
+            return new SolidContainer({ url, name });
         });
 
         await this.initializeRemoteUsing(cookbook);
     }
 
-    public async initializeRemoteUsing(cookbook: SolidContainerModel): Promise<void> {
+    public async initializeRemoteUsing(cookbook: SolidContainer): Promise<void> {
         const user = Auth.requireUser();
         const engine = Auth.requireAuthenticator().engine;
 
-        await SolidContainerModel.withEngine(engine, async () => {
+        await SolidContainer.withEngine(engine, async () => {
             const typeIndexUrl = user.privateTypeIndexUrl ?? await Auth.createPrivateTypeIndex();
 
             await cookbook.save();
@@ -247,7 +247,7 @@ export default class CookbookService extends Service<State, ComputedState> {
         };
     }
 
-    private async initializeRemoteCookbook(cookbook: SolidContainerModel): Promise<void> {
+    private async initializeRemoteCookbook(cookbook: SolidContainer): Promise<void> {
         await this.migrateLocalRecipes(cookbook.url);
 
         setRemoteCollection(Recipe, cookbook.url);
@@ -310,7 +310,7 @@ export default class CookbookService extends Service<State, ComputedState> {
         if (Auth.isLoggedIn()) {
             const engine = Auth.authenticator.engine;
 
-            await SolidContainerModel.withEngine(engine, async () => tap(
+            await SolidContainer.withEngine(engine, async () => tap(
                 await this.findCookbook(),
                 cookbook => cookbook && this.initializeRemoteCookbook(cookbook),
             ));
@@ -321,7 +321,7 @@ export default class CookbookService extends Service<State, ComputedState> {
         Recipe.collection = this.remoteCookbookUrl ?? this.localCookbookUrl;
         RecipesList.collection = this.remoteCookbookUrl ?? RecipesList.collection;
 
-        this.cookbook.resolve(new SolidContainerModel({ url: Recipe.collection, name: 'cookbook' }));
+        this.cookbook.resolve(new SolidContainer({ url: Recipe.collection, name: 'cookbook' }));
     }
 
     private async loadPublicRecipesList(): Promise<RecipesList> {
@@ -336,7 +336,7 @@ export default class CookbookService extends Service<State, ComputedState> {
         await this.loadRecipes();
     }
 
-    private async findCookbook(refreshStaleProfile: boolean = true): Promise<SolidContainerModel | null> {
+    private async findCookbook(refreshStaleProfile: boolean = true): Promise<SolidContainer | null> {
         const user = Auth.requireUser();
 
         try {
@@ -355,12 +355,12 @@ export default class CookbookService extends Service<State, ComputedState> {
         }
     }
 
-    private async findCookbookInTypeIndex(typeIndexUrl?: string): Promise<SolidContainerModel | null> {
+    private async findCookbookInTypeIndex(typeIndexUrl?: string): Promise<SolidContainer | null> {
         if (!typeIndexUrl) {
             return null;
         }
 
-        return SolidContainerModel.fromTypeIndex(typeIndexUrl, Recipe);
+        return SolidContainer.fromTypeIndex(typeIndexUrl, Recipe);
     }
 
     private async findPublicRecipesList(): Promise<RecipesList | null> {

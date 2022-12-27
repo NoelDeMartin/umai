@@ -1,10 +1,16 @@
+import { defineSolidModelSchema } from 'soukai-solid';
 import { FieldType } from 'soukai';
-import { SolidModel } from 'soukai-solid';
 
-export default SolidModel.schema({
-    recipeUrl: {
-        type: FieldType.Key,
-        rdfProperty: 'schema:item',
-        required: true,
+export default defineSolidModelSchema({
+    rdfContexts: { schema: 'https://schema.org/' },
+    rdfsClass: 'schema:ListItem',
+    history: false,
+    timestamps: false,
+    fields: {
+        recipeUrl: {
+            type: FieldType.Key,
+            rdfProperty: 'schema:item',
+            required: true,
+        },
     },
 });

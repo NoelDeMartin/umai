@@ -1,13 +1,18 @@
+import { defineSolidModelSchema } from 'soukai-solid';
 import { FieldType } from 'soukai';
-import { SolidModel } from 'soukai-solid';
 
-export default SolidModel.schema({
-    text: {
-        type: FieldType.String,
-        required: true,
-    },
-    position: {
-        type: FieldType.Number,
-        required: true,
+export default defineSolidModelSchema({
+    rdfContexts: { schema: 'https://schema.org/' },
+    rdfsClass: 'schema:HowToStep',
+    history: true,
+    fields: {
+        text: {
+            type: FieldType.String,
+            required: true,
+        },
+        position: {
+            type: FieldType.Number,
+            required: true,
+        },
     },
 });

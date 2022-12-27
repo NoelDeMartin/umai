@@ -4,7 +4,7 @@ jest.mock('./LangService.ts', () => class LangService {});
 jest.mock('./UIService.ts', () => class UIService {});
 
 import Recipe from '@/models/Recipe';
-import { SolidContainerModel, bootSolidModels } from 'soukai-solid';
+import { SolidContainer, bootSolidModels } from 'soukai-solid';
 import { createStore } from 'vuex';
 import { InMemoryEngine, bootModels, setEngine } from 'soukai';
 import { PromisedValue, mock } from '@noeldemartin/utils';
@@ -115,9 +115,9 @@ async function createRemoteRamen(remoteEngine: InMemoryEngine): Promise<Recipe> 
         return ramen;
     });
 
-    await SolidContainerModel.withEngine(
+    await SolidContainer.withEngine(
         remoteEngine,
-        () => SolidContainerModel.create({ url: Recipe.collection, resourceUrls: [remoteRamen.getDocumentUrl()] }),
+        () => SolidContainer.create({ url: Recipe.collection, resourceUrls: [remoteRamen.getDocumentUrl()] }),
     );
 
     setRemoteCollection(Recipe, Recipe.collection);

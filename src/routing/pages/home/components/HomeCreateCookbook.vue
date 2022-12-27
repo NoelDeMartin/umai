@@ -59,7 +59,7 @@
 
 <script setup lang="ts">
 import { stringToSlug, urlResolveDirectory } from '@noeldemartin/utils';
-import type { SolidContainerModel } from 'soukai-solid';
+import type { SolidContainer } from 'soukai-solid';
 
 import Auth from '@/framework/core/facades/Auth';
 import Cloud from '@/framework/core/facades/Cloud';
@@ -89,7 +89,7 @@ const $nameLabel = $ref<HTMLElement | null>(null);
 const $storageUrlLabel = $ref<HTMLElement | null>(null);
 const url = $computed(() => urlResolveDirectory(form.storageUrl, stringToSlug(form.name)));
 
-async function submit(cookbook?: SolidContainerModel) {
+async function submit(cookbook?: SolidContainer) {
     try {
         processing = true;
         cookbook
@@ -109,7 +109,7 @@ async function submit(cookbook?: SolidContainerModel) {
     }
 }
 
-async function confirmExisting(cookbook: SolidContainerModel) {
+async function confirmExisting(cookbook: SolidContainer) {
     const confirmed = await UI.confirm({
         title: translate('home.createCookbook.exists'),
         message: translate('home.createCookbook.exists_info', { url: cookbook.url }),

@@ -8,15 +8,6 @@ import type Recipe from './Recipe';
 
 export default class RecipesList extends Model {
 
-    public static history = false;
-    public static timestamps = false;
-    public static rdfContexts = {
-        schema: 'https://schema.org/',
-        purl: 'http://purl.org/dc/terms/',
-    };
-
-    public static rdfsClasses = ['schema:ItemList'];
-
     public isRegistered = false;
     declare public items?: RecipesListItem[];
     declare public relatedItems: SolidBelongsToManyRelation<

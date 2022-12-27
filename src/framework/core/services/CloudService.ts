@@ -13,7 +13,7 @@ import {
     Metadata,
     Operation,
     SolidACLAuthorization,
-    SolidContainerModel,
+    SolidContainer,
     SolidModel,
     Tombstone,
     isSolidDocumentRelation,
@@ -460,9 +460,9 @@ export default class CloudService extends Service<State, ComputedState> {
 
                 while (recipeContainers.size > loadedContainers.size) {
                     const containerUrl = [...recipeContainers].find(url => !loadedContainers.has(url));
-                    const container = await SolidContainerModel.withEngine(
+                    const container = await SolidContainer.withEngine(
                         this.requireEngine(),
-                        () => SolidContainerModel.find(containerUrl),
+                        () => SolidContainer.find(containerUrl),
                     );
 
                     loadedContainers.add(containerUrl);

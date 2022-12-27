@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { SolidContainerModel, SolidEngine, bootSolidModels } from 'soukai-solid';
+import { SolidContainer, SolidEngine, bootSolidModels } from 'soukai-solid';
 import { existsSync, rmdir } from 'fs';
 
 async function removeDir(path: string): Promise<void> {
@@ -40,8 +40,8 @@ export default defineTasks({
         await fetch('http://localhost:4000/cookbook/nested/folder/', { method: 'DELETE' });
         await fetch('http://localhost:4000/cookbook/nested/', { method: 'DELETE' });
 
-        await SolidContainerModel.withEngine(new SolidEngine(fetch), async () => {
-            const cookbook = await SolidContainerModel.find('http://localhost:4000/cookbook/');
+        await SolidContainer.withEngine(new SolidEngine(fetch), async () => {
+            const cookbook = await SolidContainer.find('http://localhost:4000/cookbook/');
 
             if (!cookbook)
                 return;
