@@ -58,6 +58,11 @@ const RENDERED_UNITS: Record<string, string> = {
 const [INGREDIENT_REGEX, QUANTITY_RANGE_SEPARATOR_REGEX, QUANTITY_PARSERS] = initializeHelpers();
 
 function compareIngredients(a: IngredientBreakdown, b: IngredientBreakdown): number {
+    const aIsOptional = a.original.toLowerCase().includes('optional');
+    const bIsOptional = b.original.toLowerCase().includes('optional');
+
+    if (aIsOptional && !bIsOptional) return -1;
+    if (!aIsOptional && bIsOptional) return 1;
     if (a.unit && !b.unit) return 1;
     if (!a.unit && b.unit) return -1;
 

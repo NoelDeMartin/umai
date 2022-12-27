@@ -98,9 +98,11 @@ describe('Ingredients helpers', () => {
                 'Crackers',
                 'Cilantro',
                 '1 Cucumber',
+                '330ml Michelada (optional)',
                 'Mayonnaise',
                 'Grated Garlic',
                 '5 Lemons',
+                'Chipotle (optional)',
                 'Jalapeños',
             ],
             [
@@ -115,6 +117,8 @@ describe('Ingredients helpers', () => {
                 'Grated Garlic',
                 'Jalapeños',
                 'Mayonnaise',
+                '330ml Michelada (optional)',
+                'Chipotle (optional)',
             ],
         );
     });
