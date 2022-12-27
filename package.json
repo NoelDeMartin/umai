@@ -36,7 +36,7 @@
     "jsoneditor": "^9.9.2",
     "marked": "^4.0.12",
     "soukai": "^0.4.1-next.28afa17749b2c24395064a670c5d3fda7665b3b7",
-    "soukai-solid": "^0.4.1-next.20cf4862f4686d0cd3a2c68ce6261ed90155f996",
+    "soukai-solid": "^0.4.1-next.08cd00e9cf25034d95df8347a592aaa337f564e8",
     "tailwindcss": "^3.1.4",
     "vue": "^3.2.29",
     "vue-i18n": "^9.2.0-beta.40",
