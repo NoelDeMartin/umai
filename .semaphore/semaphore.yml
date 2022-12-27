@@ -10,7 +10,7 @@ blocks:
       prologue:
         commands:
           - checkout
-          - sem-version node 14
+          - nvm install
           - cache restore
           - npm ci
           - cd solid-server && npm ci && cd ..
