@@ -60,6 +60,7 @@
 import { arrayRandomItem, stringToSlug } from '@noeldemartin/utils';
 
 import I18n from '@/framework/core/facades/I18n';
+import Lang from '@/framework/core/facades/Lang';
 import { translate } from '@/framework/utils/translate';
 
 import Cookbook from '@/services/facades/Cookbook';
@@ -84,11 +85,12 @@ const filteredRecipes = $computed(() => {
 
 function getTitle(): string {
     const titles = [];
+    const locale = I18n.hasMessage('home.recipes.title.0') ? null : Lang.fallbackLocale;
 
     for (let i = 0; ; i++) {
         const key = `home.recipes.title.${i}`;
 
-        if (!I18n.hasMessage(key)) {
+        if (!I18n.hasMessage(key, locale)) {
             break;
         }
 
