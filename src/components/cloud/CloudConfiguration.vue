@@ -38,7 +38,7 @@
 <script setup lang="ts">
 import Auth from '@/framework/core/facades/Auth';
 import Cloud from '@/framework/core/facades/Cloud';
-import I18n from '@/framework/core/facades/I18n';
+import { translate } from '@/framework/utils/translate';
 
 interface AuthOption {
     name: string;
@@ -58,7 +58,7 @@ interface ConfigurableAuthOption extends AuthOption {
 const options: (BasicAuthOption | ConfigurableAuthOption)[] = $ref([
     {
         name: 'auto-reconnect',
-        text: I18n.translate('cloud.reconnect_onStartup'),
+        text: translate('cloud.reconnect_onStartup'),
         enabled: Auth.autoReconnect,
         updated() {
             Auth.autoReconnect = this.enabled;
@@ -66,7 +66,7 @@ const options: (BasicAuthOption | ConfigurableAuthOption)[] = $ref([
     },
     {
         name: 'startup-sync',
-        text: I18n.translate('cloud.sync_onStartup'),
+        text: translate('cloud.sync_onStartup'),
         enabled: Cloud.startupSync,
         updated() {
             Cloud.startupSync = this.enabled;
@@ -74,7 +74,7 @@ const options: (BasicAuthOption | ConfigurableAuthOption)[] = $ref([
     },
     {
         name: 'auto-sync',
-        text: I18n.translate('cloud.sync_onInterval').split(' X ') as [string, string],
+        text: translate('cloud.sync_onInterval').split(' X ') as [string, string],
         enabled: !!Cloud.autoSync,
         value: Cloud.autoSync || 10,
         updated() {
