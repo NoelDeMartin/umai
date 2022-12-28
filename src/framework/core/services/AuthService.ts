@@ -296,6 +296,7 @@ export default class AuthService extends Service<State, ComputedState> {
     }
 
     private reconnectOnStartup(): boolean {
+        // TODO this doesn't work for lazy routes
         if (Router.currentRoute.value.meta.reconnect === false) {
             return false;
         }

@@ -133,6 +133,8 @@ export default class FilesService extends Service<State> {
     protected forgetDatabaseConnection(): void {
         this.connection?.close();
 
+        // TODO deleting doesn't work, may be related with Proxy usage
+        // delete this.connection;
         this.connection = undefined;
         this.connectionTimeout = undefined;
     }
