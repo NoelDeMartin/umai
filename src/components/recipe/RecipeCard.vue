@@ -23,7 +23,7 @@
             <router-link
                 v-focus-visible="setVisibleFocus"
                 class="block w-full h-clickable focus-visible:outline-none"
-                :to="recipe.route($router.currentRouteIs('viewer') ? 'viewer' : 'show')"
+                :to="recipe.route($viewer.active ? 'viewer' : 'show')"
             >
                 <span aria-hidden="true" class="absolute inset-0" />
                 <div v-if="recipe.name" class="absolute inset-x-0 bottom-0 p-2 recipe-card--title-wrapper">

@@ -15,6 +15,9 @@ import { setRemoteCollection } from '@/framework/cloud/remote_helpers';
 import type Authenticator from '@/framework/auth/Authenticator';
 import type AuthService from '@/framework/core/services/AuthService';
 
+import Viewer from '@/services/facades/Viewer';
+import type ViewerService from '@/services/ViewerService';
+
 import CloudService from './CloudService';
 
 describe('Cloud Service', () => {
@@ -46,6 +49,7 @@ describe('Cloud Service', () => {
             requireAuthenticator: () => authenticator,
             authenticator,
         }));
+        Viewer.setInstance(mock<ViewerService>({ active: false }));
         cloud.registerHandler(Recipe, {
             booted: PromisedValue.from(Promise.resolve()),
             active: true,

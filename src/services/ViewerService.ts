@@ -4,6 +4,7 @@ import { SolidEngine } from 'soukai-solid';
 
 import Auth from '@/framework/core/facades/Auth';
 import Errors from '@/framework/core/facades/Errors';
+import Router from '@/framework/core/facades/Router';
 import Service from '@/framework/core/Service';
 import type { ComputedStateDefinitions , IService } from '@/framework/core/Service';
 
@@ -26,6 +27,10 @@ export default class ViewerService extends Service<State, ComputedState> {
 
     private engine: SolidEngine = new SolidEngine((...args: [RequestInfo, RequestInit]) => Auth.fetch(...args));
     private listsAutoLinks: WeakMap<RecipesList, Record<string, Recipe>> = new WeakMap();
+
+    public get active(): boolean {
+        return Router.currentRouteIs('viewer');
+    }
 
     public async view(url?: string): Promise<void> {
         const list = this.recipe?.lists?.find(list => list.url === url);

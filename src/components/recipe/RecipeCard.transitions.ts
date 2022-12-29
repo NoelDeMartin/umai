@@ -10,6 +10,8 @@ import {
     defineLeaveTransition,
 } from '@/framework/core/services/ElementTransitionsService';
 
+import Viewer from '@/services/facades/Viewer';
+
 async function transitionToRecipePage(
     $wrapper: HTMLElement,
     $card: HTMLElement,
@@ -112,7 +114,7 @@ export const leaveTransition = defineLeaveTransition(async wrapper => {
         return;
     }
 
-    if (Router.currentRouteIs('viewer')) {
+    if (Viewer.active) {
         await ElementTransitions.waitElementsReady('viewer-recipe');
 
         return;

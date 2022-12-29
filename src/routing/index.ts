@@ -106,7 +106,7 @@ export function registerAutoLinkingScopes(): void {
     });
 
     AutoLinking.registerScope('recipes', url => {
-        if (Router.currentRouteIs('viewer')) {
+        if (Viewer.active) {
             return captureViewerUrls(url);
         }
 

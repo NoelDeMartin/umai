@@ -34,6 +34,8 @@ import { translate } from '@/framework/utils/translate';
 import type Authenticator from '@/framework/auth/Authenticator';
 import type { ComputedStateDefinitions, IService } from '@/framework/core/Service';
 
+import Viewer from '@/services/facades/Viewer';
+
 export enum CloudStatus {
     Offline = 'offline',
     Online = 'online',
@@ -84,8 +86,9 @@ export default class CloudService extends Service<State, ComputedState> {
     protected syncInterval: number | null = null;
 
     public async sync(model?: SolidModel): Promise<void> {
-        if (!Auth.isLoggedIn())
+        if (!Auth.isLoggedIn() || Viewer.active) {
             return;
+        }
 
         await this.asyncLock.run(async () => {
             const start = Date.now();
