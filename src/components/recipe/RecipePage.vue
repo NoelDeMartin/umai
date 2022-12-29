@@ -71,7 +71,7 @@
                                         :key="index"
                                         class="flex items-center my-2"
                                     >
-                                        <span class="flex justify-center items-center w-8">
+                                        <span class="flex justify-center items-center w-8 flex-shrink-0">
                                             <span class="w-2 h-2 bg-gray-300 rounded-full" />
                                         </span>
                                         <CoreMarkdown
