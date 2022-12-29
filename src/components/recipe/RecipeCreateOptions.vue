@@ -32,7 +32,7 @@
         </HeadlessButton>
         <BaseFileInput
             v-wobbly-border="wobblyBorder"
-            accept="application/json, application/ld+json"
+            accept="application/json, application/ld+json, .json, .jsonld"
             parse="json"
             class="
                 flex flex-row items-center justify-center bg-gray-300 text-gray-700 px-2 py-3 w-full
