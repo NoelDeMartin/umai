@@ -34,10 +34,10 @@ const { parse } = defineProps({
 const emit = defineEmits(['start', 'success', 'error']);
 
 const name = uuid();
-const input = $ref<HTMLInputElement>();
+const input = $ref<HTMLInputElement | undefined>();
 
 function uploadFile() {
-    const file = input.files?.[0];
+    const file = input?.files?.[0];
 
     if (!file)
         return;

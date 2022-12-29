@@ -198,7 +198,7 @@ const { recipe } = defineProps({
 });
 
 let showingSecondaryPanel = $ref<boolean>(false);
-let servings = $ref(recipe?.servingsBreakdown?.quantity);
+let servings = $ref(recipe?.servingsBreakdown?.quantity ?? 1);
 const customServingsQuantities = $ref<number[]>([]);
 const servingsOptions = $computed((): SelectOption<number>[] | null => {
     const servingsBreakdown = recipe?.servingsBreakdown;
