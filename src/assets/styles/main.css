@@ -39,7 +39,7 @@
 
 @layer components {
 
-    .prose a:not(.md-anchor) {
+    .prose a:not(.core-link) {
         @apply no-underline hover:underline focus-visible:outline-none focus-visible:ring-2 text-primary-700 focus-visible:ring-primary-200 focus-visible:bg-primary-200;
     }
 

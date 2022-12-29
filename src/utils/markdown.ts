@@ -56,7 +56,7 @@ export function renderCoreLink({ url, text, title, color, classes }: CoreLinkAtt
     const extraClasses = `${getCoreLinkColorClasses(color)} ${classes ?? ''}`;
 
     if (url.startsWith('action:')) {
-        const baseClasses = 'md-button no-underline hover:underline focus-visible:outline-none focus-visible:ring-2';
+        const baseClasses = 'no-underline hover:underline focus-visible:outline-none focus-visible:ring-2';
 
         return `<button
             type="button"
@@ -70,7 +70,7 @@ export function renderCoreLink({ url, text, title, color, classes }: CoreLinkAtt
         href="${url}"
         style="border-radius:${borderRadius}" ${(title && `title="${title}"`) || ''}
         ${ url.startsWith('/') ? '' : 'target="_blank"' }
-        class="md-anchor no-underline hover:underline focus-visible:outline-none focus-visible:ring-2 ${extraClasses}"
+        class="core-link no-underline hover:underline focus-visible:outline-none focus-visible:ring-2 ${extraClasses}"
     >${text}</a>`;
 }
 
