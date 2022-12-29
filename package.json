@@ -38,8 +38,8 @@
     "soukai": "^0.4.1-next.28afa17749b2c24395064a670c5d3fda7665b3b7",
     "soukai-solid": "^0.4.1-next.08cd00e9cf25034d95df8347a592aaa337f564e8",
     "tailwindcss": "^3.1.4",
-    "vue": "^3.2.29",
-    "vue-i18n": "^9.2.0-beta.40",
+    "vue": "^3.2.45",
+    "vue-i18n": "^9.2.2",
     "vue-router": "^4.0.5",
     "vuex": "^4.0.0"
   },
@@ -74,7 +74,7 @@
     "typescript": "^4.1.5",
     "unplugin-icons": "^0.14.8",
     "unplugin-vue-components": "^0.21.2",
-    "vite": "^3.1.0-beta.2",
+    "vite": "^3.2.5",
     "vite-plugin-pwa": "^0.12.3",
     "vue-tsc": "^0.28.6"
   },
