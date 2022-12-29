@@ -3,6 +3,7 @@ import { FormInputType, reactiveForm } from '@/framework/forms';
 import type { MagicForm } from '@/framework/forms';
 
 import Config from '@/services/facades/Config';
+import TooManyRequestsError from '@/errors/TooManyRequestsError';
 import type IAppModal from '@/components/modals/AppModal';
 
 export default interface IWebImportModal extends IAppModal<void> {
@@ -55,6 +56,10 @@ export function useUrlForm(modal: IWebImportModal): {
                 : await fetch(url);
 
             const text = await response.text();
+
+            if (response.status === 429 && proxyUrl) {
+                throw new TooManyRequestsError(url, proxyUrl);
+            }
 
             if (Math.floor(response.status / 100) !== 2)
                 throw new Error(`Got unexpected response code: ${response.status}\n\n${text}`);

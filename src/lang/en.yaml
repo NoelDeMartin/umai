@@ -85,10 +85,16 @@ webImport:
 
   error_title: Oops! That didn't work
   error_info: |
-      It was not possible to get the contents from `{url}`
+    It was not possible to get the contents from `{url}`
 
-      If this was temporary error, you can try again.
-      You can also look at the [error details](action:view-error-details).
+    If this was temporary error, you can try again.
+    You can also look at the [error details](action:view-error-details).
+  error_tooManyRequests: |
+    The proxy at `{proxyUrl}` is refusing to scan the website because it's
+    getting too many requests. You can try again later or use a different proxy.
+
+    You can configure the proxy in advanced options, and you can also look at the
+    [error details](action:view-error-details).
   error_submit: Retry
   error_html: or [try copy & pasting HTML](action:open-html-form)
 
