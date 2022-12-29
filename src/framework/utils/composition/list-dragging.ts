@@ -1,5 +1,5 @@
 import { arraySwap } from '@noeldemartin/utils';
-import { nextTick } from 'vue';
+import { nextTick, ref } from 'vue';
 import type { Ref } from 'vue';
 
 export interface ListDraggingController {
@@ -30,43 +30,43 @@ export function useListDragging(
     listRef: Ref<HTMLElement | undefined>,
     swapItems: (currentItem: number, nextItem: number) => void,
 ): ListDraggingController {
-    const list = $(listRef);
-
-    let active = $ref(false);
-    let listY = $ref<number>();
-    let itemsHeight = $ref<number[]>();
-    let currentItem = $ref<number>();
+    const list = listRef;
+    const active = ref(false);
+    const listY = ref<number>(0);
+    const itemsHeight = ref<number[]>([]);
+    const currentItem = ref<number>(0);
 
     return {
         start(event) {
-            if (!list || !list.firstElementChild)
+            if (!list.value?.firstElementChild) {
                 return;
+            }
 
-            active = true;
-            listY = window.scrollY + list.getBoundingClientRect().y;
-            itemsHeight = Array.from(list.children).map(item => item.clientHeight);
-            currentItem = getHoveringItem(event, listY, itemsHeight);
+            active.value = true;
+            listY.value = window.scrollY + list.value.getBoundingClientRect().y;
+            itemsHeight.value = Array.from(list.value.children).map(item => item.clientHeight);
+            currentItem.value = getHoveringItem(event, listY.value, itemsHeight.value);
         },
         update(event) {
             if (!active)
                 return;
 
-            const nextItem = getHoveringItem(event, listY, itemsHeight);
+            const nextItem = getHoveringItem(event, listY.value, itemsHeight.value);
 
-            if (nextItem !== currentItem) {
-                const updatedItemsHeight = [...itemsHeight];
+            if (nextItem !== currentItem.value) {
+                const updatedItemsHeight = [...itemsHeight.value];
 
-                swapItems(currentItem, nextItem);
-                arraySwap(updatedItemsHeight, currentItem, nextItem);
+                swapItems(currentItem.value, nextItem);
+                arraySwap(updatedItemsHeight, currentItem.value, nextItem);
 
                 nextTick().then(() => {
-                    itemsHeight = Array.from(list?.children ?? []).map(item => item.clientHeight);
-                    currentItem = nextItem;
+                    itemsHeight.value = Array.from(list.value?.children ?? []).map(item => item.clientHeight);
+                    currentItem.value = nextItem;
                 });
             }
         },
         stop() {
-            active = false;
+            active.value = false;
         },
     };
 }
