@@ -28,6 +28,10 @@ export default class RecipesCloudHandler implements CloudHandler<Recipe> {
         Cookbook.mendRecipe(recipe);
     }
 
+    public async beforeDeletingModel(recipe: Recipe): Promise<void> {
+        await Cookbook.removePublicRecipeListing(recipe);
+    }
+
     public getLocalModelsWithRemoteFileUrls(): { model: Recipe; remoteFileUrls: string[] }[] {
         return Cookbook.allRecipes.toArray().map(recipe => ({
             model: recipe,

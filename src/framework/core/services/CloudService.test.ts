@@ -53,7 +53,6 @@ describe('Cloud Service', () => {
         cloud.registerHandler(Recipe, {
             booted: PromisedValue.from(Promise.resolve()),
             active: true,
-            initialize: () => Promise.resolve(),
             getLocalModels: () => localModels,
             getLocalModelsWithRemoteFileUrls: () => localModels.map(model => ({ model, remoteFileUrls: [] })),
             mendRemoteModel: () => undefined,

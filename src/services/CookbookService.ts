@@ -154,6 +154,23 @@ export default class CookbookService extends Service<State, ComputedState> {
         }
     }
 
+    public async removePublicRecipeListing(recipe: Recipe): Promise<void> {
+        const publicRecipesList = this.publicRecipesList ??= await this.findPublicRecipesList();
+
+        if (!publicRecipesList || !publicRecipesList.has(recipe)) {
+            return;
+        }
+
+        const item = publicRecipesList.items?.find(item => item.recipeUrl === recipe.url);
+
+        item && publicRecipesList.relatedItems.detach(item);
+
+        await RecipesList.withEngine(
+            Auth.requireAuthenticator().engine,
+            () => publicRecipesList.save(),
+        );
+    }
+
     public mendRecipe(recipe: Recipe): void {
         this.mendRecipeInstructions(recipe);
         recipe.fixMalformedAttributes();

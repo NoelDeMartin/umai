@@ -67,11 +67,13 @@ interface ComputedState {
 export interface CloudHandler<T extends SolidModel = SolidModel> {
     booted: PromisedValue<void>;
     active: boolean;
-    initialize(): Promise<void>;
     getLocalModels(): T[];
     getLocalModelsWithRemoteFileUrls(): { model: T; remoteFileUrls: string[] }[];
     mendRemoteModel(model: T): void;
     foundModelUsingRdfAliases(): void;
+
+    initialize?(): Promise<void>;
+    beforeDeletingModel?(model: T): Promise<void>;
 }
 
 export default class CloudService extends Service<State, ComputedState> {
@@ -122,7 +124,7 @@ export default class CloudService extends Service<State, ComputedState> {
         modelClass: SolidModelConstructor<T>,
         handler: CloudHandler<T>,
     ): Promise<void> {
-        await handler.initialize();
+        await handler.initialize?.();
 
         this.engine && getRemoteClass(modelClass).setEngine(this.engine);
 
@@ -281,6 +283,12 @@ export default class CloudService extends Service<State, ComputedState> {
                         localModel?.remoteFileUrls.map(url => fetch(url, { method: 'DELETE' })) ?? [],
                     );
 
+                    if (localModel) {
+                        const handler = this.handlers.get(localModel.model.static());
+
+                        await handler?.beforeDeletingModel?.(localModel.model);
+                    }
+
                     remoteModel.enableHistory();
                     remoteModel.enableTombstone();
                     await remoteModel.delete();
@@ -408,10 +416,12 @@ export default class CloudService extends Service<State, ComputedState> {
         }
 
         this.setState({
-            localModelUpdates: {
-                ...this.localModelUpdates,
-                [localModel.url]: modelUpdates + 1,
-            },
+            localModelUpdates: localModel.isSoftDeleted()
+                ? objectWithout(this.localModelUpdates, localModel.url)
+                : {
+                    ...this.localModelUpdates,
+                    [localModel.url]: modelUpdates + 1,
+                },
         });
     }
 
