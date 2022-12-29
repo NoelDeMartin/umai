@@ -1,5 +1,6 @@
 import { arr, arrayFilter, isObject, objectWithoutEmpty, silenced, stringMatchAll, tap } from '@noeldemartin/utils';
-import type { JsonLD } from '@noeldemartin/solid-utils';
+import { isJsonLDGraph } from '@noeldemartin/solid-utils';
+import type { JsonLD, JsonLDResource } from '@noeldemartin/solid-utils';
 
 import { translate } from '@/framework/utils/translate';
 
@@ -128,6 +129,25 @@ function parseInstructions(instructions: string): JsonLD | JsonLD[] {
         };
 }
 
+function extractJsonLDResources(html: string): JsonLDResource[] {
+    const jsonLD = stringMatchAll<2>(html, /<script[^>]+type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/gim);
+
+    return arr(jsonLD)
+        .map(([, rawJson]) => JSON.parse(rawJson))
+        .flat()
+        .map(jsonGraph => {
+            if (isJsonLDGraph(jsonGraph)) {
+                return jsonGraph['@graph'].map(recipeJson => tap(recipeJson, () => {
+                    recipeJson['@context'] = jsonGraph['@context'];
+                }));
+            }
+
+            return [jsonGraph];
+        })
+        .flat()
+        .filter(resource => !!resource) as unknown as JsonLDResource[];
+}
+
 export interface WebsiteMetadata {
     url: string;
     title: string;
@@ -136,21 +156,11 @@ export interface WebsiteMetadata {
 }
 
 export async function parseWebsiteRecipes(url: string, html: string): Promise<Recipe[]> {
-    const jsonLD = stringMatchAll<2>(html, /<script[^>]+type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/gim);
-    const recipes = await Promise.all(
-        arr(jsonLD)
-            .map(([, rawJson]) => JSON.parse(rawJson))
-            .flat()
-            .map(recipeJson => {
-                if (!recipeJson) {
-                    return;
-                }
+    const recipes = await Promise.all(extractJsonLDResources(html) .map(jsonld => {
+        reshapeRecipeJsonLD(jsonld);
 
-                reshapeRecipeJsonLD(recipeJson);
-
-                return silenced(Recipe.newFromJsonLD(recipeJson));
-            }),
-    );
+        return silenced(Recipe.newFromJsonLD(jsonld));
+    }));
 
     return arrayFilter(recipes)
         .map(recipe => tap(recipe, () => recipe.setAttribute('externalUrls', [url])));
