@@ -36,22 +36,45 @@ const SPECIAL_QUANTITIES_VALUES: Record<string, string> = Object
     );
 
 const INGREDIENT_UNIT_QUANTITIES: Record<IngredientUnit, Record<string, number>> = {
+    // Some of these conversions depend on the ingredient. For example, a cup of flour
+    // is 125g but a cup of water is 240g. But for now, this is fine because these conversions
+    // are only used for sorting ingredients. If they are used to do actual conversions, this
+    // should be kept in mind.
     [IngredientUnit.Grams]: {
         g: 1,
         grams: 1,
         kg: 1000,
         kilograms: 1000,
-        tsp: 15,
+        cups: 200,
+        lb: 453.5924,
+        pounds: 453.5924,
+        oz: 28.34952,
+        ounces: 28.34952,
+        tsp: 5,
+        tbsp: 15,
+        tbl: 15,
     },
     [IngredientUnit.Milliliters]: {
         ml: 1,
         milliliters: 1,
         l: 1000,
         liters: 1000,
+        pt: 473,
+        pint: 473,
     },
 };
 
 const RENDERED_UNITS: Record<string, string> = {
+    cups: ' cups',
+    grams: ' grams',
+    kilograms: ' kilograms',
+    liters: ' liters',
+    milliliters: ' milliliters',
+    ounces: ' ounces',
+    pint: ' pint',
+    pounds: ' pounds',
+    tbl: ' tbl',
+    tbsp: ' tbsp',
     tsp: ' tsp',
 };
 

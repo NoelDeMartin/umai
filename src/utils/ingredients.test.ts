@@ -71,13 +71,13 @@ describe('Ingredients helpers', () => {
         rendered: 'S&P',
     });
 
-    testParsingIngredients('¼ tsp salt', .5, {
+    testParsingIngredients('¼ tbsp salt', .5, {
         name: 'salt',
-        original: '¼ tsp salt',
+        original: '¼ tbsp salt',
         quantity: 3.75,
         unit: IngredientUnit.Grams,
         unitMultiplier: 15,
-        rendered: '½ tsp salt',
+        rendered: '½ tbsp salt',
     });
 
     it('sorts ingredients', () => {
