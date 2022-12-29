@@ -4,6 +4,7 @@
             <CoreInput
                 initial-focus
                 class="z-10 flex-grow"
+                aria-describedby="input-submit-errors"
                 :color="color"
                 :name="name"
                 :label="label"
@@ -21,7 +22,7 @@
                 <slot />
             </CoreButton>
         </div>
-        <CoreFormErrors class="mt-2" />
+        <CoreFormErrors id="input-submit-errors" class="mt-2" />
     </div>
 </template>
 
