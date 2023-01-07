@@ -23,7 +23,7 @@
   "dependencies": {
     "@headlessui/vue": "^1.7.3",
     "@inrupt/solid-client-authn-browser": "^1.11.6",
-    "@noeldemartin/solid-utils": "^0.1.1-next.8987fd38d01bd74fdde315a5f60c5f95f5183cd2",
+    "@noeldemartin/solid-utils": "^0.1.1-next.03a73b36b7695e277f0298e6355fc1c99c8d0b2b",
     "@noeldemartin/utils": "^0.2.1-next.7d32c439e6acbc41e04b3b3f3501c3c172cd455b",
     "@sentry/browser": "^7.14.2",
     "@tailwindcss/forms": "^0.4.0",
@@ -36,7 +36,7 @@
     "jsoneditor": "^9.9.2",
     "marked": "^4.0.12",
     "soukai": "^0.4.1-next.28afa17749b2c24395064a670c5d3fda7665b3b7",
-    "soukai-solid": "^0.4.1-next.08cd00e9cf25034d95df8347a592aaa337f564e8",
+    "soukai-solid": "^0.4.1-next.6c80cee19f5c2f0bdeb49cdc62778bfb00774c51",
     "tailwindcss": "^3.1.4",
     "vue": "^3.2.45",
     "vue-i18n": "^9.2.2",

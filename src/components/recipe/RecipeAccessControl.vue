@@ -92,10 +92,11 @@
 import IconViewHide from '~icons/zondicons/view-hide';
 import IconViewShow from '~icons/zondicons/view-show';
 import { markRaw, onMounted, watchEffect } from 'vue';
-import { SolidDocumentPermission } from '@noeldemartin/solid-utils';
+import { SolidDocumentPermission, UnsupportedAuthorizationProtocolError } from '@noeldemartin/solid-utils';
 import type { Component } from 'vue';
 
 import Auth from '@/framework/core/facades/Auth';
+import UI from '@/framework/core/facades/UI';
 import { requiredObjectProp } from '@/framework/utils/vue';
 import { translate } from '@/framework/utils/translate';
 
@@ -173,6 +174,12 @@ async function updatePermissions(newProfile: AccessControlProfile) {
 
         profile = newProfile;
     } catch (e) {
+        if (e instanceof UnsupportedAuthorizationProtocolError) {
+            handleUnsupportedProtocolError(e);
+
+            return;
+        }
+
         error = e as Error;
     } finally {
         updatingPermissions = false;
@@ -198,6 +205,25 @@ function updateOptionsPosition(buttonElement: HTMLElement) {
         top: buttonBoundingRect.bottom,
         right: window.innerWidth - buttonBoundingRect.right,
     };
+}
+
+function handleUnsupportedProtocolError(error: UnsupportedAuthorizationProtocolError) {
+    UI.alert(
+        translate('recipes.accessControl.unsupportedProtocol_title', {
+            protocol: error.protocol,
+        }),
+        translate('recipes.accessControl.unsupportedProtocol_message', {
+            instructions: getUnsupportedProtocolInstructions(error),
+        }),
+    );
+}
+
+function getUnsupportedProtocolInstructions(error: UnsupportedAuthorizationProtocolError) {
+    if (error.url.includes('inrupt.com')) {
+        return translate('recipes.accessControl.unsupportedProtocol_inruptInstructions');
+    }
+
+    return null;
 }
 
 watchEffect(() => button && updateOptionsPosition(button.el));

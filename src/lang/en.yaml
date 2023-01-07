@@ -304,6 +304,14 @@ recipes:
     error: something went wrong
     warning_private: This recipe is private, remember to make it public before sharing it with someone else.
     warning_unknown: Before sharing a recipe, make sure that it isn't private. You'll need to reconnect in order to view the permissions.
+    unsupportedProtocol_title: Unsupported Protocol ({protocol})
+    unsupportedProtocol_message: |
+      This recipe is using an unsupported authorization protocol. For now, you'll have to use a different application to manage recipe permissions.
+
+      {instructions}
+
+      [learn more](https://github.com/NoelDeMartin/umai/issues/3)
+    unsupportedProtocol_inruptInstructions: Are you using `inrupt.com`? You can try updating the permissions using [podbrowser.inrupt.com](https://podbrowser.inrupt.com).
 
   new:
     title: Add a new recipe
