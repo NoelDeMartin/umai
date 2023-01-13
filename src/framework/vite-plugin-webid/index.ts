@@ -24,7 +24,7 @@ function generateWebId(options: WebIdOptions): string {
 
     return JSON.stringify({
         '@context': ['https://www.w3.org/ns/solid/oidc-context.jsonld'],
-        'client_id': `${domain}webid.json`,
+        'client_id': `${domain}webid.jsonld`,
         'client_name': options.name,
         'redirect_uris': [domain],
         'client_uri': domain,
@@ -45,7 +45,7 @@ export function VitePluginWebId(options: WebIdOptions): Plugin {
             });
 
             server.middlewares.use((req, res, next) => {
-                if (!req.url?.endsWith('/webid.json')) {
+                if (!req.url?.endsWith('/webid.jsonld')) {
                     next();
 
                     return;
@@ -63,11 +63,11 @@ export function VitePluginWebId(options: WebIdOptions): Plugin {
             });
         },
         generateBundle(_, bundle) {
-            bundle['webid.json'] = {
+            bundle['webid.jsonld'] = {
                 isAsset: true,
                 type: 'asset',
                 name: undefined,
-                fileName: 'webid.json',
+                fileName: 'webid.jsonld',
                 source: generateWebId(options),
             };
         },
@@ -85,7 +85,7 @@ export function VitePluginWebId(options: WebIdOptions): Plugin {
 
             const domain = normalizeDomain(serverDomain ?? options.domain);
             const webId: WebId = {
-                clientId: `${domain}webid.json`,
+                clientId: `${domain}webid.jsonld`,
                 clientName: options.name,
                 redirectUrl: domain,
             };
