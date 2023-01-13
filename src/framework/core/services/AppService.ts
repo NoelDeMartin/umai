@@ -8,6 +8,9 @@ import type { IService } from '@/framework/core/Service';
 
 import Cookbook from '@/services/facades/Cookbook';
 
+import webId from 'virtual:webid';
+import type { WebId } from 'virtual:webid';
+
 interface State {
     isMounted: boolean;
     isOnboarding: boolean;
@@ -24,6 +27,10 @@ export default class AppService extends Service<State> {
     public version: string = '';
     public versionName: string = '';
     public releaseNotesUrl: string = '';
+
+    public get webId(): WebId {
+        return webId;
+    }
 
     public env<T = unknown>(property: string): T {
         return import.meta.env[`VITE_${property}`] as unknown as T;

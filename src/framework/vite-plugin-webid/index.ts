@@ -8,8 +8,16 @@ interface WebIdOptions {
     logoPublicPath: string;
 }
 
+function normalizeDomain(domain: string): string {
+    if (domain.endsWith('/')) {
+        return domain;
+    }
+
+    return `${domain}/`;
+}
+
 function generateWebId(options: WebIdOptions): string {
-    const domain = options.domain.endsWith('/') ? options.domain : `${options.domain}/`;
+    const domain = normalizeDomain(options.domain);
     const logoPublicPath = options.logoPublicPath.startsWith('/')
         ? options.logoPublicPath.slice(1)
         : options.logoPublicPath;
@@ -75,7 +83,7 @@ export function VitePluginWebId(options: WebIdOptions): Plugin {
                 return;
             }
 
-            const domain = serverDomain ?? options.domain;
+            const domain = normalizeDomain(serverDomain ?? options.domain);
             const webId: WebId = {
                 clientId: `${domain}webid.json`,
                 clientName: options.name,
