@@ -23,14 +23,15 @@ function generateWebId(options: WebIdOptions): string {
         : options.logoPublicPath;
 
     return JSON.stringify({
-        '@context': ['https://www.w3.org/ns/solid/oidc-context.jsonld'],
+        '@context': 'https://www.w3.org/ns/solid/oidc-context.jsonld',
         'client_id': `${domain}webid.jsonld`,
         'client_name': options.name,
         'redirect_uris': [domain],
         'client_uri': domain,
         'logo_uri': domain + logoPublicPath,
         'scope': 'openid profile offline_access webid',
-        'grant_types': ['refresh_token','authorization_code'],
+        'grant_types': ['refresh_token', 'authorization_code'],
+        'response_types': ['code'],
     });
 }
 
