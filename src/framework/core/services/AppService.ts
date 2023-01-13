@@ -16,7 +16,6 @@ interface State {
 
 export default class AppService extends Service<State> {
 
-    public name: string = 'Solid App';
     public isDevelopment: boolean = false;
     public isProduction: boolean = false;
     public isStaging: boolean = false;

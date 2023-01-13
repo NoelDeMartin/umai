@@ -3,7 +3,6 @@ import { after, tap } from '@noeldemartin/utils';
 import type { Component, Directive, Plugin, App as VueApp } from 'vue';
 import type { RouteRecordRaw } from 'vue-router';
 
-import App from '@/framework/core/facades/App';
 import getBasePlugins from '@/framework/plugins';
 import baseComponents from '@/framework/components/headless';
 import baseDirectives from '@/framework/directives';
@@ -56,7 +55,6 @@ declare module '@/framework/core/services/EventsService' {
 }
 
 export type BootstrapApplicationOptions = Partial<{
-    name: string;
     selector: string;
     plugins: Plugin[];
     components: Record<string, Component>;
@@ -84,7 +82,6 @@ export async function bootstrapApplication(
     const services = { ...baseServices, ...(options.services ?? {}) };
     const authenticators = { ...baseAuthenticators, ...(options.authenticators ?? {}) };
 
-    App.name = options.name ?? App.name;
     app.config.errorHandler = errorHandler;
 
     plugins.forEach(plugin => app.use(plugin));

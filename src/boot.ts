@@ -14,7 +14,6 @@ interface BootOptions {
 
 export default async function boot({ beforeMount }: Partial<BootOptions> = {}): Promise<void> {
     await bootstrapApplication(App, {
-        name: 'Umai',
         plugins,
         services,
         routes,

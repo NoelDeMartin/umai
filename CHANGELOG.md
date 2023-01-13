@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Added
 
 - Recipes auto-linking. When a recipe is linked using a known url in description, ingredients, or instructions, the navigation will be captured for client-side routing.
+- Application [WebId](https://solid.github.io/solid-oidc/#clientids).
 
 ## [v0.1.0-beta.4](https://github.com/NoelDeMartin/umai/releases/tag/v0.1.0-beta.4) - 2022-11-18
 
