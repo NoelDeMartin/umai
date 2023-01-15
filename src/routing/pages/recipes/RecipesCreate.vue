@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { getLocationQueryParameter, hasLocationQueryParameter, urlParse } from '@noeldemartin/utils';
+import { arrayUnique, getLocationQueryParameter, hasLocationQueryParameter, urlParse } from '@noeldemartin/utils';
 import { onMounted } from 'vue';
 
 import App from '@/framework/core/facades/App';
@@ -74,7 +74,7 @@ onMounted(async () => {
         recipe = websiteRecipes[0] ?? new Recipe({
             name: websiteMetadata.title,
             description: websiteMetadata.description,
-            imageUrls: websiteMetadata.imageUrls,
+            imageUrls: websiteMetadata.imageUrls && arrayUnique(websiteMetadata.imageUrls),
             externalUrls: [websiteMetadata.url],
         });
     } catch (error) {

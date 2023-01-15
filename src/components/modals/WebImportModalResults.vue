@@ -38,6 +38,7 @@
 
 <script setup lang="ts">
 import Router from '@/framework/core/facades/Router';
+import { arrayUnique } from '@noeldemartin/utils';
 import { injectOrFail, requiredArrayProp, requiredObjectProp } from '@/framework/utils/vue';
 import { reactiveForm } from '@/framework/forms';
 
@@ -60,7 +61,7 @@ const selectedRecipe = $ref<Recipe | null>(null);
 const metadataRecipe = $computed(() => new Recipe({
     name: metadata.title,
     description: metadata.description,
-    imageUrls: metadata.imageUrls,
+    imageUrls: metadata.imageUrls && arrayUnique(metadata.imageUrls),
     externalUrls: [metadata.url],
 }));
 

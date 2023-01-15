@@ -433,8 +433,8 @@ function getUpdatedRecipe() {
         servings: form.servings || null,
         prepTime: formatDuration(form.prepTime) || null,
         cookTime: formatDuration(form.cookTime) || null,
-        ingredients: arrayFilter(form.ingredients.map(({ value }) => value)),
-        externalUrls: arrayFilter(form.externalUrls.map(({ value }) => value)),
+        ingredients: arrayUnique(arrayFilter(form.ingredients.map(({ value }) => value))),
+        externalUrls: arrayUnique(arrayFilter(form.externalUrls.map(({ value }) => value))),
     };
 
     return recipe
@@ -504,7 +504,7 @@ async function updateRecipeImage(recipe: Recipe) {
             Cloud.enqueueFileUpload(persistentImageUrl);
         }
 
-        recipe.imageUrls = [persistentImageUrl, ...recipe.imageUrls?.slice(1)];
+        recipe.imageUrls = arrayUnique([persistentImageUrl, ...recipe.imageUrls?.slice(1)]);
 
         return;
     }

@@ -58,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import { tap } from '@noeldemartin/utils';
+import { arrayUnique, tap } from '@noeldemartin/utils';
 
 import Browser from '@/framework/core/facades/Browser';
 import Cloud from '@/framework/core/facades/Cloud';
@@ -101,7 +101,7 @@ async function importRecipe(): Promise<void> {
     const remoteRecipe = tap(Viewer.recipe.clone(), recipe => recipe.unloadRelation('lists'));
     const recipe = await Recipe.newFromJsonLD(remoteRecipe.toExternalJsonLD({ includeIds: false }));
 
-    recipe.externalUrls = [...recipe.externalUrls, remoteRecipe.url];
+    recipe.externalUrls = arrayUnique([...recipe.externalUrls, remoteRecipe.url]);
 
     await recipe.save();
     await Router.push({ name: 'home' });

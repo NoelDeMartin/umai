@@ -1,6 +1,7 @@
 import {
     PromisedValue,
     arr,
+    arrayUnique,
     isObject,
     range,
     requireUrlParentDirectory,
@@ -126,7 +127,7 @@ export default class CookbookService extends Service<State, ComputedState> {
         if (publish && !publicRecipesList.has(recipe)) {
             publicRecipesList.relatedItems.attach({ recipeUrl: recipe.url });
 
-            recipe.listUrls = [...recipe.listUrls, publicRecipesList.url];
+            recipe.listUrls = arrayUnique([...recipe.listUrls, publicRecipesList.url]);
         }
 
         if (!publish && publicRecipesList.has(recipe)) {
