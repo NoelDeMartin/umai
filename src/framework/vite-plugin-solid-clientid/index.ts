@@ -1,30 +1,22 @@
 import type { Plugin } from 'vite';
 
-import type { WebId } from 'virtual:webid';
+import type { ClientIDDocument } from 'virtual:solid-clientid';
 
-interface WebIdOptions {
+interface VitePluginSolidClientIDOptions {
     name: string;
     domain: string;
     logoPublicPath: string;
 }
 
-function normalizeDomain(domain: string): string {
-    if (domain.endsWith('/')) {
-        return domain;
-    }
-
-    return `${domain}/`;
-}
-
-function generateWebId(options: WebIdOptions): string {
-    const domain = normalizeDomain(options.domain);
+function generateClientID(options: VitePluginSolidClientIDOptions): ClientIDDocument {
+    const domain = options.domain.endsWith('/') ? options.domain : `${options.domain}/`;
     const logoPublicPath = options.logoPublicPath.startsWith('/')
         ? options.logoPublicPath.slice(1)
         : options.logoPublicPath;
 
-    return JSON.stringify({
+    return {
         '@context': 'https://www.w3.org/ns/solid/oidc-context.jsonld',
-        'client_id': `${domain}webid.jsonld`,
+        'client_id': `${domain}clientid.jsonld`,
         'client_name': options.name,
         'redirect_uris': [domain],
         'client_uri': domain,
@@ -32,66 +24,58 @@ function generateWebId(options: WebIdOptions): string {
         'scope': 'openid profile offline_access webid',
         'grant_types': ['refresh_token', 'authorization_code'],
         'response_types': ['code'],
-    });
+    };
 }
 
-export function VitePluginWebId(options: WebIdOptions): Plugin {
+export function VitePluginSolidClientID(options: VitePluginSolidClientIDOptions): Plugin {
     let serverDomain: string | null;
+    const devOptions = (): VitePluginSolidClientIDOptions => ({
+        ...options,
+        domain: serverDomain ?? options.domain,
+    });
 
     return {
-        name: 'vite-plugin-webid',
+        name: 'vite-plugin-solid-clientid',
         configureServer(server) {
             server.watcher.on('ready', () => {
                 serverDomain = server.resolvedUrls?.local?.[0] ?? null;
             });
 
             server.middlewares.use((req, res, next) => {
-                if (!req.url?.endsWith('/webid.jsonld')) {
+                if (!req.url?.endsWith('/clientid.jsonld')) {
                     next();
 
                     return;
                 }
 
-                const devOptions: WebIdOptions = {
-                    ...options,
-                    domain: serverDomain ?? options.domain,
-                };
-
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/ld+json');
-                res.write(generateWebId(devOptions), 'utf-8');
+                res.write(JSON.stringify(generateClientID(devOptions())), 'utf-8');
                 res.end();
             });
         },
         generateBundle(_, bundle) {
-            bundle['webid.jsonld'] = {
+            bundle['clientid.jsonld'] = {
                 isAsset: true,
                 type: 'asset',
                 name: undefined,
-                fileName: 'webid.jsonld',
-                source: generateWebId(options),
+                fileName: 'clientid.jsonld',
+                source: JSON.stringify(generateClientID(options)),
             };
         },
         resolveId(id) {
-            if (id !== 'virtual:webid') {
+            if (id !== 'virtual:solid-clientid') {
                 return;
             }
 
             return id;
         },
         load(id) {
-            if (id !== 'virtual:webid') {
+            if (id !== 'virtual:solid-clientid') {
                 return;
             }
 
-            const domain = normalizeDomain(serverDomain ?? options.domain);
-            const webId: WebId = {
-                clientId: `${domain}webid.jsonld`,
-                clientName: options.name,
-                redirectUrl: domain,
-            };
-
-            return `export default ${JSON.stringify(webId)};`;
+            return `export default ${JSON.stringify(generateClientID(devOptions()))};`;
         },
     };
 }

@@ -19,15 +19,13 @@ export default class InruptAuthenticator extends Authenticator {
     private _handleIncomingRedirect!: typeof handleIncomingRedirect;
 
     public async login(loginUrl: string): Promise<AuthSession> {
-        const webId = App.webId;
-
         Storage.set<boolean>(STORAGE_KEY, true);
 
         await this._login({
             oidcIssuer: loginUrl,
-            clientId: webId.clientId,
-            clientName: webId.clientName,
-            redirectUrl: webId.redirectUrl,
+            clientId: App.clientID.client_id,
+            clientName: App.clientID.client_name,
+            redirectUrl: App.clientID.redirect_uris[0],
         });
 
         // Browser should redirect, so just make it wait for a while.

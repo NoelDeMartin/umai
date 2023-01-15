@@ -8,8 +8,8 @@ import type { IService } from '@/framework/core/Service';
 
 import Cookbook from '@/services/facades/Cookbook';
 
-import webId from 'virtual:webid';
-import type { WebId } from 'virtual:webid';
+import clientID from 'virtual:solid-clientid';
+import type { ClientIDDocument } from 'virtual:solid-clientid';
 
 interface State {
     isMounted: boolean;
@@ -28,8 +28,8 @@ export default class AppService extends Service<State> {
     public versionName: string = '';
     public releaseNotesUrl: string = '';
 
-    public get webId(): WebId {
-        return webId;
+    public get clientID(): ClientIDDocument {
+        return clientID;
     }
 
     public env<T = unknown>(property: string): T {

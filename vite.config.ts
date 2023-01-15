@@ -11,7 +11,7 @@ import { resolve } from 'path';
 import { VitePWA } from 'vite-plugin-pwa';
 
 import packageJson from './package.json';
-import { VitePluginWebId } from './src/framework/vite-plugin-webid';
+import { VitePluginSolidClientID } from './src/framework/vite-plugin-solid-clientid';
 
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, process.cwd());
@@ -46,7 +46,7 @@ export default defineConfig(({ mode }) => {
                     ],
                 },
             }),
-            VitePluginWebId({
+            VitePluginSolidClientID({
                 name: 'Umai',
                 logoPublicPath: '/android-chrome-512x512.png',
                 domain,
