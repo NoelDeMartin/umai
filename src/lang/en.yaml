@@ -3,7 +3,7 @@ cloud:
     online: online
     online_description: You are logged in as <a href="{url}" target="blank">{name}</a>
     offline: offline
-    offline_description: You are not online.
+    offline_description: You are offline.
     disconnected: disconnected
     syncing: syncing
     syncing_description: Syncing in progress...
@@ -23,20 +23,18 @@ cloud:
 
   login:
     title: Connect to cloud
-    info: |
-      You can keep your data safe across devices with a
-      <CoreLink url="https://solidproject.org" color="brand-solid">Solid account</CoreLink>, use the input below to log in.
+    info: You can keep your data safe across devices with a <CoreLink url="https://solidproject.org" color="brand-solid">Solid account</CoreLink>, use the input below to log in.
     info_reconnect: 'Syncing is up to date, reconnect to `{url}` to get new changes. | There is one pending update, reconnect to `{url}` to synchronize. | There are {n} pending updates, reconnect to `{url}` to synchronize.'
     info_authError: |
       There was a problem connecting to `{url}`.
 
       [view error details](action:view-error-details)
     url: Login url
-    url_placeholder: webId or issue provider
+    url_placeholder: webId or identity provider
     dismiss: No thanks, I want to keep my data offline
     submit: Log in
     loading: Connecting to your Solid POD...
-    stale: This is taking too long, maybe try [reloading the page](action:reload) to start again.
+    stale: This is taking too long, maybe try [reloading the page](action:reload) to try again.
 
   logout: Log out
 
@@ -47,7 +45,7 @@ settings:
   animations: Animations
   animations_description: Animations are cool, but it's also cool to have a long battery life. If you want to save battery or your device is struggling to keep up, turn off the animations for a simpler experience.
   errorReporting: Error reporting
-  errorReporting_description: If you are experiencing errors, you can turn on error reporting to send them to [Sentry](https://sentry.io/). Make sure that trackers are not blocking the reports. If things are so bad that you can't even get to this setting, you can always force error reporting appending `?errorReporting=true` in the address bar.
+  errorReporting_description: If you are experiencing errors, you can turn on error reporting to send them to [Sentry](https://sentry.io/). Make sure that browser extensions are not blocking the reports. If things are so bad that you can't even get to this setting, you can always force error reporting appending `?errorReporting=true` in the address bar.
   proxy: Use a proxy when importing from the web
   proxy_description: |
     Whenever you try to import recipes from other websites, you will need a proxy or you will run into
@@ -63,8 +61,8 @@ webImport:
 
     If don't know where to start, just open your favorite search engine and type away! Even if the website you find doesn't
     look like a recipe, give it a try. You may be surprised to see what you get.
-  url_label: Website URL
-  url_placeholder: Website URL
+  url_label: Website url
+  url_placeholder: Website url
   useProxy: "Use a proxy:"
   useProxy_urlLabel: Proxy url
   useProxy_help: what does this mean?
@@ -102,8 +100,7 @@ webImport:
   success_recipes: Recipes
   success_infoSingle: We've found the recipe!
   success_infoMultiple: We've found more than one recipe, which do you want to import?
-  success_infoFallback: |
-    We couldn't find a recipe in this website, but you can still add this recipe to your cookbook and fill the information that's missing by hand.
+  success_infoFallback: We couldn't find a recipe in this website, but you can still add this recipe to your cookbook and fill the information that's missing by hand.
   success_import: Import to my cookbook
 
 webImportHtml:
@@ -144,7 +141,7 @@ footer:
 home:
 
   onboarding:
-    welcome: With {umai}, you'll be able to manage all your recipes and share them with others. Take control of your diet, and start your culinary adventure!
+    welcome: With {umai} you'll be able to manage and share all your precious recipes, start now your culinary adventure!
     umai_title: Umai (うまい) means "delicious" in Japanese 😋
     getStarted: How would you like to begin?
     createRecipe: Create your first recipe
@@ -159,7 +156,7 @@ home:
     whatIsSolid: What is Solid?
     whatIsSolid_title: What is Solid?
     whatIsSolid_content: |
-      Solid is a decentralized storage protocol built on top of web standards. If you want to use this app across devices, you can use Solid to keep changes in sync. Even if you use it in a single device, this will also keep your recipes secure in case your device is lost. It is also useful to share recipes with others.
+      Solid is a decentralized storage protocol built on top of web standards. If you want to use this app across devices, you can use Solid to keep changes in sync. Even if you use it in a single device, this will also keep your recipes secure in case your device is lost. It is also useful to share recipes with others online.
 
       In any case, Umai works 100% offline and you can connect your Solid POD later on. If you've never heard of Solid and you're just trying things out, you don't need to know anything about it.
 
@@ -176,12 +173,12 @@ home:
     help: What will this do?
     help_detailsTitle: Creating a cookbook
     help_detailsContent: |
-      This will create a container and register it into your [private type index](https://github.com/solid/webid-profile/blob/main/notes/typeIndex.md).
+      This will create a container and register it into your [private type index](https://solid.github.io/type-indexes/).
 
       If you don't want to do this, you can create a container yourself (or use an existing one) and register it into the type index as a container for `https://schema.org/Recipe`
       resources.
 
-      If you're feeling adventurous, you're also welcome to look at the [source code](https://github.com/NoelDeMartin/umai/blob/main/src/services/CookbookService.ts#L46) to see how
+      If you're feeling adventurous, you're also welcome to look at the [source code](https://github.com/NoelDeMartin/umai/blob/main/src/services/CookbookService.ts) to see how
       this app does it.
     submit: Continue
     processing: Your cookbook is being created at<br>`{url}`...
@@ -280,7 +277,7 @@ recipes:
   externalUrls_set: Add urls
   externalUrl_add: Add url
   externalUrl_label: "Recipe url #:position"
-  externalUrl_placeholder: http://...
+  externalUrl_placeholder: https://...
   externalUrl_remove: Remove url
   externalUrl_remove_a11y: Remove {url}
 
@@ -302,9 +299,9 @@ recipes:
     loading: loading permissions
     updating: updating permissions
     error: something went wrong
-    warning_private: This recipe is private, remember to make it public before sharing it with someone else.
+    warning_private: This recipe is private, remember to make it public before sharing the link with someone else.
     warning_unknown: Before sharing a recipe, make sure that it isn't private. You'll need to reconnect in order to view the permissions.
-    unsupportedProtocol_title: Unsupported Protocol ({protocol})
+    unsupportedProtocol_title: Unsupported protocol ({protocol})
     unsupportedProtocol_message: |
       This recipe is using an unsupported authorization protocol. For now, you'll have to use a different application to manage recipe permissions.
 
@@ -337,14 +334,14 @@ startupCrash:
 
 viewer:
   form:
-    title: Recipes Viewer
+    title: Recipes viewer
     description: |
       In this page, you can explore recipes that someone shared with you.
 
       However, keep in mind that this only works for recipes stored in a <CoreLink color="brand-solid" url="https://solidproject.org/">Solid POD</CoreLink>.
       If you don't have one, or you don't even know what that is, just [head back home](/)
       and you'll be able to import any recipes from the Web.
-    urlLabel: Solid document URL
+    urlLabel: Solid document url
     urlPlaceholder: https://...
     searching: Searching recipes...
     notFound: We couldn't find a recipe at `{url}`.
@@ -358,7 +355,7 @@ viewer:
     import: Save in my cookbook
     creatorPrefix: Recipe created by
     viewAll: View all their recipes
-    inCookbook: View in your cookbook
+    inCookbook: Open in your cookbook
 
 history:
   title: "{recipe}'s history"
@@ -405,12 +402,12 @@ errors:
   viewSentryId: View report ID
   reportToSentrySuccess: "Error reported to Sentry.io: {sentryId}"
   reportToSentryFailed: Could not report the error to Sentry.io, look at the console for more details
-  viewSentryIdSuccess: "Sentry.io OD: {sentryId}"
+  viewSentryIdSuccess: "Sentry.io ID: {sentryId}"
   inspectInConsole: Inspect in console
   addedToConsole: You can now use the **error** variable in the console
   copyToClipboard: Copy to clipboard
   copiedToClipboard: Debug information copied to clipboard
-  reportToGithub: Report in Github
+  reportToGithub: Report in GitHub
   githubIssueBody: |
     [Please, explain here what you were trying to do when this error appeared]
 

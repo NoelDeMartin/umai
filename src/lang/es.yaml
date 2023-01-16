@@ -1,8 +1,399 @@
+cloud:
+  statuses:
+    online: online
+    online_description: Estás conectado como <a href="{url}" target="blank">{name}</a>
+    offline: offline
+    offline_description: Sin internet.
+    disconnected: desconectado
+    syncing: sincronizando
+    syncing_description: Sincronizando datos...
+    authError_description: Ha surgido un problema conectando al servidor de autenticación
+
+  advancedOptions: Opciones avanzadas
+
+  sync_now: Sincronizar ahora
+  sync_onStartup: Sincroniza al entrar
+  sync_onInterval: Sincroniza cada X minutos
+
+  reconnect_now: Reconectar
+  reconnect_onStartup: Reconectar al entrar
+
+  pendingUpdates_a11y: 'Datos sincronizados | Hay un cambio pendiente de actualizar | Hay {n} cambios pendientes de actualizar'
+  manyPendingUpdates_a11y: Hay varios cambios pendientes de actualizar
+
+  login:
+    title: Conectar a la nube
+    info: Puedes sincronizar los datos entre dispositivos y mantenerlos seguros con una <CoreLink url="https://solidproject.org" color="brand-solid">cuenta de Solid</CoreLink>, utiliza el formulario a continuación para entrar.
+    info_reconnect: 'Datos sincronizados, reconecta con `{url}` para obtener nuevas actualizaciones. | Hay un cambio pendiente, reconecta con `{url}` para sincronizar. | Hay {n} cambios pendientes, reconecta con `{url}` para sincronizar.'
+    info_authError: |
+      Ha surgido un problema conectando con `{url}`.
+
+      [ver error](action:view-error-details)
+    url: Url para entrar
+    url_placeholder: webId o proveedor de identidad
+    dismiss: No gracias, prefiero mantener mis datos offline
+    submit: Conectar
+    loading: Conectando a tu Solid POD...
+    stale: Esto está tardando demasiado, quizás deberías [recargar la página](action:reload) para volver a intentarlo.
+
+  logout: Desconectar
+
+settings:
+  title: Configuración
+  language: Idioma
+  language_description: ¿No encuentras tu idioma? [¡Aporta tu traducción!](https://github.com/NoelDeMartin/umai/blob/main/docs/contribute-translations.md)
+  animations: Animaciones
+  animations_description: Las animaciones molan, pero también mola tener batería. Si quieres conservar batería o tu dispositivo va lento, puedes desactivar las animaciones para tener mejor rendimiento.
+  errorReporting: Reportación de errores
+  errorReporting_description: Si estás encontrando errores, puedes activar la reportación de errores para enviarlos a [Sentry](https://sentry.io/). Asegúrate que las peticiones no se están bloqueando con extensiones de tu navegador. Si los errores son tan graves que no puedes llegar a esta pantalla, siempre puedes añadir `?errorReporting=true` en la url antes de entrar a la aplicación.
+  proxy: Utiliza un proxy para importar de otras páginas
+  proxy_description: |
+    Cuando intentas importar recetas desde otras páginas, es necesario utilizar un proxy para evitar problemas de
+    [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing). La aplicación ya viene con un proxy por defecto,
+    pero también puedes [configurar el tuyo](https://github.com/NoelDeMartin/umai/blob/main/docs/using-a-proxy.md).
+  proxyUrl: Url del proxy
+
+webImport:
+  title: Importa recetas
+  info: |
+    Si encuentras alguna receta online que quieres guardar en tu libro de recetas, copia la url a continuación. Buscaremos en
+    la página para encontrar la información importante como instrucciones e ingredientes.
+
+    ¡Si no sabes por dónde empezar, abre tu buscador favorito y empieza a escribir! Incluso si la página que encuentras no parece
+    una receta, prueba igualmente. Quizás funciona mejor de lo que esperas.
+  url_label: Url de la página
+  url_placeholder: Url de la página
+  useProxy: "Utiliza un proxy:"
+  useProxy_urlLabel: Url del proxy
+  useProxy_help: ¿Qué significa esto?
+  useProxy_helpTitle: Utilizando un proxy
+  useProxy_helpContent: |
+    Esta aplicación funciona completamente en tu navegador, así que necesita utilizar un proxy para leer contenido de
+    otras páginas o podría encontrar problemas de [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing).
+
+    Si quieres, puedes intentar importar recetas sin usar un proxy, pero en caso de que no funcione tendrás que copiar y
+    pegar el HTML de la página.
+
+    [aprende más](https://github.com/NoelDeMartin/umai/blob/main/docs/using-a-proxy.md)
+  submit: Escanear
+  scanning: Buscando recetas...
+  defaultWebsiteTitle: Desconocido
+  advancedOptions: Opciones avanzadas
+
+  error_title: ¡Oops! No ha funcionado
+  error_info: |
+    No ha sido posible obtener el contenido de `{url}`
+
+    Si esto ha sido un error temporal, vuelve a intentarlo.
+    También puedes ver los [detalles del error](action:view-error-details).
+  error_tooManyRequests: |
+    El proxy en `{proxyUrl}` se está negando a leer la página porque está recibiendo
+    demasiadas peticiones. Vuelve a probar más tarde o prueba con otro proxy.
+
+    Puedes configurar el proxy en opciones avanzadas, o también puedes ver los
+    [detalles del error](action:view-error-details).
+  error_submit: Volver a intentar
+  error_html: o [prueba a copias y pegar el HTML](action:open-html-form)
+
+  success_title: Importa recetas
+  success_recipes: Recetas
+  success_infoSingle: ¡Hemos encontrado la receta!
+  success_infoMultiple: Hemos encontrado más de una receta, ¿cuál quieres importar?
+  success_infoFallback: No hemos podido encontrar una receta en esta página, pero puedes añadir esta receta igualmente y rellenar la información que falte de forma manual.
+  success_import: Importar al libro de recetas
+
+webImportHtml:
+  title: Copia y pegar HTML
+  info: |
+    Si estás teniendo problemas para leer el contenido de otra página, prueba a copiar y pegar el HTML a continuación.
+
+    Si no sabes cómo hacerlo, prueba visitando esta url:
+  placeholder: Pega el HTML de la página aquí
+  label: HTML de la página
+  submit: Escanear HTML
+
+menu:
+  open: Abrir menú de usuario
+  logIn: Entrar
+  logOut: Salir
+  logOut_confirmTitle: ¿Estás seguro?
+  logOut_confirmMessage: Si sales perderás todas las recetas en este dispositivo, pero seguirán estando en tu Solid POD.
+  logOut_confirmMessageWithWarning: |
+    Si sales perderás todas las recetas en este dispositivo, ¿quieres continuar?
+
+    ⚠️ **Hay cambios locales que no se han sincronizado y se perderán.**
+  settings: Configuración
+  back: volver al libro de recetas
+
+footer:
+  about: sobre la app
+  about_title: Sobre la app
+  about_content: |
+    Desarrollo y mantenimiento por [Noel De Martin](https://noeldemartin.com).
+
+    Esta aplicación es código abierto y se aceptan contribuciones, encuentra el código fuente en [github]({ sourceUrl }).
+  source: código fuente
+  source_title: Ver código fuente de la aplicación
+  version_title: Ver notas de esta versión
+
 home:
 
   onboarding:
     welcome: Con {umai}, podrás guardar todas tus recetas y compartirlas con otros. ¡Toma las riendas de tu dieta, y empieza tu aventura culinaria!
     umai_title: Umai (うまい) significa "delicioso" en Japonés 😋
+    getStarted: ¿Cómo quieres empezar?
+    createRecipe: Crea tu primera receta
+    createRecipe_info: ¿Cómo quieres crear tu receta?
+    loginWithSolid: Conecta con tu Solid POD
+    loginWithSolid_info: Puedes conectar con tu Solid POD introduciendo tu webId o proveedor de identidad a continuación. Si no tienes uno, aprende cómo conseguirlo en <CoreLink url="https://solidproject.org/users/get-a-pod" color="brand-solid">solidproject.org</CoreLink>.
+    loginWithSolid_label: Url para entrar
+    loginWithSolid_placeholder: webId o proveedor de identidad
+    loginWithSolid_loading: Conectando con tu Solid POD...
+    loginWithSolid_stale: Esto está tardando demasiado, quizás prueba a [recargar la página](action:reload) para volver a empezar.
+    loginWithSolid_submit: Entrar
+    whatIsSolid: ¿Qué es Solid?
+    whatIsSolid_title: ¿Qué es Solid?
+    whatIsSolid_content: |
+      Solid es un protocolo de almacenamiento descentralizado que utiliza estándares web. Si quieres utilizar esta aplicación en diferentes dispositivos, puedes utilizar Solid para sincronizar los cambios. Incluso si utilizas un solo dispositivo, esto mantendrá tus recetas seguras en caso de que lo pierdas. También te servirá para compartir recetas con otros online.
+
+      De todas maneras, Umai funciona 100% offline y puedes conectar con tu Solid POD más adelante. Si es la primera vez que oyes hablar de Solid y solo estás probando la aplicación, no es necesario que lo conozcas.
+
+      <CoreLink url="https://solidproject.org" color="brand-solid" class="text-sm">aprende más</CoreLink>
+    back: Volver atrás
+
+  createCookbook:
+    title: Crea tu libro de recetas
+    message: Tenemos que crear un lugar para guardar recetas en tu Solid POD.
+    advancedOptions: Opciones avanzadas
+    nameLabel: "Nombre:"
+    storageUrlLabel: "Localización:"
+    urlPreview: La url para el nuevo contenedor será `{url}`.
+    help: ¿Qué hará esto?
+    help_detailsTitle: Creando un libro de recetas
+    help_detailsContent: |
+      Esto creará un contenedor y lo registrará en tu [type index privado](https://solid.github.io/type-indexes/).
+
+      Si no quieres hacerlo, puedes crear un contenedor tu mismo (o reutilizar uno que ya tengas) y registrarlo en el type index cómo un contendor para recursos del tipo `https://schema.org/Recipe`.
+
+      Si te ves con ganas de más, también puedes ver el [código fuente](https://github.com/NoelDeMartin/umai/blob/main/src/services/CookbookService.ts) para ver cómo
+      funciona la aplicación.
+    submit: Continuar
+    processing: Se está creando el libro de recetas en<br>`{url}`...
+    exists: El contenedor ya existe
+    exists_info: Ya existe un contenedor en `{url}`. ¿Estás seguro que lo quieres utilizar para guardar recetas?
+    exists_accept: Sí
+
+  createRecipe:
+    title: Crea tu primera receta
+    message: ¿Cómo quieres crear tu primera receta?
 
   recipes:
+    title:
+      - ¿Qué cocinarás hoy?
+      - ¿Tienes hambre?
+      - Aquí tienes tu libro de recetas
     create: Nueva receta
+    search_label: Filtra recetas
+    search_placeholder: Encuentra recetas
+    empty: No tienes ninguna receta llamada **"{search}"**, busca otra cosa
+
+recipes:
+  metadata: Metadatos de la receta
+  cookTime: Tiempo de cocción
+  prepTime: Tiempo de preparación
+  servings: Porciones
+  servings_change: Cambia raciones
+  servings_custom: Cantidad personalizada
+  servings_customPrompt: ¿Cuantas porciones quieres?
+  externalUrl: receta en {domain}
+  showMainPanel: Muestra contenido principal
+  showSecondaryPanel: Muestra contenido adicional
+
+  edit: Editar
+  delete: Eliminar
+  delete_confirm: |
+    ¿Estás seguro de que quieres eliminar esta receta?
+
+    ⚠️ **Esta operación es irreversible**
+  delete_confirm_accept: Sí, eliminar receta
+  delete_ongoing: Eliminando **{name}**...
+  delete_success: "**{name}** se ha eliminado"
+  download: Descargar
+  download_includeHistory: Incluye el histórico de cambios
+  share: Compartir
+  drag_instructions_a11y: Utiliza ctrl + up/down para cambiar la posición de las instrucciones
+
+  createFromUrl_notFound: No se ha encontrado una receta en `{domain}`.
+  createFromUrl_retry: Volver a intentarlo
+  create_a11y_title: Crear nueva receta
+  edit_a11y_title: Editar la receta "{recipe}"
+
+  image_set: Añadir imagen
+  image_edit: Cambiar imagen
+  name_label: Nombre de la receta
+  name_placeholder: Nombre
+  description_set: Escribir descripción
+  description_label: Descripción de la receta
+  description_placeholder: Descripción
+  description_remove: Eliminar descripción
+  servings_placeholder: '?? personas'
+  prepTime_placeholder: '?? minutos'
+  cookTime_placeholder: '?? minutos'
+
+  imageA11y: imagen de la receta "{recipe}"
+  image_edit_placeholder: Introduce la url de la imagen...
+  image_edit_title: Cambia la imagen de la receta
+  image_edit_upload: Sube una image
+  image_edit_url: Url de la imagen
+  image_edit_drop: o arrastra aquí
+  image_edit_mimeTypes: PNG, JPG, o GIF
+  image_edit_customUrl: o utiliza una url personalizada
+  image_edit_uploading: Subiendo imagen
+  image_edit_uploadPending: Está imagen todavía no se ha sincronizado con la nube
+  image_edit_remove: Eliminar imagen
+  image_edit_submit: Actualizar
+  image_edit_discard: Cancelar
+
+  ingredients: Ingredientes
+  ingredients_set: Añadir ingredientes
+  ingredient_add: Añadir ingrediente
+  ingredient_label: "Ingrediente de la receta #:position"
+  ingredient_placeholder: e.g. 100g Queso
+  ingredient_remove: Eliminar ingrediente
+  ingredient_remove_a11y: Eliminar el ingrediente "{ingredient}"
+
+  instructions: Instrucciones
+  instructions_set: Añadir instrucciones
+  instructionStep_add: Añadir paso
+  instructionStep_label: "Paso #:position de las instrucciones para la receta"
+  instructionStep_placeholder: e.g. Calentar a fuego lento
+  instructionStep_remove: Eliminar paso
+  instructionStep_remove_a11y: "Eliminar paso #{position} de las instrucciones para la receta"
+
+  externalUrls: Urls externas
+  externalUrls_set: Añadir urls
+  externalUrl_add: Añade url
+  externalUrl_label: "Url de la receta #:position"
+  externalUrl_placeholder: https://...
+  externalUrl_remove: Eliminar url
+  externalUrl_remove_a11y: Eliminar {url}
+
+  share_umai: Umai
+  share_solid: Url de Solid
+  share_jsonld: JSON-LD
+  shareWith: Compartir con
+
+  accessControl:
+    profile_public: Pública
+    profile_publicDescription: Cualquiera con el enlace podrá ver esta receta, y aparecerá listada junto a todas tus recetas públicas
+    profile_unlisted: Sin listar
+    profile_unlistedDescription: Cualquier con el enlace podrá ver esta receta, pero no aparecerá listada junto a todas tus recetas públicas
+    profile_private: Privada
+    profile_privateDescription: Solo tú puedes ver la receta
+    change_label_a11y: Permisos públicos
+    change_button_a11y: 'Cambiar permisos (actual: {current})'
+    disconnected: vuelve a conectar para gestionar los permisos
+    loading: cargando permisos
+    updating: actualizando permisos
+    error: algo ha ido mal
+    warning_private: Esta receta es privada, recuerda hacerla pública antes de compartir el enlace con alguien.
+    warning_unknown: Antes de compartir la receta, asegúrate de que no es privada. Tienes que volver a conectarte para ver los permisos.
+    unsupportedProtocol_title: Protocolo no soportado ({protocol})
+    unsupportedProtocol_message: |
+      Esta receta utiliza un protocolo de autorización no soportado. Por ahora, tendrás que utilizar otra aplicación para gestionar los permisos.
+
+      {instructions}
+
+      [aprende más](https://github.com/NoelDeMartin/umai/issues/3)
+    unsupportedProtocol_inruptInstructions: ¿Estás utilizando `inrupt.com`? Puedes probar a actualizar los permisos utilizando [podbrowser.inrupt.com](https://podbrowser.inrupt.com).
+
+  new:
+    title: Añadir nueva receta
+    fromScratch: Crear de cero
+    fromTheWeb: Importar de otra página
+    fromJsonLD: Subir un archivo JsonLD
+
+  form:
+    cancel: Cancelar
+    create: Crear receta
+    update: Guardar
+
+startupCrash:
+  title: ¡Algo ha ido mal!
+  message: |
+    Algo ha fallado al abrir la aplicación.
+
+    Prueba lo siguiente:
+  reload: Vuelve a intentarlo
+  reloadWithoutAutoReconnect: Vuele a intentarlo sin reconectar
+  logout: Desconectar
+  inspect: Ver detalles del error
+
+viewer:
+  form:
+    title: Visor de recetas
+    description: |
+      En esta página, podrás explorar recetas que otras personas compartan contigo.
+
+      Sin embargo, recuerda que esto solo funciona con recetas guardadas en un <CoreLink color="brand-solid" url="https://solidproject.org/">Solid POD</CoreLink>.
+      Si no tienes uno, o no sabes lo que significa, ves a la [página principal](/) y podrás importar recetas de cualquier página.
+    urlLabel: Url del documento de Solid
+    urlPlaceholder: https://...
+    searching: Buscando recetas...
+    notFound: No hemos podido encontrar ninguna receta en `{url}`.
+    submit: Ver receta
+
+  list:
+    titleFallback: Recetas
+    creatorPrefix: Lista creada por
+
+  recipe:
+    import: Guardar en mi libro de recetas
+    creatorPrefix: Receta creada por
+    viewAll: Ver todas sus recetas
+    inCookbook: Abrir en tu libro de recetas
+
+validation:
+  required: este campo no es opcional
+
+auth:
+  stuckConnecting: No hemos recibido respuesta del proveedor de identidad, ¿quizás deberías probar a reconectar?
+  invalidWebId: "`{webId}` no es un webId válido."
+
+ui:
+  drag: ¡Presiona y arrastra para mover!
+  copyToClipboard: Copiar al portapapeles
+  copiedToClipboard: Texto copiado al portapapeles
+  confirm: ¿Estás seguro?
+  confirm_accept: OK
+  confirm_cancel: Cancelar
+  error_accept: OK
+  closeModal: Cerrar modal
+  loading: Cargando...
+
+errors:
+  notFound: "404: No encontrado"
+  notFound_goHome: volver a página principal
+  unsupportedBrowser: Navegador no soportado
+  unsupportedBrowser_indexedDB: Desafortunadamente, este navegador no soporta IndexedDB.
+  unsupportedBrowser_indexedDBFeature: Desafortunadamente, este navegador no soporta IndexedDB. Si necesitas esta funcionalidad, tendrás que encontrar un [navegador compatible](https://caniuse.com/#feat=indexeddb).
+  unsupportedBrowser_indexedDBFeatureFirefox: ¿Estás utilizando Firefox en modo incógnito? Este es un [problema conocido](https://bugzilla.mozilla.org/show_bug.cgi?id=1639542).
+  unsupportedBrowser_indexedDBHelp: Encuentra un navegador compatible
+  unsupportedBrowser_indexedDBHelpFirefox: Si estás utilizando Firefox en modo incógnito, es un <CoreLink color="danger" url="https://bugzilla.mozilla.org/show_bug.cgi?id=1639542">problema conocido</CoreLink>.
+  notice: Algo ha ido mal, pero no es culpa tuya. ¡Vuelve a intentarlo!
+  sync: La sincronización ha fallado, vuelve a intentarlo más tarde
+  viewDetails: Ver detalles
+  unknown: Error desconocido
+  nextReport: Muestra siguiente error
+  previousReport: Muestra error anterior
+  reportToSentry: Reporta este error
+  viewSentryId: Ver ID del reporte
+  reportToSentrySuccess: "Error reportado a Sentry.io: {sentryId}"
+  reportToSentryFailed: No ha sido posible reportar el error a Sentry.io, abre la consola para ver más detalles
+  viewSentryIdSuccess: "Sentry.io ID: {sentryId}"
+  inspectInConsole: Inspeccionar en consola
+  addedToConsole: Ahora puedes utilizar la variable **error** en la consola
+  copyToClipboard: Copiar al portapapeles
+  copiedToClipboard: Se han copiado los detalles del error al portapapeles
+  reportToGithub: Reportar en GitHub
+  fileUpload: Ha ocurrido un error leyendo el archivo
