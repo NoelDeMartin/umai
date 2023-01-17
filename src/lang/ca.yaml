@@ -321,7 +321,7 @@ recipes:
   new:
     title: Afegir nova recepta
     fromScratch: Crear des de zero
-    fromTheWeb: Importar d'una altra pàgina web
+    fromTheWeb: Importar d'una pàgina web
     fromJsonLD: Pujar arxiu JsonLD
 
   form:

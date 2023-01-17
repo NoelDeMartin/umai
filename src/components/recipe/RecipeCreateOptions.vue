@@ -8,7 +8,7 @@
                 hover:bg-primary-500 hover:text-white
                 focus:bg-primary-500 focus:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
                 active:bg-primary-700 active:text-white
-                md:flex-col md:h-40 md:w-40 md:px-0 md:py-0
+                md:flex-col md:h-40 md:w-40 md:px-3 md:py-3
             "
             @click="$ui.openModal(WebImportModal), $emit('optionSelected')"
         >
@@ -22,7 +22,7 @@
                 hover:bg-primary-500 hover:text-white
                 focus:bg-primary-500 focus:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
                 active:bg-primary-700 active:text-white
-                md:flex-col md:h-40 md:w-40 md:px-0 md:py-0
+                md:flex-col md:h-40 md:w-40 md:px-3 md:py-3
             "
             route="recipes.create"
             @click="$emit('optionSelected')"
@@ -39,7 +39,7 @@
                 focus-within:bg-primary-500 focus-within:text-white focus-within:ring-2 focus-within:ring-primary-500 focus-within:ring-offset-2
                 hover:cursor-pointer hover:bg-primary-500 hover:text-white
                 active:bg-primary-700 active:text-white
-                md:flex-col md:h-40 md:w-40 md:px-0 md:py-0
+                md:flex-col md:h-40 md:w-40 md:px-3 md:py-3
             "
             @error="(error: unknown) => $errors.report(error)"
             @success="(jsonld: JsonLD) => (importFromJsonLD(jsonld), $emit('optionSelected'))"
@@ -62,7 +62,7 @@ import WebImportModal from '@/components/modals/WebImportModal.vue';
 
 defineEmits(['optionSelected']);
 
-const wobblyBorder = $computed(() => UI.isMobile ? {} : { min: 200, max: 350 });
+const wobblyBorder = $computed(() => UI.isMobile ? {} : { min: 100, max: 200 });
 
 async function importFromJsonLD(jsonld: JsonLD) {
     const recipe = await Recipe.createFromJsonLD(jsonld);

@@ -313,7 +313,7 @@ recipes:
   new:
     title: Añadir nueva receta
     fromScratch: Crear de cero
-    fromTheWeb: Importar de otra página web
+    fromTheWeb: Importar de una página web
     fromJsonLD: Subir archivo JsonLD
 
   form:
