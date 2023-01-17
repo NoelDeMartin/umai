@@ -133,7 +133,7 @@ footer:
   about_content: |
     Developed and maintained by [Noel De Martin](https://noeldemartin.com).
 
-    This application is open source and contributions are welcome, get the code in [github]({ sourceUrl }).
+    This application is open source and contributions are welcome, get the code in [GitHub]({ sourceUrl }).
   source: source
   source_title: View application source code
   version_title: View release notes
@@ -408,11 +408,4 @@ errors:
   copyToClipboard: Copy to clipboard
   copiedToClipboard: Debug information copied to clipboard
   reportToGithub: Report in GitHub
-  githubIssueBody: |
-    [Please, explain here what you were trying to do when this error appeared]
-
-    Error details:
-    ```
-    %DETAILS%
-    ```
   fileUpload: There was an error reading the file

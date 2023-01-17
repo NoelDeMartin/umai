@@ -1,8 +1,414 @@
+cloud:
+  statuses:
+    online: online
+    online_description: Estàs connectat com <a href="{url}" target="blank">{name}</a>
+    offline: offline
+    offline_description: Sense internet.
+    disconnected: desconnectat
+    syncing: sincronitzant
+    syncing_description: Sincronitzant dades...
+    authError_description: Ha sorgit un problema connectant al servidor d'autenticació
+
+  advancedOptions: Opcions avançades
+
+  sync_now: Sincronitzar ara
+  sync_onStartup: Sincronitza a l'entrar
+  sync_onInterval: Sincronitza cada X minuts
+
+  reconnect_now: Reconnectar
+  reconnect_onStartup: Reconnectar a l'entrar
+
+  pendingUpdates_a11y: 'Dades sincronitzades | Hi ha un canvi pendent per sincronitzar | Hi ha {n} canvis pendents per sincronitzar'
+  manyPendingUpdates_a11y: Hi ha canvis pendents de sincronitzar
+
+  login:
+    title: Connectar al núvol
+    info: Pots sincronitzar les dades entre dispositius i mantenir-les segures amb un <CoreLink url="https://solidproject.org" color="brand-solid">compte de Solid</CoreLink>, fes servir el formulari a continuació per entrar.
+    info_reconnect: 'Dades sincronitzades, reconnecta amb `{url}` per obtenir nous canvis. | Hi ha un canvi pendent, reconnecta amb `{url}` per sincronitzar. | Hi ha {n} canvis pendents, reconnecta amb `{url}` per sincronitzar.'
+    info_authError: |
+      Ha sorgit un problema connectant amb `{url}`.
+
+      [veure detalls](action:view-error-details)
+    url: Url per entrar
+    url_placeholder: webId o proveïdor d'identitat
+    dismiss: No gràcies, m'estimo més mantenir les dades offline
+    submit: Connectar
+    loading: Connectant al teu Solid POD...
+    stale: Això està trigant massa, potser hauries de [recarregar la pàgina](action:reload) per tornar a intentar-ho.
+
+  logout: Desconnectar
+
+settings:
+  title: Configuració
+  language: Idioma
+  language_description: No trobes el teu idioma? [aporta la teva traducció!](https://github.com/NoelDeMartin/umai/blob/main/docs/contribute-translations.md)
+  animations: Animacions
+  animations_description: Les animacions estan guays, però també està guay tenir bateria. Si vols conservar bateria o el teu dispositiu va lent, pots desactivar les animacions per tenir millor rendiment.
+  errorReporting: Report d'errors
+  errorReporting_description: Si t'estàs trobant amb errors, pots activar el report d'errors per enviar-los a [Sentry](https://sentry.io/). Assegura't que les peticions no s'estàn bloquejant. Si els errors son tant greus que no pots ni arribar a aquesta pantalla, sempre pots afegir `?errorReporting=true` a l'url abans d'entrar a l'aplicació.
+  proxy: Fes servir un proxy per importar d'altres pàgines
+  proxy_description: |
+    Quan intentes importar receptes d'altres pàgines, és necessari fer servir un proxy per evitar problemes de
+    [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing). L'aplicació ja fa servir un proxy per defecte,
+    però també pots [configurar el teu](https://github.com/NoelDeMartin/umai/blob/main/docs/using-a-proxy.md).
+  proxyUrl: Url del proxy
+
+webImport:
+  title: Importa receptes
+  info: |
+    Si trobes cap recepta online que vols guardar al teu llibre de receptes, copia l'url a continuació. Buscarem en la
+    pàgina web per trobar la informació rellevant com instruccions o ingredients.
+
+    Si no saps per on començar, obre el teu buscador preferit i comença a escriure! Encara que la pàgina web que trobis no sembli
+    una recepta, prova igualment. Potser funciona millor del que t'esperes.
+  url_label: Url de la pàgina web
+  url_placeholder: Url de la pàgina web
+  useProxy: "Fes servir un proxy:"
+  useProxy_urlLabel: Url del proxy
+  useProxy_help: Això què vol dir?
+  useProxy_helpTitle: Fent servir un proxy
+  useProxy_helpContent: |
+    Aquesta aplicació funciona completament al teu navegador. Per tant, li fa falta fer servir un proxy per llegir els continguts
+    d'altres pàgines o es podria trobar problemes [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing).
+
+    Si vols, pots provar d'importar receptes sense un proxy, però en cas que no funcioni hauràs de copiar i enganxar
+    l'HTML de la pàgina web.
+
+    [aprendre més](https://github.com/NoelDeMartin/umai/blob/main/docs/using-a-proxy.md)
+  submit: Escanejar
+  scanning: Buscant receptes...
+  defaultWebsiteTitle: Desconegut
+  advancedOptions: Opcions avançades
+
+  error_title: Oops! No ha funcionat
+  error_info: |
+    No ha estat possible obtenir el contingut de `{url}`
+
+    Si només ha estat un error temporal, torna a provar-ho.
+    També pots veure els [detalls de l'error](action:view-error-details).
+  error_tooManyRequests: |
+    El proxy en `{proxyUrl}` està rebutjant llegir la pàgina web perque està rebent
+    massa peticions. Torna a provar més tard o prova amb un altre proxy.
+
+    Pots configurar el proxy en opcions avançades, o també pots veure els
+    [detalls de l'error](action:view-error-details).
+  error_submit: Tornar a intentar-ho
+  error_html: o [prova de copiar i enganxar l'HTML](action:open-html-form)
+
+  success_title: Importa receptes
+  success_recipes: Receptes
+  success_infoSingle: Hem trobat la recepta!
+  success_infoMultiple: Hem trobat més d'una recepta, quina vols importar?
+  success_infoFallback: No hem trobat cap recepta en aquesta pàgina web, però pots afegir la recepta igualment i emplenar la informació restant de forma manual.
+  success_import: Importar al llibre de receptes
+
+webImportHtml:
+  title: Copia i enganxa HTML
+  info: |
+    Si tens problemes per llegir el contingut d'un altra pàgina web, prova de copiar i enganxar l'HTML a continuació.
+
+    Si no saps com fer-ho, prova visitant aquest enllaç:
+  placeholder: Enganxa l'HTML de la pàgina web aquí
+  label: HTML de la pàgina web
+  submit: Escanejar HTML
+
+menu:
+  open: Obrir menú d'usuari
+  logIn: Entrar
+  logOut: Sortir
+  logOut_confirmTitle: Estàs segur?
+  logOut_confirmMessage: Si surts perdràs totes les receptes d'aquest dispositiu, però romandran al teu Solid POD.
+  logOut_confirmMessageWithWarning: |
+    Si surts perdràs totes les receptes d'aquest dispositiu, vols continuar?
+
+    ⚠️ **Hi ha canvis locals que no s'han sincronitzat i es perdran.**
+  settings: Configuració
+  back: tornar al llibre de receptes
+
+footer:
+  about: sobre l'app
+  about_title: Sobre l'app
+  about_content: |
+    Desarrollo i manteniment per [Noel De Martin](https://noeldemartin.com).
+
+    Aquesta aplicació és de codi obert i s'accepten contribucions, pots trobar el codi a [GitHub]({ sourceUrl }).
+  source: codi font
+  source_title: Veure codi font de l'aplicació
+  version_title: Veure notes d'aquesta versió
+
 home:
 
   onboarding:
-    welcome: Amb {umai}, podràs guardar totes les teves receptes i compartir-les amb altres. Pren control de la teva dieta, i comença la teva aventura culinària!
+    welcome: Amb {umai}, podràs guardar i compartir totes les teves estimades receptes. Comença la teva aventura culinària!
     umai_title: Umai (うまい) vol dir "deliciós" en Japonès 😋
+    getStarted: Com vols començar?
+    createRecipe: Crea la teva primera recepta
+    createRecipe_info: Com vols crear la teva recepta?
+    loginWithSolid: Connecta amb el teu Solid POD
+    loginWithSolid_info: Pots connectar amb el teu Solid POD introduint el teu webId o proveïdor d'identitat a continuació. Si no en tens cap, pots veure com obtenir-lo a <CoreLink url="https://solidproject.org/users/get-a-pod" color="brand-solid">solidproject.org</CoreLink>.
+    loginWithSolid_label: Url per entrar
+    loginWithSolid_placeholder: webId o proveïdor d'identitat
+    loginWithSolid_loading: Connectant al teu Solid POD...
+    loginWithSolid_stale: Això està trigant massa, potser hauries de provar a [recarregar la pàgina](action:reload) per tornar a començar.
+    loginWithSolid_submit: Entrar
+    whatIsSolid: Què és Solid?
+    whatIsSolid_title: Què és Solid?
+    whatIsSolid_content: |
+      Solid és un protocol d'emmagatzematge descentralitzat que fa servir estàndards web. Si
+      vols fer servir aquesta aplicació en diferents dispositius, pots fer servir Solid per
+      sincronitzar els canvis. Inclús si només fas servir un dispositiu, això mantindrà les teves
+      receptes segures en cas que el perdis. També et servirà per compartir receptes amb altres online.
+
+      De totes maneres, Umai funciona 100% offline i pots connectar amb el teu Solid POD més endavant. Si és
+      la primera vegada que sentes parlar de Solid i només estàs provant l'aplicació, no és necessari que
+      ho coneguis.
+
+      <CoreLink url="https://solidproject.org" color="brand-solid" class="text-sm">aprendre més</CoreLink>
+    back: Tornar darrera
+
+  createCookbook:
+    title: Crea el teu llibre de receptes
+    message: Hem de crear un lloc per guardar receptes al teu Solid POD.
+    advancedOptions: Opcions avançades
+    nameLabel: "Nom:"
+    storageUrlLabel: "Localització:"
+    urlPreview: l'url pel nou contenidor serà `{url}`.
+    help: Això què farà?
+    help_detailsTitle: Creant un llibre de receptes
+    help_detailsContent: |
+      Això crearà un contenidor el registrarà al teu [type index privat](https://solid.github.io/type-indexes/).
+
+      Si no vols fer-ho, també pots crear el contenidor tu mateix (o fer servir un que ja tinguis) i registrar-lo
+      al type index com un contenidor per recursos del tipus `https://schema.org/Recipe`.
+
+      Si encara tens ganes de més, també pots veure el [codi font](https://github.com/NoelDeMartin/umai/blob/main/src/services/CookbookService.ts)
+      per veure com funciona l'aplicació.
+    submit: Continuar
+    processing: S'està creant un llibre de receptes a<br>`{url}`...
+    exists: El contenidor ja existeix
+    exists_info: Ja existeix un contenidor a `{url}`. Estàs segur que el vols fer servir per guardar receptes?
+    exists_accept: Sí
+
+  createRecipe:
+    title: Crea la teva primera recepta
+    message: Com vols crear la teva primera recepta?
 
   recipes:
+    title:
+      - Què cuinaràs avui?
+      - Tens gana?
+      - Aquí tens el teu llibre de receptes
     create: Nova recepta
+    search_label: Filtra receptes
+    search_placeholder: Troba receptes
+    empty: No tens cap recepta que es digui **"{search}"**, busca un altre cosa
+
+recipes:
+  metadata: Metadades de la recepta
+  cookTime: Temps de cocció
+  prepTime: Temps de preparació
+  servings: Porcions
+  servings_change: Canvia porcions
+  servings_custom: Quantitat personalitzada
+  servings_customPrompt: Quantes porcions vols?
+  externalUrl: recepta a {domain}
+  showMainPanel: Mostra contingut principal
+  showSecondaryPanel: Mostra contingut addicional
+
+  edit: Editar
+  delete: Eliminar
+  delete_confirm: |
+    Estàs segur que vols eliminar aquesta recepta?
+
+    ⚠️ **Aquesta operació és irreversible**
+  delete_confirm_accept: Sí, eliminar recepta
+  delete_ongoing: Eliminant **{name}**...
+  delete_success: "**{name}** s'ha eliminat"
+  download: Descarregar
+  download_includeHistory: Incloure històric de canvis
+  share: Compartir
+  drag_instructions_a11y: Fes servir ctrl + up/down per canviar la posició de les instruccions
+
+  createFromUrl_notFound: No s'ha trobat cap recepta a `{domain}`.
+  createFromUrl_retry: Tronar a intentar-ho
+  create_a11y_title: Crear nova recepta
+  edit_a11y_title: Editar la recepta "{recipe}"
+
+  image_set: Afegir imatge
+  image_edit: Canviar imatge
+  name_label: Nom de la recepta
+  name_placeholder: Nom
+  description_set: Escriure descripció
+  description_label: Descripció de la recepta
+  description_placeholder: Descripció
+  description_remove: Eliminar descripció
+  servings_placeholder: '?? persones'
+  prepTime_placeholder: '?? mins'
+  cookTime_placeholder: '?? mins'
+
+  imageA11y: Imatge de la recepta "{recipe}"
+  image_edit_placeholder: Introdueix l'url de la imatge...
+  image_edit_title: Canvia la imatge de la recepta
+  image_edit_upload: Puja una imatge
+  image_edit_url: Url de la imatge
+  image_edit_drop: o arrossega aquí
+  image_edit_mimeTypes: PNG, JPG, o GIF
+  image_edit_customUrl: o fes servir un url personalitzada
+  image_edit_uploading: Pujant imatge
+  image_edit_uploadPending: Aquesta imatge encara no s'ha sincronitzat en el núvol
+  image_edit_remove: Eliminar imatge
+  image_edit_submit: Actualitzar
+  image_edit_discard: Cancel·lar
+
+  ingredients: Ingredients
+  ingredients_set: Afegir ingredients
+  ingredient_add: Afegir ingredient
+  ingredient_label: "Ingredient de la recepta #:position"
+  ingredient_placeholder: e.g. 30ml Vi ranci
+  ingredient_remove: Eliminar ingredient
+  ingredient_remove_a11y: Eliminar l'ingredient "{ingredient}"
+
+  instructions: Instruccions
+  instructions_set: Afegir instruccions
+  instructionStep_add: Afegir pas
+  instructionStep_label: "Pas #:position de les instruccions per la recepta"
+  instructionStep_placeholder: e.g. Afegir el vi ranci
+  instructionStep_remove: Eliminar pas
+  instructionStep_remove_a11y: "Eliminar pas #{position} de les instruccions per la recepta"
+
+  externalUrls: Urls externes
+  externalUrls_set: Afegir urls
+  externalUrl_add: Afegir url
+  externalUrl_label: "Url de la recepta #:position"
+  externalUrl_placeholder: https://...
+  externalUrl_remove: Eliminar url
+  externalUrl_remove_a11y: Eliminar {url}
+
+  share_umai: Umai
+  share_solid: Url de Solid
+  share_jsonld: JSON-LD
+  shareWith: Compartir amb
+
+  accessControl:
+    profile_public: Pública
+    profile_publicDescription: |
+      Qualsevol amb l'enllaç podrà veure la recepta, i apareixerà llistada amb totes les teves receptes públiques
+    profile_unlisted: Sense llistar
+    profile_unlistedDescription: |
+      Qualsevol amb l'enllaç podrà veure la recepta, però no apareixerà llistada amb les receptes públiques
+    profile_private: Privada
+    profile_privateDescription: Només tu pots veure la recepta
+    change_label_a11y: Permisos públics
+    change_button_a11y: 'Canviar permisos (actual: {current})'
+    disconnected: torna a connectar per gestionar permisos
+    loading: carregant permisos
+    updating: actualitzant permisos
+    error: alguna cosa ha anat malament
+    warning_private: Aquesta recepta és privada, recorda fer-la pública abans de compartir l'enllaç amb algú.
+    warning_unknown: Abans de compartir la recepta, assegurat que no és privada. Has de tornar a connectar per veure els permisos.
+    unsupportedProtocol_title: Protocol no suportat ({protocol})
+    unsupportedProtocol_message: |
+      Aquesta recepta fa servir un protocol d'autorització que no està suportat. Per ara, hauràs de fer servir un altra
+      aplicació per gestionar els permisos.
+
+      {instructions}
+
+      [aprendre més](https://github.com/NoelDeMartin/umai/issues/3)
+    unsupportedProtocol_inruptInstructions: |
+      Estàs fent servir `inrupt.com`? Pots provar d'actualitzar els permisos fent servir
+      [podbrowser.inrupt.com](https://podbrowser.inrupt.com).
+
+  new:
+    title: Afegir nova recepta
+    fromScratch: Crear des de zero
+    fromTheWeb: Importar d'una altra pàgina web
+    fromJsonLD: Pujar arxiu JsonLD
+
+  form:
+    cancel: Cancel·lar
+    create: Crear recepta
+    update: Guardar
+
+startupCrash:
+  title: Alguna cosa ha anat malament!
+  message: |
+    Alguna cosa ha fallat en obrir l'aplicació.
+
+    Pots provar el següent:
+  reload: Torna a intentar-ho
+  reloadWithoutAutoReconnect: Torna a intentar-ho sense reconnectar
+  logout: Desconnectar
+  inspect: Veure detalls de l'error
+
+viewer:
+  form:
+    title: Visor de receptes
+    description: |
+      En aquesta pàgina, podràs explorar receptes que altres persones comparteixin amb tu.
+
+      De totes formes, recorda que això només funciona per receptes que estiguin a un
+       <CoreLink color="brand-solid" url="https://solidproject.org/">Solid POD</CoreLink>.
+      Si no en tens cap, o no saps què vol dir això, ves a la [pantalla principal](/) i podràs
+      importar receptes des de qualsevol pàgina web.
+    urlLabel: Url del document de Solid
+    urlPlaceholder: https://...
+    searching: Buscant receptes...
+    notFound: No hem trobat cap recepta en `{url}`.
+    submit: Veure recepta
+
+  list:
+    titleFallback: Receptes
+    creatorPrefix: Llista creada per
+
+  recipe:
+    import: Guardar en el meu llibre de receptes
+    creatorPrefix: Recepta creada per
+    viewAll: Veure totes les seves receptes
+    inCookbook: Obrir en el teu llibre receptes
+
+validation:
+  required: aquest camp és obligatori
+
+auth:
+  stuckConnecting: No hem rebut una resposta del proveïdor d'identitat, potser hauries de reconnectar?
+  invalidWebId: "`{webId}` no és un webId vàlid."
+
+ui:
+  drag: Prem i arrossega per moure!
+  copyToClipboard: Copiar al porta-retalls
+  copiedToClipboard: Text copiat al porta-retalls
+  confirm: Estàs segur?
+  confirm_accept: OK
+  confirm_cancel: Cancel·lar
+  error_accept: OK
+  closeModal: Tancar modal
+  loading: Carregant...
+
+errors:
+  notFound: "404: No trobat"
+  notFound_goHome: tornar a la pantalla principal
+  unsupportedBrowser: Navegador no suporta
+  unsupportedBrowser_indexedDB: Desafortunadament, aquest navegador no suporta IndexedDB.
+  unsupportedBrowser_indexedDBFeature: |
+    Desafortunadament, aquest navegador no suporta IndexedDB. Si necessites aquesta funcionalitat,
+    hauràs de trobar un [navegador compatible](https://caniuse.com/#feat=indexeddb).
+  unsupportedBrowser_indexedDBFeatureFirefox: Estàs fent servir Firefox en mode incògnit? Aquest és un [problema conegut](https://bugzilla.mozilla.org/show_bug.cgi?id=1639542).
+  unsupportedBrowser_indexedDBHelp: Troba un navegador compatible
+  unsupportedBrowser_indexedDBHelpFirefox: Si estàs fent servir Firefox en mode incògnit, és un <CoreLink color="danger" url="https://bugzilla.mozilla.org/show_bug.cgi?id=1639542">problema conegut</CoreLink>.
+  notice: Alguna cosa ha anat malament, però no és culpa teva. Torna-ho a intentar!
+  sync: La sincronització ha fallat, torna a intentar-ho més tard
+  viewDetails: Veure detalls
+  unknown: Error desconegut
+  nextReport: Mostra el següent error
+  previousReport: Mostra l'error anterior
+  reportToSentry: Reporta aquest error
+  viewSentryId: Veure ID del report
+  reportToSentrySuccess: "Error reportat a Sentry.io: {sentryId}"
+  reportToSentryFailed: No ha estat possible reportar l'error a Sentry.io, obre la consola per veure més detalls
+  viewSentryIdSuccess: "Sentry.io ID: {sentryId}"
+  inspectInConsole: Inspeccionar en consola
+  addedToConsole: Ara pots fer servir la variable **error** en la consola
+  copyToClipboard: Copiar al porta-retalls
+  copiedToClipboard: S'han copiat els detalls de l'error al porta-retalls
+  reportToGithub: Reportar en GitHub
+  fileUpload: S'ha produït un error llegint l'arxiu

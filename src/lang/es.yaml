@@ -18,17 +18,17 @@ cloud:
   reconnect_now: Reconectar
   reconnect_onStartup: Reconectar al entrar
 
-  pendingUpdates_a11y: 'Datos sincronizados | Hay un cambio pendiente de actualizar | Hay {n} cambios pendientes de actualizar'
-  manyPendingUpdates_a11y: Hay varios cambios pendientes de actualizar
+  pendingUpdates_a11y: 'Datos sincronizados | Hay un cambio pendiente de sincronizar | Hay {n} cambios pendientes de sincronizar'
+  manyPendingUpdates_a11y: Hay varios cambios pendientes de sincronizar
 
   login:
     title: Conectar a la nube
     info: Puedes sincronizar los datos entre dispositivos y mantenerlos seguros con una <CoreLink url="https://solidproject.org" color="brand-solid">cuenta de Solid</CoreLink>, utiliza el formulario a continuación para entrar.
-    info_reconnect: 'Datos sincronizados, reconecta con `{url}` para obtener nuevas actualizaciones. | Hay un cambio pendiente, reconecta con `{url}` para sincronizar. | Hay {n} cambios pendientes, reconecta con `{url}` para sincronizar.'
+    info_reconnect: 'Datos sincronizados, reconecta con `{url}` para obtener nuevos cambios. | Hay un cambio pendiente, reconecta con `{url}` para sincronizar. | Hay {n} cambios pendientes, reconecta con `{url}` para sincronizar.'
     info_authError: |
       Ha surgido un problema conectando con `{url}`.
 
-      [ver error](action:view-error-details)
+      [ver detalles](action:view-error-details)
     url: Url para entrar
     url_placeholder: webId o proveedor de identidad
     dismiss: No gracias, prefiero mantener mis datos offline
@@ -46,9 +46,9 @@ settings:
   animations_description: Las animaciones molan, pero también mola tener batería. Si quieres conservar batería o tu dispositivo va lento, puedes desactivar las animaciones para tener mejor rendimiento.
   errorReporting: Reportación de errores
   errorReporting_description: Si estás encontrando errores, puedes activar la reportación de errores para enviarlos a [Sentry](https://sentry.io/). Asegúrate que las peticiones no se están bloqueando con extensiones de tu navegador. Si los errores son tan graves que no puedes llegar a esta pantalla, siempre puedes añadir `?errorReporting=true` en la url antes de entrar a la aplicación.
-  proxy: Utiliza un proxy para importar de otras páginas
+  proxy: Utiliza un proxy para importar de otras páginas web
   proxy_description: |
-    Cuando intentas importar recetas desde otras páginas, es necesario utilizar un proxy para evitar problemas de
+    Cuando intentas importar recetas desde otras páginas web, es necesario utilizar un proxy para evitar problemas de
     [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing). La aplicación ya viene con un proxy por defecto,
     pero también puedes [configurar el tuyo](https://github.com/NoelDeMartin/umai/blob/main/docs/using-a-proxy.md).
   proxyUrl: Url del proxy
@@ -57,24 +57,24 @@ webImport:
   title: Importa recetas
   info: |
     Si encuentras alguna receta online que quieres guardar en tu libro de recetas, copia la url a continuación. Buscaremos en
-    la página para encontrar la información importante como instrucciones e ingredientes.
+    la página web para encontrar la información relevante como instrucciones o ingredientes.
 
-    ¡Si no sabes por dónde empezar, abre tu buscador favorito y empieza a escribir! Incluso si la página que encuentras no parece
+    ¡Si no sabes por dónde empezar, abre tu buscador favorito y empieza a escribir! Incluso si la página web que encuentras no parece
     una receta, prueba igualmente. Quizás funciona mejor de lo que esperas.
-  url_label: Url de la página
-  url_placeholder: Url de la página
+  url_label: Url de la página web
+  url_placeholder: Url de la página web
   useProxy: "Utiliza un proxy:"
   useProxy_urlLabel: Url del proxy
   useProxy_help: ¿Qué significa esto?
   useProxy_helpTitle: Utilizando un proxy
   useProxy_helpContent: |
     Esta aplicación funciona completamente en tu navegador, así que necesita utilizar un proxy para leer contenido de
-    otras páginas o podría encontrar problemas de [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing).
+    otras páginas web o podría encontrar problemas de [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing).
 
     Si quieres, puedes intentar importar recetas sin usar un proxy, pero en caso de que no funcione tendrás que copiar y
-    pegar el HTML de la página.
+    pegar el HTML de la página web.
 
-    [aprende más](https://github.com/NoelDeMartin/umai/blob/main/docs/using-a-proxy.md)
+    [aprender más](https://github.com/NoelDeMartin/umai/blob/main/docs/using-a-proxy.md)
   submit: Escanear
   scanning: Buscando recetas...
   defaultWebsiteTitle: Desconocido
@@ -87,29 +87,29 @@ webImport:
     Si esto ha sido un error temporal, vuelve a intentarlo.
     También puedes ver los [detalles del error](action:view-error-details).
   error_tooManyRequests: |
-    El proxy en `{proxyUrl}` se está negando a leer la página porque está recibiendo
+    El proxy en `{proxyUrl}` se está rechazando leer la página web porque está recibiendo
     demasiadas peticiones. Vuelve a probar más tarde o prueba con otro proxy.
 
     Puedes configurar el proxy en opciones avanzadas, o también puedes ver los
     [detalles del error](action:view-error-details).
   error_submit: Volver a intentar
-  error_html: o [prueba a copias y pegar el HTML](action:open-html-form)
+  error_html: o [prueba a copiar y pegar el HTML](action:open-html-form)
 
   success_title: Importa recetas
   success_recipes: Recetas
   success_infoSingle: ¡Hemos encontrado la receta!
   success_infoMultiple: Hemos encontrado más de una receta, ¿cuál quieres importar?
-  success_infoFallback: No hemos podido encontrar una receta en esta página, pero puedes añadir esta receta igualmente y rellenar la información que falte de forma manual.
+  success_infoFallback: No hemos encontrado una receta en esta página web, pero puedes añadir la receta igualmente y rellenar la información que falte de forma manual.
   success_import: Importar al libro de recetas
 
 webImportHtml:
   title: Copia y pegar HTML
   info: |
-    Si estás teniendo problemas para leer el contenido de otra página, prueba a copiar y pegar el HTML a continuación.
+    Si tienes problemas para leer el contenido de otra página web, prueba a copiar y pegar el HTML a continuación.
 
-    Si no sabes cómo hacerlo, prueba visitando esta url:
-  placeholder: Pega el HTML de la página aquí
-  label: HTML de la página
+    Si no sabes cómo hacerlo, prueba visitando este enlace:
+  placeholder: Pega el HTML de la página web aquí
+  label: HTML de la página web
   submit: Escanear HTML
 
 menu:
@@ -131,7 +131,7 @@ footer:
   about_content: |
     Desarrollo y mantenimiento por [Noel De Martin](https://noeldemartin.com).
 
-    Esta aplicación es código abierto y se aceptan contribuciones, encuentra el código fuente en [github]({ sourceUrl }).
+    Esta aplicación es de código abierto y se aceptan contribuciones, puedes encontrar el código en [GitHub]({ sourceUrl }).
   source: código fuente
   source_title: Ver código fuente de la aplicación
   version_title: Ver notas de esta versión
@@ -139,13 +139,13 @@ footer:
 home:
 
   onboarding:
-    welcome: Con {umai}, podrás guardar todas tus recetas y compartirlas con otros. ¡Toma las riendas de tu dieta, y empieza tu aventura culinaria!
+    welcome: Con {umai}, podrás guardar y compartir todas tus preciadas recetas. ¡Empieza ya tu aventura culinaria!
     umai_title: Umai (うまい) significa "delicioso" en Japonés 😋
     getStarted: ¿Cómo quieres empezar?
     createRecipe: Crea tu primera receta
     createRecipe_info: ¿Cómo quieres crear tu receta?
     loginWithSolid: Conecta con tu Solid POD
-    loginWithSolid_info: Puedes conectar con tu Solid POD introduciendo tu webId o proveedor de identidad a continuación. Si no tienes uno, aprende cómo conseguirlo en <CoreLink url="https://solidproject.org/users/get-a-pod" color="brand-solid">solidproject.org</CoreLink>.
+    loginWithSolid_info: Puedes conectar con tu Solid POD introduciendo tu webId o proveedor de identidad a continuación. Si no tienes uno, puedes ver cómo conseguirlo en <CoreLink url="https://solidproject.org/users/get-a-pod" color="brand-solid">solidproject.org</CoreLink>.
     loginWithSolid_label: Url para entrar
     loginWithSolid_placeholder: webId o proveedor de identidad
     loginWithSolid_loading: Conectando con tu Solid POD...
@@ -158,7 +158,7 @@ home:
 
       De todas maneras, Umai funciona 100% offline y puedes conectar con tu Solid POD más adelante. Si es la primera vez que oyes hablar de Solid y solo estás probando la aplicación, no es necesario que lo conozcas.
 
-      <CoreLink url="https://solidproject.org" color="brand-solid" class="text-sm">aprende más</CoreLink>
+      <CoreLink url="https://solidproject.org" color="brand-solid" class="text-sm">aprender más</CoreLink>
     back: Volver atrás
 
   createCookbook:
@@ -173,7 +173,7 @@ home:
     help_detailsContent: |
       Esto creará un contenedor y lo registrará en tu [type index privado](https://solid.github.io/type-indexes/).
 
-      Si no quieres hacerlo, puedes crear un contenedor tu mismo (o reutilizar uno que ya tengas) y registrarlo en el type index cómo un contendor para recursos del tipo `https://schema.org/Recipe`.
+      Si no quieres hacerlo, puedes crear un contenedor tú mismo (o reutilizar uno que ya tengas) y registrarlo en el type index cómo un contendor para recursos del tipo `https://schema.org/Recipe`.
 
       Si te ves con ganas de más, también puedes ver el [código fuente](https://github.com/NoelDeMartin/umai/blob/main/src/services/CookbookService.ts) para ver cómo
       funciona la aplicación.
@@ -202,7 +202,7 @@ recipes:
   cookTime: Tiempo de cocción
   prepTime: Tiempo de preparación
   servings: Porciones
-  servings_change: Cambia raciones
+  servings_change: Cambia porciones
   servings_custom: Cantidad personalizada
   servings_customPrompt: ¿Cuantas porciones quieres?
   externalUrl: receta en {domain}
@@ -237,19 +237,19 @@ recipes:
   description_placeholder: Descripción
   description_remove: Eliminar descripción
   servings_placeholder: '?? personas'
-  prepTime_placeholder: '?? minutos'
-  cookTime_placeholder: '?? minutos'
+  prepTime_placeholder: '?? mins'
+  cookTime_placeholder: '?? mins'
 
-  imageA11y: imagen de la receta "{recipe}"
+  imageA11y: Imagen de la receta "{recipe}"
   image_edit_placeholder: Introduce la url de la imagen...
   image_edit_title: Cambia la imagen de la receta
-  image_edit_upload: Sube una image
+  image_edit_upload: Sube una imagen
   image_edit_url: Url de la imagen
   image_edit_drop: o arrastra aquí
   image_edit_mimeTypes: PNG, JPG, o GIF
   image_edit_customUrl: o utiliza una url personalizada
   image_edit_uploading: Subiendo imagen
-  image_edit_uploadPending: Está imagen todavía no se ha sincronizado con la nube
+  image_edit_uploadPending: Esta imagen todavía no se ha sincronizado con la nube
   image_edit_remove: Eliminar imagen
   image_edit_submit: Actualizar
   image_edit_discard: Cancelar
@@ -285,14 +285,16 @@ recipes:
 
   accessControl:
     profile_public: Pública
-    profile_publicDescription: Cualquiera con el enlace podrá ver esta receta, y aparecerá listada junto a todas tus recetas públicas
+    profile_publicDescription: |
+      Cualquiera con el enlace podrá ver esta receta, y aparecerá listada junto a todas tus recetas públicas
     profile_unlisted: Sin listar
-    profile_unlistedDescription: Cualquier con el enlace podrá ver esta receta, pero no aparecerá listada junto a todas tus recetas públicas
+    profile_unlistedDescription: |
+      Cualquiera con el enlace podrá ver esta receta, pero no aparecerá listada junto a las recetas públicas
     profile_private: Privada
     profile_privateDescription: Solo tú puedes ver la receta
     change_label_a11y: Permisos públicos
     change_button_a11y: 'Cambiar permisos (actual: {current})'
-    disconnected: vuelve a conectar para gestionar los permisos
+    disconnected: vuelve a conectar para gestionar permisos
     loading: cargando permisos
     updating: actualizando permisos
     error: algo ha ido mal
@@ -300,18 +302,19 @@ recipes:
     warning_unknown: Antes de compartir la receta, asegúrate de que no es privada. Tienes que volver a conectarte para ver los permisos.
     unsupportedProtocol_title: Protocolo no soportado ({protocol})
     unsupportedProtocol_message: |
-      Esta receta utiliza un protocolo de autorización no soportado. Por ahora, tendrás que utilizar otra aplicación para gestionar los permisos.
+      Esta receta utiliza un protocolo de autorización no que no está soportado. Por ahora, tendrás que
+      utilizar otra aplicación para gestionar los permisos.
 
       {instructions}
 
-      [aprende más](https://github.com/NoelDeMartin/umai/issues/3)
+      [aprender más](https://github.com/NoelDeMartin/umai/issues/3)
     unsupportedProtocol_inruptInstructions: ¿Estás utilizando `inrupt.com`? Puedes probar a actualizar los permisos utilizando [podbrowser.inrupt.com](https://podbrowser.inrupt.com).
 
   new:
     title: Añadir nueva receta
     fromScratch: Crear de cero
-    fromTheWeb: Importar de otra página
-    fromJsonLD: Subir un archivo JsonLD
+    fromTheWeb: Importar de otra página web
+    fromJsonLD: Subir archivo JsonLD
 
   form:
     cancel: Cancelar
@@ -323,7 +326,7 @@ startupCrash:
   message: |
     Algo ha fallado al abrir la aplicación.
 
-    Prueba lo siguiente:
+    Puedes probar lo siguiente:
   reload: Vuelve a intentarlo
   reloadWithoutAutoReconnect: Vuele a intentarlo sin reconectar
   logout: Desconectar
@@ -335,12 +338,12 @@ viewer:
     description: |
       En esta página, podrás explorar recetas que otras personas compartan contigo.
 
-      Sin embargo, recuerda que esto solo funciona con recetas guardadas en un <CoreLink color="brand-solid" url="https://solidproject.org/">Solid POD</CoreLink>.
-      Si no tienes uno, o no sabes lo que significa, ves a la [página principal](/) y podrás importar recetas de cualquier página.
+      Sin embargo, recuerda que esto solo funciona con recetas que están en un <CoreLink color="brand-solid" url="https://solidproject.org/">Solid POD</CoreLink>.
+      Si no tienes uno, o no sabes lo que significa, ves a la [pantalla principal](/) y podrás importar recetas de cualquier página web.
     urlLabel: Url del documento de Solid
     urlPlaceholder: https://...
     searching: Buscando recetas...
-    notFound: No hemos podido encontrar ninguna receta en `{url}`.
+    notFound: No hemos encontrado ninguna receta en `{url}`.
     submit: Ver receta
 
   list:
@@ -354,10 +357,10 @@ viewer:
     inCookbook: Abrir en tu libro de recetas
 
 validation:
-  required: este campo no es opcional
+  required: este campo es obligatorio
 
 auth:
-  stuckConnecting: No hemos recibido respuesta del proveedor de identidad, ¿quizás deberías probar a reconectar?
+  stuckConnecting: No hemos recibido respuesta del proveedor de identidad, ¿quizás deberías reconectar?
   invalidWebId: "`{webId}` no es un webId válido."
 
 ui:
@@ -373,7 +376,7 @@ ui:
 
 errors:
   notFound: "404: No encontrado"
-  notFound_goHome: volver a página principal
+  notFound_goHome: volver a la pantalla principal
   unsupportedBrowser: Navegador no soportado
   unsupportedBrowser_indexedDB: Desafortunadamente, este navegador no soporta IndexedDB.
   unsupportedBrowser_indexedDBFeature: Desafortunadamente, este navegador no soporta IndexedDB. Si necesitas esta funcionalidad, tendrás que encontrar un [navegador compatible](https://caniuse.com/#feat=indexeddb).

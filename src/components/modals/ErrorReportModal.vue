@@ -112,16 +112,19 @@ const report = $computed(() => reports[activeReportIndex] as ErrorReport);
 const summary = $computed(() => report.description ? `${report.title}: ${report.description}` : report.title);
 const details = $computed(() => report.details);
 const githubReportUrl = $computed(() => {
-    const issueBodyTemplate = translate('errors.githubIssueBody');
     const issueTitle = encodeURIComponent(summary);
     const issueBody = encodeURIComponent(
-        issueBodyTemplate.replace(
-            '%DETAILS%',
+        [
+            '[Please, explain here what you were trying to do when this error appeared]',
+            '',
+            'Error details:',
+            '```',
             stringExcerpt(
                 details ?? 'Details missing from report',
-                1900 - issueBodyTemplate.length - issueTitle.length - App.sourceUrl.length,
+                1800 - issueTitle.length - App.sourceUrl.length,
             ).trim(),
-        ),
+            '```',
+        ].join('\n'),
     );
 
     return `${App.sourceUrl}/issues/new?title=${issueTitle}&body=${issueBody}`;
