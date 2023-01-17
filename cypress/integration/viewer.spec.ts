@@ -24,7 +24,7 @@ describe('Viewer', () => {
         // Act
         cy.visit('viewer');
         cy.startApp();
-        cy.ariaInput('Solid document URL').type('https://pod.example.com/recipes/aguachile');
+        cy.ariaInput('Solid document url').type('https://pod.example.com/recipes/aguachile');
         cy.press('View');
 
         // Assert

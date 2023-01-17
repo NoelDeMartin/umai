@@ -421,7 +421,7 @@ describe('Cookbook', () => {
         cy.details('Advanced options').within(() => {
             cy.get('input[type="checkbox"]').click();
         });
-        cy.ariaInput('Website URL').type('https://recipes.example.com/hummus');
+        cy.ariaInput('Website url').type('https://recipes.example.com/hummus');
         cy.press('Scan');
         cy.see('We\'ve found the recipe!');
 
@@ -487,7 +487,7 @@ describe('Cookbook', () => {
         cy.details('Advanced options').within(() => {
             cy.get('input[type="checkbox"]').click();
         });
-        cy.ariaInput('Website URL').type('https://recipes.example.com/pisto');
+        cy.ariaInput('Website url').type('https://recipes.example.com/pisto');
         cy.press('Scan');
         cy.see('We\'ve found more than one recipe');
         cy.contains('[role="radio"]', 'Pisto Manchego').click();
@@ -519,7 +519,7 @@ describe('Cookbook', () => {
         cy.press('Import from the Web');
         cy.toggleDetails('Advanced options');
         cy.ariaLabel('Proxy url').clear().type('https://proxy.example.com');
-        cy.ariaInput('Website URL').type('https://recipes.example.com/hummus');
+        cy.ariaInput('Website url').type('https://recipes.example.com/hummus');
         cy.press('Scan');
         cy.see('We\'ve found the recipe!');
 
@@ -552,7 +552,7 @@ describe('Cookbook', () => {
         // Act
         cy.press('Create your first recipe');
         cy.press('Import from the Web');
-        cy.ariaInput('Website URL').type('https://recipes.example.com/ramen');
+        cy.ariaInput('Website url').type('https://recipes.example.com/ramen');
         cy.press('Scan');
         cy.see('Oops! That didn\'t work');
 
