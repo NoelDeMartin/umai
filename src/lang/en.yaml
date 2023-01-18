@@ -141,7 +141,7 @@ footer:
 home:
 
   onboarding:
-    welcome: With {umai} you'll be able to manage and share all your precious recipes, start now your culinary adventure!
+    welcome: With {umai} you'll be able to collect and share all your precious recipes, start now your culinary adventure!
     umai_title: Umai (うまい) means "delicious" in Japanese 😋
     getStarted: How would you like to begin?
     createRecipe: Create your first recipe
