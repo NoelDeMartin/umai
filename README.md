@@ -4,7 +4,7 @@
     <img src="./docs/logo.png" alt="Umai logo">
 </p>
 
-Umai is a simple app that can help you manage all your precious recipes.
+Umai is a simple Recipes Manager to take care of all your precious recipes.
 
 - 📗 Create your own cookbook.
 - ✨ Import recipes from any website.
