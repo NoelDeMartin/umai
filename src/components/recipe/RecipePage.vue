@@ -156,7 +156,7 @@
                             <ul v-if="externalUrls.length > 0" class="mb-4">
                                 <li v-for="(externalUrl, index) of externalUrls" :key="index">
                                     <CoreLink :url="externalUrl.url" class="flex items-center space-x-1">
-                                        <i-pepicons-chain class="w-4 h-4" aria-hidden="true" />
+                                        <i-pepicons-chain class="w-4 h-4 shrink-0" aria-hidden="true" />
                                         <span>
                                             {{ $t('recipes.externalUrl', { domain: externalUrl.domain }) }}
                                         </span>
