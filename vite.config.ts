@@ -11,7 +11,8 @@ import { resolve } from 'path';
 import { VitePWA } from 'vite-plugin-pwa';
 
 import packageJson from './package.json';
-import { VitePluginSolidClientID } from './src/framework/vite-plugin-solid-clientid';
+import VitePluginSolidClientID from './src/framework/vite-plugin-solid-clientid';
+import VitePluginIndexReplacements from './src/framework/vite-plugin-index-replacements/index';
 
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, process.cwd());
@@ -46,6 +47,7 @@ export default defineConfig(({ mode }) => {
                     ],
                 },
             }),
+            VitePluginIndexReplacements({ baseUrl: domain }),
             VitePluginSolidClientID({
                 name: 'Umai',
                 logoPublicPath: '/android-chrome-512x512.png',

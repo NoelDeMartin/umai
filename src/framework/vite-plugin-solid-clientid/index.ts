@@ -27,7 +27,7 @@ function generateClientID(options: VitePluginSolidClientIDOptions): ClientIDDocu
     };
 }
 
-export function VitePluginSolidClientID(options: VitePluginSolidClientIDOptions): Plugin {
+export default function VitePluginSolidClientID(options: VitePluginSolidClientIDOptions): Plugin {
     let serverDomain: string | null;
     const devOptions = (): VitePluginSolidClientIDOptions => ({
         ...options,
