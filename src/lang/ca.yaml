@@ -43,9 +43,9 @@ settings:
   language: Idioma
   language_description: No trobes el teu idioma? [aporta la teva traducció!](https://github.com/NoelDeMartin/umai/blob/main/docs/contribute-translations.md)
   animations: Animacions
-  animations_description: Les animacions estan guays, però també està guay tenir bateria. Si vols conservar bateria o el teu dispositiu va lent, pots desactivar les animacions per tenir millor rendiment.
+  animations_description: Les animacions estan bé, però també està bé tenir bateria. Si vols conservar bateria o el teu dispositiu va lent, pots desactivar les animacions per tenir millor rendiment.
   errorReporting: Report d'errors
-  errorReporting_description: Si t'estàs trobant amb errors, pots activar el report d'errors per enviar-los a [Sentry](https://sentry.io/). Assegura't que les peticions no s'estàn bloquejant. Si els errors son tant greus que no pots ni arribar a aquesta pantalla, sempre pots afegir `?errorReporting=true` a l'url abans d'entrar a l'aplicació.
+  errorReporting_description: Si t'estàs trobant amb errors, pots activar el report d'errors per enviar-los a [Sentry](https://sentry.io/). Assegura't que les peticions no s'estan bloquejant. Si els errors són tan greus que no pots ni arribar a aquesta pantalla, sempre pots afegir `?errorReporting=true` a l'url abans d'entrar a l'aplicació.
   proxy: Fes servir un proxy per importar d'altres pàgines
   proxy_description: |
     Quan intentes importar receptes d'altres pàgines, és necessari fer servir un proxy per evitar problemes de
@@ -69,12 +69,12 @@ webImport:
   useProxy_helpTitle: Fent servir un proxy
   useProxy_helpContent: |
     Aquesta aplicació funciona completament al teu navegador. Per tant, li fa falta fer servir un proxy per llegir els continguts
-    d'altres pàgines o es podria trobar problemes [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing).
+    d'altres pàgines o es podria trobar amb problemes [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing).
 
     Si vols, pots provar d'importar receptes sense un proxy, però en cas que no funcioni hauràs de copiar i enganxar
     l'HTML de la pàgina web.
 
-    [aprendre més](https://github.com/NoelDeMartin/umai/blob/main/docs/using-a-proxy.md)
+    [aprendre'n més](https://github.com/NoelDeMartin/umai/blob/main/docs/using-a-proxy.md)
   submit: Escanejar
   scanning: Buscant receptes...
   defaultWebsiteTitle: Desconegut
@@ -116,7 +116,7 @@ menu:
   open: Obrir menú d'usuari
   logIn: Entrar
   logOut: Sortir
-  logOut_confirmTitle: Estàs segur?
+  logOut_confirmTitle: N'estàs segur?
   logOut_confirmMessage: Si surts perdràs totes les receptes d'aquest dispositiu, però romandran al teu Solid POD.
   logOut_confirmMessageWithWarning: |
     Si surts perdràs totes les receptes d'aquest dispositiu, vols continuar?
@@ -129,7 +129,7 @@ footer:
   about: sobre l'app
   about_title: Sobre l'app
   about_content: |
-    Desarrollo i manteniment per [Noel De Martin](https://noeldemartin.com).
+    Desenvolupament i manteniment per [Noel De Martin](https://noeldemartin.com).
 
     Aquesta aplicació és de codi obert i s'accepten contribucions, pots trobar el codi a [GitHub]({ sourceUrl }).
   source: codi font
@@ -160,11 +160,11 @@ home:
       receptes segures en cas que el perdis. També et servirà per compartir receptes amb altres online.
 
       De totes maneres, Umai funciona 100% offline i pots connectar amb el teu Solid POD més endavant. Si és
-      la primera vegada que sentes parlar de Solid i només estàs provant l'aplicació, no és necessari que
-      ho coneguis.
+      la primera vegada que sents parlar de Solid i només estàs provant l'aplicació, no és necessari que
+      ho sàpigues.
 
-      <CoreLink url="https://solidproject.org" color="brand-solid" class="text-sm">aprendre més</CoreLink>
-    back: Tornar darrera
+      <CoreLink url="https://solidproject.org" color="brand-solid" class="text-sm">aprendre'n més</CoreLink>
+    back: Tornar enrere
 
   createCookbook:
     title: Crea el teu llibre de receptes
@@ -201,7 +201,7 @@ home:
     create: Nova recepta
     search_label: Filtra receptes
     search_placeholder: Troba receptes
-    empty: No tens cap recepta que es digui **"{search}"**, busca un altre cosa
+    empty: No tens cap recepta que es digui **"{search}"**, busca una altra cosa
 
 recipes:
   metadata: Metadades de la recepta
@@ -308,12 +308,12 @@ recipes:
     warning_unknown: Abans de compartir la recepta, assegurat que no és privada. Has de tornar a connectar per veure els permisos.
     unsupportedProtocol_title: Protocol no suportat ({protocol})
     unsupportedProtocol_message: |
-      Aquesta recepta fa servir un protocol d'autorització que no està suportat. Per ara, hauràs de fer servir un altra
+      Aquesta recepta fa servir un protocol d'autorització que no està suportat. Per ara, hauràs de fer servir una altra
       aplicació per gestionar els permisos.
 
       {instructions}
 
-      [aprendre més](https://github.com/NoelDeMartin/umai/issues/3)
+      [aprendre'n més](https://github.com/NoelDeMartin/umai/issues/3)
     unsupportedProtocol_inruptInstructions: |
       Estàs fent servir `inrupt.com`? Pots provar d'actualitzar els permisos fent servir
       [podbrowser.inrupt.com](https://podbrowser.inrupt.com).
@@ -377,7 +377,7 @@ ui:
   drag: Prem i arrossega per moure!
   copyToClipboard: Copiar al porta-retalls
   copiedToClipboard: Text copiat al porta-retalls
-  confirm: Estàs segur?
+  confirm: N'estàs segur?
   confirm_accept: OK
   confirm_cancel: Cancel·lar
   error_accept: OK
@@ -404,7 +404,7 @@ errors:
   reportToSentry: Reporta aquest error
   viewSentryId: Veure ID del report
   reportToSentrySuccess: "Error reportat a Sentry.io: {sentryId}"
-  reportToSentryFailed: No ha estat possible reportar l'error a Sentry.io, obre la consola per veure més detalls
+  reportToSentryFailed: No ha estat possible reportar l'error a Sentry.io, obre la consola per veure'n més detalls
   viewSentryIdSuccess: "Sentry.io ID: {sentryId}"
   inspectInConsole: Inspeccionar en consola
   addedToConsole: Ara pots fer servir la variable **error** en la consola
