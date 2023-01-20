@@ -2,11 +2,9 @@
     <header
         ref="$header"
         class="flex relative z-40 flex-col items-center self-stretch pt-edge h-24 shrink-0"
-        :aria-hidden="hidden ? 'true' : 'false'"
         :class="{
-            'invisible': $ui.headerHidden,
+            'invisible': $ui.headerHidden || $app.isOnboarding,
             'text-white': $route.meta.fullBleedHeader && !$app.onboardingCompleting,
-            'opacity-0 pointer-events-none': $app.isOnboarding,
             'transition-colors duration-700': $ui.animations,
             'transition-opacity opacity-100': $ui.animations && $app.onboardingCompleting,
         }"
@@ -60,13 +58,12 @@
 
 <script setup lang="ts">
 import { debounce } from '@noeldemartin/utils';
-import { provide, watch } from 'vue';
+import { watch } from 'vue';
 
 import App from '@/framework/core/facades/App';
 import Router from '@/framework/core/facades/Router';
 import UI from '@/framework/core/facades/UI';
 import { useResizeObserver } from '@/framework/utils/composition/observers';
-import type { A11y } from '@/framework/components/headless';
 
 let navigationButtonClasses = $ref({ enterFrom: 'opacity-0', leaveTo: 'opacity-0' });
 const $header = $ref<HTMLElement | null>(null);
@@ -85,7 +82,6 @@ const navigationButton = $computed(() => {
 
     return 'logo';
 });
-const hidden = $computed(() => UI.headerHidden || App.isOnboarding);
 
 watch($$(navigationButton), (newValue, oldValue) => {
     navigationButtonClasses = (() => {
@@ -111,6 +107,4 @@ watch($$(navigationButton), (newValue, oldValue) => {
 });
 
 useResizeObserver($$($header), debounce($header => UI.updateHeaderHeight($header.clientHeight), 50));
-
-provide<A11y>('a11y', { hidden: $$(hidden) });
 </script>
