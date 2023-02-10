@@ -4,6 +4,7 @@
 
 <script setup lang="ts">
 import { h } from 'vue';
+import { isInstanceOf } from '@noeldemartin/utils';
 
 import AutoLinking from '@/framework/core/facades/AutoLinking';
 import { booleanProp, objectProp, requiredStringProp, stringProp } from '@/framework/utils/vue';
@@ -44,7 +45,7 @@ const html = $computed(() => {
 async function onClick(event: Event) {
     const { target } = event;
 
-    if (!(target instanceof HTMLElement)) {
+    if (!isInstanceOf(target, HTMLElement)) {
         return;
     }
 

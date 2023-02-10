@@ -29,7 +29,7 @@ import {
     SetPropertyOperation,
     UnsetPropertyOperation,
 } from 'soukai-solid';
-import { arrayFrom, tap } from '@noeldemartin/utils';
+import { arrayFrom, isInstanceOf, tap } from '@noeldemartin/utils';
 import type { Operation } from 'soukai-solid';
 
 import { requiredObjectProp } from '@/framework/utils/vue';
@@ -60,7 +60,7 @@ function applyOperationToDiff(diff: Record<string, unknown>, operation: Operatio
         return;
     }
 
-    if (!(operation instanceof PropertyOperation)) {
+    if (!isInstanceOf(operation, PropertyOperation)) {
         addDiffOperation(diff, '$unknownOperation', operation.static().modelName);
 
         return;

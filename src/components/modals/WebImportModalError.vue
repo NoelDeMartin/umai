@@ -25,6 +25,7 @@
 <script setup lang="ts">
 import UI from '@/framework/core/facades/UI';
 import { injectOrFail, requiredObjectProp } from '@/framework/utils/vue';
+import { isInstanceOf } from '@noeldemartin/utils';
 
 import TooManyRequestsError from '@/errors/TooManyRequestsError';
 import WebImportHtmlModal from '@/components/modals/WebImportHtmlModal.vue';
@@ -42,7 +43,7 @@ const modal = injectOrFail<IWebImportModal>(
 );
 const { form, submit } = useUrlForm(modal);
 const tooManyRequestsProxyUrl = $computed(() => {
-    if (!(error instanceof TooManyRequestsError)) {
+    if (!isInstanceOf(error, TooManyRequestsError)) {
         return;
     }
 

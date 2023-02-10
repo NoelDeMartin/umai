@@ -1,4 +1,4 @@
-import { arrayFilter, tap, urlRoute } from '@noeldemartin/utils';
+import { arrayFilter, isInstanceOf, tap, urlRoute } from '@noeldemartin/utils';
 import { NetworkRequestError } from '@noeldemartin/solid-utils';
 import { SolidEngine } from 'soukai-solid';
 
@@ -128,8 +128,9 @@ export default class ViewerService extends Service<State, ComputedState> {
 
             return true;
         } catch(error) {
-            if (!(error instanceof NetworkRequestError))
+            if (!isInstanceOf(error, NetworkRequestError)) {
                 Errors.report(error);
+            }
 
             return false;
         }
@@ -158,8 +159,9 @@ export default class ViewerService extends Service<State, ComputedState> {
 
             return true;
         } catch(error) {
-            if (!(error instanceof NetworkRequestError))
+            if (!isInstanceOf(error, NetworkRequestError)) {
                 Errors.report(error);
+            }
 
             return false;
         }

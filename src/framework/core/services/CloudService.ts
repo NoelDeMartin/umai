@@ -4,6 +4,7 @@ import {
     arrayChunk,
     arrayFilter,
     fail,
+    isInstanceOf,
     isSuccessfulResponse,
     map,
     objectWithout,
@@ -594,9 +595,9 @@ export default class CloudService extends Service<State, ComputedState> {
             .getRelatedModels()
             .filter(
                 model =>
-                    !(model instanceof SolidACLAuthorization) &&
-                    !(model instanceof Metadata) &&
-                    !(model instanceof Operation),
+                    !isInstanceOf(model, SolidACLAuthorization) &&
+                    !isInstanceOf(model, Metadata) &&
+                    !isInstanceOf(model, Operation),
             );
 
         for (const relatedModel of relatedModels) {
