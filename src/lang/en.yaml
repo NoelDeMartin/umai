@@ -213,6 +213,7 @@ recipes:
   showSecondaryPanel: Show extra content
 
   edit: Edit
+  edit_title: Edit {name}
   delete: Delete
   delete_confirm: |
     Are you sure that you want to delete this recipe?
@@ -333,6 +334,8 @@ startupCrash:
   inspect: View error details
 
 viewer:
+  title: Viewer
+
   form:
     title: Recipes viewer
     description: |

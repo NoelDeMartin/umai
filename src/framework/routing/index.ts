@@ -1,10 +1,10 @@
 import { h } from 'vue';
-import type { RouteRecordRaw } from 'vue-router';
 
 import UI from '@/framework/core/facades/UI';
 import { ApplicationComponent } from '@/framework/core/services/UIService';
+import { defineRoutes } from '@/framework/routing/router';
 
-const routes: RouteRecordRaw[] = [
+export default defineRoutes([
     {
         name: 'errors.404',
         path: '/:path(.*)*',
@@ -14,6 +14,4 @@ const routes: RouteRecordRaw[] = [
             render: () => h(UI.resolveComponent(ApplicationComponent.NotFound)),
         },
     },
-];
-
-export default routes;
+]);

@@ -1,7 +1,7 @@
-import type { RouteRecordRaw } from 'vue-router';
-
 import AutoLinking from '@/framework/core/facades/AutoLinking';
 import Router from '@/framework/core/facades/Router';
+import { defineRoutes, routeMeta } from '@/framework/routing/router';
+import { translate } from '@/framework/utils/translate';
 
 import Cookbook from '@/services/facades/Cookbook';
 import Recipe from '@/models/Recipe';
@@ -13,48 +13,17 @@ import RecipesEdit from './pages/recipes/RecipesEdit.vue';
 import RecipesShow from './pages/recipes/RecipesShow.vue';
 import ViewerPage from './pages/viewer/Viewer.vue';
 
-const routes: RouteRecordRaw[] = [
-    {
-        name: 'home',
-        path: '/',
-        component: Home,
-    },
-    {
-        name: 'recipes.index',
-        path: '/recipes',
-        redirect: { name: 'home' },
-    },
-    {
-        name: 'recipes.create',
-        path: '/recipes/create',
-        component: RecipesCreate,
-        meta: { fullBleedHeader: true, pageFooter: true },
-    },
-    {
-        name: 'recipes.show',
-        path: '/recipes/:recipe',
-        component: RecipesShow,
-        meta: { fullBleedHeader: true },
-    },
-    {
-        name: 'recipes.edit',
-        path: '/recipes/:recipe/edit',
-        component: RecipesEdit,
-        meta: { fullBleedHeader: true, pageFooter: true },
-    },
-    {
-        name: 'recipes.history',
-        path: '/recipes/:recipe/history',
-        component: () => import('./pages/recipes/RecipesHistory.vue'),
-        meta: { header: false, footer: false },
-    },
-    {
-        name: 'viewer',
-        path: '/viewer',
-        component: ViewerPage,
-        meta: { header: false, reconnect: false, requiresIndexedDB: false },
-    },
-];
+declare module '@/framework/routing/router' {
+
+    export interface AppRouteMeta {
+        header?: boolean;
+        footer?: boolean;
+        fullBleedHeader?: boolean;
+        reconnect?: boolean;
+        pageFooter?: boolean;
+    }
+
+}
 
 function captureCookbookUrls(url: string): (() => unknown) | false {
     const recipe = Cookbook.autoLink(url);
@@ -114,4 +83,63 @@ export function registerAutoLinkingScopes(): void {
     });
 }
 
-export default routes;
+export default defineRoutes([
+    {
+        name: 'home',
+        path: '/',
+        component: Home,
+    },
+    {
+        name: 'recipes.index',
+        path: '/recipes',
+        redirect: { name: 'home' },
+    },
+    {
+        name: 'recipes.create',
+        path: '/recipes/create',
+        component: RecipesCreate,
+        meta: {
+            fullBleedHeader: true,
+            pageFooter: true,
+        },
+    },
+    {
+        name: 'recipes.show',
+        path: '/recipes/:recipe',
+        component: RecipesShow,
+        meta: routeMeta<{ recipe: Recipe }>({
+            title: ({ recipe }) => recipe.name,
+            fullBleedHeader: true,
+        }),
+    },
+    {
+        name: 'recipes.edit',
+        path: '/recipes/:recipe/edit',
+        component: RecipesEdit,
+        meta: routeMeta<{ recipe: Recipe }>({
+            title: ({ recipe }) => translate('recipes.edit_title', { name: recipe.name }),
+            fullBleedHeader: true,
+            pageFooter: true,
+        }),
+    },
+    {
+        name: 'recipes.history',
+        path: '/recipes/:recipe/history',
+        component: () => import('./pages/recipes/RecipesHistory.vue'),
+        meta: routeMeta<{ recipe: Recipe }>({
+            title: ({ recipe }) => `${recipe.name} history`,
+            header: false,
+            footer: false,
+        }),
+    },
+    {
+        name: 'viewer',
+        path: '/viewer',
+        component: ViewerPage,
+        meta: {
+            header: false,
+            reconnect: false,
+            requiresIndexedDB: false,
+        },
+    },
+]);

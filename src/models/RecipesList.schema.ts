@@ -10,10 +10,7 @@ export default defineSolidModelSchema({
     history: false,
     timestamps: false,
     fields: {
-        name: {
-            type: FieldType.String,
-            required: true,
-        },
+        name: FieldType.String,
         description: FieldType.String,
         creatorWebId: {
             type: FieldType.Key,

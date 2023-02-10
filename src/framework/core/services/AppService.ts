@@ -19,6 +19,7 @@ interface State {
 
 export default class AppService extends Service<State> {
 
+    public readonly name = 'Umai';
     public isDevelopment: boolean = false;
     public isProduction: boolean = false;
     public isStaging: boolean = false;

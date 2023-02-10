@@ -210,6 +210,7 @@ recipes:
   showSecondaryPanel: Muestra contenido adicional
 
   edit: Editar
+  edit_title: Editar {name}
   delete: Eliminar
   delete_confirm: |
     ¿Estás seguro de que quieres eliminar esta receta?
@@ -333,6 +334,8 @@ startupCrash:
   inspect: Ver detalles del error
 
 viewer:
+  title: Visor
+
   form:
     title: Visor de recetas
     description: |

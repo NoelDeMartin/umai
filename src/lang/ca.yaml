@@ -216,6 +216,7 @@ recipes:
   showSecondaryPanel: Mostra contingut addicional
 
   edit: Editar
+  edit_title: Editar {name}
   delete: Eliminar
   delete_confirm: |
     Estàs segur que vols eliminar aquesta recepta?
@@ -341,6 +342,8 @@ startupCrash:
   inspect: Veure detalls de l'error
 
 viewer:
+  title: Visor
+
   form:
     title: Visor de receptes
     description: |

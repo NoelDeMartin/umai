@@ -1,10 +1,11 @@
 import { applyMixins, fail, tap } from '@noeldemartin/utils';
 import { createRouter, onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from 'vue-router';
-import { defineComponent, h, onUnmounted, ref } from 'vue';
+import { computed, defineComponent, h, onUnmounted, ref, watch } from 'vue';
 import type { Component, ConcreteComponent } from 'vue';
 import type { Constructor } from '@noeldemartin/utils';
 import type { RouteMeta, RouteRecordRaw, RouterOptions , Router as VueRouter } from 'vue-router';
 
+import App from '@/framework/core/facades/App';
 import Browser from '@/framework/core/facades/Browser';
 import FrameworkRouter from '@/framework/routing/router/FrameworkRouter';
 import Router from '@/framework/core/facades/Router';
@@ -13,7 +14,16 @@ import { ApplicationComponent } from '@/framework/core/services/UIService';
 import { translate } from '@/framework/utils/translate';
 import type { ErrorReport } from '@/framework/core/services/ErrorsService';
 
-function enhanceRoute(route: RouteRecordRaw): RouteRecordRaw {
+export interface AppRouteMeta<T extends Record<string, unknown> = Record<string, unknown>> extends RouteMeta {
+    title?: string | ((params: T) => string);
+    requiresIndexedDB?: boolean;
+}
+
+export type AppRoute = RouteRecordRaw & {
+    meta?: AppRouteMeta;
+};
+
+function enhanceRoute(route: AppRoute): AppRoute {
     if (typeof route.component === 'function') {
         const lazyComponent = route.component as () => Promise<{ default: ConcreteComponent }>;
 
@@ -41,10 +51,25 @@ function enhanceRouter(router: VueRouter): VueRouter {
     return tap(router, router => router.initialize());
 }
 
-function enhancedRouteComponentSetup(pageComponent: ConcreteComponent, meta?: RouteMeta) {
+function enhancedRouteComponentSetup(pageComponent: ConcreteComponent, meta?: AppRouteMeta) {
     const route = useRoute();
     const subscriptions = ref<Function[]>([]);
     const routeParameters = ref<Record<string, unknown> | null>(null);
+    const routeTitle = computed(() => {
+        if (!meta?.title) {
+            return null;
+        }
+
+        if (typeof meta.title === 'string') {
+            return meta.title;
+        }
+
+        if (!routeParameters.value) {
+            return null;
+        }
+
+        return meta.title(routeParameters.value);
+    });
 
     function updateRouteParameters() {
         routeParameters.value = resolveRouteParameters();
@@ -95,6 +120,7 @@ function enhancedRouteComponentSetup(pageComponent: ConcreteComponent, meta?: Ro
         }
     }
 
+    watch(routeTitle, title => updateRouteTitle(title), { immediate: true });
     onBeforeRouteLeave(() => UI.showHeader());
     onBeforeRouteUpdate(() => updateRouteParameters());
     onUnmounted(() => {
@@ -124,12 +150,30 @@ function enhancedRouteComponentSetup(pageComponent: ConcreteComponent, meta?: Ro
     };
 }
 
-function enhanceRouteComponent(pageComponent: ConcreteComponent, meta?: RouteMeta): Component {
+function enhanceRouteComponent(pageComponent: ConcreteComponent, meta?: AppRouteMeta): Component {
     return defineComponent({
         setup() {
             return enhancedRouteComponentSetup(pageComponent, meta);
         },
     });
+}
+
+export function updateRouteTitle(title?: string | null): void {
+    if (!title) {
+        document.title = App.name;
+
+        return;
+    }
+
+    document.title = `${title} | ${App.name}`;
+}
+
+export function defineRoutes(routes: AppRoute[]): AppRoute[] {
+    return routes;
+}
+
+export function routeMeta<T extends Record<string, unknown>>(meta: AppRouteMeta<T>): AppRouteMeta {
+    return meta as AppRouteMeta;
 }
 
 export function createFrameworkRouter(options: RouterOptions): FrameworkRouter & VueRouter {

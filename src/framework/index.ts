@@ -1,7 +1,6 @@
 import { createApp } from 'vue';
 import { after, tap } from '@noeldemartin/utils';
 import type { Component, Directive, Plugin, App as VueApp } from 'vue';
-import type { RouteRecordRaw } from 'vue-router';
 
 import getBasePlugins from '@/framework/plugins';
 import baseComponents from '@/framework/components/headless';
@@ -18,6 +17,7 @@ import {
 import { services as baseServices } from '@/framework/core';
 import type Authenticator from '@/framework/auth/Authenticator';
 import type Service from '@/framework/core/Service';
+import type { AppRoute } from '@/framework/routing/router';
 import type { AuthenticatorName } from '@/framework/auth';
 import type { ErrorSource } from '@/framework/core/services/ErrorsService';
 
@@ -59,7 +59,7 @@ export type BootstrapApplicationOptions = Partial<{
     plugins: Plugin[];
     components: Record<string, Component>;
     directives: Record<string, Directive>;
-    routes: RouteRecordRaw[];
+    routes: AppRoute[];
     services: Record<string, Service>;
     authenticators: Record<string, Authenticator>;
     defaultAuthenticator: AuthenticatorName;
