@@ -3,6 +3,7 @@ import {
     arraySorted,
     compare,
     downloadFile,
+    shortId,
     stringToSlug,
     urlParse,
     urlResolve,
@@ -171,7 +172,7 @@ export default class Recipe extends Model {
     }
 
     protected newUrl(documentUrl?: string, resourceHash?: string): string {
-        documentUrl = documentUrl ?? urlResolve(this.static('collection'), stringToSlug(this.name));
+        documentUrl = documentUrl ?? urlResolve(this.static('collection'), stringToSlug(this.name) || shortId());
         resourceHash = resourceHash ?? this.static('defaultResourceHash');
 
         return `${documentUrl}#${resourceHash}`;
