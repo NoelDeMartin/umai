@@ -212,7 +212,7 @@
         </RecipePage>
 
         <div class="fixed flex justify-center inset-x-0 bottom-0 z-30 bg-primary-gray-300 recipe-form--footer">
-            <div class="mx-edge overflow-hidden">
+            <div class="mx-edge">
                 <div class="flex">
                     <div class="prose mr-8">
                         <CoreProseFiller />
