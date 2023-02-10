@@ -352,7 +352,10 @@ const a11yTitle = $computed(
 );
 
 async function editImage() {
-    const modal = await UI.openModal<IRecipeImageFormModal>(RecipeImageModal, { recipe, imageUrl: form.imageUrl });
+    const modal = await UI.openModal<IRecipeImageFormModal>(RecipeImageModal, {
+        recipe,
+        imageUrl: form.imageUrl.trim(),
+    });
     const result = await modal.beforeClose;
 
     document.querySelector<HTMLElement>(':focus')?.blur();
@@ -428,13 +431,13 @@ function formatDuration(duration: string) {
 
 function getUpdatedRecipe() {
     const updatedAttributes = {
-        name: form.name,
-        description: form.description || null,
-        servings: form.servings || null,
-        prepTime: formatDuration(form.prepTime) || null,
-        cookTime: formatDuration(form.cookTime) || null,
-        ingredients: arrayUnique(arrayFilter(form.ingredients.map(({ value }) => value))),
-        externalUrls: arrayUnique(arrayFilter(form.externalUrls.map(({ value }) => value))),
+        name: form.name.trim(),
+        description: form.description.trim() || null,
+        servings: form.servings.trim() || null,
+        prepTime: formatDuration(form.prepTime.trim()) || null,
+        cookTime: formatDuration(form.cookTime.trim()) || null,
+        ingredients: arrayUnique(arrayFilter(form.ingredients.map(({ value }) => value.trim()))),
+        externalUrls: arrayUnique(arrayFilter(form.externalUrls.map(({ value }) => value.trim()))),
     };
 
     return recipe
@@ -448,7 +451,7 @@ function updateRecipeInstructions(recipe: Recipe) {
         .filter(({ value }) => !!value)
         .map(({ id, value }) => objectWithoutEmpty({
             url: instructionUrls[id],
-            text: value,
+            text: value.trim(),
         } as Attributes));
 
     if (!recipe.exists()) {
@@ -485,20 +488,22 @@ function updateRecipeInstructions(recipe: Recipe) {
 }
 
 async function updateRecipeImage(recipe: Recipe) {
-    if (!form.imageUrl) {
+    const imageUrl = form.imageUrl.trim();
+
+    if (!imageUrl) {
         recipe.imageUrls = [];
 
         return;
     }
 
-    if (form.imageUrl.startsWith('tmp://')) {
+    if (imageUrl.startsWith('tmp://')) {
         recipe.exists() || recipe.mintUrl();
 
         const persistentImageUrl = recipe.imageUrl?.startsWith(recipe.requireContainerUrl())
             ? recipe.imageUrl
             : `${recipe.getDocumentUrl()}.png`;
 
-        await Files.rename(form.imageUrl, persistentImageUrl);
+        await Files.rename(imageUrl, persistentImageUrl);
 
         if (Cookbook.remoteCookbookUrl && persistentImageUrl.startsWith(Cookbook.remoteCookbookUrl)) {
             Cloud.enqueueFileUpload(persistentImageUrl);
@@ -509,7 +514,7 @@ async function updateRecipeImage(recipe: Recipe) {
         return;
     }
 
-    recipe.imageUrls = arrayUnique([form.imageUrl, ...recipe.imageUrls ?? []]);
+    recipe.imageUrls = arrayUnique([imageUrl, ...recipe.imageUrls ?? []]);
 }
 
 async function submit() {

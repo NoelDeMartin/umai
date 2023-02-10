@@ -180,7 +180,7 @@ export function parseWebsiteMetadata(url: string, html: string): WebsiteMetadata
         head.match(/<meta[^>]+content="([^"]+)"[^>]+name="(?:og:image|twitter:image)"[^>]*\/?>/im);
 
     return objectWithoutEmpty({
-        url,
+        url: url.trim(),
         title: titleMatch?.[1] ?? translate('webImport.defaultWebsiteTitle'),
         description: descriptionMatch?.[1] ?? null,
         imageUrls: arrayFilter([imageUrlMatch?.[1]]),
