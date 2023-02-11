@@ -349,14 +349,14 @@ viewer:
     notFound: No hemos encontrado ninguna receta en `{url}`.
     submit: Ver receta
 
-  list:
+  collection:
     titleFallback: Recetas
-    creatorPrefix: Lista creada por
+    creatorPrefix: Creado por
 
   recipe:
     import: Guardar en mi libro de recetas
     creatorPrefix: Receta creada por
-    viewAll: Ver todas sus recetas
+    viewAll: Ver más recetas
     inCookbook: Abrir en tu libro de recetas
 
 validation:

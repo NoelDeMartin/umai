@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Added
 
 - Unique [page titles](https://www.w3.org/DesignIssues/UserInterface.html#title), in order to distinguish multiple open tabs.
+- [#7](https://github.com/NoelDeMartin/umai/issues/7) Show recipe containers in viewer.
 
 ### Fixed
 

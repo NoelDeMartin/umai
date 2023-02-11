@@ -350,14 +350,14 @@ viewer:
     notFound: We couldn't find a recipe at `{url}`.
     submit: View recipe
 
-  list:
+  collection:
     titleFallback: Recipes
-    creatorPrefix: List created by
+    creatorPrefix: Created by
 
   recipe:
     import: Save in my cookbook
     creatorPrefix: Recipe created by
-    viewAll: View all their recipes
+    viewAll: View more recipes
     inCookbook: Open in your cookbook
 
 history:

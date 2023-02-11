@@ -21,23 +21,24 @@ import { silenced, urlClean } from '@noeldemartin/utils';
 import Auth from '@/framework/core/facades/Auth';
 import { computedAsync, requiredObjectProp, requiredStringProp } from '@/framework/utils/vue';
 
-import type RecipesList from '@/models/RecipesList';
+import type RecipesCollection from '@/models/types/RecipesCollection';
 
-const { list } = defineProps({
-    list: requiredObjectProp<RecipesList>(),
+
+const { collection } = defineProps({
+    collection: requiredObjectProp<RecipesCollection>(),
     prefix: requiredStringProp(),
 });
 
 const creator = $(computedAsync(async () => {
-    if (!list?.creatorWebId) {
+    if (!collection?.creatorWebId) {
         return null;
     }
 
-    const user = await silenced(Auth.getUserProfile(list.creatorWebId));
+    const user = await silenced(Auth.getUserProfile(collection.creatorWebId));
 
     return {
-        name: user?.name ?? urlClean(user?.webId ?? list.creatorWebId, { protocol: false }),
-        url: user?.webId ?? list.creatorWebId,
+        name: user?.name ?? urlClean(user?.webId ?? collection.creatorWebId, { protocol: false }),
+        url: user?.webId ?? collection.creatorWebId,
         avatarUrl: user?.avatarUrl,
     };
 }));

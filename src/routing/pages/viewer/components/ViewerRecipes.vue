@@ -1,5 +1,5 @@
 <template>
-    <div v-if="$viewer.list" class="flex flex-col flex-grow w-full px-edge">
+    <div v-if="$viewer.collection" class="flex flex-col flex-grow w-full px-edge">
         <div
             v-element-transitions="{
                 transitions: {
@@ -20,11 +20,11 @@
             >
                 <i-app-umai class="mr-2 w-36 h-12 fill-primary-500" />
             </router-link>
-            <h1 id="viewer-recipes-list-title" class="mt-4 text-xl font-semibold">
-                {{ $viewer.list.name ?? $t('viewer.list.titleFallback') }}
+            <h1 id="viewer-recipes-collection-title" class="mt-4 text-xl font-semibold">
+                {{ $viewer.collection.name ?? $t('viewer.collection.titleFallback') }}
             </h1>
-            <CoreMarkdown v-if="$viewer.list.description" class="mt-2" :text="$viewer.list.description" />
-            <ViewerRecipeCreator :list="$viewer.list" :prefix="$t('viewer.list.creatorPrefix')" />
+            <CoreMarkdown v-if="$viewer.collection.description" class="mt-2" :text="$viewer.collection.description" />
+            <ViewerRecipeCreator :collection="$viewer.collection" :prefix="$t('viewer.collection.creatorPrefix')" />
         </div>
         <RecipesGrid :recipes="recipes" class="w-full" />
     </div>
@@ -37,5 +37,5 @@ import Viewer from '@/services/facades/Viewer';
 
 import { leaveTransition } from './ViewerRecipes.transitions';
 
-const recipes = $computed(() => arrayFilter(Viewer.list?.items?.map(item => item.recipe) ?? []));
+const recipes = $computed(() => arrayFilter(Viewer.collection?.recipes ?? []));
 </script>

@@ -359,14 +359,14 @@ viewer:
     notFound: No hem trobat cap recepta en `{url}`.
     submit: Veure recepta
 
-  list:
+  collection:
     titleFallback: Receptes
-    creatorPrefix: Llista creada per
+    creatorPrefix: Creat per
 
   recipe:
     import: Guardar en el meu llibre de receptes
     creatorPrefix: Recepta creada per
-    viewAll: Veure totes les seves receptes
+    viewAll: Veure més receptes
     inCookbook: Obrir en el teu llibre receptes
 
 validation:

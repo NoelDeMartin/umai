@@ -50,11 +50,67 @@ describe('Viewer', () => {
 
         // Act
         cy.see('Alice');
-        cy.press('View all their recipes');
+        cy.press('View more recipes');
         cy.press('Pisto');
 
         // Assert
         cy.see('Pisto is the same as Ratatouille!');
+    });
+
+    it('Views recipe lists', () => {
+        // Arrange
+        cy.intercept('https://pod.example.com/alice/profile', {
+            headers: { Link: '<http://www.w3.org/ns/pim/space#Storage>; rel="type"' },
+            body: '',
+        });
+        cy.intercept('https://pod.example.com/alice/profile/card', { fixture: 'webids/alice.ttl' });
+        cy.intercept('https://pod.example.com/recipes/ramen', { fixture: 'recipes/ramen.ttl' });
+        cy.intercept('https://pod.example.com/recipes/pisto', { fixture: 'recipes/pisto.ttl' });
+        cy.intercept('https://pod.example.com/recipes/public', { fixture: 'recipes/public.ttl' });
+
+        cy.visit('viewer');
+        cy.startApp();
+
+        // Act
+        cy.ariaInput('Solid document url').type('https://pod.example.com/recipes/public');
+        cy.press('View recipe');
+
+        // Assert - View recipes
+        cy.see('Alice');
+        cy.see('Pisto');
+
+        // Assert - Navigate
+        cy.press('Pisto');
+        cy.see('Pisto is the same as Ratatouille!');
+
+        cy.press('View more recipes');
+        cy.press('Ramen');
+        cy.see('Broth');
+    });
+
+    it('Views recipe containers', () => {
+        // Arrange
+        cy.task('resetSolidPOD');
+        cy.visit('viewer');
+        cy.startApp();
+        cy.createSolidDocument('/cookbook/ramen', 'recipes/ramen.ttl');
+        cy.createSolidDocument('/cookbook/pisto', 'recipes/pisto.ttl');
+
+        // Act
+        cy.ariaInput('Solid document url').type('http://localhost:4000/cookbook/');
+        cy.press('View recipe');
+
+        // Assert - View recipes
+        cy.see('Ramen');
+        cy.see('Pisto');
+
+        // Assert - Navigate
+        cy.press('Pisto');
+        cy.see('Pisto is the same as Ratatouille!');
+
+        cy.press('View more recipes');
+        cy.press('Ramen');
+        cy.see('Broth');
     });
 
     it('Saves recipes in cookbook', () => {

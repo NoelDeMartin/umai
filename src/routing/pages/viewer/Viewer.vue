@@ -1,7 +1,7 @@
 <template>
     <AppPage :aria-labelledby="pageLabelId">
         <ViewerRecipe v-if="$viewer.recipe" />
-        <ViewerRecipes v-else-if="$viewer.list" />
+        <ViewerRecipes v-else-if="$viewer.collection" />
 
         <transition
             :enter-active-class="!$ui.animations || !starting ? 'transition duration-1000' : ''"
@@ -12,7 +12,7 @@
             leave-to-class="opacity-0"
         >
             <ViewerForm
-                v-if="!$viewer.recipe && !$viewer.list"
+                v-if="!$viewer.recipe && !$viewer.collection"
                 v-show="!starting"
             />
         </transition>
@@ -36,8 +36,8 @@ const pageLabelId = $computed(() => {
         return 'viewer-recipe-title';
     }
 
-    if (Viewer.list) {
-        return 'viewer-recipes-list-title';
+    if (Viewer.collection) {
+        return 'viewer-recipes-collection-title';
     }
 
     return 'viewer-form-title';
@@ -47,8 +47,8 @@ const routeTitle = $computed(() => {
         return Viewer.recipe.name;
     }
 
-    if (Viewer.list?.name) {
-        return Viewer.list.name;
+    if (Viewer.collection?.name) {
+        return Viewer.collection.name;
     }
 
     return translate('viewer.title');

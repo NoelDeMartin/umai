@@ -48,7 +48,7 @@ function captureViewerUrls(url: string): (() => unknown) | false {
 
     return async () => {
         // TODO fix recipe --> recipe animation instead of doing this
-        await Router.push(autoLinked.list.route());
+        await Router.push(autoLinked.collection.route());
         await Router.push(autoLinked.recipe.route('viewer'));
     };
 }
