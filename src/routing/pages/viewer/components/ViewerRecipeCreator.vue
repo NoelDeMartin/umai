@@ -21,7 +21,7 @@ import { silenced, urlClean } from '@noeldemartin/utils';
 import Auth from '@/framework/core/facades/Auth';
 import { computedAsync, requiredObjectProp, requiredStringProp } from '@/framework/utils/vue';
 
-import type RecipesCollection from '@/models/types/RecipesCollection';
+import type RecipesCollection from '@/models/contracts/RecipesCollection';
 
 
 const { collection } = defineProps({
