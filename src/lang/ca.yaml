@@ -357,7 +357,7 @@ viewer:
     urlPlaceholder: https://...
     searching: Buscant receptes...
     notFound: No hem trobat cap recepta en `{url}`.
-    submit: Veure recepta
+    submit: Buscar
 
   collection:
     titleFallback: Receptes

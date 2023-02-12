@@ -1,5 +1,8 @@
 <template>
-    <AppPage :aria-labelledby="pageLabelId">
+    <AppPage
+        :aria-labelledby="pageLabelId"
+        :style="`margin-top: -${$ui.headerHeight}px`"
+    >
         <ViewerRecipe v-if="$viewer.recipe" />
         <ViewerRecipes v-else-if="$viewer.collection" />
 

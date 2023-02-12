@@ -2,6 +2,7 @@ import { updateLocationQueryParameters } from '@noeldemartin/utils';
 
 import Auth from '@/framework/core/facades/Auth';
 import Events from '@/framework/core/facades/Events';
+import Router from '@/framework/core/facades/Router';
 import Service from '@/framework/core/Service';
 import { afterAnimationTime } from '@/framework/utils/dom';
 import type { IService } from '@/framework/core/Service';
@@ -70,7 +71,10 @@ export default class AppService extends Service<State> {
                 ? `/tree/${sourceCommitHash}`
                 : `/releases/tag/${this.versionName}`
         );
-        this.isOnboarding = !Auth.isLoggedIn() && Auth.previousSession === null && Cookbook.recipes.isEmpty();
+        this.isOnboarding = !Router.currentRouteIs('viewer')
+            && !Auth.isLoggedIn()
+            && Auth.previousSession === null
+            && Cookbook.recipes.isEmpty();
 
         Events.on('recipe-created', async () => {
             if (!this.isOnboarding) {

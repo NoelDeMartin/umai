@@ -40,15 +40,15 @@
                         <CoreButton
                             clear
                             class="text-white hover:bg-transparent focus:bg-transparent focus:ring-0 focus:ring-offset-0 focus-visible:bg-black/20 focus:hover:bg-transparent"
-                            @click="$router.previousRouteWas('home') ? $router.back() : $router.push({ name: 'home' })"
+                            @click="goBack()"
                         >
                             <span aria-hidden="true" class="mr-2">&larr; </span>
-                            <span>{{ $t('menu.back') }}</span>
+                            <span>{{ backText }}</span>
                         </CoreButton>
                     </div>
                 </transition>
             </div>
-            <div class="flex space-x-2">
+            <div v-if="!isViewer" class="flex space-x-2">
                 <AppHeaderCloudStatus v-if="!$auth.dismissed" />
                 <AppHeaderUserMenu />
             </div>
@@ -63,11 +63,23 @@ import { watch } from 'vue';
 import App from '@/framework/core/facades/App';
 import Router from '@/framework/core/facades/Router';
 import UI from '@/framework/core/facades/UI';
+import { translate } from '@/framework/utils/translate';
 import { useResizeObserver } from '@/framework/utils/composition/observers';
+
+import Viewer from '@/services/facades/Viewer';
 
 let navigationButtonClasses = $ref({ enterFrom: 'opacity-0', leaveTo: 'opacity-0' });
 const $header = $ref<HTMLElement | null>(null);
+const isViewer = $computed(() => Router.currentRouteIs('viewer'));
+const recipe = $computed(() => Viewer.recipe);
+const list = $computed(() => recipe && recipe?.lists?.[0]);
+const container = $computed(() => recipe && Viewer.getRecipeContainer(recipe));
+const collection = $computed(() => list ?? container);
 const navigationButton = $computed(() => {
+    if (isViewer) {
+        return Viewer.recipe && Viewer.hasSeenCollection ? 'back-arrow' : null;
+    }
+
     if (
         App.isOnboarding ||
         App.onboardingCompleting ||
@@ -82,6 +94,31 @@ const navigationButton = $computed(() => {
 
     return 'logo';
 });
+const backText = $computed(() => {
+    if (isViewer) {
+        return collection?.name
+            ?? Viewer.collection?.name
+            ?? translate('viewer.collection.titleFallback');
+    }
+
+    return translate('menu.back');
+});
+
+async function goBack() {
+    if (isViewer) {
+        await Router.push({ name: 'viewer', query: { url: collection?.url } });
+
+        return;
+    }
+
+    if (!Router.previousRouteWas('home')) {
+        await Router.push({ name: 'home' });
+
+        return;
+    }
+
+    Router.back();
+}
 
 watch($$(navigationButton), (newValue, oldValue) => {
     navigationButtonClasses = (() => {

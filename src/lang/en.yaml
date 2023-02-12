@@ -348,7 +348,7 @@ viewer:
     urlPlaceholder: https://...
     searching: Searching recipes...
     notFound: We couldn't find a recipe at `{url}`.
-    submit: View recipe
+    submit: Search
 
   collection:
     titleFallback: Recipes

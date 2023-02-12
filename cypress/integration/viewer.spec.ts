@@ -25,7 +25,7 @@ describe('Viewer', () => {
         cy.visit('viewer');
         cy.startApp();
         cy.ariaInput('Solid document url').type('https://pod.example.com/recipes/aguachile');
-        cy.press('View');
+        cy.press('Search');
 
         // Assert
         cy.see('Aguachile');
@@ -73,7 +73,7 @@ describe('Viewer', () => {
 
         // Act
         cy.ariaInput('Solid document url').type('https://pod.example.com/recipes/public');
-        cy.press('View recipe');
+        cy.press('Search');
 
         // Assert - View recipes
         cy.see('Alice');
@@ -83,7 +83,7 @@ describe('Viewer', () => {
         cy.press('Pisto');
         cy.see('Pisto is the same as Ratatouille!');
 
-        cy.press('View more recipes');
+        cy.get('header').within(() => cy.press('Alice\'s Public Recipes'));
         cy.press('Ramen');
         cy.see('Broth');
     });
@@ -98,7 +98,7 @@ describe('Viewer', () => {
 
         // Act
         cy.ariaInput('Solid document url').type('http://localhost:4000/cookbook/');
-        cy.press('View recipe');
+        cy.press('Search');
 
         // Assert - View recipes
         cy.see('Ramen');
@@ -108,7 +108,7 @@ describe('Viewer', () => {
         cy.press('Pisto');
         cy.see('Pisto is the same as Ratatouille!');
 
-        cy.press('View more recipes');
+        cy.get('header').within(() => cy.press('Recipes'));
         cy.press('Ramen');
         cy.see('Broth');
     });

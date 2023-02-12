@@ -137,7 +137,7 @@ export default defineRoutes([
         path: '/viewer',
         component: ViewerPage,
         meta: {
-            header: false,
+            fullBleedHeader: true,
             reconnect: false,
             requiresIndexedDB: false,
         },

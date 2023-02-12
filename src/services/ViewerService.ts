@@ -22,6 +22,7 @@ interface State {
     list: RecipesList | null;
     container: RecipesContainer | null;
     recipesContainers: WeakMap<Recipe, RecipesContainer>;
+    hasSeenCollection: boolean;
 }
 
 interface ComputedState {
@@ -51,7 +52,7 @@ export default class ViewerService extends Service<State, ComputedState> {
         if (list) {
             await this.loadRecipesList(list);
 
-            this.setState({ list, recipe: null, container: null });
+            this.setState({ list, hasSeenCollection: true, recipe: null, container: null });
 
             return;
         }
@@ -65,7 +66,7 @@ export default class ViewerService extends Service<State, ComputedState> {
         }
 
         if (container) {
-            this.setState({ container, recipe: null, list: null });
+            this.setState({ container, hasSeenCollection: true, recipe: null, list: null });
 
             return;
         }
@@ -123,6 +124,7 @@ export default class ViewerService extends Service<State, ComputedState> {
             list: null,
             container: null,
             recipesContainers: new WeakMap(),
+            hasSeenCollection: false,
         };
     }
 
@@ -172,7 +174,7 @@ export default class ViewerService extends Service<State, ComputedState> {
 
             await this.loadRecipesList(list);
 
-            this.setState({ list });
+            this.setState({ list, hasSeenCollection: true });
 
             return true;
         } catch(error) {
@@ -191,7 +193,7 @@ export default class ViewerService extends Service<State, ComputedState> {
             return false;
         }
 
-        this.setState({ container });
+        this.setState({ container, hasSeenCollection: true });
 
         return true;
     }

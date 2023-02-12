@@ -347,7 +347,7 @@ viewer:
     urlPlaceholder: https://...
     searching: Buscando recetas...
     notFound: No hemos encontrado ninguna receta en `{url}`.
-    submit: Ver receta
+    submit: Buscar
 
   collection:
     titleFallback: Recetas
