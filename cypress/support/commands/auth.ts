@@ -19,7 +19,6 @@ interface CSSAuthorizeOptions {
     reset: boolean | Partial<ResetOptions>;
 }
 
-const cssPodUrl = 'http://localhost:4000';
 const queuedRequests = arr<{ url: string; options: RequestInit }>();
 
 function cssLogin() {
@@ -39,6 +38,10 @@ function cssRegister() {
     cy.contains('a', 'log in').click();
 }
 
+export function cssPodUrl(path: string = ''): string {
+    return `http://localhost:4000${path}`;
+}
+
 export function queueAuthenticatedRequests(window: Window): void {
     queuedRequests.map(({ url, options }) => window.testing?.queueAuthenticatedRequest(url, options));
     queuedRequests.clear();
@@ -48,7 +51,7 @@ export default {
 
     createSolidContainerAnonymously(url: string, name: string): void {
         cy.request({
-            url: cssPodUrl + url,
+            url: cssPodUrl(url),
             method: 'PUT',
             headers: {
                 'Content-Type': 'text/turtle',
@@ -61,7 +64,7 @@ export default {
 
     createSolidDocument(url: string, fixture: string, replacements: Record<string, string> = {}): void {
         cy.fixture(fixture).then(body => {
-            cy.runAuthenticatedRequest(cssPodUrl + url, {
+            cy.runAuthenticatedRequest(cssPodUrl(url), {
                 method: 'PUT',
                 headers: { 'Content-Type': 'text/turtle' },
                 body: Object.entries(replacements).reduce(
@@ -75,7 +78,7 @@ export default {
     createSolidDocumentAnonymously(url: string, fixture: string, replacements: Record<string, string> = {}): void {
         cy.fixture(fixture).then(body => {
             cy.request({
-                url: cssPodUrl + url,
+                url: cssPodUrl(url),
                 method: 'PUT',
                 headers: { 'Content-Type': 'text/turtle' },
                 body: Object.entries(replacements).reduce(
@@ -180,7 +183,7 @@ export default {
 
     queueCreatingSolidDocument(url: string, fixture: string): void {
         cy.fixture(fixture).then(body => {
-            cy.queueAuthenticatedRequest(cssPodUrl + url, {
+            cy.queueAuthenticatedRequest(cssPodUrl(url), {
                 method: 'PUT',
                 headers: { 'Content-Type': 'text/turtle' },
                 body,
@@ -189,12 +192,12 @@ export default {
     },
 
     queueDeletingSolidDocument(url: string): void {
-        cy.queueAuthenticatedRequest(cssPodUrl + url, { method: 'DELETE' });
+        cy.queueAuthenticatedRequest(cssPodUrl(url), { method: 'DELETE' });
     },
 
     queueUpdatingSolidDocument(url: string, fixture: string, replacements: Record<string, string> = {}): void {
         cy.fixture(fixture).then(body => {
-            cy.queueAuthenticatedRequest(cssPodUrl + url, {
+            cy.queueAuthenticatedRequest(cssPodUrl(url), {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/sparql-update' },
                 body: normalizeSparql(
@@ -212,7 +215,7 @@ export default {
 
     updateSolidDocument(url: string, fixture: string, replacements: Record<string, string> = {}): void {
         cy.fixture(fixture).then((body: string) => {
-            cy.runAuthenticatedRequest(cssPodUrl + url, {
+            cy.runAuthenticatedRequest(cssPodUrl(url), {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/sparql-update' },
                 body: normalizeSparql(

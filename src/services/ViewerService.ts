@@ -79,9 +79,12 @@ export default class ViewerService extends Service<State, ComputedState> {
     }
 
     public async search(url: string): Promise<boolean> {
-        return await this.findRecipe(url)
-            || await this.findRecipesList(url)
-            || await this.findRecipesContainer(url);
+        return this.cachingDocuments(
+            async () =>
+                await this.findRecipe(url) ||
+                await this.findRecipesList(url) ||
+                await this.findRecipesContainer(url),
+        );
     }
 
     public async preloadList(list: RecipesList): Promise<void> {
@@ -132,6 +135,17 @@ export default class ViewerService extends Service<State, ComputedState> {
         return {
             collection: ({ list, container }) => list ?? container ?? null,
         };
+    }
+
+    private async cachingDocuments<T>(operation: () => Promise<T>): Promise<T> {
+        this.engine.setConfig({ cachesDocuments: true });
+
+        const result = await operation();
+
+        this.engine.clearCache();
+        this.engine.setConfig({ cachesDocuments: false });
+
+        return result;
     }
 
     private async findRecipe(url: string): Promise<boolean> {

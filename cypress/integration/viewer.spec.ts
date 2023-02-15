@@ -1,4 +1,5 @@
 import aguachileJsonLD from '@cy/fixtures/recipes/aguachile.json';
+import { cssPodUrl } from '@cy/support/commands/auth';
 
 describe('Viewer', () => {
 
@@ -66,7 +67,7 @@ describe('Viewer', () => {
         cy.intercept('https://pod.example.com/alice/profile/card', { fixture: 'webids/alice.ttl' });
         cy.intercept('https://pod.example.com/recipes/ramen', { fixture: 'recipes/ramen.ttl' });
         cy.intercept('https://pod.example.com/recipes/pisto', { fixture: 'recipes/pisto.ttl' });
-        cy.intercept('https://pod.example.com/recipes/public', { fixture: 'recipes/public.ttl' });
+        cy.intercept('https://pod.example.com/recipes/public', { fixture: 'recipes/public.ttl' }).as('getList');
 
         cy.visit('viewer');
         cy.startApp();
@@ -86,10 +87,14 @@ describe('Viewer', () => {
         cy.get('header').within(() => cy.press('Alice\'s Public Recipes'));
         cy.press('Ramen');
         cy.see('Broth');
+
+        cy.get('@getList.all').should('have.length', 1);
     });
 
     it('Views recipe containers', () => {
         // Arrange
+        cy.intercept('GET', cssPodUrl('/cookbook/')).as('getContainer');
+
         cy.task('resetSolidPOD');
         cy.visit('viewer');
         cy.startApp();
@@ -97,7 +102,7 @@ describe('Viewer', () => {
         cy.createSolidDocument('/cookbook/pisto', 'recipes/pisto.ttl');
 
         // Act
-        cy.ariaInput('Solid document url').type('http://localhost:4000/cookbook/');
+        cy.ariaInput('Solid document url').type(cssPodUrl('/cookbook/'));
         cy.press('Search');
 
         // Assert - View recipes
@@ -111,6 +116,8 @@ describe('Viewer', () => {
         cy.get('header').within(() => cy.press('Recipes'));
         cy.press('Ramen');
         cy.see('Broth');
+
+        cy.get('@getContainer.all').should('have.length', 1);
     });
 
     it('Saves recipes in cookbook', () => {
