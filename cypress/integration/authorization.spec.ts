@@ -1,3 +1,5 @@
+import { cssPodUrl } from '@cy/support/commands/auth';
+
 function createACLSparql(document: string): string {
     return `
         INSERT DATA {
@@ -5,8 +7,8 @@ function createACLSparql(document: string): string {
 
             <#owner>
                 a acl:Authorization ;
-                acl:agent <http://localhost:4000/alice/profile/card#me>, <mailto:alice@example.com> ;
-                acl:accessTo <http://localhost:4000/alice/cookbook/${document}> ;
+                acl:agent <${cssPodUrl('/alice/profile/card#me')}>, <mailto:alice@example.com> ;
+                acl:accessTo <${cssPodUrl(`/alice/cookbook/${document}`)}> ;
                 acl:mode acl:Read, acl:Write, acl:Control .
         }
     `;
@@ -21,7 +23,7 @@ function publishACLSparql(document: string): string {
             <#public>
                 a acl:Authorization ;
                 acl:agentClass foaf:Agent ;
-                acl:accessTo <http://localhost:4000/alice/cookbook/${document}> ;
+                acl:accessTo <${cssPodUrl(`/alice/cookbook/${document}`)}> ;
                 acl:mode acl:Read .
         }
     `;
@@ -36,7 +38,7 @@ function unpublishACLSparql(document: string): string {
             <#public>
                 a acl:Authorization ;
                 acl:agentClass foaf:Agent ;
-                acl:accessTo <http://localhost:4000/alice/cookbook/${document}> ;
+                acl:accessTo <${cssPodUrl(`/alice/cookbook/${document}`)}> ;
                 acl:mode acl:Read .
         }
     `;
@@ -49,22 +51,22 @@ describe('Authorization', () => {
         cy.startApp();
         cy.createRecipe({
             name: 'Ramen',
-            imageUrls: ['http://localhost:4000/alice/cookbook/ramen.png'],
+            imageUrls: [cssPodUrl('/alice/cookbook/ramen.png')],
         });
         cy.login({ authenticator: 'inrupt', hasCookbook: true });
-        cy.uploadFile('http://localhost:4000/alice/cookbook/ramen.png', 'img/ramen.png');
+        cy.uploadFile(cssPodUrl('/alice/cookbook/ramen.png'), 'img/ramen.png');
     });
 
     it('Publishes recipes', () => {
         // Arrange
         const publicDocuments = ['ramen', 'ramen.png', 'public'];
 
-        cy.intercept('PATCH', 'http://localhost:4000/alice/settings/publicTypeIndex').as('createTypeIndex');
-        cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/public').as('createPublicList');
-        cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/ramen').as('updateRamen');
+        cy.intercept('PATCH', cssPodUrl('/alice/settings/publicTypeIndex')).as('createTypeIndex');
+        cy.intercept('PATCH', cssPodUrl('/alice/cookbook/public')).as('createPublicList');
+        cy.intercept('PATCH', cssPodUrl('/alice/cookbook/ramen')).as('updateRamen');
 
         publicDocuments.forEach(acl => {
-            cy.intercept('PATCH', `http://localhost:4000/alice/cookbook/${acl}.acl`).as(`patch-${acl}-ACL`);
+            cy.intercept('PATCH', cssPodUrl(`/alice/cookbook/${acl}.acl`)).as(`patch-${acl}-ACL`);
         });
 
         // Act
@@ -99,12 +101,12 @@ describe('Authorization', () => {
         // Arrange
         const publicDocuments = ['ramen', 'ramen.png'];
 
-        cy.intercept('PATCH', 'http://localhost:4000/alice/settings/publicTypeIndex').as('createTypeIndex');
-        cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/public').as('createPublicList');
-        cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/ramen').as('updateRamen');
+        cy.intercept('PATCH', cssPodUrl('/alice/settings/publicTypeIndex')).as('createTypeIndex');
+        cy.intercept('PATCH', cssPodUrl('/alice/cookbook/public')).as('createPublicList');
+        cy.intercept('PATCH', cssPodUrl('/alice/cookbook/ramen')).as('updateRamen');
 
         publicDocuments.forEach(acl => {
-            cy.intercept('PATCH', `http://localhost:4000/alice/cookbook/${acl}.acl`).as(`patch-${acl}-ACL`);
+            cy.intercept('PATCH', cssPodUrl(`/alice/cookbook/${acl}.acl`)).as(`patch-${acl}-ACL`);
         });
 
         // Act
@@ -141,15 +143,15 @@ describe('Authorization', () => {
         cy.createSolidDocument('/alice/cookbook/ramen.png.acl', 'turtle/public-acls.ttl', { document: 'ramen.png' });
         cy.service('$auth').then(Auth => Auth.refreshUserProfile());
         cy.getRecipe('ramen').then(ramen => ramen.update({
-            listUrls: ['http://localhost:4000/alice/cookbook/public#it'],
+            listUrls: [cssPodUrl('/alice/cookbook/public#it')],
         }));
 
         cy.sync();
 
-        cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/ramen.acl').as('patchRamenACL');
-        cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/ramen.png.acl').as('patchImageACL');
-        cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/ramen').as('patchRamen');
-        cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/public').as('patchList');
+        cy.intercept('PATCH', cssPodUrl('/alice/cookbook/ramen.acl')).as('patchRamenACL');
+        cy.intercept('PATCH', cssPodUrl('/alice/cookbook/ramen.png.acl')).as('patchImageACL');
+        cy.intercept('PATCH', cssPodUrl('/alice/cookbook/ramen')).as('patchRamen');
+        cy.intercept('PATCH', cssPodUrl('/alice/cookbook/public')).as('patchList');
 
         // Act
         cy.press('Ramen');
@@ -177,7 +179,7 @@ describe('Authorization', () => {
 
                 <#ramen>
                     a schema:ListItem ;
-                    schema:item <http://localhost:4000/alice/cookbook/ramen#it> .
+                    schema:item <${cssPodUrl('/alice/cookbook/ramen#it')}> .
             }
         `);
     });
@@ -192,10 +194,10 @@ describe('Authorization', () => {
         cy.createSolidDocument('/alice/cookbook/ramen.png.acl', 'turtle/private-acls.ttl', { document: 'ramen.png' });
         cy.service('$auth').then(Auth => Auth.refreshUserProfile());
 
-        cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/ramen.acl').as('patchRamenACL');
-        cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/ramen.png.acl').as('patchImageACL');
-        cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/ramen').as('patchRamen');
-        cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/public').as('patchList');
+        cy.intercept('PATCH', cssPodUrl('/alice/cookbook/ramen.acl')).as('patchRamenACL');
+        cy.intercept('PATCH', cssPodUrl('/alice/cookbook/ramen.png.acl')).as('patchImageACL');
+        cy.intercept('PATCH', cssPodUrl('/alice/cookbook/ramen')).as('patchRamen');
+        cy.intercept('PATCH', cssPodUrl('/alice/cookbook/public')).as('patchList');
 
         // Act
         cy.press('Ramen');
@@ -223,7 +225,7 @@ describe('Authorization', () => {
 
                 <#[[ramen][%uuid%]]>
                     a schema:ListItem ;
-                    schema:item <http://localhost:4000/alice/cookbook/ramen#it> .
+                    schema:item <${cssPodUrl('/alice/cookbook/ramen#it')}> .
             }
         `);
     });

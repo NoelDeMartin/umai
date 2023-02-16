@@ -1,3 +1,5 @@
+import { cssPodUrl } from '@cy/support/commands/auth';
+
 describe('Interoperability', () => {
 
     beforeEach(() => {
@@ -23,7 +25,7 @@ describe('Interoperability', () => {
         cy.login();
         cy.createSolidDocument('/cookbook/ramen', 'recipes/ramen-bare.ttl');
 
-        cy.intercept('PATCH', 'http://localhost:4000/cookbook/ramen').as('patchRamen');
+        cy.intercept('PATCH', cssPodUrl('/cookbook/ramen')).as('patchRamen');
 
         // Act.
         cy.sync();
@@ -42,8 +44,8 @@ describe('Interoperability', () => {
         cy.createSolidDocument('/cookbook/ramen', 'recipes/ramen-gallery.ttl');
         cy.sync();
 
-        cy.intercept('PUT', 'http://localhost:4000/cookbook/ramen-1.png').as('putRamenImage');
-        cy.intercept('PATCH', 'http://localhost:4000/cookbook/ramen').as('patchRamen');
+        cy.intercept('PUT', cssPodUrl('/cookbook/ramen-1.png')).as('putRamenImage');
+        cy.intercept('PATCH', cssPodUrl('/cookbook/ramen')).as('patchRamen');
 
         // Act.
         cy.press('Ramen');
@@ -67,7 +69,7 @@ describe('Interoperability', () => {
         cy.login();
         cy.createSolidDocument('/cookbook/ramen', 'recipes/ramen-malformed.ttl');
 
-        cy.intercept('PATCH', 'http://localhost:4000/cookbook/ramen').as('patchRamen');
+        cy.intercept('PATCH', cssPodUrl('/cookbook/ramen')).as('patchRamen');
 
         // Act.
         cy.sync();
@@ -93,7 +95,7 @@ describe('Interoperability', () => {
         cy.sync();
         cy.updateSolidDocument('/cookbook/ramen', 'sparql/update-ramen-without-history.sparql');
 
-        cy.intercept('PATCH', 'http://localhost:4000/cookbook/ramen').as('patchRamen');
+        cy.intercept('PATCH', cssPodUrl('/cookbook/ramen')).as('patchRamen');
 
         // Act.
         cy.press('Ramen');
@@ -116,7 +118,7 @@ describe('Interoperability', () => {
         cy.login();
         cy.createSolidDocument('/cookbook/ramen', 'recipes/ramen-http.ttl');
 
-        cy.intercept('PATCH', 'http://localhost:4000/cookbook/ramen').as('patchRamen');
+        cy.intercept('PATCH', cssPodUrl('/cookbook/ramen')).as('patchRamen');
 
         // Act
         cy.sync();
@@ -141,13 +143,13 @@ describe('Interoperability', () => {
         // Arrange
         const registerCookbookReplacements = {
             resourceHash: '[[cookbook-registration][.*]]',
-            cookbookUrl: 'http://localhost:4000/cookbook/',
+            cookbookUrl: cssPodUrl('/cookbook/'),
         };
 
         cy.createSolidContainerAnonymously('/cookbook/', 'Cookbook');
         cy.createSolidDocumentAnonymously('/cookbook/ramen', 'recipes/ramen.ttl');
 
-        cy.intercept('PATCH', 'http://localhost:4000/settings/privateTypeIndex').as('registerCookbook');
+        cy.intercept('PATCH', cssPodUrl('/settings/privateTypeIndex')).as('registerCookbook');
 
         // Act
         cy.login({ useExistingCookbook: true });

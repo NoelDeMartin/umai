@@ -91,7 +91,7 @@ export default {
 
     cssAuthorize(options: Partial<CSSAuthorizeOptions> = {}): void {
         const requestOptions = {
-            url: 'http://localhost:4000/alice/profile/card',
+            url: cssPodUrl('/alice/profile/card'),
             failOnStatusCode: false,
         };
 
@@ -124,7 +124,7 @@ export default {
             cy.queueCreatingSolidContainer('/alice/', 'Cookbook');
             cy.queueUpdatingSolidDocument('/alice/settings/privateTypeIndex', 'sparql/register-cookbook.sparql', {
                 resourceHash: 'cookbook-registration',
-                cookbookUrl: 'http://localhost:4000/alice/cookbook/',
+                cookbookUrl: cssPodUrl('/alice/cookbook/'),
             });
         }
 
@@ -139,7 +139,7 @@ export default {
         switch (options.authenticator) {
             case 'inrupt':
                 cy.press(options.hasCookbook ? 'disconnected' : 'Connect your Solid POD');
-                cy.ariaInput('Login url').clear().type('http://localhost:4000/alice/{enter}');
+                cy.ariaInput('Login url').clear().type(cssPodUrl('/alice/{enter}'));
                 cy.cssAuthorize({ reset: true });
                 cy.waitForReload({ resetProfiles: true });
                 break;
@@ -170,7 +170,7 @@ export default {
     },
 
     queueCreatingSolidContainer(parentUrl: string, name: string): void {
-        cy.queueAuthenticatedRequest(cssPodUrl + parentUrl, {
+        cy.queueAuthenticatedRequest(cssPodUrl(parentUrl), {
             method: 'POST',
             headers: {
                 'Content-Type': 'text/turtle',

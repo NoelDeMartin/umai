@@ -9,6 +9,7 @@ import junsRamenJsonLD from '@cy/fixtures/recipes/juns-ramen.json';
 import pistoJsonLD from '@cy/fixtures/recipes/pisto.json';
 import ramenJsonLD from '@cy/fixtures/recipes/ramen.json';
 import secondRamenJsonLD from '@cy/fixtures/recipes/ramen-2.json';
+import { cssPodUrl } from '@cy/support/commands/auth';
 
 describe('Cookbook', () => {
 
@@ -87,7 +88,7 @@ describe('Cookbook', () => {
 
     it('Sends model updates to the cloud', () => {
         // Arrange
-        cy.intercept('PATCH', 'http://localhost:4000/cookbook/ramen').as('patchRamen');
+        cy.intercept('PATCH', cssPodUrl('/cookbook/ramen')).as('patchRamen');
 
         cy.login();
 
@@ -179,7 +180,7 @@ describe('Cookbook', () => {
             cy.get('@patchRamen.all').should('have.length', fixtures.length);
         });
 
-        cy.assertLocalDocumentEquals('http://localhost:4000/cookbook/ramen', secondRamenJsonLD);
+        cy.assertLocalDocumentEquals(cssPodUrl('/cookbook/ramen'), secondRamenJsonLD);
     });
 
     it('Reconciles remote and local changes', () => {
@@ -196,7 +197,7 @@ describe('Cookbook', () => {
             });
         });
 
-        cy.intercept('PATCH', 'http://localhost:4000/cookbook/ramen').as('patchRamen');
+        cy.intercept('PATCH', cssPodUrl('/cookbook/ramen')).as('patchRamen');
 
         // Act
         cy.press('Ramen');
@@ -289,7 +290,7 @@ describe('Cookbook', () => {
 
     it('Uploads images for new recipes', () => {
         // Arrange
-        cy.intercept('PUT', 'http://localhost:4000/cookbook/ramen.png').as('putRamenImage');
+        cy.intercept('PUT', cssPodUrl('/cookbook/ramen.png')).as('putRamenImage');
 
         cy.see('How would you like to begin?');
 
@@ -316,7 +317,7 @@ describe('Cookbook', () => {
 
     it('Uploads images for existing recipes', () => {
         // Arrange
-        cy.intercept('PUT', 'http://localhost:4000/cookbook/ramen.png').as('putRamenImage');
+        cy.intercept('PUT', cssPodUrl('/cookbook/ramen.png')).as('putRamenImage');
 
         cy.createRecipe({ name: 'Ramen' });
         cy.login({ hasCookbook: true });
@@ -344,8 +345,8 @@ describe('Cookbook', () => {
         });
         cy.login({ hasCookbook: true });
 
-        cy.intercept('PATCH', 'http://localhost:4000/cookbook/ramen').as('patchRamen');
-        cy.intercept('PUT', 'http://localhost:4000/cookbook/ramen.png').as('putRamenImage');
+        cy.intercept('PATCH', cssPodUrl('/cookbook/ramen')).as('patchRamen');
+        cy.intercept('PUT', cssPodUrl('/cookbook/ramen.png')).as('putRamenImage');
 
         // Act
         cy.press('Ramen');
@@ -372,8 +373,8 @@ describe('Cookbook', () => {
         });
         cy.login({ hasCookbook: true });
 
-        cy.intercept('PATCH', 'http://localhost:4000/cookbook/ramen').as('patchRamen');
-        cy.intercept('PUT', 'http://localhost:4000/cookbook/ramen.png').as('putRamenImage');
+        cy.intercept('PATCH', cssPodUrl('/cookbook/ramen')).as('patchRamen');
+        cy.intercept('PUT', cssPodUrl('/cookbook/ramen.png')).as('putRamenImage');
 
         // Act
         cy.press('Ramen');
@@ -643,14 +644,14 @@ describe('Cookbook', () => {
         // Arrange
         cy.createRecipe({
             name: 'Ramen',
-            imageUrls: ['http://localhost:4000/cookbook/ramen.png'],
+            imageUrls: [cssPodUrl('/cookbook/ramen.png')],
         });
         cy.login({ hasCookbook: true });
-        cy.request('http://localhost:4000/cookbook/ramen')
+        cy.request(cssPodUrl('/cookbook/ramen'))
             .then(response => cy.wrap(response.body).as('ramenTurtle'));
 
-        cy.intercept('PATCH', 'http://localhost:4000/cookbook/ramen').as('patchRamen');
-        cy.intercept('DELETE', 'http://localhost:4000/cookbook/ramen.png').as('deleteRamenImage');
+        cy.intercept('PATCH', cssPodUrl('/cookbook/ramen')).as('patchRamen');
+        cy.intercept('DELETE', cssPodUrl('/cookbook/ramen.png')).as('deleteRamenImage');
 
         // Act
         cy.press('Ramen');
@@ -675,7 +676,7 @@ describe('Cookbook', () => {
             `);
         });
         cy.get('@deleteRamenImage').should('not.be.null');
-        cy.assertLocalDocumentDoesNotExist('http://localhost:4000/cookbook/ramen');
+        cy.assertLocalDocumentDoesNotExist(cssPodUrl('/cookbook/ramen'));
     });
 
     it('Deletes recipes deleted remotely', () => {
@@ -689,7 +690,7 @@ describe('Cookbook', () => {
 
         // Assert
         cy.dontSee('Ramen');
-        cy.assertLocalDocumentDoesNotExist('http://localhost:4000/cookbook/ramen');
+        cy.assertLocalDocumentDoesNotExist(cssPodUrl('/cookbook/ramen'));
     });
 
     it('Downloads recipes', () => {
@@ -736,8 +737,8 @@ describe('Cookbook', () => {
             ingredients: [
                 '[Dashi (relative app url)](/recipes/dashi)',
                 `[Dashi (hard-coded app url)](${Cypress.config('baseUrl')}/recipes/dashi)`,
-                '[Dashi (resource id)](http://localhost:4000/cookbook/dashi#it)',
-                '[Dashi (document url)](http://localhost:4000/cookbook/dashi)',
+                `[Dashi (resource id)](${cssPodUrl('/cookbook/dashi#it')})`,
+                `[Dashi (document url)](${cssPodUrl('/cookbook/dashi')})`,
                 '[Dashi (external url)](https://recipes.example.com/dashi)',
                 '[Noodles](https://recipes.example.com/noodles)',
             ],

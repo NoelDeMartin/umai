@@ -1,4 +1,5 @@
 import ramenJsonLD from '@cy/fixtures/recipes/ramen-3.json';
+import { cssPodUrl } from '@cy/support/commands/auth';
 
 describe('Authentication', () => {
 
@@ -24,19 +25,19 @@ describe('Authentication', () => {
         // Arrange
         const registerCookbookReplacements = {
             resourceHash: '[[cookbook-registration][.*]]',
-            cookbookUrl: 'http://localhost:4000/alice/cookbook/',
+            cookbookUrl: cssPodUrl('/alice/cookbook/'),
         };
 
-        cy.intercept('PUT', 'http://localhost:4000/alice/cookbook/').as('createCookbook');
-        cy.intercept('PUT', 'http://localhost:4000/alice/settings/privateTypeIndex').as('createTypeIndex');
-        cy.intercept('PATCH', 'http://localhost:4000/alice/settings/privateTypeIndex').as('registerCookbook');
-        cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/ramen').as('patchRamen');
+        cy.intercept('PUT', cssPodUrl('/alice/cookbook/')).as('createCookbook');
+        cy.intercept('PUT', cssPodUrl('/alice/settings/privateTypeIndex')).as('createTypeIndex');
+        cy.intercept('PATCH', cssPodUrl('/alice/settings/privateTypeIndex')).as('registerCookbook');
+        cy.intercept('PATCH', cssPodUrl('/alice/cookbook/ramen')).as('patchRamen');
         cy.visit('/?authenticator=inrupt');
         cy.startApp();
 
         // Act - Sign up
         cy.press('Connect your Solid POD');
-        cy.ariaInput('Login url').clear().type('http://localhost:4000/alice/{enter}');
+        cy.ariaInput('Login url').clear().type(cssPodUrl('/alice/{enter}'));
         cy.cssAuthorize({ reset: true });
         cy.waitForReload({ resetProfiles: true });
 
@@ -53,7 +54,7 @@ describe('Authentication', () => {
 
         // Assert
         cy.press('online');
-        cy.see('You are logged in as http://localhost:4000/alice/profile/card#me');
+        cy.see(`You are logged in as ${cssPodUrl('/alice/profile/card#me')}`);
 
         cy.get('@createCookbook').its('request.headers.authorization').should('match', /DPoP .*/);
         cy.get('@createTypeIndex').its('request.headers.authorization').should('match', /DPoP .*/);
@@ -68,13 +69,13 @@ describe('Authentication', () => {
 
     it('Logs in using the Inrupt authenticator', () => {
         // Arrange
-        cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/pisto').as('patchPisto');
+        cy.intercept('PATCH', cssPodUrl('/alice/cookbook/pisto')).as('patchPisto');
         cy.visit('/?authenticator=inrupt');
         cy.startApp();
 
         // Act - Log in
         cy.press('Connect your Solid POD');
-        cy.ariaInput('Login url').clear().type('http://localhost:4000/alice/{enter}');
+        cy.ariaInput('Login url').clear().type(cssPodUrl('/alice/{enter}'));
         cy.cssAuthorize({
             reset: {
                 typeIndex: true,
@@ -105,7 +106,7 @@ describe('Authentication', () => {
         cy.visit('/?authenticator=inrupt');
         cy.startApp();
         cy.press('Connect your Solid POD');
-        cy.ariaInput('Login url').clear().type('http://localhost:4000/alice/{enter}');
+        cy.ariaInput('Login url').clear().type(cssPodUrl('/alice/{enter}'));
         cy.cssAuthorize({ reset: true });
         cy.waitForReload({ resetProfiles: true });
         cy.press('online');
@@ -132,7 +133,7 @@ describe('Authentication', () => {
         cy.visit('/?authenticator=inrupt');
         cy.startApp();
         cy.press('Connect your Solid POD');
-        cy.ariaInput('Login url').clear().type('http://localhost:4000/alice/{enter}');
+        cy.ariaInput('Login url').clear().type(cssPodUrl('/alice/{enter}'));
         cy.cssAuthorize({
             reset: {
                 typeIndex: true,
@@ -158,7 +159,7 @@ describe('Authentication', () => {
         cy.visit('/?authenticator=inrupt');
         cy.startApp();
         cy.press('Connect your Solid POD');
-        cy.ariaInput('Login url').clear().type('http://localhost:4000/alice/{enter}');
+        cy.ariaInput('Login url').clear().type(cssPodUrl('/alice/{enter}'));
         cy.cssAuthorize({
             reset: {
                 typeIndex: true,
@@ -187,7 +188,7 @@ describe('Authentication', () => {
 
     it('Migrates local data to cloud after logging in', () => {
         // Arrange
-        cy.intercept('PATCH', 'http://localhost:4000/alice/cookbook/ramen').as('patchRamen');
+        cy.intercept('PATCH', cssPodUrl('/alice/cookbook/ramen')).as('patchRamen');
         cy.visit('/');
         cy.startApp();
 
@@ -244,7 +245,7 @@ describe('Authentication', () => {
         cy.visit('/?authenticator=inrupt');
         cy.startApp();
         cy.press('disconnected');
-        cy.ariaInput('Login url').clear().type('http://localhost:4000/alice/{enter}');
+        cy.ariaInput('Login url').clear().type(cssPodUrl('/alice/{enter}'));
         cy.cssAuthorize({ reset: true });
         cy.waitForReload({ resetProfiles: true });
         cy.press('Continue');
@@ -252,7 +253,7 @@ describe('Authentication', () => {
         // Assert
         cy.wait('@patchRamen');
         cy.get('@patchRamen.all').should('have.length', 1);
-        cy.assertLocalDocumentEquals('http://localhost:4000/alice/cookbook/ramen', ramenJsonLD);
+        cy.assertLocalDocumentEquals(cssPodUrl('/alice/cookbook/ramen'), ramenJsonLD);
         cy.assertLocalDocumentDoesNotExist('solid://recipes/ramen');
     });
 
