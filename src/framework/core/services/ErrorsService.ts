@@ -1,5 +1,12 @@
 import { captureException, init } from '@sentry/browser';
-import { JSError, getLocationQueryParameter, hasLocationQueryParameter, parseBoolean, tap } from '@noeldemartin/utils';
+import {
+    JSError,
+    getLocationQueryParameter,
+    hasLocationQueryParameter,
+    isObject,
+    parseBoolean,
+    tap,
+} from '@noeldemartin/utils';
 import { UnsuccessfulNetworkRequestError } from '@noeldemartin/solid-utils';
 
 import App from '@/framework/core/facades/App';
@@ -142,7 +149,7 @@ export default class ErrorsService extends Service<State, ComputedState> {
         // eslint-disable-next-line no-console
         console.error(error);
 
-        if (error instanceof Error && error.cause) {
+        if (isObject(error) && error.cause) {
             this.logError(error.cause);
         }
     }
