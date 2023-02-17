@@ -57,7 +57,7 @@ export default class InruptAuthenticator extends Authenticator {
         Storage.remove(STORAGE_KEY);
 
         if (session?.isLoggedIn && session.webId) {
-            this.initSession(session.webId);
+            await this.initSession(session.webId);
         }
     }
 
