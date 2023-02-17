@@ -6,6 +6,8 @@ import Events from '@/framework/core/facades/Events';
 import I18n from '@/framework/core/facades/I18n';
 import Service from '@/framework/core/Service';
 
+import localesDisplayNames from '@/lang/locales.json';
+
 const DEFAULT_LOCALE_STORAGE_KEY = 'lang.locale';
 
 export default class LangService extends Service {
@@ -24,12 +26,12 @@ export default class LangService extends Service {
         this.localeLoaders = this.initLocaleLoaders();
         this.locales = Object.keys(this.localeLoaders);
         this.displayNames = this.locales.reduce((displayNames, locale) => {
-            displayNames[locale] = stringCapitalize(
+            displayNames[locale] ??= stringCapitalize(
                 (new Intl.DisplayNames([locale], { type: 'language' })).of(locale) ?? locale,
             );
 
             return displayNames;
-        }, {} as Record<string, string>);
+        }, localesDisplayNames as Record<string, string>);
         this.defaultLocale = this.initDefaultLocale();
     }
 

@@ -25,7 +25,7 @@ export default defineConfig(({ mode }) => {
     return {
         plugins: [
             Vue({ reactivityTransform: true }),
-            I18n({ include: resolve(__dirname, './src/lang/**') }),
+            I18n({ include: resolve(__dirname, './src/lang/**/*.yaml') }),
             VitePWA({
                 registerType: 'autoUpdate',
                 manifest: {
