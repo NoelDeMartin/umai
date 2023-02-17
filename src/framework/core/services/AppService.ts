@@ -20,18 +20,40 @@ interface State {
 
 export default class AppService extends Service<State> {
 
-    public readonly name = 'Umai';
-    public isDevelopment: boolean = false;
-    public isProduction: boolean = false;
-    public isStaging: boolean = false;
-    public isTesting: boolean = false;
-    public sourceUrl: string = '';
-    public version: string = '';
-    public versionName: string = '';
-    public releaseNotesUrl: string = '';
+    public readonly name: string;
+    public readonly clientID: ClientIDDocument;
+    public readonly isDevelopment: boolean;
+    public readonly isProduction: boolean;
+    public readonly isStaging: boolean;
+    public readonly isTesting: boolean;
+    public readonly sourceUrl: string;
+    public readonly version: string;
+    public readonly versionName: string;
+    public readonly releaseNotesUrl: string;
 
-    public get clientID(): ClientIDDocument {
-        return clientID;
+    constructor() {
+        super();
+
+        const sourceCommitHash = process.env.VUE_APP_SOURCE_COMMIT_HASH as string;
+
+        this.name = clientID.client_name;
+        this.clientID = clientID;
+        this.isDevelopment = import.meta.env.DEV;
+        this.isProduction = import.meta.env.PROD;
+        this.isStaging = import.meta.env.MODE === 'staging';
+        this.isTesting = import.meta.env.MODE === 'testing';
+        this.sourceUrl = process.env.VUE_APP_SOURCE_URL as string;
+        this.version = process.env.VUE_APP_VERSION as string;
+        this.versionName = this.formatVersionName(
+            (this.isStaging || this.isDevelopment)
+                ? ((this.isStaging ? 'staging.' : 'dev.') + sourceCommitHash.toString().substring(0, 7))
+                : this.version,
+        );
+        this.releaseNotesUrl = this.sourceUrl + (
+            (this.isStaging || this.isDevelopment)
+                ? `/tree/${sourceCommitHash}`
+                : `/releases/tag/${this.versionName}`
+        );
     }
 
     public env<T = unknown>(property: string): T {
@@ -53,24 +75,6 @@ export default class AppService extends Service<State> {
         await Auth.booted;
         await Cookbook.booted;
 
-        const sourceCommitHash = process.env.VUE_APP_SOURCE_COMMIT_HASH as string;
-
-        this.sourceUrl = process.env.VUE_APP_SOURCE_URL as string;
-        this.isDevelopment = import.meta.env.DEV;
-        this.isProduction = import.meta.env.PROD;
-        this.isStaging = import.meta.env.MODE === 'staging';
-        this.isTesting = import.meta.env.MODE === 'testing';
-        this.version = process.env.VUE_APP_VERSION as string;
-        this.versionName = this.formatVersionName(
-            (this.isStaging || this.isDevelopment)
-                ? ((this.isStaging ? 'staging.' : 'dev.') + sourceCommitHash.toString().substring(0, 7))
-                : this.version,
-        );
-        this.releaseNotesUrl = this.sourceUrl + (
-            (this.isStaging || this.isDevelopment)
-                ? `/tree/${sourceCommitHash}`
-                : `/releases/tag/${this.versionName}`
-        );
         this.isOnboarding = !Router.currentRouteIs('viewer')
             && !Auth.isLoggedIn()
             && Auth.previousSession === null
