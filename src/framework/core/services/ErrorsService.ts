@@ -53,9 +53,8 @@ export default class ErrorsService extends Service<State, ComputedState> {
     }
 
     public async report(error: ErrorSource, message?: string): Promise<void> {
-        if (App.isDevelopment) {
-            // eslint-disable-next-line no-console
-            console.error(error);
+        if (App.isDevelopment || App.isTesting) {
+            this.logError(error);
         }
 
         if (!this.enabled) {
@@ -137,6 +136,15 @@ export default class ErrorsService extends Service<State, ComputedState> {
 
     private reportErrors(): boolean {
         return this.sentryConfigured && (this.reporting || this.forceReporting);
+    }
+
+    private logError(error: unknown): void {
+        // eslint-disable-next-line no-console
+        console.error(error);
+
+        if (error instanceof Error && error.cause) {
+            this.logError(error.cause);
+        }
     }
 
     private async createErrorReport(error: ErrorSource, sentryId?: string | null | undefined): Promise<ErrorReport> {
