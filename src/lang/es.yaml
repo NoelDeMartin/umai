@@ -364,7 +364,6 @@ validation:
 
 auth:
   stuckConnecting: No hemos recibido respuesta del proveedor de identidad, ¿quizás deberías reconectar?
-  invalidWebId: "`{webId}` no es un webId válido."
 
 ui:
   drag: ¡Presiona y arrastra para mover!

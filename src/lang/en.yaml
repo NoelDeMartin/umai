@@ -373,7 +373,6 @@ validation:
 
 auth:
   stuckConnecting: We didn't hear back from the identity provider, maybe try reconnecting?
-  invalidWebId: "`{webId}` does not return a valid webId document."
 
 ui:
   drag: Hold and drag to move!

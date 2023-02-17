@@ -5,9 +5,7 @@ import type { handleIncomingRedirect, login, logout } from '@inrupt/solid-client
 import App from '@/framework/core/facades/App';
 import Auth from '@/framework/core/facades/Auth';
 import Authenticator from '@/framework/auth/Authenticator';
-import { i18nTranslate } from '@/framework/plugins/i18n';
 import type { AuthSession } from '@/framework/auth/Authenticator';
-
 
 const STORAGE_KEY = 'inrupt-authenticator';
 
@@ -59,13 +57,19 @@ export default class InruptAuthenticator extends Authenticator {
         Storage.remove(STORAGE_KEY);
 
         if (session?.isLoggedIn && session.webId) {
-            await this.initAuthenticatedFetch(this._fetch);
+            this.initSession(session.webId);
+        }
+    }
 
-            const user = await Auth.getUserProfile(session.webId);
+    protected async initSession(webId: string): Promise<void> {
+        await this.initAuthenticatedFetch(this._fetch);
 
-            user
-                ? await this.startSession({ user, loginUrl: session.webId })
-                : await this.failSession(session.webId, i18nTranslate('auth.invalidWebId', { webId: session.webId }));
+        try {
+            const user = await Auth.requireUserProfile(webId);
+
+            await this.startSession({ user, loginUrl: webId });
+        } catch (error) {
+            await this.failSession(webId, error);
         }
     }
 

@@ -92,9 +92,21 @@ export default class AuthService extends Service<State, ComputedState> {
         return this.user ?? fail('Could not get user profile');
     }
 
-    public async getUserProfile(url: string): Promise<SolidUserProfile | null> {
+    public requireUserProfile(url: string): Promise<SolidUserProfile> {
+        return this.getUserProfile(url, true);
+    }
+
+    public async getUserProfile(url: string, required: true): Promise<SolidUserProfile>;
+    public async getUserProfile(url: string, required?: false): Promise<SolidUserProfile | null>;
+    public async getUserProfile(url: string, required: boolean = false): Promise<SolidUserProfile | null> {
         return this.profiles[url]
-            ?? tap(await fetchLoginUserProfile(url, this.fetch), profile => profile && this.rememberProfile(profile));
+            ?? tap(
+                await fetchLoginUserProfile(url, {
+                    fetch: this.fetch,
+                    required,
+                }),
+                profile => profile && this.rememberProfile(profile),
+            );
     }
 
     public async refreshUserProfile(): Promise<void> {
@@ -103,10 +115,7 @@ export default class AuthService extends Service<State, ComputedState> {
 
         this.setState({ profiles: objectWithout(this.profiles, [this.user.webId]) });
 
-        const user = await this.getUserProfile(this.user.webId);
-
-        if (!user)
-            throw new Error('User profile went missing');
+        const user = await this.requireUserProfile(this.user.webId);
 
         this.setState({
             session: {
@@ -293,6 +302,14 @@ export default class AuthService extends Service<State, ComputedState> {
             hasLoggedIn: (_, state) => state.loggedIn || state.wasLoggedIn,
             user: state => state.session?.user ?? null,
         };
+    }
+
+    protected serializePersistedState(state: Partial<State>): Partial<State> {
+        if (state.previousSession?.error instanceof Error) {
+            state.previousSession.error = state.previousSession.error.message;
+        }
+
+        return state;
     }
 
     private reconnectOnStartup(): boolean {

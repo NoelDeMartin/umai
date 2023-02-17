@@ -374,7 +374,6 @@ validation:
 
 auth:
   stuckConnecting: No hem rebut una resposta del proveïdor d'identitat, potser hauries de reconnectar?
-  invalidWebId: "`{webId}` no és un webId vàlid."
 
 ui:
   drag: Prem i arrossega per moure!

@@ -23,7 +23,7 @@
   "dependencies": {
     "@headlessui/vue": "^1.7.3",
     "@inrupt/solid-client-authn-browser": "^1.11.6",
-    "@noeldemartin/solid-utils": "^0.2.0",
+    "@noeldemartin/solid-utils": "^0.2.0-next.4b14611c89c76d446970ae9cbd59846d3fcd35bf",
     "@noeldemartin/utils": "^0.3.0-next.4e8641b2bd16389b65055466f4875fc565dd2c2f",
     "@sentry/browser": "^7.14.2",
     "@tailwindcss/forms": "^0.4.0",

@@ -1,4 +1,4 @@
-import { PromisedValue, Storage, isEmpty, objectOnly } from '@noeldemartin/utils';
+import { PromisedValue, Storage, isEmpty, objectDeepClone, objectOnly } from '@noeldemartin/utils';
 import type { Constructor } from '@noeldemartin/utils';
 
 import ServiceBootError from '@/framework/core/errors/ServiceBootError';
@@ -148,14 +148,15 @@ export default class Service<
     protected onStateUpdated(state: Partial<State>): void {
         const persisted = objectOnly(state, this.static('persist'));
 
-        if (isEmpty(persisted))
+        if (isEmpty(persisted)) {
             return;
+        }
 
         const storage = Storage.require<ServiceStorage>(this._namespace);
 
         Storage.set(this._namespace, {
             ...storage,
-            ...persisted,
+            ...this.serializePersistedState(objectDeepClone(persisted) as Partial<State>),
         });
     }
 
@@ -173,6 +174,10 @@ export default class Service<
 
     protected getComputedStateDefinitions(): ComputedStateDefinitions<State, ComputedState> {
         return {} as ComputedStateDefinitions<State, ComputedState>;
+    }
+
+    protected serializePersistedState(state: Partial<State>): Partial<State> {
+        return state;
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
