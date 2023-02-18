@@ -32,8 +32,9 @@
                 </CoreButton>
                 <div
                     ref="content"
-                    class="flex overflow-auto flex-col mt-2 max-h-full"
+                    class="flex overflow-auto flex-col mt-4 max-h-full"
                     :class="{
+                        'border-t': headerBorder,
                         'pl-4 pb-4': padding,
                         'pr-4': padding && (hasTitle || !cancellable),
                         'pr-12': padding && (!hasTitle && cancellable),
@@ -71,6 +72,7 @@ const { modal, title, childIndex, noPadding } = defineProps({
     childIndex: requiredNumberProp(),
     noPadding: booleanProp(),
     cancellable: booleanProp(true),
+    headerBorder: booleanProp(),
 });
 
 let hidden = $ref(true);

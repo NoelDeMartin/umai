@@ -376,6 +376,10 @@ ui:
   closeModal: Cerrar modal
   loading: Cargando...
 
+time:
+  secondsAgo: hace {seconds} segundos
+  minutesAgo: hace {minutes} minutos
+
 errors:
   notFound: "404: No encontrado"
   notFound_goHome: volver a la pantalla principal
@@ -386,6 +390,7 @@ errors:
   unsupportedBrowser_indexedDBHelp: Encuentra un navegador compatible
   unsupportedBrowser_indexedDBHelpFirefox: Si estás utilizando Firefox en modo incógnito, es un <CoreLink color="danger" url="https://bugzilla.mozilla.org/show_bug.cgi?id=1639542">problema conocido</CoreLink>.
   notice: Algo ha ido mal, pero no es culpa tuya. ¡Vuelve a intentarlo!
+  logs: Historial de errores
   sync: La sincronización ha fallado, vuelve a intentarlo más tarde
   viewDetails: Ver detalles
   unknown: Error desconocido

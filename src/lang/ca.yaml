@@ -386,6 +386,10 @@ ui:
   closeModal: Tancar modal
   loading: Carregant...
 
+time:
+  secondsAgo: fa {seconds} segons
+  minutesAgo: fa {minutes} minuts
+
 errors:
   notFound: "404: No trobat"
   notFound_goHome: tornar a la pantalla principal
@@ -398,6 +402,7 @@ errors:
   unsupportedBrowser_indexedDBHelp: Troba un navegador compatible
   unsupportedBrowser_indexedDBHelpFirefox: Si estàs fent servir Firefox en mode incògnit, és un <CoreLink color="danger" url="https://bugzilla.mozilla.org/show_bug.cgi?id=1639542">problema conegut</CoreLink>.
   notice: Alguna cosa ha anat malament, però no és culpa teva. Torna-ho a intentar!
+  logs: Historial d'errors
   sync: La sincronització ha fallat, torna a intentar-ho més tard
   viewDetails: Veure detalls
   unknown: Error desconegut

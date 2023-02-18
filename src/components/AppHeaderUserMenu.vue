@@ -1,6 +1,6 @@
 <template>
     <Menu as="div" class="flex relative items-center">
-        <div>
+        <div class="relative">
             <MenuButton as="template">
                 <HeadlessButton
                     v-if="$auth.userAvatarUrl"
@@ -18,6 +18,7 @@
                     <i-pepicons-gear-filled class="w-7 h-7" aria-hidden="true" />
                 </AppHeaderButton>
             </MenuButton>
+            <div v-if="$errors.hasNewErrors" class="w-2 h-2 rounded-full bg-red-500 absolute -top-1 -right-1" />
         </div>
         <transition
             enter-active-class="transition duration-100 ease-out"
@@ -41,6 +42,21 @@
                         <i-pepicons-tool class="w-4 h-4" aria-hidden="true" />
                     </button>
                 </MenuItem>
+                <MenuItem v-if="$errors.hasErrors" v-slot="{ active }">
+                    <button
+                        type="button"
+                        class="flex items-center justify-between px-4 py-2 w-full text-sm"
+                        :class="{
+                            'text-red-500': $errors.hasNewErrors,
+                            'text-gray-700': !$errors.hasNewErrors,
+                            'bg-gray-100': active,
+                        }"
+                        @click="() => $ui.openModal(ErrorReportsModal)"
+                    >
+                        <span>{{ $t('errors.logs') }}</span>
+                        <i-pepicons-exclamation-circle class="w-4 h-4" aria-hidden="true" />
+                    </button>
+                </MenuItem>
                 <MenuItem v-slot="{ active }">
                     <button
                         type="button"
@@ -61,5 +77,6 @@
 
 <script setup lang="ts">
 import CloudStatusModal from '@/components/modals/CloudStatusModal.vue';
+import ErrorReportsModal from '@/components/modals/ErrorReportsModal.vue';
 import SettingsModal from '@/components/modals/SettingsModal.vue';
 </script>

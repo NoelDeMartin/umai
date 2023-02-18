@@ -19,10 +19,13 @@ import type { ComputedStateDefinitions, IService } from '@/framework/core/Servic
 
 interface State {
     reporting: boolean;
+    logs: ErrorReportLog[];
     startupErrors: ErrorReport[];
 }
 
 interface ComputedState {
+    hasErrors: boolean;
+    hasNewErrors: boolean;
     hasStartupErrors: boolean;
 }
 
@@ -34,6 +37,12 @@ export interface ErrorReport {
     details?: string;
     sentryId?: string | null;
     error?: Error | JSError | unknown;
+}
+
+export interface ErrorReportLog {
+    report: ErrorReport;
+    seen: boolean;
+    date: Date;
 }
 
 export default class ErrorsService extends Service<State, ComputedState> {
@@ -85,6 +94,11 @@ export default class ErrorsService extends Service<State, ComputedState> {
         }
 
         const report = await this.createErrorReport(error, sentryId);
+        const log: ErrorReportLog = {
+            report,
+            seen: false,
+            date: new Date(),
+        };
 
         UI.showSnackbar(message ?? translate('errors.notice'), {
             style: SnackbarStyle.Error,
@@ -98,6 +112,8 @@ export default class ErrorsService extends Service<State, ComputedState> {
                 },
             ],
         });
+
+        this.setState({ logs: [log].concat(this.logs) });
     }
 
     public reportToSentry(error: ErrorSource): string | null {
@@ -118,6 +134,32 @@ export default class ErrorsService extends Service<State, ComputedState> {
         return null;
     }
 
+    public markErrorsRead(report?: ErrorReport): void {
+        if (!report) {
+            this.setState({
+                logs: this.logs.map(log => ({
+                    ...log,
+                    seen: true,
+                })),
+            });
+
+            return;
+        }
+
+        this.setState({
+            logs: this.logs.map(log => {
+                if (log.report !== report) {
+                    return log;
+                }
+
+                return {
+                    ...log,
+                    seen: log.report === report ? true : log.seen,
+                };
+            }),
+        });
+    }
+
     protected async boot(): Promise<void> {
         await super.boot();
 
@@ -131,12 +173,15 @@ export default class ErrorsService extends Service<State, ComputedState> {
     protected getInitialState(): State {
         return {
             reporting: false,
+            logs: [],
             startupErrors: [],
         };
     }
 
     protected getComputedStateDefinitions(): ComputedStateDefinitions<State, ComputedState> {
         return {
+            hasErrors: ({ logs }) => logs.length > 0,
+            hasNewErrors: ({ logs }) => logs.some(error => !error.seen),
             hasStartupErrors: ({ startupErrors }) => startupErrors.length > 0,
         };
     }

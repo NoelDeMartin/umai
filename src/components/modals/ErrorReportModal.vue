@@ -95,6 +95,7 @@
 
 <script setup lang="ts">
 import { stringExcerpt } from '@noeldemartin/utils';
+import { watch } from 'vue';
 
 import App from '@/framework/core/facades/App';
 import Errors from '@/framework/core/facades/Errors';
@@ -153,4 +154,6 @@ async function copyToClipboard() {
 
     UI.showSnackbar(translate('errors.copiedToClipboard'));
 }
+
+watch(report, () => Errors.markErrorsRead(report), { immediate: true });
 </script>
