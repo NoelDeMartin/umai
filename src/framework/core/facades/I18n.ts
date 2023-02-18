@@ -1,7 +1,6 @@
+import { facade } from '@noeldemartin/utils';
 import type { ComposerTranslation, LocaleMessages, VueMessageType } from 'vue-i18n';
 import type { Ref } from 'vue';
-
-import { facade } from '@/framework/core/facades';
 
 export default facade<{
     locale: Ref<string>;

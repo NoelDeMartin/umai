@@ -1,4 +1,4 @@
-import { facade } from '@/framework/core/facades';
+import { facade } from '@noeldemartin/utils';
 
 import ConfigService from '@/services/ConfigService';
 

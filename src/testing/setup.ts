@@ -1,3 +1,7 @@
+import { installJestPlugin } from '@noeldemartin/solid-utils';
+
+installJestPlugin();
+
 expect.extend({
     toEqualClasses(received: string, expected: string) {
         const normalizedReceived = received.split(' ').sort().join(' ');
