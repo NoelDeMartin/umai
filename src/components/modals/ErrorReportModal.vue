@@ -155,5 +155,5 @@ async function copyToClipboard() {
     UI.showSnackbar(translate('errors.copiedToClipboard'));
 }
 
-watch(report, () => Errors.markErrorsRead(report), { immediate: true });
+watch(report, () => Errors.see(report), { immediate: true });
 </script>

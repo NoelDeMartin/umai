@@ -53,5 +53,5 @@ function renderDate(date: Date): string {
     return translate('time.secondsAgo', { seconds });
 }
 
-onMounted(() => Errors.markErrorsRead());
+onMounted(() => Errors.seeAll());
 </script>

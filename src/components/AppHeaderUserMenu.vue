@@ -18,7 +18,14 @@
                     <i-pepicons-gear-filled class="w-7 h-7" aria-hidden="true" />
                 </AppHeaderButton>
             </MenuButton>
-            <div v-if="$errors.hasNewErrors" class="w-2 h-2 rounded-full bg-red-500 absolute -top-1 -right-1" />
+            <div
+                v-if="$errors.hasNewErrors"
+                class="w-2 h-2 rounded-full bg-red-500 absolute"
+                :class="{
+                    '-top-1 -right-1': $auth.userAvatarUrl,
+                    'top-1 right-1': !$auth.userAvatarUrl,
+                }"
+            />
         </div>
         <transition
             enter-active-class="transition duration-100 ease-out"

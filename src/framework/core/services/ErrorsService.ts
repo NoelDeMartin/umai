@@ -134,18 +134,7 @@ export default class ErrorsService extends Service<State, ComputedState> {
         return null;
     }
 
-    public markErrorsRead(report?: ErrorReport): void {
-        if (!report) {
-            this.setState({
-                logs: this.logs.map(log => ({
-                    ...log,
-                    seen: true,
-                })),
-            });
-
-            return;
-        }
-
+    public see(report: ErrorReport): void {
         this.setState({
             logs: this.logs.map(log => {
                 if (log.report !== report) {
@@ -154,9 +143,18 @@ export default class ErrorsService extends Service<State, ComputedState> {
 
                 return {
                     ...log,
-                    seen: log.report === report ? true : log.seen,
+                    seen: true,
                 };
             }),
+        });
+    }
+
+    public seeAll(): void {
+        this.setState({
+            logs: this.logs.map(log => ({
+                ...log,
+                seen: true,
+            })),
         });
     }
 
