@@ -257,4 +257,30 @@ describe('Authentication', () => {
         cy.assertLocalDocumentDoesNotExist('solid://recipes/ramen');
     });
 
+    it('Restores route after reconnecting', () => {
+        // Arrange
+        cy.intercept('PATCH', cssPodUrl('/alice/cookbook/pisto')).as('patchPisto');
+        cy.visit('/?authenticator=inrupt');
+        cy.startApp();
+
+        cy.press('Connect your Solid POD');
+        cy.ariaInput('Login url').clear().type(cssPodUrl('/alice/{enter}'));
+        cy.cssAuthorize({
+            reset: {
+                typeIndex: true,
+                cookbook: true,
+                recipe: 'pisto',
+            },
+        });
+        cy.waitForReload({ resetProfiles: true });
+        cy.see('Pisto');
+
+        // Act
+        cy.visit('/recipes/pisto?arbitraryState=true#hash');
+        cy.startApp();
+
+        // Assert
+        cy.url().should('equal', `${Cypress.config('baseUrl')}/recipes/pisto?arbitraryState=true#hash`);
+    });
+
 });

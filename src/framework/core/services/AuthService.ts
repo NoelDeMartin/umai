@@ -5,6 +5,10 @@ import {
     fetchLoginUserProfile,
 } from '@noeldemartin/solid-utils';
 import {
+    Storage,
+    arrayFilter,
+    arrayUnique,
+    arrayWithout,
     fail,
     getLocationQueryParameter,
     hasLocationQueryParameter,
@@ -17,6 +21,7 @@ import { requireEngine } from 'soukai';
 import { SolidACLAuthorization, SolidTypeIndex } from 'soukai-solid';
 import type { Fetch, SolidUserProfile } from '@noeldemartin/solid-utils';
 import type { IndexedDBEngine } from 'soukai';
+import type { RouteLocationNormalizedLoaded } from 'vue-router';
 
 import App from '@/framework/core/facades/App';
 import AuthenticationCancelledError from '@/framework/auth/errors/AuthenticationCancelledError';
@@ -41,6 +46,7 @@ interface State {
     autoReconnect: boolean;
     session: AuthSession | null;
     profiles: Record<string, SolidUserProfile>;
+    staleProfiles: string[];
     dismissed: boolean;
     preferredAuthenticator: AuthenticatorName | null;
     ongoing: boolean;
@@ -76,9 +82,17 @@ declare module '@/framework/core/services/EventsService' {
 
 }
 
+const FLASH_ROUTE_STORAGE_KEY = 'auth.flashRoute';
+
 export default class AuthService extends Service<State, ComputedState> {
 
-    public static persist: Array<keyof State> = ['autoReconnect', 'dismissed', 'previousSession', 'profiles'];
+    public static persist: Array<keyof State> = [
+        'autoReconnect',
+        'dismissed',
+        'previousSession',
+        'profiles',
+        'staleProfiles',
+    ];
 
     public isLoggedIn(): this is { session: AuthSession; user: SolidUserProfile; authenticator: Authenticator } {
         return this.loggedIn;
@@ -110,8 +124,9 @@ export default class AuthService extends Service<State, ComputedState> {
     }
 
     public async refreshUserProfile(): Promise<void> {
-        if (!this.isLoggedIn())
+        if (!this.isLoggedIn()) {
             return;
+        }
 
         this.setState({ profiles: objectWithout(this.profiles, [this.user.webId]) });
 
@@ -185,6 +200,8 @@ export default class AuthService extends Service<State, ComputedState> {
             return;
         }
 
+        Storage.set(FLASH_ROUTE_STORAGE_KEY, Router.currentRoute.value);
+
         await this.login(this.previousSession.loginUrl, this.previousSession.authenticator);
     }
 
@@ -257,13 +274,26 @@ export default class AuthService extends Service<State, ComputedState> {
         await super.boot();
         await Errors.booted;
 
-        const url = new URL(location.href);
+        if (hasLocationQueryParameter('authenticator')) {
+            this.setState({
+                preferredAuthenticator: getLocationQueryParameter('authenticator') as AuthenticatorName,
+            });
+        }
 
-        if (url.searchParams.has('authenticator'))
-            this.setState({ preferredAuthenticator: url.searchParams.get('authenticator') as AuthenticatorName });
+        if (hasLocationQueryParameter('refreshProfile')) {
+            this.setState({
+                staleProfiles: arrayUnique(
+                    this.staleProfiles.concat(arrayFilter([
+                        this.session?.user.webId,
+                        this.previousSession?.loginUrl,
+                    ])),
+                ),
+            });
+        }
 
-        this.previousSession && await this.bootAuthenticator(this.previousSession.authenticator);
-        this.reconnectOnStartup() && await this.reconnect();
+        await this.restorePreviousSession();
+        await this.restoreFlashRoute();
+        await this.startupReconnect();
     }
 
     protected getInitialState(): State {
@@ -278,6 +308,7 @@ export default class AuthService extends Service<State, ComputedState> {
             previousSession: null,
             preferredAuthenticator: null,
             profiles: {},
+            staleProfiles: [],
         };
     }
 
@@ -312,6 +343,32 @@ export default class AuthService extends Service<State, ComputedState> {
         return state;
     }
 
+    private async restorePreviousSession(): Promise<void> {
+        if (!this.previousSession) {
+            return;
+        }
+
+        await this.bootAuthenticator(this.previousSession.authenticator);
+    }
+
+    private async restoreFlashRoute(): Promise<void> {
+        const flashRoute = Storage.pull<RouteLocationNormalizedLoaded>(FLASH_ROUTE_STORAGE_KEY);
+
+        if (!flashRoute) {
+            return;
+        }
+
+        await Router.replace(flashRoute);
+    }
+
+    private async startupReconnect(): Promise<void> {
+        if (!this.reconnectOnStartup()) {
+            return;
+        }
+
+        await this.reconnect();
+    }
+
     private reconnectOnStartup(): boolean {
         // TODO this doesn't work for lazy routes
         if (Router.currentRoute.value.meta.reconnect === false) {
@@ -323,14 +380,6 @@ export default class AuthService extends Service<State, ComputedState> {
         }
 
         return this.autoReconnect;
-    }
-
-    private refreshProfileOnSessionStarted(user: SolidUserProfile): boolean {
-        if (user.cloaked || !user.writableProfileUrl) {
-            return true;
-        }
-
-        return parseBoolean(getLocationQueryParameter('refreshProfile'));
     }
 
     private async bootAuthenticator(name: AuthenticatorName): Promise<Authenticator> {
@@ -348,7 +397,11 @@ export default class AuthService extends Service<State, ComputedState> {
                     },
                 });
 
-                if (this.refreshProfileOnSessionStarted(session.user)) {
+                if (
+                    session.user.cloaked ||
+                    !session.user.writableProfileUrl ||
+                    this.staleProfiles.includes(session.user.webId)
+                ) {
                     await this.refreshUserProfile();
                 }
 
@@ -380,6 +433,7 @@ export default class AuthService extends Service<State, ComputedState> {
                 ...this.profiles,
                 [profile.webId]: profile,
             },
+            staleProfiles: arrayWithout(this.staleProfiles, profile.webId),
         });
     }
 
