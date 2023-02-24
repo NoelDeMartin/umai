@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Fixed
 
 - [#8](https://github.com/NoelDeMartin/umai/issues/8) Support non-roman alphabets.
+- Zombie recipes (some recipes would reappear after being deleted).
 
 ## [v0.1.0](https://github.com/NoelDeMartin/umai/releases/tag/v0.1.0) - 2023-01-20
 

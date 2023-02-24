@@ -359,7 +359,7 @@ export default class CloudService extends Service<State, ComputedState> {
                 if (localModel) {
                     await localModel.delete();
 
-                    synchronizedModelUrls.add(remoteModel.url);
+                    synchronizedModelUrls.add(remoteModel.resourceUrl);
                 }
 
                 continue;
