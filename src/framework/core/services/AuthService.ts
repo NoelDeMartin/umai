@@ -200,6 +200,7 @@ export default class AuthService extends Service<State, ComputedState> {
             return;
         }
 
+        // TODO this doesn't work for lazy routes (like /history)
         Storage.set(FLASH_ROUTE_STORAGE_KEY, Router.currentRoute.value);
 
         await this.login(this.previousSession.loginUrl, this.previousSession.authenticator);
