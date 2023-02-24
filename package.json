@@ -52,6 +52,7 @@
     "@storybook/addon-essentials": "^6.4.22",
     "@storybook/builder-vite": "^0.2.2",
     "@storybook/vue3": "^6.4.22",
+    "@total-typescript/ts-reset": "^0.3.7",
     "@types/dompurify": "^2.3.2",
     "@types/jest": "^26.0.20",
     "@types/marked": "^4.0.1",

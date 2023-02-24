@@ -1,3 +1,4 @@
+import '@total-typescript/ts-reset';
 import type { App as VueApp } from 'vue';
 
 import { bootstrapApplication } from '@/framework';

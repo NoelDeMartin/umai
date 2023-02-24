@@ -136,6 +136,10 @@ function extractJsonLDResources(html: string): JsonLDResource[] {
         .map(([, rawJson]) => JSON.parse(rawJson))
         .flat()
         .map(jsonGraph => {
+            if (!isObject(jsonGraph)) {
+                return [];
+            }
+
             if (isJsonLDGraph(jsonGraph)) {
                 return jsonGraph['@graph'].map(recipeJson => tap(recipeJson, () => {
                     recipeJson['@context'] = jsonGraph['@context'];
