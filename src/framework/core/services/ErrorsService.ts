@@ -1,4 +1,3 @@
-import { captureException, init } from '@sentry/browser';
 import {
     JSError,
     getLocationQueryParameter,
@@ -80,7 +79,7 @@ export default class ErrorsService extends Service<State, ComputedState> {
         let sentryId: string | null | undefined;
 
         if (this.reportErrors()) {
-            sentryId = this.reportToSentry(error) ?? undefined;
+            sentryId = await this.reportToSentry(error) ?? undefined;
         }
 
         if (!App.isMounted) {
@@ -116,10 +115,12 @@ export default class ErrorsService extends Service<State, ComputedState> {
         this.setState({ logs: [log].concat(this.logs) });
     }
 
-    public reportToSentry(error: ErrorSource): string | null {
-        this.initializeSentry();
+    public async reportToSentry(error: ErrorSource): Promise<string | null> {
+        await this.initializeSentry();
 
         try {
+            const { captureException } = await import('@/framework/utils/sentry.lazy');
+
             return tap(
                 captureException(error),
 
@@ -247,12 +248,14 @@ export default class ErrorsService extends Service<State, ComputedState> {
         };
     }
 
-    private initializeSentry(): void {
+    private async initializeSentry(): Promise<void> {
         if (this.sentryInitialized) {
             return;
         }
 
         try {
+            const { init } = await import('@/framework/utils/sentry.lazy');
+
             init({ dsn: App.env('SENTRY_DSN') });
 
             this.sentryInitialized = true;

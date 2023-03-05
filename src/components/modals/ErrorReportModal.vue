@@ -135,8 +135,8 @@ function viewSentryReport(sentryId: string) {
     UI.showSnackbar(translate('errors.viewSentryIdSuccess', { sentryId }));
 }
 
-function reportToSentry() {
-    const sentryId = report.sentryId = Errors.reportToSentry(report.error);
+async function reportToSentry() {
+    const sentryId = report.sentryId = await Errors.reportToSentry(report.error);
 
     sentryId
         ? UI.showSnackbar(translate('errors.reportToSentrySuccess', { sentryId }))
