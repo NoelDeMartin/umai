@@ -7,6 +7,7 @@
         <i-mdi-image v-else class="w-full h-2/5 opacity-25" aria-hidden="true" />
         <img
             v-if="sourceUrl && !failed"
+            ref="$image"
             :src="sourceUrl"
             class="absolute inset-0 object-cover w-full h-full"
             :alt="recipe ? $t('recipes.imageA11y', { recipe: recipe.name }) : ''"
@@ -28,6 +29,8 @@ import Cache from '@/framework/core/facades/Cache';
 
 import type Recipe from '@/models/Recipe';
 
+import type IRecipeImage from './RecipeImage';
+
 const { class: classProp, recipe, url } = defineProps({
     class: stringProp(''),
     recipe: objectProp<Recipe>(),
@@ -36,6 +39,7 @@ const { class: classProp, recipe, url } = defineProps({
 
 let failed = $ref(false);
 let sourceUrl = $ref<string | undefined>();
+const $image = $ref<HTMLImageElement | null>(null);
 const imageUrl = $computed(() => url ?? recipe?.imageUrl);
 const extraClasses = $computed(() => classProp.includes('absolute') ? classProp : `${classProp} relative`);
 const hue = $computed(() => {
@@ -89,4 +93,10 @@ async function resolveSourceUrl(url: string): Promise<string | undefined> {
 
 watch($$(sourceUrl), () => failed = false);
 watchEffect(async () => (sourceUrl = imageUrl ? await resolveSourceUrl(imageUrl) : undefined));
+
+defineExpose<IRecipeImage>({
+    getImageElement() {
+        return $$($image).value;
+    },
+});
 </script>

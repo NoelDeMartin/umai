@@ -2,6 +2,31 @@ import { tap } from '@noeldemartin/utils';
 
 // TODO import these from tailwind config
 const config = {
+    colors: {
+        gray: {
+            50: '#fafafa',
+            100: '#f5f5f5',
+            200: '#e5e5e5',
+            300: '#d4d4d4',
+            400: '#a3a3a3',
+            500: '#737373',
+            600: '#525252',
+            700: '#404040',
+            800: '#262626',
+            900: '#171717',
+        },
+        primary: {
+            100: '#dff29c',
+            200: '#d5ee7c',
+            300: '#c0e147',
+            400: '#b0d237',
+            500: '#8db007',
+            600: '#738e06',
+            700: '#668104',
+            800: '#637a05',
+            900: '#475809',
+        },
+    },
     spacing: {
         edge: '2rem',
         content: '1280px',

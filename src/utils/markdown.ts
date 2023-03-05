@@ -1,8 +1,12 @@
+import type { Content } from 'pdfmake/interfaces';
+
 import { marked } from 'marked';
 import { stringMatchAll } from '@noeldemartin/utils';
 
 import { CoreColor } from '@/components/core';
 import { randomWobblyBorderRadius } from '@/directives/wobbly-border';
+
+let pdf = false;
 
 function parseCoreLinkAttributes(attributes: string): {
     url: string;
@@ -49,6 +53,30 @@ export interface CoreLinkAttributes {
     title?: string | null;
     color?: string | null;
     classes?: string | null;
+}
+
+export function isRenderingPDF(): boolean {
+    return pdf;
+}
+
+export function renderPDF(text: string): Content {
+    pdf = true;
+    const content = marked(text);
+    pdf = false;
+
+    const matches = stringMatchAll<1, 1>(content, /\[\[(.*)\]\]/g);
+
+    for (const match of matches) {
+        console.log(match);
+    }
+
+    // TODO https://github.com/bpampuch/pdfmake/issues/1651
+    // text: [
+    //     { text: '...' },
+    //     { text: 'google', link: 'http://google.com', style: 'link' },
+    //     { text: '...' },
+    // ],
+    return { text: content };
 }
 
 export function renderCoreLink({ url, text, title, color, classes }: CoreLinkAttributes): string {

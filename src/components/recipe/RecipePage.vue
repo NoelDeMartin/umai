@@ -2,7 +2,7 @@
     <div class="flex flex-col flex-grow overflow-hidden w-screen min-h-full">
         <div class="recipe-page--image fixed inset-x-0 top-0 h-52 md:h-80">
             <slot name="image">
-                <RecipeImage :recipe="recipe" class="absolute inset-0" />
+                <RecipeImage ref="$image" :recipe="recipe" class="absolute inset-0" />
             </slot>
         </div>
         <div
@@ -187,6 +187,7 @@ import { objectProp } from '@/framework/utils/vue';
 import { translate } from '@/framework/utils/translate';
 import type { SelectOption } from '@/framework/components/headless/HeadlessSelect';
 
+import type IRecipeImage from '@/components/recipe/RecipeImage';
 import type Recipe from '@/models/Recipe';
 
 import type IRecipePage from './RecipePage';
@@ -199,6 +200,7 @@ const { recipe } = defineProps({
 
 let showingSecondaryPanel = $ref<boolean>(false);
 let servings = $ref(recipe?.servingsBreakdown?.quantity ?? 1);
+const $image = $ref<IRecipeImage | null>(null);
 const customServingsQuantities = $ref<number[]>([]);
 const servingsOptions = $computed((): SelectOption<number>[] | null => {
     const servingsBreakdown = recipe?.servingsBreakdown;
@@ -298,6 +300,9 @@ watchEffect(async () => {
 });
 
 defineExpose<IRecipePage>({
+    getImage() {
+        return $$($image).value;
+    },
     showPrimaryPanel: async () => {
         showingSecondaryPanel = false;
 

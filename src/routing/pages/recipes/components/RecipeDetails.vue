@@ -37,6 +37,14 @@
                 <CoreButton
                     secondary
                     class="h-12"
+                    @click="print"
+                >
+                    <i-pepicons-file class="ml-2 w-4 h-4" aria-hidden="true" />
+                    <span class="mx-2 uppercase tracking-wider font-semibold text-sm">Print</span>
+                </CoreButton>
+                <CoreButton
+                    secondary
+                    class="h-12"
                     @click="$ui.openModal(ShareRecipeModal, { recipe })"
                 >
                     <i-pepicons-share-android class="w-5 h-5 ml-2" aria-hidden="true" />
@@ -54,6 +62,7 @@ import Router from '@/framework/core/facades/Router';
 import { requiredObjectProp } from '@/framework/utils/vue';
 
 import ShareRecipeModal from '@/components/modals/ShareRecipeModal.vue';
+import { printRecipe } from '@/utils/printing.lazy';
 import type IRecipePage from '@/components/recipe/RecipePage';
 import type Recipe from '@/models/Recipe';
 
@@ -68,6 +77,10 @@ const $page = $ref<IRecipePage | null>(null);
 async function editRecipe() {
     await $page?.showPrimaryPanel();
     await Router.push(recipe.route('edit'));
+}
+
+async function print() {
+    await printRecipe(recipe, $page?.getImage()?.getImageElement() ?? undefined);
 }
 
 onMounted(() => window.scrollTo({ top: 0 }));
