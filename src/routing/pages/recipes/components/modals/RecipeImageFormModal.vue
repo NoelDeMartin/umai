@@ -79,7 +79,6 @@
 </template>
 
 <script setup lang="ts">
-import ImageBlobReduce from 'image-blob-reduce';
 import { uuid } from '@noeldemartin/utils';
 import { watchEffect } from 'vue';
 
@@ -113,6 +112,7 @@ const isLocalUrl = $computed(() => /^(tmp|solid):\/\//.test(url));
 async function uploadImage(file: File) {
     try {
         const imageUrl = `tmp://${uuid()}.png`;
+        const { default: ImageBlobReduce } = await import('image-blob-reduce');
         const blob = await (new ImageBlobReduce).toBlob(file, { max: 1024 });
 
         await Files.store(imageUrl, 'image/png', blob);
