@@ -35,6 +35,7 @@
 
 <script setup lang="ts">
 import IconJsonLD from '~icons/file-icons/json-ld2';
+import IconPrint from '~icons/pepicons/printer';
 import IconSolid from '~icons/app/solid-emblem';
 import IconViewShow from '~icons/zondicons/view-show';
 import type { Component } from 'vue';
@@ -66,6 +67,10 @@ const optionsMap: Record<RecipeShareOption, RecipeSharingOptionData> = $computed
     [RecipeShareOption.JsonLD]: {
         name: translate('recipes.share_jsonld'),
         iconComponent: IconJsonLD,
+    },
+    [RecipeShareOption.Print]: {
+        name: translate('recipes.share_print'),
+        iconComponent: IconPrint,
     },
 }));
 const options = $computed(() => Object.entries(optionsMap).reduce(

@@ -16,12 +16,7 @@
         :recipe="recipe"
     >
         <template #title>
-            <h1
-                id="recipe-details-title"
-                class="recipe-details--header-title text-2xl font-semibold text-white text-shadow md:text-4xl"
-            >
-                <span class="recipe-details--header-title-text">{{ recipe.name }}</span>
-            </h1>
+            <RecipeTitle id="recipe-details-title" :recipe="recipe" />
         </template>
 
         <template #actions>

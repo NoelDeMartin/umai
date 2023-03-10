@@ -1,7 +1,7 @@
 <template>
     <header
         ref="$header"
-        class="flex relative z-40 flex-col items-center self-stretch pt-edge h-24 shrink-0"
+        class="flex relative z-40 flex-col items-center self-stretch pt-edge h-24 shrink-0 print:hidden"
         :class="{
             'invisible': $ui.headerHidden || $app.isOnboarding,
             'text-white': $route.meta.fullBleedHeader && !$app.onboardingCompleting,

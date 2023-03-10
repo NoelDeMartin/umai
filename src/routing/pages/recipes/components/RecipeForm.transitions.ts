@@ -15,6 +15,7 @@ import {
     headerSlideUp,
     headerToCard,
 } from '@/components/recipe/RecipePage.transitions';
+import { createRecipeTitleElement } from '@/components/recipe/RecipeTitle.transitions';
 
 export const enterFromDetails = defineEnterTransition(async ($root) => {
     const duration = 500;
@@ -78,16 +79,12 @@ export const leaveTransition = defineLeaveTransition(async ($wrapper, $root) => 
 export const transitionToCard = defineElementTransition(async ($wrapper, $root, { element: $card }) => {
     const duration = 500;
     const $recipePage = requireChildElement($root, '.recipe-form--recipe-page');
-    const $headerTitle = document.createElement('div');
-    const $headerTitleText = document.createElement('span');
     const $headerTitleLabel = requireChildElement($root, '.recipe-form--title-label');
     const $headerTitleTextArea = requireChildElement<HTMLTextAreaElement>($headerTitleLabel, 'textarea');
     const $footer = requireChildElement($root, '.recipe-form--footer');
+    const $headerTitle = createRecipeTitleElement($headerTitleTextArea.value);
 
     $wrapper.classList.add('z-20');
-    $headerTitle.setAttribute('class', 'text-4xl font-semibold text-white text-shadow');
-    $headerTitle.append($headerTitleText);
-    $headerTitleText.innerText = $headerTitleTextArea.value;
     $headerTitleLabel.replaceWith($headerTitle);
     $footer.classList.add('z-20');
 
@@ -98,7 +95,6 @@ export const transitionToCard = defineElementTransition(async ($wrapper, $root, 
                 duration,
                 withoutHeaderOverlay: parseBoolean($root.dataset.wasOnboarding),
                 $headerTitle,
-                $headerTitleText,
                 $card,
             },
         ),

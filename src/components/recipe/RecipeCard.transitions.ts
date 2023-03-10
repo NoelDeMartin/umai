@@ -136,14 +136,14 @@ export const transitionToCard = defineElementTransition(async ($wrapper, $card, 
 
 
 export const transitionToViewer = defineElementTransition(async ($wrapper, $card, { element: $viewer }) => {
-    const $detailsHeaderTitle = requireChildElement($viewer, '.viewer-recipe--header-title');
+    const $detailsHeaderTitle = requireChildElement($viewer, '#viewer-recipe-title');
 
     await transitionToRecipePage($wrapper, $card, $viewer, $detailsHeaderTitle);
     await ElementTransitions.waitElementsReady('viewer-recipe');
 });
 
 export const transitionToDetails = defineElementTransition(async ($wrapper, $card, { element: $details }) => {
-    const $detailsHeaderTitle = requireChildElement($details, '.recipe-details--header-title');
+    const $detailsHeaderTitle = requireChildElement($details, '#recipe-details-title');
 
     await transitionToRecipePage($wrapper, $card, $details, $detailsHeaderTitle);
     await ElementTransitions.waitElementsReady('recipe-details');

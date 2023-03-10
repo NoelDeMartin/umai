@@ -1,7 +1,7 @@
 <template>
     <AppPage
+        style="margin-top: calc(-1 * var(--header-height))"
         aria-labelledby="recipe-details-title"
-        :style="`margin-top: -${$ui.headerHeight}px`"
     >
         <RecipeDetails :recipe="recipe" />
     </AppPage>

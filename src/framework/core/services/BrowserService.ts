@@ -5,6 +5,7 @@ import type { IService } from '@/framework/core/Service';
 interface State {
     supportsIndexedDB: boolean | null;
     supportsSharing: boolean;
+    supportsPrinting: boolean;
     isFirefox: boolean;
 }
 
@@ -21,6 +22,7 @@ export default class BrowserService extends Service<State> {
         return {
             supportsIndexedDB: null,
             supportsSharing: 'share' in navigator,
+            supportsPrinting: 'print' in window,
             isFirefox: !!(navigator && navigator.userAgent && /firefox/i.test(navigator.userAgent)),
         };
     }

@@ -1,7 +1,8 @@
-import TailwindCSS from '@/framework/utils/tailwindcss';
 import UI from '@/framework/core/facades/UI';
 import { animateElements, requireChildElement } from '@/framework/utils/dom';
 import { delay } from '@/framework/utils/transitions';
+
+import { recipeTitleToCardTitleAnimations } from '@/components/recipe/RecipeTitle.transitions';
 
 export async function bodySlideDown($root: HTMLElement, duration: number): Promise<void> {
     const $header = requireChildElement($root, '.recipe-page--header');
@@ -125,7 +126,6 @@ export async function headerSlideUp($root: HTMLElement, duration: number): Promi
 
 interface HeaderToCardOptions {
     $headerTitle: HTMLElement;
-    $headerTitleText: HTMLElement;
     $card: HTMLElement;
     duration: number;
     withoutHeaderOverlay?: boolean;
@@ -137,7 +137,6 @@ export async function headerToCard(
         duration,
         withoutHeaderOverlay,
         $headerTitle,
-        $headerTitleText,
         $card,
     }: HeaderToCardOptions,
 ): Promise<void>{
@@ -149,8 +148,8 @@ export async function headerToCard(
     const $headerTitleFiller = requireChildElement($root, '.recipe-page--header-title-filler');
     const $headerWrapperBackground = document.createElement('div');
     const imageBoundingRect = $image.getBoundingClientRect();
-    const headerTitleBoundingRect = $headerTitle.getBoundingClientRect();
     const cardBoundingRect = $card.getBoundingClientRect();
+    const headerTitleAnimations = recipeTitleToCardTitleAnimations($headerTitle);
 
     withoutHeaderOverlay && $headerOverlay.remove();
     $root.classList.remove('overflow-hidden');
@@ -204,30 +203,6 @@ export async function headerToCard(
                 removeClasses: 'mr-8 md:pr-36 max-w-prose',
             },
         },
-        {
-            element: $headerTitle,
-            before: { addClasses: 'relative w-full' },
-            classes: {
-                paddingTop: ['p-4', 'p-2'],
-                paddingRight: ['p-4', 'p-2'],
-                paddingBottom: ['p-4', 'p-2'],
-                textShadow: ['text-shadow', 'text-shadow-transparent'],
-                fontSize: [UI.isMobile ? 'text-2xl' : 'text-4xl', 'text-lg'],
-            },
-            styles: {
-                paddingLeft: [
-                    `${headerTitleBoundingRect.left}px`,
-                    TailwindCSS.css('spacing.2'),
-                ],
-                paddingRight: [
-                    `${window.innerWidth - headerTitleBoundingRect.right}px`,
-                    TailwindCSS.css('spacing.2'),
-                ],
-            },
-        },
-        {
-            element: $headerTitleText,
-            before: { addClasses: 'relative' },
-        },
+        ...headerTitleAnimations,
     ]);
 }

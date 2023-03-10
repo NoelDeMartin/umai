@@ -227,6 +227,17 @@ recipes:
   delete_success: "**{name}** s'ha eliminat"
   download: Descarregar
   download_includeHistory: Incloure històric de canvis
+  print: Imprimir
+  print_info: |
+    La impressió de receptes fa servir funcionalitat nativa del navegador, però té algunes
+    limitacions. Hauria de funcionar amb la majoria de navegadors moderns, però pot donar problemes
+    en dispositius mòbils.
+
+    Si no està funcionant correctament, pots intentar-ho publicant la recepta sense llistar i fer
+    servir un altre dispositiu per imprimir-la en [el visor de receptes](blank:/viewer).
+
+    [aprendre'n més](https://github.com/NoelDeMartin/umai/issues/5)
+  print_unsupportedBrowser: Aquest navegador no permet imprimir documents.
   share: Compartir
   drag_instructions_a11y: Fes servir ctrl + up/down per canviar la posició de les instruccions
 
@@ -285,9 +296,12 @@ recipes:
   externalUrl_remove: Eliminar url
   externalUrl_remove_a11y: Eliminar {url}
 
-  share_umai: Umai
+  printUrls: Urls
+
+  share_umai: Visor de receptes
   share_solid: Url de Solid
   share_jsonld: JSON-LD
+  share_print: Imprimir
   shareWith: Compartir amb
 
   accessControl:
@@ -368,6 +382,15 @@ viewer:
     creatorPrefix: Recepta creada per
     viewAll: Veure més receptes
     inCookbook: Obrir en el teu llibre receptes
+    print_help: Ajuda amb l'impressió
+    print_info: |
+      La impressió de receptes fa servir funcionalitat nativa del navegador, però té algunes
+      limitacions. Hauria de funcionar amb la majoria de navegadors moderns, però pot donar problemes
+      en dispositius mòbils.
+
+      Si no està funcionant correctament, pots intentar-ho fent servir un altre dispositiu.
+
+      [aprendre'n més](https://github.com/NoelDeMartin/umai/issues/5)
 
 validation:
   required: aquest camp és obligatori

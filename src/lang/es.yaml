@@ -221,6 +221,17 @@ recipes:
   delete_success: "**{name}** se ha eliminado"
   download: Descargar
   download_includeHistory: Incluye el histórico de cambios
+  print: Imprimir
+  print_info: |
+    La impresión de recetas utiliza funcionalidad nativa del navegador, pero existen algunas
+    limitaciones. Debería funcionar con la mayoría de navegadores modernos, pero puede dar
+    problemas en dispositivos móviles.
+
+    Si no está funcionando correctamente, puedes intentarlo publicando la receta sin listar y utilizar
+    otro dispositivo para imprimirla en [el visor de recetas](blank:/viewer).
+
+    [aprender más](https://github.com/NoelDeMartin/umai/issues/5)
+  print_unsupportedBrowser: Este navegador no permite imprimir documentos.
   share: Compartir
   drag_instructions_a11y: Utiliza ctrl + up/down para cambiar la posición de las instrucciones
 
@@ -279,9 +290,12 @@ recipes:
   externalUrl_remove: Eliminar url
   externalUrl_remove_a11y: Eliminar {url}
 
-  share_umai: Umai
+  printUrls: Urls
+
+  share_umai: Visor de recetas
   share_solid: Url de Solid
   share_jsonld: JSON-LD
+  share_print: Imprimir
   shareWith: Compartir con
 
   accessControl:
@@ -358,6 +372,15 @@ viewer:
     creatorPrefix: Receta creada por
     viewAll: Ver más recetas
     inCookbook: Abrir en tu libro de recetas
+    print_help: Ayuda con la impresión
+    print_info: |
+      La impresión de recetas utiliza funcionalidad nativa del navegador, pero existen algunas
+      limitaciones. Debería funcionar con la mayoría de navegadores modernos, pero puede dar
+      problemas en dispositivos móviles.
+
+      Si no está funcionando correctamente, puedes intentarlo utilizando otro dispositivo.
+
+      [aprender más](https://github.com/NoelDeMartin/umai/issues/5)
 
 validation:
   required: este campo es obligatorio

@@ -24,13 +24,12 @@ export const enterTransition = defineEnterTransition(async ($root, previous) => 
 
 export const transitionToCard = defineElementTransition(async ($wrapper, $root, { element: $card }) => {
     const duration = 500;
-    const $headerTitle = requireChildElement($root, '.viewer-recipe--header-title');
-    const $headerTitleText = requireChildElement($root, '.viewer-recipe--header-title-text');
+    const $headerTitle = requireChildElement($root, '#viewer-recipe-title');
 
     $wrapper.classList.add('z-20');
 
     await Promise.all([
-        headerToCard($root, { duration, $headerTitle, $headerTitleText, $card }),
+        headerToCard($root, { duration, $headerTitle, $card }),
         bodySlideDown($root, duration),
     ]);
 });

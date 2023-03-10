@@ -3,35 +3,41 @@
         <template #title>
             <div class="flex justify-between">
                 {{ $t('recipes.share') }}
-                <RecipeAccessControl v-if="$cookbook.isRemote" :recipe="recipe" />
+                <RecipeAccessControl v-if="requiresPermissions" :recipe="recipe" />
             </div>
         </template>
 
         <template #default="{ close }">
             <RecipeShareOptions v-model="shareOption" />
-            <CoreClipboard class="mt-4 max-w-prose" :text="clipboardContent" />
+            <CoreClipboard v-if="clipboardContent" class="mt-4 max-w-prose" :text="clipboardContent" />
+            <CoreMarkdown v-if="shareOption === 'print'" class="mt-4" :text="$t('recipes.print_info')" />
             <p v-if="warning" class="text-red-500 flex self-start mt-2 max-w-prose">
                 <i-zondicons-exclamation-outline class="w-4 h-4 mt-1 mr-2 flex-shrink-0" />
                 {{ warning }}
             </p>
             <div class="flex justify-between mt-4">
                 <label v-if="shareOption === 'jsonld'" class="cursor-pointer flex items-center">
-                    <BaseCheckbox v-model="includeHistory" />
+                    <CoreToggle v-model="includeHistory" />
                     <p class="ml-2">{{ $t('recipes.download_includeHistory') }}</p>
                 </label>
                 <span v-else />
                 <CoreButton
                     v-if="shareOption === 'jsonld'"
-                    v-initial-focus
                     @click="() => (recipe.download({ includeHistory }), close())"
                 >
                     <i-pepicons-cloud-down class="w-6 h-6" aria-hidden="true" />
                     <span class="ml-2">{{ $t('recipes.download') }}</span>
                 </CoreButton>
                 <CoreButton
-                    v-else-if="$browser.supportsSharing"
-                    v-initial-focus
-                    @click="share(), close()"
+                    v-if="shareOption === 'print' && $browser.supportsPrinting"
+                    @click="close().then(() => print())"
+                >
+                    <i-pepicons-file class="w-6 h-6" aria-hidden="true" />
+                    <span class="ml-2">{{ $t('recipes.print') }}</span>
+                </CoreButton>
+                <CoreButton
+                    v-else-if="shareOption !== 'print' && $browser.supportsSharing"
+                    @click="close(), share()"
                 >
                     <i-pepicons-share-android class="w-6 h-6" aria-hidden="true" />
                     <span class="ml-2">{{ $t('recipes.share') }}</span>
@@ -44,6 +50,7 @@
 <script setup lang="ts">
 import { objectWithoutEmpty, stringExcerpt, urlRoot } from '@noeldemartin/utils';
 
+import Browser from '@/framework/core/facades/Browser';
 import Router from '@/framework/core/facades/Router';
 import { requiredObjectProp } from '@/framework/utils/vue';
 import { translate } from '@/framework/utils/translate';
@@ -58,16 +65,28 @@ const { recipe } = defineProps({
 
 const includeHistory = $ref(false);
 const shareOption = $ref<RecipeShareOption>(Cookbook.isRemote ? RecipeShareOption.Umai : RecipeShareOption.JsonLD);
-const clipboardContents: Record<RecipeShareOption, string> = $computed(() => ({
+const clipboardContents: Record<RecipeShareOption, string | null> = $computed(() => ({
     [RecipeShareOption.Umai]:
         urlRoot(location.href) +
         Router.resolve({ name: 'viewer', query: { url: recipe.getDocumentUrl() } }).href,
     [RecipeShareOption.Solid]: recipe.url,
     [RecipeShareOption.JsonLD]: JSON.stringify(recipe.toExternalJsonLD({ includeHistory }), null, 2),
+    [RecipeShareOption.Print]: null,
 }));
-const clipboardContent = $computed(() => (clipboardContents as Record<string, string>)[shareOption]);
+const clipboardContent = $computed(() => clipboardContents[shareOption as RecipeShareOption & PropertyKey]);
+const requiresPermissions = $computed(() => {
+    if (!Cookbook.isRemote) {
+        return false;
+    }
+
+    return shareOption === RecipeShareOption.Umai || shareOption === RecipeShareOption.Solid;
+});
 const warning = $computed(() => {
-    if (shareOption !== RecipeShareOption.Umai || recipe.isPrivate === false) {
+    if (shareOption === RecipeShareOption.Print && !Browser.supportsPrinting) {
+        return translate('recipes.print_unsupportedBrowser');
+    }
+
+    if (!requiresPermissions || recipe.isPrivate === false) {
         return;
     }
 
@@ -82,5 +101,9 @@ function share() {
         text: recipe.description ? stringExcerpt(recipe.description) : null,
         url: clipboardContent,
     }));
+}
+
+function print() {
+    window.print();
 }
 </script>

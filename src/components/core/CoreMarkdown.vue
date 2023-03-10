@@ -55,7 +55,15 @@ async function onClick(event: Event) {
         return;
     }
 
-    const capture = target instanceof HTMLAnchorElement && AutoLinking.captureLink(
+    captureAutoLink(target, event);
+}
+
+async function captureAutoLink(target: HTMLElement, event: Event) {
+    if (target.dataset.disableAutoLinking || !isInstanceOf(target, HTMLAnchorElement)) {
+        return;
+    }
+
+    const capture = AutoLinking.captureLink(
         target.href,
         autoLink ? `${autoLink}, default` : 'default',
     );

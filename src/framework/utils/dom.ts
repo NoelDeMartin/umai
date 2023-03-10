@@ -23,6 +23,8 @@ interface AnimateElementConfig {
     boundingDimensions: DOMRect[];
 }
 
+export type AnimationConfig = Partial<AnimateElementConfig> & { element: HTMLElement };
+
 const computedClassStyles: Record<string, string> = {};
 
 function getComputedClassStyle(property: keyof CSSStyleDeclaration, classes: string[]): string[] {
@@ -119,7 +121,7 @@ export async function animateElement(element: HTMLElement, config: Partial<Anima
 
 export async function animateElements(
     sharedConfig: Partial<AnimateElementConfig>,
-    animations: ((Partial<AnimateElementConfig> & { element: HTMLElement }) | null)[],
+    animations: Array<AnimationConfig | null>,
 ): Promise<void> {
     await Promise.all(
         Object

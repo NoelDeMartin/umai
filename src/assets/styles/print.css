@@ -1,0 +1,52 @@
+@media print {
+
+    /* App styles */
+
+    #app-layout {
+        --header-height: 0 !important;
+    }
+
+    .px-edge, .md\:px-edge {
+        @apply px-0 !important;
+    }
+
+    .max-w-screen {
+        @apply max-w-none !important;
+    }
+
+    .w-screen {
+        @apply w-auto !important;
+    }
+
+    .h-screen {
+        @apply h-auto !important;
+    }
+
+    /* @tailwindcss/typography styles */
+
+    .prose {
+        --tw-prose-body: black !important;
+
+        @apply max-w-none !important;
+    }
+
+    .prose :where(h2):not(:where([class~="not-prose"] *)) {
+        @apply mb-1 !important;
+    }
+
+    .max-w-prose {
+        @apply max-w-none !important;
+    }
+
+    /* Additional utilities styles */
+
+    .print\:text-no-shadow {
+        text-shadow: none !important;
+    }
+
+    .print-bg {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+}

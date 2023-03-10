@@ -235,9 +235,11 @@ describe('Cookbook', () => {
         cy.press('Ramen');
 
         // Assert
-        cy.see('3 persons');
-        cy.see('1 day');
-        cy.see('1 hour 30 min');
+        cy.get('.recipe-page--body').within(() => {
+            cy.see('3 persons');
+            cy.see('1 day');
+            cy.see('1 hour 30 min');
+        });
 
         cy.assertLocalDocumentEquals('solid://recipes/ramen', ramenJsonLD);
     });
@@ -432,17 +434,20 @@ describe('Cookbook', () => {
         cy.see('Simple houmous');
         cy.see('Chickpeas – the star ingredient in houmous – are incredibly good for you.');
         cy.press('Import to my cookbook');
+        cy.dontSee('How do you want to create your recipe?');
         cy.ariaInput('Recipe name').clear().type('Houmous');
         cy.press('Create recipe');
         cy.press('Houmous', 'a');
 
         // Assert
         cy.url().should('contain', 'houmous');
-        cy.see('10 min');
-        cy.see('Chickpeas – the star ingredient in houmous – are incredibly good for you.');
-        cy.see('1 lemon');
-        cy.see('recipe on recipes.example.com');
-        cy.contains('h2', 'Instructions').next('ol').children().should('have.length', 7);
+        cy.get('.recipe-page--body').within(() => {
+            cy.see('10 min');
+            cy.see('Chickpeas – the star ingredient in houmous – are incredibly good for you.');
+            cy.see('1 lemon');
+            cy.see('recipe on recipes.example.com');
+            cy.contains('h2', 'Instructions').next('ol').children().should('have.length', 7);
+        });
 
         cy.assertLocalDocumentEquals('solid://recipes/houmous', jaimiesHummusJsonLD);
     });
@@ -491,6 +496,10 @@ describe('Cookbook', () => {
         cy.ariaInput('Website url').type('https://recipes.example.com/pisto');
         cy.press('Scan');
         cy.see('We\'ve found more than one recipe');
+
+        // Workaround for https://github.com/cypress-io/cypress/issues/7306
+        cy.wait(200);
+
         cy.contains('[role="radio"]', 'Pisto Manchego').click();
         cy.press('Import to my cookbook');
         cy.press('Create recipe');
@@ -500,11 +509,14 @@ describe('Cookbook', () => {
         cy.dontSee('Marinated Olives');
         cy.press('Pisto Manchego');
         cy.url().should('contain', 'pisto-manchego');
-        cy.see('1 hour');
-        cy.see('Pisto Manchego With Olive Oil');
-        cy.see('4 zucchini small, cubed');
-        cy.see('recipe on recipes.example.com');
-        cy.dontSee('Instructions');
+
+        cy.get('.recipe-page--body').within(() => {
+            cy.see('1 hour');
+            cy.see('Pisto Manchego With Olive Oil');
+            cy.see('4 zucchini small, cubed');
+            cy.see('recipe on recipes.example.com');
+            cy.dontSee('Instructions');
+        });
 
         cy.assertLocalDocumentEquals('solid://recipes/pisto-manchego', pistoJsonLD);
     });
@@ -611,7 +623,7 @@ describe('Cookbook', () => {
         // Assert
         cy.getRecipe('ramen').then(ramen => {
             cy.see('Unlisted', 'button');
-            cy.ariaLabel('Umai').should('match', '[aria-checked="true"]');
+            cy.ariaLabel('Recipes viewer').should('match', '[aria-checked="true"]');
             cy.see(`${Cypress.config('baseUrl')}/viewer?url=${ramen.getDocumentUrl()}`);
 
             cy.ariaLabel('Solid url').click();

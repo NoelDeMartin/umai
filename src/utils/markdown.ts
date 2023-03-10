@@ -43,6 +43,10 @@ function renderCoreLinks(markdown: string): string {
     return markdown;
 }
 
+function singleLine(text: string): string {
+    return text.split('\n').join(' ');
+}
+
 export interface CoreLinkAttributes {
     url: string;
     text: string;
@@ -52,26 +56,35 @@ export interface CoreLinkAttributes {
 }
 
 export function renderCoreLink({ url, text, title, color, classes }: CoreLinkAttributes): string {
+    let targetBlank = !url.startsWith('/');
+    let disableAutoLinking = false;
     const borderRadius = randomWobblyBorderRadius();
     const extraClasses = `${getCoreLinkColorClasses(color)} ${classes ?? ''}`;
 
     if (url.startsWith('action:')) {
         const baseClasses = 'no-underline hover:underline focus-visible:outline-none focus-visible:ring-2';
 
-        return `<button
+        return singleLine(`<button
             type="button"
             style="border-radius:${borderRadius}" ${(title && `title="${title}"`) || ''}
             class="${baseClasses} ${extraClasses}"
             data-markdown-action="${url.substring('action:'.length)}"
-        >${text}</button>`;
+        >${text}</button>`);
     }
 
-    return `<a
+    if (url.startsWith('blank:')) {
+        targetBlank = true;
+        disableAutoLinking = true;
+        url = url.substring('blank:'.length);
+    }
+
+    return singleLine(`<a
         href="${url}"
         style="border-radius:${borderRadius}" ${(title && `title="${title}"`) || ''}
-        ${ url.startsWith('/') ? '' : 'target="_blank"' }
+        ${ targetBlank ? 'target="_blank"' : '' }
+        ${ disableAutoLinking ? 'data-disable-auto-linking="true"' : ''}
         class="core-link no-underline hover:underline focus-visible:outline-none focus-visible:ring-2 ${extraClasses}"
-    >${text}</a>`;
+    >${text}</a>`);
 }
 
 export function renderMarkdown(markdown: string): string {

@@ -1,6 +1,6 @@
 <template>
     <AppPage
-        :style="`margin-top: -${$ui.headerHeight}px`"
+        style="margin-top: calc(-1 * var(--header-height))"
         aria-labelledby="recipe-form-title"
     >
         <RecipeForm
