@@ -228,25 +228,9 @@ recipes:
   download: Descarregar
   download_includeHistory: Incloure històric de canvis
   print: Imprimir
-  print_remoteInfo: |
-    La impressió de receptes fa servir funcionalitat nativa del navegador, però té algunes
-    limitacions. Hauria de funcionar amb la majoria de navegadors moderns, però pot donar problemes
-    en dispositius mòbils.
-
-    Si no està funcionant correctament, pots intentar-ho publicant la recepta sense llistar i fer
-    servir un altre dispositiu per imprimir-la en [el visor de receptes](blank:/viewer). També pots
-    exportar-la a JSON-LD, pero és possible que les imatges no funcionin.
-
-    [aprendre'n més](https://github.com/NoelDeMartin/umai/issues/5)
-  print_localInfo: |
-    La impressió de receptes fa servir funcionalitat nativa del navegador, però té algunes
-    limitacions. Hauria de funcionar amb la majoria de navegadors moderns, però pot donar problemes
-    en dispositius mòbils.
-
-    Si no està funcionant correctament, pots intentar-ho exportant-la a JSON-LD i fer servir un
-    altre dispositiu per imprimir-la. Però és possible que les imatges no funcionin.
-
-    [aprendre'n més](https://github.com/NoelDeMartin/umai/issues/5)
+  print_info: |
+    La impressió de receptes fa servir [funcionalitat nativa del navegador](https://developer.mozilla.org/en-US/docs/Web/Guide/Printing).
+    Si tens problemes, prova amb un altre navegador.
   print_unsupportedBrowser: Aquest navegador no permet imprimir documents.
   share: Compartir
   drag_instructions_a11y: Fes servir ctrl + up/down per canviar la posició de les instruccions
@@ -392,15 +376,6 @@ viewer:
     creatorPrefix: Recepta creada per
     viewAll: Veure més receptes
     inCookbook: Obrir en el teu llibre receptes
-    print_help: Ajuda amb l'impressió
-    print_info: |
-      La impressió de receptes fa servir funcionalitat nativa del navegador, però té algunes
-      limitacions. Hauria de funcionar amb la majoria de navegadors moderns, però pot donar problemes
-      en dispositius mòbils.
-
-      Si no està funcionant correctament, pots intentar-ho fent servir un altre dispositiu.
-
-      [aprendre'n més](https://github.com/NoelDeMartin/umai/issues/5)
 
 validation:
   required: aquest camp és obligatori

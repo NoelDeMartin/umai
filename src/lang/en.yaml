@@ -225,25 +225,9 @@ recipes:
   download: Download
   download_includeHistory: Include changes history
   print: Print
-  print_remoteInfo: |
-    The current approach to printing recipes uses the browser's built-in functionality, but it has
-    some limitations. It should work with most modern browsers, but it is specially problematic in
-    mobile devices.
-
-    If it isn't working for you, try temporarily publishing the recipe as unlisted and use a different
-    device to print it in [the viewer](blank:/viewer). You can also export it as a JSON-LD, but
-    it's possible that images aren't exported properly.
-
-    [learn more](https://github.com/NoelDeMartin/umai/issues/5)
-  print_localInfo: |
-    The current approach to printing recipes uses the browser's built-in functionality, but it has
-    some limitations. It should work with most modern browsers, but it is specially problematic in
-    mobile devices.
-
-    If it isn't working for you, try exporting the recipe as a JSON-LD and use a different device to
-    print it. But it's possible that images aren't exported properly.
-
-    [learn more](https://github.com/NoelDeMartin/umai/issues/5)
+  print_info: |
+    Recipes are printed using the [browser's built-in functionality](https://developer.mozilla.org/en-US/docs/Web/Guide/Printing).
+    If you're having issues, try using a different browser.
   print_unsupportedBrowser: This browser does not support printing documents.
   share: Share
   drag_instructions_a11y: Use ctrl + up/down to change instruction positions
@@ -383,15 +367,6 @@ viewer:
     creatorPrefix: Recipe created by
     viewAll: View more recipes
     inCookbook: Open in your cookbook
-    print_help: Help with printing
-    print_info: |
-      The current approach to printing recipes uses the browser's built-in functionality, but it has
-      some limitations. It should work with most modern browsers, but it is specially problematic in
-      mobile devices.
-
-      If it isn't working for you, try using a different device.
-
-      [learn more](https://github.com/NoelDeMartin/umai/issues/5)
 
 history:
   title: "{recipe}'s history"

@@ -222,25 +222,9 @@ recipes:
   download: Descargar
   download_includeHistory: Incluye el histórico de cambios
   print: Imprimir
-  print_remoteInfo: |
-    La impresión de recetas utiliza funcionalidad nativa del navegador, pero existen algunas
-    limitaciones. Debería funcionar con la mayoría de navegadores modernos, pero puede dar
-    problemas en dispositivos móviles.
-
-    Si no está funcionando correctamente, puedes intentarlo publicando la receta sin listar y utilizar
-    otro dispositivo para imprimirla en [el visor de recetas](blank:/viewer). También puedes exportarla
-    a JSON-LD, pero es possible que las imágenes no funcionen.
-
-    [aprender más](https://github.com/NoelDeMartin/umai/issues/5)
-  print_localInfo: |
-    La impresión de recetas utiliza funcionalidad nativa del navegador, pero existen algunas
-    limitaciones. Debería funcionar con la mayoría de navegadores modernos, pero puede dar
-    problemas en dispositivos móviles.
-
-    Si no está funcionando correctamente, puedes intentarlo exportando la receta a JSON-LD y utilizar
-    otro dispositivo para imprimirla. Pero es possible que las imágenes no funcionen.
-
-    [aprender más](https://github.com/NoelDeMartin/umai/issues/5)
+  print_info: |
+    La impresión de recetas utiliza [funcionalidad nativa del navegador](https://developer.mozilla.org/en-US/docs/Web/Guide/Printing).
+    Si tienes problemas, prueba con otro navegador.
   print_unsupportedBrowser: Este navegador no permite imprimir documentos.
   share: Compartir
   drag_instructions_a11y: Utiliza ctrl + up/down para cambiar la posición de las instrucciones
@@ -382,15 +366,6 @@ viewer:
     creatorPrefix: Receta creada por
     viewAll: Ver más recetas
     inCookbook: Abrir en tu libro de recetas
-    print_help: Ayuda con la impresión
-    print_info: |
-      La impresión de recetas utiliza funcionalidad nativa del navegador, pero existen algunas
-      limitaciones. Debería funcionar con la mayoría de navegadores modernos, pero puede dar
-      problemas en dispositivos móviles.
-
-      Si no está funcionando correctamente, puedes intentarlo utilizando otro dispositivo.
-
-      [aprender más](https://github.com/NoelDeMartin/umai/issues/5)
 
 validation:
   required: este campo es obligatorio

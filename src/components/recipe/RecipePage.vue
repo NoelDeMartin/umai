@@ -6,7 +6,7 @@
             </slot>
         </div>
         <div
-            class="recipe-page--wrapper flex flex-col flex-grow w-[200vw] z-10 md:w-full pointer-events-none print:w-auto print:block"
+            class="recipe-page--wrapper flex flex-col flex-grow w-[200vw] z-10 md:w-full pointer-events-none print:w-auto print:block print:translate-x-0"
             :class="{
                 'transition-transform duration-300': $ui.animations && $ui.isMobile,
                 '-translate-x-screen': $ui.isMobile && showingSecondaryPanel,
