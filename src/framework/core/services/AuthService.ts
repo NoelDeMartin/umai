@@ -21,7 +21,7 @@ import { requireEngine } from 'soukai';
 import { SolidACLAuthorization, SolidTypeIndex } from 'soukai-solid';
 import type { Fetch, SolidUserProfile } from '@noeldemartin/solid-utils';
 import type { IndexedDBEngine } from 'soukai';
-import type { RouteLocationNormalizedLoaded } from 'vue-router';
+import type { RouteLocationRaw } from 'vue-router';
 
 import App from '@/framework/core/facades/App';
 import AuthenticationCancelledError from '@/framework/auth/errors/AuthenticationCancelledError';
@@ -33,6 +33,7 @@ import Service from '@/framework/core/Service';
 import UI from '@/framework/core/facades/UI';
 import { getAuthenticator } from '@/framework/auth';
 import { i18nTranslate } from '@/framework/plugins/i18n';
+import { serializeRoute } from '@/framework/routing/router';
 import { translate } from '@/framework/utils/translate';
 import type Authenticator from '@/framework/auth/Authenticator';
 import type { AuthenticatorName } from '@/framework/auth';
@@ -201,7 +202,7 @@ export default class AuthService extends Service<State, ComputedState> {
         }
 
         // TODO this doesn't work for lazy routes (like /history)
-        Storage.set(FLASH_ROUTE_STORAGE_KEY, Router.currentRoute.value);
+        Storage.set(FLASH_ROUTE_STORAGE_KEY, serializeRoute(Router.currentRoute.value));
 
         await this.login(this.previousSession.loginUrl, this.previousSession.authenticator);
     }
@@ -353,7 +354,7 @@ export default class AuthService extends Service<State, ComputedState> {
     }
 
     private async restoreFlashRoute(): Promise<void> {
-        const flashRoute = Storage.pull<RouteLocationNormalizedLoaded>(FLASH_ROUTE_STORAGE_KEY);
+        const flashRoute = Storage.pull<RouteLocationRaw>(FLASH_ROUTE_STORAGE_KEY);
 
         if (!flashRoute) {
             return;

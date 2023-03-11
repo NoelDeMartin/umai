@@ -3,7 +3,14 @@ import { createRouter, onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from 
 import { computed, defineComponent, h, onUnmounted, ref, watch } from 'vue';
 import type { Component, ConcreteComponent } from 'vue';
 import type { Constructor } from '@noeldemartin/utils';
-import type { RouteMeta, RouteRecordRaw, RouterOptions , Router as VueRouter } from 'vue-router';
+import type {
+    RouteLocationNormalizedLoaded,
+    RouteLocationRaw,
+    RouteMeta ,
+    RouteRecordRaw ,
+    RouterOptions,
+    Router as VueRouter,
+} from 'vue-router';
 
 import App from '@/framework/core/facades/App';
 import Browser from '@/framework/core/facades/Browser';
@@ -156,6 +163,15 @@ function enhanceRouteComponent(pageComponent: ConcreteComponent, meta?: AppRoute
             return enhancedRouteComponentSetup(pageComponent, meta);
         },
     });
+}
+
+export function serializeRoute(route: RouteLocationNormalizedLoaded): RouteLocationRaw {
+    return {
+        path: route.path,
+        query: route.query,
+        hash: route.hash,
+        params: route.params,
+    };
 }
 
 export function updateRouteTitle(title?: string | null): void {
