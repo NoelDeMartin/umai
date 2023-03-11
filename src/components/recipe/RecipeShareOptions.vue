@@ -1,6 +1,5 @@
 <template>
     <RadioGroup
-        v-if="$cookbook.isRemote"
         v-model="selectedOption"
         class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0 md:items-center"
     >
@@ -43,10 +42,13 @@ import type { Component } from 'vue';
 import { requiredEnumProp } from '@/framework/utils/vue';
 import { translate } from '@/framework/utils/translate';
 
+import Cookbook from '@/services/facades/Cookbook';
+
 import { RecipeShareOption } from './RecipeShareOptions';
 
 interface RecipeSharingOptionData {
     name: string;
+    onlyRemote: boolean;
     iconComponent: Component;
 }
 
@@ -59,22 +61,32 @@ const optionsMap: Record<RecipeShareOption, RecipeSharingOptionData> = $computed
     [RecipeShareOption.Umai]: {
         name: translate('recipes.share_umai'),
         iconComponent: IconViewShow,
+        onlyRemote: true,
     },
     [RecipeShareOption.Solid]: {
         name: translate('recipes.share_solid'),
         iconComponent: IconSolid,
+        onlyRemote: true,
     },
     [RecipeShareOption.JsonLD]: {
         name: translate('recipes.share_jsonld'),
         iconComponent: IconJsonLD,
+        onlyRemote: false,
     },
     [RecipeShareOption.Print]: {
         name: translate('recipes.share_print'),
         iconComponent: IconPrint,
+        onlyRemote: false,
     },
 }));
 const options = $computed(() => Object.entries(optionsMap).reduce(
-    (options, [id, option]) => [...options, { id, ...option }],
+    (options, [id, option]) => {
+        if (!option.onlyRemote || Cookbook.isRemote) {
+            options.push({ id, ...option });
+        }
+
+        return options;
+    },
     [] as (RecipeSharingOptionData & { id: string })[],
 ));
 const selectedOption = $computed({
