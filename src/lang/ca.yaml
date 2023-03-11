@@ -228,13 +228,23 @@ recipes:
   download: Descarregar
   download_includeHistory: Incloure històric de canvis
   print: Imprimir
-  print_info: |
+  print_remoteInfo: |
     La impressió de receptes fa servir funcionalitat nativa del navegador, però té algunes
     limitacions. Hauria de funcionar amb la majoria de navegadors moderns, però pot donar problemes
     en dispositius mòbils.
 
     Si no està funcionant correctament, pots intentar-ho publicant la recepta sense llistar i fer
-    servir un altre dispositiu per imprimir-la en [el visor de receptes](blank:/viewer).
+    servir un altre dispositiu per imprimir-la en [el visor de receptes](blank:/viewer). També pots
+    exportar-la a JSON-LD, pero és possible que les imatges no funcionin.
+
+    [aprendre'n més](https://github.com/NoelDeMartin/umai/issues/5)
+  print_localInfo: |
+    La impressió de receptes fa servir funcionalitat nativa del navegador, però té algunes
+    limitacions. Hauria de funcionar amb la majoria de navegadors moderns, però pot donar problemes
+    en dispositius mòbils.
+
+    Si no està funcionant correctament, pots intentar-ho exportant-la a JSON-LD i fer servir un
+    altre dispositiu per imprimir-la. Però és possible que les imatges no funcionin.
 
     [aprendre'n més](https://github.com/NoelDeMartin/umai/issues/5)
   print_unsupportedBrowser: Aquest navegador no permet imprimir documents.

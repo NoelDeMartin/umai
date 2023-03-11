@@ -225,13 +225,23 @@ recipes:
   download: Download
   download_includeHistory: Include changes history
   print: Print
-  print_info: |
+  print_remoteInfo: |
     The current approach to printing recipes uses the browser's built-in functionality, but it has
     some limitations. It should work with most modern browsers, but it is specially problematic in
     mobile devices.
 
-    If it isn't working for you, try temporarily making the recipe Unlisted and use a different
-    device to print it in [the viewer](blank:/viewer).
+    If it isn't working for you, try temporarily publishing the recipe as unlisted and use a different
+    device to print it in [the viewer](blank:/viewer). You can also export it as a JSON-LD, but
+    it's possible that images aren't exported properly.
+
+    [learn more](https://github.com/NoelDeMartin/umai/issues/5)
+  print_localInfo: |
+    The current approach to printing recipes uses the browser's built-in functionality, but it has
+    some limitations. It should work with most modern browsers, but it is specially problematic in
+    mobile devices.
+
+    If it isn't working for you, try exporting the recipe as a JSON-LD and use a different device to
+    print it. But it's possible that images aren't exported properly.
 
     [learn more](https://github.com/NoelDeMartin/umai/issues/5)
   print_unsupportedBrowser: This browser does not support printing documents.

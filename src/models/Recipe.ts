@@ -147,11 +147,17 @@ export default class Recipe extends Model {
     }
 
     public toExternalJsonLD(options: Partial<RecipeExportOptions> = {}): JsonLD {
-        return this.toJsonLD({
+        const jsonld = this.toJsonLD({
             ids: options.includeIds ?? this.url?.startsWith('http'),
             timestamps: options.includeHistory ?? false,
             history: options.includeHistory ?? false,
         });
+
+        if (this.imageUrl?.startsWith('solid://')) {
+            delete jsonld['image'];
+        }
+
+        return jsonld;
     }
 
     public download(options: Partial<RecipeExportOptions> = {}): void {

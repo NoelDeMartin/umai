@@ -10,13 +10,17 @@
         <template #default="{ close }">
             <RecipeShareOptions v-model="shareOption" />
             <CoreClipboard v-if="clipboardContent" class="mt-4 max-w-prose" :text="clipboardContent" />
-            <CoreMarkdown v-if="shareOption === 'print'" class="mt-4" :text="$t('recipes.print_info')" />
+            <CoreMarkdown
+                v-if="shareOption === 'print'"
+                class="mt-4"
+                :text="$cookbook.isRemote ? $t('recipes.print_remoteInfo') : $t('recipes.print_localInfo')"
+            />
             <p v-if="warning" class="text-red-500 flex self-start mt-2 max-w-prose">
                 <i-zondicons-exclamation-outline class="w-4 h-4 mt-1 mr-2 flex-shrink-0" />
                 {{ warning }}
             </p>
-            <div class="flex justify-between mt-4">
-                <label v-if="shareOption === 'jsonld'" class="cursor-pointer flex items-center">
+            <div class="flex flex-col justify-between items-end mt-4 gap-y-2 md:flex-row md:gap-x-2 md:gap-y-0">
+                <label v-if="shareOption === 'jsonld'" class="cursor-pointer flex items-center self-start mb-4 md:mb-0">
                     <CoreToggle v-model="includeHistory" />
                     <p class="ml-2">{{ $t('recipes.download_includeHistory') }}</p>
                 </label>

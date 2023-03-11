@@ -222,13 +222,23 @@ recipes:
   download: Descargar
   download_includeHistory: Incluye el histórico de cambios
   print: Imprimir
-  print_info: |
+  print_remoteInfo: |
     La impresión de recetas utiliza funcionalidad nativa del navegador, pero existen algunas
     limitaciones. Debería funcionar con la mayoría de navegadores modernos, pero puede dar
     problemas en dispositivos móviles.
 
     Si no está funcionando correctamente, puedes intentarlo publicando la receta sin listar y utilizar
-    otro dispositivo para imprimirla en [el visor de recetas](blank:/viewer).
+    otro dispositivo para imprimirla en [el visor de recetas](blank:/viewer). También puedes exportarla
+    a JSON-LD, pero es possible que las imágenes no funcionen.
+
+    [aprender más](https://github.com/NoelDeMartin/umai/issues/5)
+  print_localInfo: |
+    La impresión de recetas utiliza funcionalidad nativa del navegador, pero existen algunas
+    limitaciones. Debería funcionar con la mayoría de navegadores modernos, pero puede dar
+    problemas en dispositivos móviles.
+
+    Si no está funcionando correctamente, puedes intentarlo exportando la receta a JSON-LD y utilizar
+    otro dispositivo para imprimirla. Pero es possible que las imágenes no funcionen.
 
     [aprender más](https://github.com/NoelDeMartin/umai/issues/5)
   print_unsupportedBrowser: Este navegador no permite imprimir documentos.
