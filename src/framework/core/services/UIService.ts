@@ -320,8 +320,10 @@ export default class UIService extends Service<State, ComputedState> {
     }
 
     protected getInitialState(): State {
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion)').matches;
+
         return {
-            animations: true,
+            animations: !prefersReducedMotion,
             headerHeight: 0,
             headerHidden: false,
             loadingModal: null,
