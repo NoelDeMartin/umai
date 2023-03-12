@@ -217,7 +217,7 @@
                     <div class="prose mr-8">
                         <CoreProseFiller />
                     </div>
-                    <div class="w-72" />
+                    <div class="hidden w-72 md:block" />
                 </div>
                 <div class="flex flex-row-reverse items-center py-4 space-x-reverse space-x-4">
                     <div class="flex flex-row-reverse space-x-4 space-x-reverse">
