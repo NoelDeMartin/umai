@@ -79,7 +79,12 @@ const RENDERED_UNITS: Record<string, string> = {
 };
 
 const QUANTITY_PLACEHOLDER = '{quantity}';
-const [INGREDIENT_REGEX, QUANTITY_RANGE_SEPARATOR_REGEX, QUANTITY_PARSERS] = initializeHelpers();
+const [
+    INGREDIENT_REGEX,
+    INGREDIENT_REGEX_WITHOUT_UNITS,
+    QUANTITY_RANGE_SEPARATOR_REGEX,
+    QUANTITY_PARSERS,
+] = initializeHelpers();
 
 function compareIngredients(a: IngredientBreakdown, b: IngredientBreakdown): number {
     const aIsOptional = a.original.toLowerCase().includes('optional');
@@ -102,17 +107,19 @@ function compareIngredients(a: IngredientBreakdown, b: IngredientBreakdown): num
     return quantityComparison === 0 ? compare(b.original, a.original) : quantityComparison;
 }
 
-function initializeHelpers(): [RegExp, RegExp, Record<string, IngredientQuantityParser>] {
+function initializeHelpers(): [RegExp, RegExp, RegExp, Record<string, IngredientQuantityParser>] {
     const quantityRegex = `(?:(?:\\d+[.,\\d]*)|${Object.keys(SPECIAL_QUANTITIES).join('|')})`;
     const quantityRangeSeparator = 'to|-|~';
     const quantityRangeRegex = `${quantityRegex}\\s*(?:${quantityRangeSeparator})\\s*${quantityRegex}`;
+    const quantityValueRegex = `(?<quantityValue>(?:${quantityRangeRegex})|(?:${quantityRegex}))`;
     const unitsRegex = Object
         .values(INGREDIENT_UNIT_QUANTITIES)
         .reduce((units, quantities) => [...units, Object.keys(quantities).join('|')], [] as string[])
         .join('|');
 
     return [
-        new RegExp(`.*?(((?:${quantityRangeRegex})|(?:${quantityRegex}))\\s*(?:(${unitsRegex})(?:\\s+|$))?).*?`, 'i'),
+        new RegExp(`.*?(?<quantity>${quantityValueRegex}\\s*(?:(?<quantityUnit>${unitsRegex})(?:\\s+|$))).*?`, 'i'),
+        new RegExp(`.*?(?<quantity>${quantityValueRegex}\\s*).*?`, 'i'),
         new RegExp(quantityRangeSeparator, 'i'),
         Object
             .entries(INGREDIENT_UNIT_QUANTITIES)
@@ -161,10 +168,15 @@ function parseIngredientQuantity(quantity?: string, unit?: string): [
 
 export function parseIngredient(ingredient: string): IngredientBreakdown {
     const original = ingredient;
-    const matches = ingredient.match(INGREDIENT_REGEX);
-    const template = matches?.[1] ? ingredient.replace(matches[1].trim(), QUANTITY_PLACEHOLDER) : ingredient;
-    const originalUnit = matches?.[3];
-    const [quantity, unit, unitMultiplier, displayUnit] = parseIngredientQuantity(matches?.[2], originalUnit);
+    const match = ingredient.match(INGREDIENT_REGEX) ?? ingredient.match(INGREDIENT_REGEX_WITHOUT_UNITS);
+    const template = match?.groups?.quantity
+        ? ingredient.replace(match.groups.quantity.trim(), QUANTITY_PLACEHOLDER)
+        : ingredient;
+    const originalUnit = match?.groups?.quantityUnit;
+    const [quantity, unit, unitMultiplier, displayUnit] = parseIngredientQuantity(
+        match?.groups?.quantityValue,
+        originalUnit,
+    );
 
     return objectWithoutEmpty({
         template,

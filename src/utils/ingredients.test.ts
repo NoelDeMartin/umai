@@ -89,6 +89,15 @@ describe('Ingredients helpers', () => {
         rendered: 'Zucchero 50g',
     });
 
+    testParsingIngredients('Farina 00 150 g', 50, {
+        template: 'Farina 00 {quantity}',
+        original: 'Farina 00 150 g',
+        quantity: 150,
+        unit: IngredientUnit.Grams,
+        unitMultiplier: 1,
+        rendered: 'Farina 00 50g',
+    });
+
     it('sorts ingredients', () => {
         const expectIngredientsOrder = (ingredients: string[], expected: string[]) => {
             const sortedIngredients = ingredients.map(parseIngredient);
