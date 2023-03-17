@@ -18,7 +18,7 @@ function testParsingIngredients(
 describe('Ingredients helpers', () => {
 
     testParsingIngredients('100g Cheese', 50, {
-        name: 'Cheese',
+        template: '{quantity} Cheese',
         original: '100g Cheese',
         quantity: 100,
         unit: IngredientUnit.Grams,
@@ -27,7 +27,7 @@ describe('Ingredients helpers', () => {
     });
 
     testParsingIngredients('2kg Zucchini', 3, {
-        name: 'Zucchini',
+        template: '{quantity} Zucchini',
         original: '2kg Zucchini',
         quantity: 2000,
         unit: IngredientUnit.Grams,
@@ -36,7 +36,7 @@ describe('Ingredients helpers', () => {
     });
 
     testParsingIngredients('1,2L Milk', 4, {
-        name: 'Milk',
+        template: '{quantity} Milk',
         original: '1,2L Milk',
         quantity: 1200,
         unit: IngredientUnit.Milliliters,
@@ -45,39 +45,48 @@ describe('Ingredients helpers', () => {
     });
 
     testParsingIngredients('3 Eggs', 20, {
-        name: 'Eggs',
+        template: '{quantity} Eggs',
         original: '3 Eggs',
         quantity: 3,
         rendered: '20 Eggs',
     });
 
     testParsingIngredients('3 to 6 Tomatoes', [6, 9], {
-        name: 'Tomatoes',
+        template: '{quantity} Tomatoes',
         original: '3 to 6 Tomatoes',
         quantity: [3, 6],
         rendered: '6 - 9 Tomatoes',
     });
 
     testParsingIngredients('3 Lemons', 5, {
-        name: 'Lemons',
+        template: '{quantity} Lemons',
         original: '3 Lemons',
         quantity: 3,
         rendered: '5 Lemons',
     });
 
     testParsingIngredients('S&P', 0, {
-        name: 'S&P',
+        template: 'S&P',
         original: 'S&P',
         rendered: 'S&P',
     });
 
     testParsingIngredients('¼ tbsp salt', .5, {
-        name: 'salt',
+        template: '{quantity} salt',
         original: '¼ tbsp salt',
         quantity: 3.75,
         unit: IngredientUnit.Grams,
         unitMultiplier: 15,
         rendered: '½ tbsp salt',
+    });
+
+    testParsingIngredients('Zucchero 150 g', 50, {
+        template: 'Zucchero {quantity}',
+        original: 'Zucchero 150 g',
+        quantity: 150,
+        unit: IngredientUnit.Grams,
+        unitMultiplier: 1,
+        rendered: 'Zucchero 50g',
     });
 
     it('sorts ingredients', () => {

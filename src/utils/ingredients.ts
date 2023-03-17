@@ -8,7 +8,7 @@ export enum IngredientUnit {
 }
 
 export type IngredientBreakdown<Q extends IngredientQuantity = IngredientQuantity> = {
-    name: string;
+    template: string;
     original: string;
     quantity?: Q;
     unit?: IngredientUnit;
@@ -78,6 +78,7 @@ const RENDERED_UNITS: Record<string, string> = {
     tsp: ' tsp',
 };
 
+const QUANTITY_PLACEHOLDER = '{quantity}';
 const [INGREDIENT_REGEX, QUANTITY_RANGE_SEPARATOR_REGEX, QUANTITY_PARSERS] = initializeHelpers();
 
 function compareIngredients(a: IngredientBreakdown, b: IngredientBreakdown): number {
@@ -111,7 +112,7 @@ function initializeHelpers(): [RegExp, RegExp, Record<string, IngredientQuantity
         .join('|');
 
     return [
-        new RegExp(`((?:${quantityRangeRegex})|(?:${quantityRegex}))\\s*(?:(${unitsRegex})\\s+)?(.*)`, 'i'),
+        new RegExp(`.*?(((?:${quantityRangeRegex})|(?:${quantityRegex}))\\s*(?:(${unitsRegex})(?:\\s+|$))?).*?`, 'i'),
         new RegExp(quantityRangeSeparator, 'i'),
         Object
             .entries(INGREDIENT_UNIT_QUANTITIES)
@@ -161,12 +162,12 @@ function parseIngredientQuantity(quantity?: string, unit?: string): [
 export function parseIngredient(ingredient: string): IngredientBreakdown {
     const original = ingredient;
     const matches = ingredient.match(INGREDIENT_REGEX);
-    const name = (matches?.[3] ?? ingredient).trim();
-    const originalUnit = matches?.[2];
-    const [quantity, unit, unitMultiplier, displayUnit] = parseIngredientQuantity(matches?.[1], originalUnit);
+    const template = matches?.[1] ? ingredient.replace(matches[1].trim(), QUANTITY_PLACEHOLDER) : ingredient;
+    const originalUnit = matches?.[3];
+    const [quantity, unit, unitMultiplier, displayUnit] = parseIngredientQuantity(matches?.[2], originalUnit);
 
     return objectWithoutEmpty({
-        name,
+        template,
         original,
         quantity,
         unit,
@@ -174,8 +175,14 @@ export function parseIngredient(ingredient: string): IngredientBreakdown {
 
         renderQuantity: typeof quantity !== 'undefined'
             ? Array.isArray(quantity)
-                ? (quantity: [number, number]) => quantity.map(renderQuantityString).join(' - ') + ` ${name}`
-                : (quantity: number) => `${renderQuantityString(quantity)}${displayUnit ?? ''} ${name}`
+                ? (quantity: [number, number]) => template.replace(
+                    QUANTITY_PLACEHOLDER,
+                    quantity.map(renderQuantityString).join(' - '),
+                )
+                : (quantity: number) => template.replace(
+                    QUANTITY_PLACEHOLDER,
+                    `${renderQuantityString(quantity)}${displayUnit ?? ''}`,
+                )
             : () => original,
     });
 }
