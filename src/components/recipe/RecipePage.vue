@@ -25,7 +25,7 @@
                     </div>
                     <div class="recipe-page--header-title-filler w-72 flex-shrink-0 hidden md:block md:print:hidden print:hidden" />
                 </div>
-                <div class="hidden overflow-hidden rounded-lg print:block">
+                <div class="hidden overflow-hidden rounded-lg border border-gray-300 print:block">
                     <div v-if="recipe?.imageUrl" class="relative overflow-hidden w-full h-52">
                         <RecipeImage :recipe="recipe" class="absolute inset-0" />
                     </div>
