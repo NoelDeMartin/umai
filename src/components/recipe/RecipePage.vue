@@ -91,7 +91,7 @@
                         <i-pepicons-triangle-right-filled class="w-8 h-8" aria-hidden="true" />
                     </button>
                 </div>
-                <div class="prose prose-h2:mt-6 px-edge w-screen overflow-hidden md:mr-8 md:px-0 md:w-auto md:print:mr-0">
+                <div class="prose prose-h2:mt-6 px-edge w-screen md:mr-8 md:px-0 md:w-auto md:print:mr-0">
                     <slot name="description">
                         <CoreMarkdown
                             v-if="recipe?.description"
