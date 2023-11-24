@@ -2,7 +2,7 @@ import { defineDirective } from '@/framework/utils/vue';
 
 export default defineDirective({
     mounted(element: HTMLElement, { value }) {
-        if (!value) {
+        if (value === false) {
             return;
         }
 
