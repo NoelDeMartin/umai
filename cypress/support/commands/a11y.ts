@@ -43,7 +43,7 @@ export default {
         return cy.contains(text).should('not.exist');
     },
 
-    press(label: string, selector: string = 'button, a, label'): void {
+    press(label: string, selector: string = 'button:visible, a:visible, label:visible'): void {
         cy.contains(selector, label).click();
     },
 

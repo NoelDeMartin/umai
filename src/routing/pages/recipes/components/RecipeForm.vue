@@ -30,20 +30,23 @@
                     <button
                         type="button"
                         class="
-                            group flex absolute inset-0 justify-center items-center w-full text-xl text-white opacity-100
-                            md:opacity-0
+                            group flex absolute inset-0 justify-center items-center w-full text-white opacity-0
                             group-hover:opacity-100
                             focus:opacity-100 focus:outline-none focus:bg-opacity-20
                         "
                         @click="editImage"
                     >
-                        <div
-                            v-wobbly-border
-                            class="flex items-center self-center px-4 py-2 bg-black bg-opacity-50 rounded-md hover:bg-opacity-100 group-focus:ring-2 group-focus:ring-offset-[rgba(255,255,255,.5)] group-focus:ring-offset-2 group-focus:ring-[rgba(0,0,0,.5)] hover:group-focus:ring-black"
-                        >
-                            <i-pepicons-pen v-if="form.imageUrl" class="mr-3 w-4 h-4" aria-hidden="true" />
-                            <i-pepicons-plus v-else class="mr-3 w-4 h-4" aria-hidden="true" />
-                            {{ form.imageUrl ? $t('recipes.image_edit') : $t('recipes.image_set') }}
+                        <div class="m-edge max-w-full h-24 w-[calc(20rem+65ch)] justify-end items-start hidden md:flex">
+                            <div class="w-72 flex justify-center">
+                                <div
+                                    v-wobbly-border
+                                    class="flex items-center text-xl px-4 py-2 bg-black bg-opacity-50 rounded-md hover:bg-opacity-100 group-focus:ring-2 group-focus:ring-offset-[rgba(255,255,255,.5)] group-focus:ring-offset-2 group-focus:ring-[rgba(0,0,0,.5)] hover:group-focus:ring-black"
+                                >
+                                    <i-pepicons-pen v-if="form.imageUrl" class="mr-3 w-4 h-4" aria-hidden="true" />
+                                    <i-pepicons-plus v-else class="mr-3 w-4 h-4" aria-hidden="true" />
+                                    {{ form.imageUrl ? $t('recipes.image_edit') : $t('recipes.image_set') }}
+                                </div>
+                            </div>
                         </div>
                     </button>
                 </div>
@@ -67,6 +70,11 @@
 
             <template #description>
                 <div class="flex flex-col items-start space-y-3">
+                    <CoreButton secondary class="space-x-2 md:hidden" @click="editImage">
+                        <i-pepicons-pen v-if="form.imageUrl" class="w-4 h-4" aria-hidden="true" />
+                        <i-pepicons-plus v-else class="w-4 h-4" aria-hidden="true" />
+                        <span>{{ form.imageUrl ? $t('recipes.image_edit') : $t('recipes.image_set') }}</span>
+                    </CoreButton>
                     <div v-if="form.description || writingDescription" class="group relative w-full">
                         <CoreFluidTextArea
                             ref="$description"
