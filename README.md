@@ -1,4 +1,4 @@
-# Umai [![Build Status](https://noeldemartin.semaphoreci.com/badges/umai/branches/main.svg)](https://noeldemartin.semaphoreci.com/projects/umai)
+# Umai ![CI](https://github.com/NoelDeMartin/umai/actions/workflows/ci.yml/badge.svg)
 
 <p align="center">
     <img src="./docs/logo.png" alt="Umai logo">
