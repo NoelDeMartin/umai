@@ -34,6 +34,7 @@
                             group-hover:opacity-100
                             focus:opacity-100 focus:outline-none focus:bg-opacity-20
                         "
+                        :aria-label="form.imageUrl ? $t('recipes.image_edit') : $t('recipes.image_set')"
                         @click="editImage"
                     >
                         <div class="m-edge max-w-full h-24 w-[calc(20rem+65ch)] justify-end items-start hidden md:flex">
