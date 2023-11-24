@@ -45,6 +45,7 @@ describe('Cookbook', () => {
         cy.see('Boil the noodles');
         cy.see('Dip them into the broth');
         cy.press('Edit');
+        cy.ariaLabel('Add an image').focus();
         cy.press('Add an image');
         cy.ariaInput('Image url').type('https://media.example.com/ramen.jpg');
         cy.press('Update');
@@ -278,6 +279,7 @@ describe('Cookbook', () => {
         cy.press('Create your first recipe');
         cy.press('Create from scratch');
         cy.ariaInput('Recipe name').type('Ramen');
+        cy.ariaLabel('Add an image').focus();
         cy.press('Add an image');
         cy.uploadFixture('Upload an image', 'img/ramen.png');
         cy.see('Remove image');
@@ -300,6 +302,7 @@ describe('Cookbook', () => {
         cy.press('Create your first recipe');
         cy.press('Create from scratch');
         cy.ariaInput('Recipe name').type('Ramen');
+        cy.ariaLabel('Add an image').focus();
         cy.press('Add an image');
         cy.uploadFixture('Upload an image', 'img/ramen.png');
         cy.see('Remove image');
@@ -327,6 +330,7 @@ describe('Cookbook', () => {
         // Act
         cy.press('Ramen');
         cy.press('Edit');
+        cy.ariaLabel('Add an image').focus();
         cy.press('Add an image');
         cy.uploadFixture('Upload an image', 'img/ramen.png');
         cy.see('Remove image');
@@ -353,6 +357,7 @@ describe('Cookbook', () => {
         // Act
         cy.press('Ramen');
         cy.press('Edit');
+        cy.ariaLabel('Change image').focus();
         cy.press('Change image');
         cy.press('Remove image');
         cy.uploadFixture('Upload an image', 'img/ramen.png');
@@ -381,6 +386,7 @@ describe('Cookbook', () => {
         // Act
         cy.press('Ramen');
         cy.press('Edit');
+        cy.ariaLabel('Change image').focus();
         cy.press('Change image');
         cy.press('Remove image');
         cy.uploadFixture('Upload an image', 'img/ramen.png');

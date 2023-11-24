@@ -50,6 +50,7 @@ describe('Interoperability', () => {
         // Act.
         cy.press('Ramen');
         cy.press('Edit');
+        cy.ariaLabel('Change image').focus();
         cy.press('Change image');
         cy.press('Remove image');
         cy.uploadFixture('Upload an image', 'img/ramen.png');
