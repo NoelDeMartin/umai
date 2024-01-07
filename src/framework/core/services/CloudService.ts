@@ -15,12 +15,14 @@ import {
     Operation,
     SolidACLAuthorization,
     SolidContainer,
+    SolidDocument,
     SolidModel,
     Tombstone,
     isSolidDocumentRelation,
 } from 'soukai-solid';
 import type { Engine } from 'soukai';
 import type { ObjectsMap, PromisedValue } from '@noeldemartin/utils';
+import type { SolidDocumentPermission } from '@noeldemartin/solid-utils';
 import type { SolidModelConstructor } from 'soukai-solid';
 
 import Auth from '@/framework/core/facades/Auth';
@@ -50,7 +52,7 @@ interface State {
     autoSync: number | false;
     startupSync: boolean;
     status: CloudStatus;
-    dirtyFileUrls: Set<string>;
+    dirtyFileUrls: Record<string, Set<string>>;
     dirtyRemoteModels: ObjectsMap<SolidModel>;
     remoteOperationUrls: Record<string, string[]>;
     localModelUpdates: Record<string, number>;
@@ -135,12 +137,26 @@ export default class CloudService extends Service<State, ComputedState> {
         modelClass.on('updated', model => handler.active && this.updateRemoteModel(model));
     }
 
-    public enqueueFileUpload(url: string): void {
-        this.dirtyFileUrls = tap(new Set(this.dirtyFileUrls), urls => urls.add(url));
+    public enqueueFileUpload(model: SolidModel, fileUrl: string): void {
+        const dirtyFileUrls = Object.assign({}, this.dirtyFileUrls);
+        const modelFileUrls = dirtyFileUrls[model.url] ??= new Set();
+
+        modelFileUrls.add(fileUrl);
+
+        this.dirtyFileUrls = dirtyFileUrls;
     }
 
-    public removeFileUpload(url: string): void {
-        this.dirtyFileUrls = tap(new Set(this.dirtyFileUrls), urls => urls.delete(url));
+    public removeFileUpload(modelUrl: string, fileUrl: string): void {
+        const dirtyFileUrls = Object.assign({}, this.dirtyFileUrls);
+        const modelFileUrls = dirtyFileUrls[modelUrl] ??= new Set();
+
+        modelFileUrls.delete(fileUrl);
+
+        if (modelFileUrls.size === 0) {
+            delete dirtyFileUrls[modelUrl];
+        }
+
+        this.dirtyFileUrls = dirtyFileUrls;
     }
 
     public onModelMoved(previousUrl: string, newUrl: string): void {
@@ -165,7 +181,7 @@ export default class CloudService extends Service<State, ComputedState> {
         Events.on('login', ({ authenticator }) => this.initializeEngine(authenticator));
         Events.on('logout', () => this.setState({
             status: CloudStatus.Disconnected,
-            dirtyFileUrls: new Set(),
+            dirtyFileUrls: {},
             dirtyRemoteModels: map([], 'url'),
             remoteOperationUrls: {},
             localModelUpdates: {},
@@ -191,7 +207,7 @@ export default class CloudService extends Service<State, ComputedState> {
             autoSync: 10,
             status: CloudStatus.Disconnected,
             startupSync: true,
-            dirtyFileUrls: new Set(),
+            dirtyFileUrls: {},
             dirtyRemoteModels: map([], 'url'),
             remoteOperationUrls: {},
             localModelUpdates: {},
@@ -205,8 +221,13 @@ export default class CloudService extends Service<State, ComputedState> {
             offline: ({ status }) => status === CloudStatus.Offline,
             syncing: ({ status }) => status === CloudStatus.Syncing,
             disconnected: ({ status }) => status === CloudStatus.Disconnected,
-            pendingUpdates: ({ dirtyFileUrls, localModelUpdates }) =>
-                Object.values(localModelUpdates).reduce((total, count) => total + count, dirtyFileUrls.size),
+            pendingUpdates: ({ dirtyFileUrls, localModelUpdates }) => {
+                const modelUpdatesCount = Object.values(localModelUpdates).reduce((total, count) => total + count, 0);
+                const fileUpdatesCount = Object.values(dirtyFileUrls)
+                    .reduce((total, fileUrls) => total + fileUrls.size, 0);
+
+                return modelUpdatesCount + fileUpdatesCount;
+            },
         };
     }
 
@@ -323,26 +344,29 @@ export default class CloudService extends Service<State, ComputedState> {
 
     protected async uploadFiles(): Promise<void> {
         const fetch = Auth.requireAuthenticator().requireAuthenticatedFetch();
-        const fileUrls = new Set(this.dirtyFileUrls);
 
-        for (const url of fileUrls) {
-            const file = await Files.get(url);
+        for (const [modelUrl, fileUrls] of Object.entries(this.dirtyFileUrls)) {
+            for (const fileUrl of fileUrls) {
+                const file = await Files.get(fileUrl);
 
-            if (file) {
-                const response = await fetch(url, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': file.mimeType },
-                    body: file.blob,
-                });
+                if (file) {
+                    const response = await fetch(fileUrl, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': file.mimeType },
+                        body: file.blob,
+                    });
 
-                if (!isSuccessfulResponse(response))
-                    continue;
+                    if (!isSuccessfulResponse(response)) {
+                        continue;
+                    }
 
-                await Files.delete(url);
-                await Cache.replace(url, new Response(file.blob));
+                    await Files.delete(fileUrl);
+                    await Cache.replace(fileUrl, new Response(file.blob));
+                    await this.updateFilePermissions(modelUrl, fileUrl);
+                }
+
+                this.removeFileUpload(modelUrl, fileUrl);
             }
-
-            this.removeFileUpload(url);
         }
     }
 
@@ -426,12 +450,40 @@ export default class CloudService extends Service<State, ComputedState> {
         });
     }
 
+    protected async updateFilePermissions(modelUrl: string, fileUrl: string): Promise<void> {
+        const model = this.findLocalModel(modelUrl);
+
+        if (!model) {
+            return;
+        }
+
+        const fileDocument = new SolidDocument({ url: fileUrl });
+        const modelPermissions = await this.getModelPublicPermissions(model);
+        const filePermissions = await this.getModelPublicPermissions(fileDocument);
+
+        if (
+            modelPermissions.length === filePermissions.length &&
+                        !modelPermissions.some(modelPermission => !filePermissions.includes(modelPermission))
+        ) {
+            return;
+        }
+
+        await fileDocument.updatePublicPermissions(modelPermissions);
+    }
+
     protected getLocalModel(remoteModel: SolidModel, localModels: ObjectsMap<SolidModel>): SolidModel {
         return localModels.get(remoteModel.url) ?? this.cloneRemoteModel(remoteModel);
     }
 
     protected getRemoteModel(localModel: SolidModel, remoteModels: ObjectsMap<SolidModel>): SolidModel {
         return remoteModels.get(localModel.url) ?? this.cloneLocalModel(localModel);
+    }
+
+    protected async getModelPublicPermissions(model: SolidModel): Promise<SolidDocumentPermission[]> {
+        await model.fetchPublicPermissionsIfMissing();
+
+        // TODO implement getter in soukai-solid instead
+        return (model as unknown as { _publicPermissions: SolidDocumentPermission[]})._publicPermissions;
     }
 
     protected cloneLocalModel(localModel: SolidModel): SolidModel {
@@ -555,6 +607,22 @@ export default class CloudService extends Service<State, ComputedState> {
             await localModel.save();
             await SolidModel.synchronize(localModel, remoteModel);
         }
+    }
+
+    protected findLocalModel(url: string): SolidModel | null {
+        const handlers = [...this.handlers.values()];
+
+        for (const handler of handlers) {
+            const model = handler.getLocalModels().find(model => model.url === url);
+
+            if (!model) {
+                continue;
+            }
+
+            return model;
+        }
+
+        return null;
     }
 
     protected getLocalModels(): Iterable<SolidModel> {

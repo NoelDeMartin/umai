@@ -158,7 +158,7 @@ export default class CookbookService extends Service<State, ComputedState> {
     public async removePublicRecipeListing(recipe: Recipe): Promise<void> {
         const publicRecipesList = this.publicRecipesList ??= await this.findPublicRecipesList();
 
-        if (!publicRecipesList || !publicRecipesList.has(recipe)) {
+        if (!publicRecipesList) {
             return;
         }
 
@@ -479,7 +479,7 @@ export default class CookbookService extends Service<State, ComputedState> {
             await Promise.all(fileRenames.map(async ([url, newUrl]) => {
                 await Files.rename(url, newUrl);
 
-                Cloud.enqueueFileUpload(newUrl);
+                Cloud.enqueueFileUpload(recipe, newUrl);
             }));
             await engine.create(remoteCollection, document, newDocumentUrl);
             await engine.delete(Recipe.collection, documentUrl);
@@ -490,16 +490,20 @@ export default class CookbookService extends Service<State, ComputedState> {
     }
 
     private async enqueueFileUploads(): Promise<void> {
-        if (!this.remoteCookbookUrl)
+        if (!this.remoteCookbookUrl) {
             return;
+        }
 
         const urls = await Files.getUrls();
 
         for (const url of urls) {
-            if (!url.startsWith(this.remoteCookbookUrl))
-                continue;
+            const recipe = this.recipes.find(recipe => recipe.imageUrls.includes(url));
 
-            Cloud.enqueueFileUpload(url);
+            if (!url.startsWith(this.remoteCookbookUrl) || !recipe) {
+                continue;
+            }
+
+            Cloud.enqueueFileUpload(recipe, url);
         }
     }
 

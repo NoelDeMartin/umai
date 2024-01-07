@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fixed
 
+- [#9](https://github.com/NoelDeMartin/umai/issues/9) Updated images don't use recipe permissions.
 - [#14](https://github.com/NoelDeMartin/umai/issues/14) "Back to cookbook" navigates to authorization page.
 
 ## [v0.1.5](https://github.com/NoelDeMartin/umai/releases/tag/v0.1.5) - 2023-12-22

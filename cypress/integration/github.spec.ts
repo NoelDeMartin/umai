@@ -1,10 +1,44 @@
-import { cssPodUrl } from '@cy/support/commands/auth';
+import { createACLSparql, cssPodUrl, publishACLSparql } from '@cy/support/commands/auth';
 
 describe('Github issues', () => {
 
     beforeEach(() => {
         cy.visit('/');
         cy.startApp();
+    });
+
+    it('#9  Updated images don\'t use recipe permissions', () => {
+        // Arrange
+        cy.intercept('PATCH', cssPodUrl('/alice/cookbook/ramen.png.acl')).as('patchImageACL');
+
+        cy.visit('/?authenticator=inrupt');
+        cy.startApp();
+        cy.createRecipe({ name: 'Ramen' });
+        cy.login({ authenticator: 'inrupt', hasCookbook: true });
+        cy.press('Ramen');
+        cy.press('Share');
+        cy.see('Private', 'button');
+        cy.see('This recipe is private');
+        cy.press('Private', 'button');
+        cy.press('Public', 'li');
+        cy.see('updating permissions');
+        cy.see('Public', 'button', { timeout: 10000 });
+        cy.ariaLabel('Close modal').click();
+
+        // Act
+        cy.press('Edit');
+        cy.ariaLabel('Add an image').focus();
+        cy.press('Add an image');
+        cy.uploadFixture('Upload an image', 'img/ramen.png');
+        cy.see('Remove image');
+        cy.press('Update');
+        cy.press('Save');
+        cy.waitForSync();
+
+        // Assert
+        cy.get('@patchImageACL.all').should('have.length', 2);
+        cy.get('@patchImageACL.0').its('request.body').should('be.sparql', createACLSparql('ramen.png'));
+        cy.get('@patchImageACL.1').its('request.body').should('be.sparql', publishACLSparql('ramen.png'));
     });
 
     it('#13 Image Upload Button is blocked by long title on mobile', () => {

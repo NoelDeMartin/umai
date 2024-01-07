@@ -515,7 +515,7 @@ async function updateRecipeImage(recipe: Recipe) {
         await Files.rename(imageUrl, persistentImageUrl);
 
         if (Cookbook.remoteCookbookUrl && persistentImageUrl.startsWith(Cookbook.remoteCookbookUrl)) {
-            Cloud.enqueueFileUpload(persistentImageUrl);
+            Cloud.enqueueFileUpload(recipe, persistentImageUrl);
         }
 
         recipe.imageUrls = arrayUnique([persistentImageUrl, ...recipe.imageUrls?.slice(1)]);

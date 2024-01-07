@@ -1,48 +1,4 @@
-import { cssPodUrl } from '@cy/support/commands/auth';
-
-function createACLSparql(document: string): string {
-    return `
-        INSERT DATA {
-            @prefix acl: <http://www.w3.org/ns/auth/acl#> .
-
-            <#owner>
-                a acl:Authorization ;
-                acl:agent <${cssPodUrl('/alice/profile/card#me')}>, <mailto:alice@example.com> ;
-                acl:accessTo <${cssPodUrl(`/alice/cookbook/${document}`)}> ;
-                acl:mode acl:Read, acl:Write, acl:Control .
-        }
-    `;
-}
-
-function publishACLSparql(document: string): string {
-    return `
-        INSERT DATA {
-            @prefix acl: <http://www.w3.org/ns/auth/acl#> .
-            @prefix foaf: <http://xmlns.com/foaf/0.1/> .
-
-            <#public>
-                a acl:Authorization ;
-                acl:agentClass foaf:Agent ;
-                acl:accessTo <${cssPodUrl(`/alice/cookbook/${document}`)}> ;
-                acl:mode acl:Read .
-        }
-    `;
-}
-
-function unpublishACLSparql(document: string): string {
-    return `
-        DELETE DATA {
-            @prefix acl: <http://www.w3.org/ns/auth/acl#> .
-            @prefix foaf: <http://xmlns.com/foaf/0.1/> .
-
-            <#public>
-                a acl:Authorization ;
-                acl:agentClass foaf:Agent ;
-                acl:accessTo <${cssPodUrl(`/alice/cookbook/${document}`)}> ;
-                acl:mode acl:Read .
-        }
-    `;
-}
+import { createACLSparql, cssPodUrl, publishACLSparql, unpublishACLSparql } from '@cy/support/commands/auth';
 
 describe('Authorization', () => {
 
