@@ -1,0 +1,1 @@
+import{H as t}from"./noeldemartin-utils.esm.6d933a35.js";!function(){const e=new URL(location.href),a={path:e.pathname,hash:e.hash,query:t()};localStorage.setItem("github-pages-redirect",JSON.stringify(a)),location.href="/"}();
