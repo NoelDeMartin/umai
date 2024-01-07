@@ -1,8 +1,7 @@
-import { applyMixins, fail, tap } from '@noeldemartin/utils';
+import { fail, objectWithout, tap } from '@noeldemartin/utils';
 import { createRouter, onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from 'vue-router';
 import { computed, defineComponent, h, onUnmounted, ref, watch } from 'vue';
 import type { Component, ConcreteComponent } from 'vue';
-import type { Constructor } from '@noeldemartin/utils';
 import type {
     RouteLocationNormalizedLoaded,
     RouteLocationRaw,
@@ -53,9 +52,17 @@ function enhanceRoute(route: AppRoute): AppRoute {
 }
 
 function enhanceRouter(router: VueRouter): VueRouter {
-    applyMixins(router.constructor as Constructor<VueRouter>, [FrameworkRouter]);
+    const originalReplace = router.replace;
+    const mixinDescriptors = objectWithout(
+        Object.getOwnPropertyDescriptors(FrameworkRouter.prototype),
+        ['constructor'],
+    );
 
-    return tap(router, router => router.initialize());
+    for (const [propertyName, propertyDescriptor] of Object.entries(mixinDescriptors)) {
+        Object.defineProperty(router, propertyName, propertyDescriptor);
+    }
+
+    return tap(router, router => router.initialize(originalReplace));
 }
 
 function enhancedRouteComponentSetup(pageComponent: ConcreteComponent, meta?: AppRouteMeta) {

@@ -1,5 +1,11 @@
-import { Storage, once, toString } from '@noeldemartin/utils';
-import type { RouteLocationNormalized, RouteLocationRaw, Router } from 'vue-router';
+import { Storage, fail, once, toString } from '@noeldemartin/utils';
+import type {
+    NavigationFailure,
+    RouteLocationNormalized,
+    RouteLocationNormalizedLoaded,
+    RouteLocationRaw,
+    Router,
+} from 'vue-router';
 import type { SolidModel } from 'soukai-solid';
 
 const HISTORY_LENGTH = 10;
@@ -11,16 +17,36 @@ interface ModelBindingConfiguration {
 
 export default class FrameworkRouter {
 
-    private modelBindings: Record<string, ModelBindingConfiguration> = {};
-    private runtimeHistory: RouteLocationNormalized[] = [];
+    private _modelBindings?: Record<string, ModelBindingConfiguration>;
+    private _runtimeHistory?: RouteLocationNormalized[];
+    private _replacements?: WeakMap<RouteLocationNormalizedLoaded, RouteLocationRaw>;
+    private _originalReplace?: Router['replace'];
 
     public get previousRoute(): RouteLocationNormalized | null {
-        return this.runtimeHistory[1] ?? null;
+        return this.runtimeHistory?.[1] ?? null;
     }
 
-    public initialize(this: Router): void {
-        this.modelBindings = {};
-        this.runtimeHistory = [];
+    private get modelBindings(): Record<string, ModelBindingConfiguration> {
+        return this._modelBindings ?? fail('modelBindings not initialized in framework router');
+    }
+
+    private get runtimeHistory(): RouteLocationNormalized[] {
+        return this._runtimeHistory ?? fail('runtimeHistory not initialized in framework router');
+    }
+
+    private get replacements(): WeakMap<RouteLocationNormalizedLoaded, RouteLocationRaw> {
+        return this._replacements ?? fail('replacements not initialized in framework router');
+    }
+
+    private get originalReplace(): Router['replace'] {
+        return this._originalReplace ?? fail('originalReplace not initialized in framework router');
+    }
+
+    public initialize(this: Router, originalReplace: Router['replace']): void {
+        this._modelBindings = {};
+        this._runtimeHistory = [];
+        this._replacements = new WeakMap();
+        this._originalReplace = originalReplace;
         this.beforeEach(once(() => this.handleGithubPagesRedirect()));
         this.beforeEach(route => this.onCurrentRouteChanged(route));
     }
@@ -57,7 +83,22 @@ export default class FrameworkRouter {
         return name.test(toString(this.currentRoute.value.name));
     }
 
+    public async replace(this: Router, to: RouteLocationRaw): Promise<NavigationFailure | void | undefined> {
+        this.replacements.set(this.currentRoute.value, to);
+
+        return this.originalReplace.call(this, to);
+    }
+
     private onCurrentRouteChanged(route: RouteLocationNormalized): void {
+        const lastRoute = this.runtimeHistory[0];
+
+        if (lastRoute && this.replacements.get(lastRoute)) {
+            this.runtimeHistory[0] = route;
+            this.replacements.delete(lastRoute);
+
+            return;
+        }
+
         this.runtimeHistory.unshift(route);
         this.runtimeHistory.splice(HISTORY_LENGTH);
     }
