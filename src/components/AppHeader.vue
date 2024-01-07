@@ -30,7 +30,7 @@
                             aria-label="Umai"
                             class="flex ring-primary-100 justify-center items-center space-x-2 focus-visible:outline-none focus-visible:bg-primary-100 focus-visible:ring-8"
                         >
-                            <i-app-umai-xmas class="mr-2 w-36 h-12 fill-primary-500" />
+                            <i-app-umai class="mr-2 w-36 h-12 fill-primary-500" />
                         </router-link>
                     </div>
                     <div
