@@ -118,6 +118,7 @@ export default class ViewerService extends Service<State, ComputedState> {
 
     protected async boot(): Promise<void> {
         await super.boot();
+        await Auth.booted;
         await Cookbook.booted;
     }
 
