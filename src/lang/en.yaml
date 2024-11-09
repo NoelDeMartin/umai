@@ -59,7 +59,7 @@ webImport:
     If there is a recipe online that you want to save in your cookbook, just paste the url below. We will look into that page
     and find all the relevant information like instructions and ingredients.
 
-    If don't know where to start, just open your favorite search engine and type away! Even if the website you find doesn't
+    If you don't know where to start, just open your favorite search engine and type away! Even if the website you find doesn't
     look like a recipe, give it a try. You may be surprised to see what you get.
   url_label: Website url
   url_placeholder: Website url
@@ -267,7 +267,7 @@ recipes:
   ingredients_set: Add ingredients
   ingredient_add: Add ingredient
   ingredient_label: "Recipe ingredient #:position"
-  ingredient_placeholder: e.g. 100g Cheese
+  ingredient_placeholder: e.g. 100g Tomatoes
   ingredient_remove: Remove ingredient
   ingredient_remove_a11y: Remove "{ingredient}" ingredient
 
