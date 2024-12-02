@@ -83,4 +83,33 @@ describe('Github issues', () => {
         cy.url().should('equal', `${Cypress.config('baseUrl')}/`);
     });
 
+    it('#15 Add multiple ingredients at once', () => {
+        // Arrange
+        cy.press('Create your first recipe');
+        cy.press('Create from scratch');
+        cy.ariaInput('Recipe name').type('Ayran');
+        cy.press('Add ingredients');
+
+        // Act
+        cy.get(':focus').then(element => {
+            const input = element.get(0);
+            const event = new ClipboardEvent('paste', { clipboardData: new DataTransfer() });
+
+            event.clipboardData?.setData('text', `
+                - 300ml Cold Water
+                - 300ml Greek Yogurt
+                - Salt
+            `);
+
+            input.dispatchEvent(event);
+        });
+        cy.press('Create recipe');
+        cy.press('Ayran');
+
+        // Assert
+        cy.contains('ul li:nth-child(1)', '300ml Cold Water');
+        cy.contains('ul li:nth-child(2)', '300ml Greek Yogurt');
+        cy.contains('ul li:nth-child(3)', 'Salt');
+    });
+
 });

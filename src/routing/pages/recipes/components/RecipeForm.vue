@@ -139,6 +139,7 @@
                         :item-placeholder="$t('recipes.ingredient_placeholder')"
                         :item-remove-label="$t('recipes.ingredient_remove')"
                         :item-remove-a11y-label="$t('recipes.ingredient_remove_a11y', { ingredient: ':value' })"
+                        @paste="pasteIngredient($event)"
                         @submit="submit()"
                     />
                 </div>
@@ -524,6 +525,25 @@ async function updateRecipeImage(recipe: Recipe) {
     }
 
     recipe.imageUrls = arrayUnique([imageUrl, ...recipe.imageUrls ?? []]);
+}
+
+function pasteIngredient({ index, event }: { index: number; event: ClipboardEvent }) {
+    const text = event.clipboardData.getData('text');
+
+    if (!text.includes('\n')) {
+        return;
+    }
+
+    const ingredients = text.split('\n')
+        .map(line => line.replace(/^\s*[-*]/, '').trim())
+        .filter(line => line.length > 0);
+
+    event.preventDefault();
+    form.input('ingredients')?.update([
+        ...form.ingredients.slice(0, index),
+        ...ingredients.map(ingredient => new CoreListItemValue(ingredient)),
+        ...form.ingredients.slice(index + 1),
+    ]);
 }
 
 async function submit() {

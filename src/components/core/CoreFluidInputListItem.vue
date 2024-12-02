@@ -10,6 +10,7 @@
             v-bind="inputProps"
             :wrapper-class="inputClass"
             v-on="inputEvents"
+            @paste="$emit('paste', $event)"
         />
         <CoreFluidActionButton class="ml-2 flex-shrink-0" v-bind="removeButtonProps" v-on="removeButtonEvents">
             <i-pepicons-trash aria-hidden="true" class="w-5 h-5" />
@@ -28,7 +29,7 @@ const props = defineProps({
     ...useListItemProps(),
     inputClass: stringProp(),
 });
-const emit = defineEmits(['remove', ...useListItemEmits()]);
+const emit = defineEmits(['remove', 'paste', ...useListItemEmits()]);
 
 const $root = $ref<HTMLElement | null>(null);
 const $input = $ref<IFocusable | null>(null);

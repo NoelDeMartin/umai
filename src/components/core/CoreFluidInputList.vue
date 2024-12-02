@@ -12,6 +12,7 @@
                         :input-class="inputsClass"
                         v-bind="itemsProps[index]"
                         v-on="itemsEvents[index]"
+                        @paste="$emit('paste', { index, event: $event })"
                     >
                         <template v-if="$slots.marker" #marker>
                             <slot name="marker" />
@@ -44,7 +45,7 @@ const props = defineProps({
     ...useListProps(),
     inputsClass: stringProp(),
 });
-const emit = defineEmits(useListEmits());
+const emit = defineEmits(['paste', ...useListEmits()]);
 
 let $inputs = $ref<IFocusable[]>([]);
 const $root = $ref<HTMLElement | null>(null);

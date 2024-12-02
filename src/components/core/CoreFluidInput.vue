@@ -22,6 +22,7 @@
                 class="fluid-input absolute inset-0 w-full text-gray-900 border-b-2 hover:border-gray-300 focus:outline-none"
                 :class="inputClasses"
                 v-bind="$attrs"
+                @paste="$emit('paste', $event)"
             />
             <HeadlessInputError class="mt-4 text-left text-sm text-red-700 opacity-75" />
         </div>
@@ -56,7 +57,7 @@ const { placeholder, inline, color } = defineProps({
     color: enumProp(CoreColor),
 });
 
-defineEmits(['update:modelValue']);
+defineEmits(['update:modelValue', 'paste']);
 
 interface ColorClasses {
     base: string;
