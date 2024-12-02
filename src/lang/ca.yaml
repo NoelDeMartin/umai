@@ -401,6 +401,9 @@ time:
 errors:
   notFound: "404: No trobat"
   notFound_goHome: tornar a la pantalla principal
+  notFound_syncing: Carregant les dades més noves...
+  notFound_login: (No estàs conectat, potser se soluciona el problema %LOGIN_BUTTON%)
+  notFound_loginButton: fent log in
   unsupportedBrowser: Navegador no suporta
   unsupportedBrowser_indexedDB: Desafortunadament, aquest navegador no suporta IndexedDB.
   unsupportedBrowser_indexedDBFeature: |

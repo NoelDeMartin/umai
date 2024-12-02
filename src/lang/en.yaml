@@ -400,6 +400,9 @@ time:
 errors:
   notFound: "404: Not Found"
   notFound_goHome: go home
+  notFound_syncing: Getting latest data...
+  notFound_login: (Psst you're logged out, maybe you want to try %LOGIN_BUTTON%)
+  notFound_loginButton: logging in
   unsupportedBrowser: Unsupported browser
   unsupportedBrowser_indexedDB: Unfortunately, this browser doesn't have IndexedDB support.
   unsupportedBrowser_indexedDBFeature: Unfortunately, this browser doesn't have IndexedDB support. If you want this feature, you'll have to use [a compatible browser](https://caniuse.com/#feat=indexeddb).

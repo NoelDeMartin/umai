@@ -160,6 +160,7 @@ export default class AuthService extends Service<State, ComputedState> {
             const oidcIssuerUrl = profile?.oidcIssuerUrl ?? urlRoot(profile?.webId ?? loginUrl);
             const authenticator = await this.bootAuthenticator(authenticatorName);
 
+            this.rememberCurrentRoute();
             this.setState({
                 dismissed: false,
                 ignorePreviousSessionError: true,
@@ -200,9 +201,6 @@ export default class AuthService extends Service<State, ComputedState> {
         ) {
             return;
         }
-
-        // TODO this doesn't work for lazy routes (like /history)
-        Storage.set(FLASH_ROUTE_STORAGE_KEY, serializeRoute(Router.currentRoute.value));
 
         await this.login(this.previousSession.loginUrl, this.previousSession.authenticator);
     }
@@ -343,6 +341,11 @@ export default class AuthService extends Service<State, ComputedState> {
         }
 
         return state;
+    }
+
+    private rememberCurrentRoute(): void {
+        // TODO this doesn't work for lazy routes (like /history)
+        Storage.set(FLASH_ROUTE_STORAGE_KEY, serializeRoute(Router.currentRoute.value));
     }
 
     private async restorePreviousSession(): Promise<void> {

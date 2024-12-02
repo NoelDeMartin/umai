@@ -36,7 +36,6 @@
 </template>
 
 <script setup lang="ts">
-
 import { stringCapitalize } from '@noeldemartin/utils';
 
 import Cloud from '@/framework/core/facades/Cloud';

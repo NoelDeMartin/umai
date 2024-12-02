@@ -56,7 +56,16 @@ function captureViewerUrls(url: string): (() => unknown) | false {
 export function registerRouterBindings(): void {
     Router.registerModelBinding('recipe', {
         find: slug => Cookbook.recipes?.find(recipe => recipe.slug === slug) || null,
-        subscribe: (slug, listener) => Recipe.on('updated', recipe => recipe.slug === slug && listener(recipe)),
+        subscribe: (slug, listener) => {
+            const handle = (recipe: Recipe) => recipe.slug === slug && listener(recipe);
+            const unsubscribeCreate = Recipe.on('created', handle);
+            const unsubscribeUpdate = Recipe.on('updated', handle);
+
+            return () => {
+                unsubscribeCreate();
+                unsubscribeUpdate();
+            };
+        },
     });
 }
 

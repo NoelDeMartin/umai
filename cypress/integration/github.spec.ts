@@ -7,7 +7,7 @@ describe('Github issues', () => {
         cy.startApp();
     });
 
-    it('#9  Updated images don\'t use recipe permissions', () => {
+    it('#9 Updated images don\'t use recipe permissions', () => {
         // Arrange
         cy.intercept('PATCH', cssPodUrl('/alice/cookbook/ramen.png.acl')).as('patchImageACL');
 
@@ -147,6 +147,29 @@ describe('Github issues', () => {
         cy.see('Zürcher Geschnetzeltes');
         cy.see('Make and share this Zürcher Geschnetzeltes');
         cy.see('pepper and ½ teaspoon paprika');
+    });
+
+    it('#18 Log in from not found page', () => {
+        // Arrange
+        cy.visit('/recipes/ramen');
+        cy.startApp();
+
+        // Act
+        cy.press('logging in');
+        cy.ariaInput('Login url').clear().type(cssPodUrl('/alice/{enter}'));
+        cy.cssAuthorize({
+            reset: {
+                typeIndex: true,
+                cookbook: true,
+                recipe: 'ramen',
+            },
+        });
+        cy.waitForReload({ resetProfiles: true });
+
+        // Assert
+        cy.see('Ramen');
+        cy.see('Broth');
+        cy.dontSee('Not Found');
     });
 
 });
