@@ -9,6 +9,7 @@ import { isInstanceOf } from '@noeldemartin/utils';
 import AutoLinking from '@/framework/core/facades/AutoLinking';
 import { booleanProp, objectProp, requiredStringProp, stringProp } from '@/framework/utils/vue';
 import { safeHtml } from '@/framework/utils/sanitization';
+import type { LinkCapture } from '@/framework/core/services/AutoLinkingService';
 
 import { renderMarkdown } from '@/utils/markdown';
 
@@ -58,6 +59,30 @@ async function onClick(event: Event) {
     captureAutoLink(target, event);
 }
 
+async function handleCapture(event: Event, capture: LinkCapture) {
+    if (!capture) {
+        return;
+    }
+
+    event.preventDefault();
+
+    await capture();
+}
+
+async function handleDeferredCapture(event: Event, target: HTMLAnchorElement, deferredCapture: Promise<LinkCapture>) {
+    event.preventDefault();
+
+    const capture = await deferredCapture;
+
+    if (!capture) {
+        target.target === '_blank' ? window.open(target.href) : location.href = target.href;
+
+        return;
+    }
+
+    await capture();
+}
+
 async function captureAutoLink(target: HTMLElement, event: Event) {
     if (target.dataset.disableAutoLinking || !isInstanceOf(target, HTMLAnchorElement)) {
         return;
@@ -68,12 +93,12 @@ async function captureAutoLink(target: HTMLElement, event: Event) {
         autoLink ? `${autoLink}, default` : 'default',
     );
 
-    if (capture) {
-        event.preventDefault();
-
-        await capture();
+    if (capture instanceof Promise) {
+        handleDeferredCapture(event, target, capture);
 
         return;
     }
+
+    await handleCapture(event, capture);
 }
 </script>

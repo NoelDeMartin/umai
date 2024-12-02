@@ -75,11 +75,15 @@ export function registerAutoLinkingScopes(): void {
     });
 
     AutoLinking.registerScope('recipes', url => {
-        if (Viewer.active) {
-            return captureViewerUrls(url);
+        if (!Viewer.active) {
+            return captureCookbookUrls(url);
         }
 
-        return captureCookbookUrls(url);
+        if (!Viewer.autoLinksReady) {
+            return Viewer.waitAutoLinksReady().then(() => captureViewerUrls(url));
+        }
+
+        return captureViewerUrls(url);
     });
 }
 

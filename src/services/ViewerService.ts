@@ -1,4 +1,4 @@
-import { arrayFilter, isInstanceOf, tap, urlRoute } from '@noeldemartin/utils';
+import { PromisedValue, arrayFilter, isInstanceOf, tap, urlRoute } from '@noeldemartin/utils';
 import { NetworkRequestError } from '@noeldemartin/solid-utils';
 import { SolidEngine } from 'soukai-solid';
 import { toRaw } from 'vue';
@@ -32,11 +32,20 @@ interface ComputedState {
 export default class ViewerService extends Service<State, ComputedState> {
 
     private engine: SolidEngine = new SolidEngine((...args: [RequestInfo, RequestInit]) => Auth.fetch(...args));
+    private autoLinks: PromisedValue<void> = new PromisedValue();
     private collectionsAutoLinks: WeakMap<RecipesCollection, Record<string, Recipe>> = new WeakMap();
     private recipesContainersRequested: Set<string> = new Set();
 
     public get active(): boolean {
         return Router.currentRouteIs('viewer');
+    }
+
+    public get autoLinksReady(): boolean {
+        return this.autoLinks.isResolved();
+    }
+
+    public async waitAutoLinksReady(): Promise<void> {
+        await this.autoLinks;
     }
 
     public getRecipeContainer(recipe: Recipe): RecipesContainer | null {
@@ -266,6 +275,10 @@ export default class ViewerService extends Service<State, ComputedState> {
             }),
             {} as Record<string, Recipe>,
         ));
+
+        if (!this.autoLinks.isResolved()) {
+            this.autoLinks.resolve();
+        }
     }
 
 }

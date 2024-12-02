@@ -5,29 +5,36 @@ import App from '@/framework/core/facades/App';
 import Router from '@/framework/core/facades/Router';
 import Service from '@/framework/core/Service';
 
-type AutoLinkingScope = (url: string) => RouteLocationRaw | (() => unknown) | boolean | null;
+export type AutoLinkingScope = (url: string) => CapturedRoute | Promise<CapturedRoute>;
+export type CapturedRoute = RouteLocationRaw | (() => unknown) | boolean | null;
+export type LinkCapture = (() => unknown) | null;
 
 export default class AutoLinkingService extends Service {
 
     private scopes: Record<string, AutoLinkingScope> = {};
     private capturedTestUrls: string[] = [];
 
-    public captureLink(url: string, scopes?: string | string[] | null): (() => unknown) | null {
+    public captureLink(url: string, scopes?: string | string[] | null): LinkCapture | Promise<LinkCapture> {
         const route = this.getCapturedRoute(url, scopes);
+        const handleCapturedRoute = (capturedRoute: CapturedRoute) => {
+            if (!capturedRoute) {
+                return null;
+            }
 
-        if (!route) {
-            return null;
-        }
+            if (capturedRoute === true) {
+                return noop;
+            }
 
-        if (route === true) {
-            return noop;
-        }
+            if (typeof capturedRoute === 'function') {
+                return capturedRoute;
+            }
 
-        if (typeof route === 'function') {
-            return route;
-        }
+            return () => Router.push(capturedRoute);
+        };
 
-        return () => Router.push(route);
+        return route instanceof Promise
+            ? Promise.resolve(route).then(capturedRoute => handleCapturedRoute(capturedRoute))
+            : handleCapturedRoute(route);
     }
 
     public registerScope(name: string, scope: AutoLinkingScope): void {
@@ -50,10 +57,7 @@ export default class AutoLinkingService extends Service {
         });
     }
 
-    protected getCapturedRoute(
-        url: string,
-        scopes?: string | string[] | null,
-    ): RouteLocationRaw | (() => unknown) | boolean | null {
+    protected getCapturedRoute(url: string, scopes?: string | string[] | null): CapturedRoute | Promise<CapturedRoute> {
         const enabledScopes = this.getScopeNames(scopes);
 
         for (const [name, scope] of Object.entries(this.scopes)) {

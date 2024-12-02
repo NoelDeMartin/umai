@@ -128,7 +128,7 @@
                     <template v-if="$slots.instructions || instructions.length > 0">
                         <h2>{{ $t('recipes.instructions') }}</h2>
                         <slot name="instructions">
-                            <CoreMarkdown v-if="instructions.length === 1" :text="instructions[0]?.text" />
+                            <CoreMarkdown v-if="instructions.length === 1" :text="instructions[0]?.text" auto-link="recipes" />
                             <ol v-else-if="instructions.length > 0" class="pl-0 list-none">
                                 <li
                                     v-for="(instructionStep, index) of instructions"
