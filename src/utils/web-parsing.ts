@@ -1,4 +1,13 @@
-import { arr, arrayFilter, isObject, objectWithoutEmpty, silenced, stringMatchAll, tap } from '@noeldemartin/utils';
+import {
+    arr,
+    arrayFilter,
+    isArray,
+    isObject,
+    objectWithoutEmpty,
+    silenced,
+    stringMatchAll,
+    tap,
+} from '@noeldemartin/utils';
 import { isJsonLDGraph } from '@noeldemartin/solid-utils';
 import type { JsonLD, JsonLDResource } from '@noeldemartin/solid-utils';
 
@@ -6,6 +15,7 @@ import { translate } from '@/framework/utils/translate';
 
 import Recipe from '@/models/Recipe';
 
+const HTML_ENTITIES_REGEX = /&[a-z0-9#]{1,8};/;
 const CONTEXT_ALIASES: Record<string, string> = {
     'http://schema.org': 'https://schema.org/',
     'http://schema.org/': 'https://schema.org/',
@@ -28,6 +38,25 @@ function reshapeRecipeJsonLD(json: RecipeJsonLD): void {
     reshapeRecipeInstructions(json);
     reshapeRecipeIngredients(json);
     reshapeRecipeImage(json);
+}
+
+function cleanRecipeJsonLD(json: RecipeJsonLD): void {
+    cleanHTMLEntities(json, 'name');
+    cleanHTMLEntities(json, 'description');
+
+    if (isArray(json.recipeIngredient)) {
+        json.recipeIngredient.forEach((_, index) => cleanHTMLEntities(json.recipeIngredient as string[], index));
+    }
+
+    if (isArray(json.recipeInstructions)) {
+        json.recipeInstructions.forEach((instructionStep) => {
+            if (!isObject(instructionStep)) {
+                return;
+            }
+
+            cleanHTMLEntities(instructionStep, 'text');
+        });
+    }
 }
 
 // TODO move to soukai
@@ -152,6 +181,23 @@ function extractJsonLDResources(html: string): JsonLDResource[] {
         .filter(resource => !!resource) as unknown as JsonLDResource[];
 }
 
+function cleanHTMLEntities<T>(obj: T, property: keyof T): void {
+    const text = obj[property];
+
+    if (typeof text !== 'string') {
+        return;
+    }
+
+    if (!HTML_ENTITIES_REGEX.test(text)) {
+        return;
+    }
+
+    const div = document.createElement('div');
+
+    div.innerHTML = text;
+    obj[property] = (div.textContent ?? text) as T[keyof T];
+}
+
 export interface WebsiteMetadata {
     url: string;
     title: string;
@@ -162,6 +208,7 @@ export interface WebsiteMetadata {
 export async function parseWebsiteRecipes(url: string, html: string): Promise<Recipe[]> {
     const recipes = await Promise.all(extractJsonLDResources(html) .map(jsonld => {
         reshapeRecipeJsonLD(jsonld);
+        cleanRecipeJsonLD(jsonld);
 
         return silenced(Recipe.newFromJsonLD(jsonld));
     }));

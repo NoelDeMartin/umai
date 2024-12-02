@@ -112,4 +112,41 @@ describe('Github issues', () => {
         cy.contains('ul li:nth-child(3)', 'Salt');
     });
 
+    it('#17 Decodes html entities when importing from the web', () => {
+        // Arrange
+        cy.intercept('https://recipes.example.com/zurcher', { fixture: 'html/zurcher-geschnetzeltes.html' });
+
+        cy.see('How would you like to begin?');
+
+        // Act - Preview
+        cy.press('Create your first recipe');
+        cy.press('Import from the Web');
+        cy.toggleDetails('Advanced options');
+        cy.details('Advanced options').within(() => {
+            cy.get('input[type="checkbox"]').click();
+        });
+        cy.ariaInput('Website url').type('https://recipes.example.com/zurcher');
+        cy.press('Scan');
+        cy.see('We\'ve found the recipe!');
+
+        // Workaround for https://github.com/cypress-io/cypress/issues/7306
+        cy.wait(200);
+
+        // Assert - Preview
+        cy.see('Zürcher Geschnetzeltes');
+        cy.see('Make and share this Zürcher Geschnetzeltes');
+
+        // Act - Create
+        cy.press('Import to my cookbook');
+        cy.press('Create recipe');
+        cy.dontSee('Create recipe');
+
+        cy.press('Zürcher Geschnetzeltes');
+
+        // Assert - Create
+        cy.see('Zürcher Geschnetzeltes');
+        cy.see('Make and share this Zürcher Geschnetzeltes');
+        cy.see('pepper and ½ teaspoon paprika');
+    });
+
 });
