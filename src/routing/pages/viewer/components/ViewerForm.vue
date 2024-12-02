@@ -38,6 +38,7 @@ import { onMounted } from 'vue';
 import Router from '@/framework/core/facades/Router';
 import { FormInputType, reactiveForm } from '@/framework/forms';
 import Viewer from '@/services/facades/Viewer';
+import Auth from '@/framework/core/facades/Auth';
 
 let searching = $ref(false);
 let notFound = $ref<string | null>(null);
@@ -54,6 +55,10 @@ async function findRecipes(): Promise<void> {
     notFound = null;
 
     const found = await Viewer.search(form.url);
+
+    if (!found && Auth.wasLoggedIn) {
+        await Auth.reconnect(true);
+    }
 
     notFound = found ? null : form.url;
     searching = false;
