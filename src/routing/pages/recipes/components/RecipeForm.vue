@@ -528,9 +528,9 @@ async function updateRecipeImage(recipe: Recipe) {
 }
 
 function pasteIngredient({ index, event }: { index: number; event: ClipboardEvent }) {
-    const text = event.clipboardData.getData('text');
+    const text = event.clipboardData?.getData('text');
 
-    if (!text.includes('\n')) {
+    if (!text?.includes('\n')) {
         return;
     }
 

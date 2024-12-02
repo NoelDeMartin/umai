@@ -195,7 +195,7 @@ function cleanHTMLEntities<T>(obj: T, property: keyof T): void {
     const div = document.createElement('div');
 
     div.innerHTML = text;
-    obj[property] = (div.textContent ?? text) as T[keyof T];
+    obj[property] = (div.textContent ?? text) as unknown as T[keyof T];
 }
 
 export interface WebsiteMetadata {
