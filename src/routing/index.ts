@@ -67,10 +67,13 @@ export function registerAutoLinkingScopes(): void {
         }
 
         return async () => {
-            // TODO fix recipe --> recipe animation instead of doing this
-            // TODO use framework default instead
+            const urlObject = new URL(url);
+
             await Router.push({ name: 'home' });
-            await Router.push({ path: url.slice(document.location.origin.length) });
+            await Router.push({
+                path: urlObject.pathname,
+                query: Object.fromEntries(urlObject.searchParams.entries()),
+            });
         };
     });
 
