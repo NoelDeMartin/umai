@@ -14,7 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Changed
 
-- [Christmas attire](https://github.com/NoelDeMartin/umai/tree/v0.1.5/src/assets/icons/umai-xmas.svg).
+- [Christmas attire](https://github.com/NoelDeMartin/umai/tree/v0.1.7/src/assets/icons/umai-xmas.svg).
 
 ### Fixed
 
