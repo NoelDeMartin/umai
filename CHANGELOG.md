@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.1.7](https://github.com/NoelDeMartin/umai/releases/tag/v0.1.7) - 2024-12-03
+
+### Added
+
+- [#15](https://github.com/NoelDeMartin/umai/issues/15) Pasting multi-line ingredients.
+- [#18](https://github.com/NoelDeMartin/umai/issues/18) Log in from not found page.
+- [#23](https://github.com/NoelDeMartin/umai/issues/20) Viewing private recipes in Viewer.
+
+### Changed
+
+- [Christmas attire](https://github.com/NoelDeMartin/umai/tree/v0.1.5/src/assets/icons/umai-xmas.svg).
+
+### Fixed
+
+- [#17](https://github.com/NoelDeMartin/umai/issues/17) Importing recipes with html entities.
+- [#20](https://github.com/NoelDeMartin/umai/issues/20) Viewer auto-linking.
+
 ## [v0.1.6](https://github.com/NoelDeMartin/umai/releases/tag/v0.1.6) - 2024-01-07
 
 ### Changed
