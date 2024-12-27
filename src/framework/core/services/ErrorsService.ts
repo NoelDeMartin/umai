@@ -1,5 +1,6 @@
 import {
     JSError,
+    arrayRemove,
     getLocationQueryParameter,
     hasLocationQueryParameter,
     isObject,
@@ -28,6 +29,8 @@ interface ComputedState {
     hasStartupErrors: boolean;
 }
 
+export type ErrorHandler = (error: ErrorSource) => boolean | Promise<boolean>;
+
 export type ErrorSource = string | Error | JSError | unknown;
 
 export interface ErrorReport {
@@ -52,6 +55,7 @@ export default class ErrorsService extends Service<State, ComputedState> {
     public sentryConfigured: boolean = false;
     private enabled: boolean = true;
     private sentryInitialized: boolean = false;
+    private handlers: ErrorHandler[] = [];
 
     public enable(): void {
         this.enabled = true;
@@ -68,6 +72,10 @@ export default class ErrorsService extends Service<State, ComputedState> {
     }
 
     public async report(error: ErrorSource, message?: string): Promise<void> {
+        if (await this.handleError(error)) {
+            return;
+        }
+
         if (App.isDevelopment || App.isTesting) {
             this.logError(error);
         }
@@ -133,6 +141,12 @@ export default class ErrorsService extends Service<State, ComputedState> {
         }
 
         return null;
+    }
+
+    public handleErrors(handler: ErrorHandler): () => void {
+        this.handlers.push(handler);
+
+        return () => arrayRemove(this.handlers, handler);
     }
 
     public see(report: ErrorReport): void {
@@ -263,6 +277,18 @@ export default class ErrorsService extends Service<State, ComputedState> {
             // eslint-disable-next-line no-console
             console.error('Failed initializing Sentry', error);
         }
+    }
+
+    private async handleError(error: ErrorSource): Promise<boolean> {
+        for (const handler of this.handlers) {
+            if (!(await handler(error))) {
+                continue;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
 }

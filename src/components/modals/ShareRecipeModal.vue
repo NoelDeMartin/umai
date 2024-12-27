@@ -48,9 +48,10 @@
 </template>
 
 <script setup lang="ts">
-import { objectWithoutEmpty, stringExcerpt, urlRoot } from '@noeldemartin/utils';
+import { after, objectWithoutEmpty, stringExcerpt, urlRoot } from '@noeldemartin/utils';
 
 import Browser from '@/framework/core/facades/Browser';
+import Errors from '@/framework/core/facades/Errors';
 import Router from '@/framework/core/facades/Router';
 import { requiredObjectProp } from '@/framework/utils/vue';
 import { translate } from '@/framework/utils/translate';
@@ -96,11 +97,15 @@ const warning = $computed(() => {
 });
 
 function share() {
+    const removeHandler = Errors.handleErrors(error => error instanceof Error && error.name === 'AbortError');
+
     navigator.share(objectWithoutEmpty({
         title: recipe.name,
         text: recipe.description ? stringExcerpt(recipe.description) : null,
         url: clipboardContent,
     }));
+
+    after({ seconds: 60 }).then(() => removeHandler());
 }
 
 function print() {
