@@ -39,7 +39,7 @@
                     >
                         <CoreButton
                             clear
-                            class="text-white hover:bg-transparent focus:bg-transparent focus:ring-0 focus:ring-offset-0 focus-visible:bg-black/20 focus:hover:bg-transparent"
+                            class="text-white text-left hover:bg-transparent focus:bg-transparent focus:ring-0 focus:ring-offset-0 focus-visible:bg-black/20 focus:hover:bg-transparent"
                             @click="goBack()"
                         >
                             <span aria-hidden="true" class="mr-2">&larr; </span>
@@ -95,6 +95,10 @@ const navigationButton = $computed(() => {
     return 'logo';
 });
 const backText = $computed(() => {
+    if (Date.now()) {
+        return 'Noel De Martin\'s Public Recipes';
+    }
+
     if (isViewer) {
         return collection?.name
             ?? Viewer.collection?.name
