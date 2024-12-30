@@ -71,8 +71,12 @@ export default class FrameworkRouter {
         return this.runtimeHistory.length > 1;
     }
 
-    public previousRouteWas(name: string): boolean {
-        return this.previousRoute?.name === name;
+    public previousRouteWas(name: string | RegExp): boolean {
+        if (typeof name === 'string') {
+            return this.previousRoute?.name === name;
+        }
+
+        return name.test(toString(this.previousRoute?.name));
     }
 
     public currentRouteIs(this: Router, name: string | RegExp): boolean {

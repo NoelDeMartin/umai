@@ -1,7 +1,8 @@
 <template>
     <AppLayout>
         <AppStartupCrash v-if="$errors.hasStartupErrors" />
-        <router-view v-else />
+        <AppRouterView v-else />
+        <AppKitchen />
     </AppLayout>
 </template>
 

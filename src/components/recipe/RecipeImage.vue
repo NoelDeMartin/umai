@@ -1,6 +1,6 @@
 <template>
     <div
-        :class="`flex justify-center items-center bg-gray-200 ${extraClasses}`"
+        :class="`flex justify-center items-center bg-gray-200 overflow-hidden ${extraClasses}`"
         :style="hue ? `background: hsl(${hue} 40% 80%)` : ''"
     >
         <i-mdi-image-remove v-if="failed" class="w-full h-2/5 opacity-25" aria-hidden="true" />

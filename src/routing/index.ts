@@ -11,7 +11,11 @@ import Home from './pages/home/Home.vue';
 import RecipesCreate from './pages/recipes/RecipesCreate.vue';
 import RecipesEdit from './pages/recipes/RecipesEdit.vue';
 import RecipesShow from './pages/recipes/RecipesShow.vue';
+import KitchenDonePage from './pages/kitchen/KitchenDone.vue';
+import KitchenIngredientsPage from './pages/kitchen/KitchenIngredients.vue';
+import KitchenInstructionsPage from './pages/kitchen/KitchenInstructions.vue';
 import ViewerPage from './pages/viewer/Viewer.vue';
+import { hideKitchen, showKitchen } from './pages/kitchen/components/KitchenPage.transitions';
 
 declare module '@/framework/routing/router' {
 
@@ -21,6 +25,8 @@ declare module '@/framework/routing/router' {
         fullBleedHeader?: boolean;
         reconnect?: boolean;
         pageFooter?: boolean;
+        enter?: (element: HTMLElement) => Promise<void>;
+        leave?: (element: HTMLElement) => Promise<void>;
     }
 
 }
@@ -146,6 +152,47 @@ export default defineRoutes([
             title: ({ recipe }) => `${recipe.name} history`,
             header: false,
             footer: false,
+        }),
+    },
+    {
+        path: '/kitchen/:recipe',
+        redirect: '/kitchen/:recipe/ingredients',
+    },
+    {
+        name: 'kitchen.ingredients',
+        path: '/kitchen/:recipe/ingredients',
+        component: KitchenIngredientsPage,
+        meta: routeMeta<{ recipe: Recipe }>({
+            fullBleedHeader: true,
+            title: ({ recipe }) => translate('kitchen.title', { name: recipe.name }),
+            enter: showKitchen,
+            leave: hideKitchen,
+        }),
+    },
+    {
+        path: '/kitchen/:recipe/instructions',
+        redirect: '/kitchen/:recipe/instructions/1',
+    },
+    {
+        name: 'kitchen.instructions',
+        path: '/kitchen/:recipe/instructions/:step',
+        component: KitchenInstructionsPage,
+        meta: routeMeta<{ recipe: Recipe }>({
+            fullBleedHeader: true,
+            title: ({ recipe }) => translate('kitchen.title', { name: recipe.name }),
+            enter: showKitchen,
+            leave: hideKitchen,
+        }),
+    },
+    {
+        name: 'kitchen.done',
+        path: '/kitchen/:recipe/done',
+        component: KitchenDonePage,
+        meta: routeMeta<{ recipe: Recipe }>({
+            fullBleedHeader: true,
+            title: ({ recipe }) => translate('kitchen.title', { name: recipe.name }),
+            enter: showKitchen,
+            leave: hideKitchen,
         }),
     },
     {

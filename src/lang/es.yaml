@@ -330,6 +330,29 @@ recipes:
     create: Crear receta
     update: Guardar
 
+kitchen:
+  title: Cocinando {name}
+  cook: ¡Vamos a cocinar!
+  dismiss: ahora no
+  close: Cierra la cocina
+  next: Siguiente
+  previous: Anterior
+
+  ingredients:
+    title: Mise en place
+    description: Antes de empezar, asegúrate de tener todos los ingredientes preparados.
+
+  instructions:
+    title: Paso {step}
+    emptyTitle: Instrucciones
+    empty: Ahora, ¡haz la receta!
+
+  done:
+    title: ¡Ya está!
+    imageDescription: Felicidades, ¡has acabado la receta! ¿Se parece a la foto? Si no, quizás ahora es un buen momento para actualizarla.
+    imageMissingDescription: Felicidades, ¡has acabado la receta! Parece que todavía no has añadido una foto para este plato, quizás ahora es un buen momento para hacerlo.
+    finish: Acabar
+
 startupCrash:
   title: ¡Algo ha ido mal!
   message: |

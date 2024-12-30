@@ -338,6 +338,30 @@ recipes:
     create: Crear recepta
     update: Guardar
 
+
+kitchen:
+  title: Cuinant {name}
+  cook: Anem a cuinar!
+  dismiss: ara no
+  close: Tanca la cuina
+  next: Següent
+  previous: Anterior
+
+  ingredients:
+    title: Mise en place
+    description: Abans de començar, assegurat d'enllestir tots els ingredients.
+
+  instructions:
+    title: Pas {step}
+    emptyTitle: Instruccions
+    empty: Ara, fes la recepta!
+
+  done:
+    title: Ja està!
+    imageDescription: Felicitats, has acabat de fer la recepta! S'assembla a la foto? Si no, potser ara és un bon moment per actualitzar-la.
+    imageMissingDescription: Felicitats, has acabat de fer la recepta! Sembla que encara no has afegit cap foto, potser ara és un bon moment per fer-ho.
+    finish: Acabar
+
 startupCrash:
   title: Alguna cosa ha anat malament!
   message: |

@@ -3,6 +3,7 @@
     "configurations": [
         {
             "type": "node",
+            "runtimeVersion": "16.15.0",
             "request": "launch",
             "name": "Jest All",
             "program": "${workspaceFolder}/node_modules/.bin/jest",
@@ -16,6 +17,7 @@
         },
         {
             "type": "node",
+            "runtimeVersion": "16.15.0",
             "request": "launch",
             "name": "Jest Current File",
             "program": "${workspaceFolder}/node_modules/.bin/jest",

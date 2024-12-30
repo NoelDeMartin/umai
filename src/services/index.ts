@@ -7,6 +7,7 @@ import Recipe from '@/models/Recipe';
 
 import Config from './facades/Config';
 import Cookbook from './facades/Cookbook';
+import Kitchen from './facades/Kitchen';
 import Viewer from './facades/Viewer';
 
 import RecipesCloudHandler from './cloud-handlers/recipes';
@@ -14,6 +15,7 @@ import RecipesCloudHandler from './cloud-handlers/recipes';
 const services = {
     $config: Config,
     $cookbook: Cookbook,
+    $kitchen: Kitchen,
     $viewer: Viewer,
 };
 

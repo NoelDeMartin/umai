@@ -9,6 +9,7 @@
                 leave: {
                     'recipes.edit': $elementTransitions.fadeOut,
                     'recipes.show': $elementTransitions.fadeOut,
+                    'kitchen.ingredients': () => after({ ms: KITCHEN_TRANSITION_DURATION }),
                 },
                 'recipe-card': transitionToCard,
             },
@@ -43,12 +44,14 @@
 </template>
 
 <script setup lang="ts">
+import { after } from '@noeldemartin/utils';
 import { onMounted } from 'vue';
 
 import Router from '@/framework/core/facades/Router';
 import { requiredObjectProp } from '@/framework/utils/vue';
 
 import ShareRecipeModal from '@/components/modals/ShareRecipeModal.vue';
+import { KITCHEN_TRANSITION_DURATION } from '@/routing/pages/kitchen/constants';
 import type IRecipePage from '@/components/recipe/RecipePage';
 import type Recipe from '@/models/Recipe';
 

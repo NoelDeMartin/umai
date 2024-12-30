@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "@babel/preset-env": "^7.13.10",
-    "@iconify/json": "^2.1.71",
+    "@iconify/json": "^2.2.290",
     "@intlify/vite-plugin-vue-i18n": "^5.0.1",
     "@noeldemartin/eslint-config-vue": "^0.1.1",
     "@noeldemartin/scripts": "^0.1.2",

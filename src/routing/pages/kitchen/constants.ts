@@ -1,0 +1,1 @@
+export const KITCHEN_TRANSITION_DURATION = 600;
