@@ -7,7 +7,7 @@
 
         <CoreMarkdown v-else :text="$t('kitchen.completed.imageMissingDescription')" class="text-gray-700 mt-3" />
 
-        <CoreButton class="mt-4" route="recipes.show" :route-params="{ recipe: recipe.slug }">
+        <CoreButton class="mt-4" @click="$kitchen.complete()">
             <i-zondicons-checkmark class="w-4 h-4" aria-hidden="true" />
             <span class="ml-1">{{ $t('kitchen.completed.finish') }}</span>
         </CoreButton>
@@ -15,11 +15,16 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from 'vue';
+
 import { requiredObjectProp } from '@/framework/utils/vue';
 
+import Kitchen from '@/services/facades/Kitchen';
 import type Recipe from '@/models/Recipe';
 
 defineProps({
     recipe: requiredObjectProp<Recipe>(),
 });
+
+onMounted(() => Kitchen.dish.updateStage('completed'));
 </script>

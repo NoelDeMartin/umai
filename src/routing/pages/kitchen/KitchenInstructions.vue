@@ -25,11 +25,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 
 import { requiredObjectProp, requiredStringProp } from '@/framework/utils/vue';
 import { translate } from '@/framework/utils/translate';
 
+import Kitchen from '@/services/facades/Kitchen';
 import type Recipe from '@/models/Recipe';
 
 const props = defineProps({
@@ -49,4 +50,6 @@ const title = computed(() => {
 
     return translate('kitchen.instructions.title', { step: props.step });
 });
+
+onMounted(() => Kitchen.dish.updateStage(position.value));
 </script>

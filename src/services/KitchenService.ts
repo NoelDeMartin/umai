@@ -44,10 +44,7 @@ export default class CookbookService extends Service<State, ComputedState, Persi
             params: Router.currentRoute.value.params,
         };
 
-        await Router.push({
-            name: 'kitchen.ingredients',
-            params: { recipe: this.dish.recipe.slug },
-        });
+        await Router.push(this.dish.getStageRoute());
     }
 
     public async close(): Promise<void> {
@@ -65,6 +62,8 @@ export default class CookbookService extends Service<State, ComputedState, Persi
         this.dish = new Dish(recipe);
 
         this.lockScreen();
+
+        this.dish.listeners.add({ onUpdated: () => this.setState({ dish: this.dish }) });
 
         await this.open();
     }
@@ -85,7 +84,11 @@ export default class CookbookService extends Service<State, ComputedState, Persi
         await super.boot();
         await Viewer.booted;
 
-        this.dish && this.lockScreen();
+        if (this.dish) {
+            this.lockScreen();
+
+            this.dish.listeners.add({ onUpdated: () => this.setState({ dish: this.dish }) });
+        }
     }
 
     protected getInitialState(): State {

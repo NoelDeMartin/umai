@@ -5,7 +5,11 @@
         <ul class="space-y-2 mt-6 flex flex-col items-start">
             <li v-for="(ingredient, index) of recipe.ingredients" :key="index">
                 <label class="flex items-center space-x-2">
-                    <BaseCheckbox class="w-5 h-5" />
+                    <BaseCheckbox
+                        :model-value="$kitchen.dish.ingredients[ingredient]"
+                        class="w-5 h-5"
+                        @update:modelValue="$kitchen.dish.updateIngredient(ingredient, $event)"
+                    />
                     <CoreMarkdown inline :text="ingredient" />
                 </label>
             </li>
@@ -21,11 +25,16 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from 'vue';
+
 import { requiredObjectProp } from '@/framework/utils/vue';
 
+import Kitchen from '@/services/facades/Kitchen';
 import type Recipe from '@/models/Recipe';
 
 defineProps({
     recipe: requiredObjectProp<Recipe>(),
 });
+
+onMounted(() => Kitchen.dish.updateStage('ingredients'));
 </script>
