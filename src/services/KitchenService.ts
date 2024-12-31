@@ -14,6 +14,7 @@ import type { DishJson } from '@/models/Dish';
 interface State {
     dish: Dish | null;
     dismissed: boolean;
+    wakeLock: boolean;
     lastRoute: RouteLocationRaw | null;
 }
 
@@ -23,12 +24,15 @@ interface ComputedState {
 
 interface PersistedState {
     dish: DishJson | null;
+    wakeLock: boolean;
     lastRoute: RouteLocationRaw | null;
 }
 
 export default class CookbookService extends Service<State, ComputedState, PersistedState> {
 
-    public static persist: Array<keyof PersistedState> = ['dish', 'lastRoute'];
+    public static persist: Array<keyof PersistedState> = ['wakeLock', 'dish', 'lastRoute'];
+
+    private screenLock: Promise<{ release(): Promise<void> }> | null = null;
 
     public async open(): Promise<void> {
         if (!this.dish) {
@@ -60,11 +64,15 @@ export default class CookbookService extends Service<State, ComputedState, Persi
     public async cook(recipe: Recipe): Promise<void> {
         this.dish = new Dish(recipe);
 
+        this.lockScreen();
+
         await this.open();
     }
 
     public async complete(): Promise<void> {
         this.dish = null;
+
+        this.releaseScreen();
 
         await this.close();
     }
@@ -76,12 +84,15 @@ export default class CookbookService extends Service<State, ComputedState, Persi
     protected async boot(): Promise<void> {
         await super.boot();
         await Viewer.booted;
+
+        this.dish && this.lockScreen();
     }
 
     protected getInitialState(): State {
         return {
             dish: null,
             dismissed: false,
+            wakeLock: true,
             lastRoute: null,
         };
     }
@@ -117,6 +128,27 @@ export default class CookbookService extends Service<State, ComputedState, Persi
             ...state,
             dish: state.dish && await Dish.fromJson(state.dish),
         };
+    }
+
+    protected lockScreen(): void {
+        const typedNavigator = navigator as {
+            wakeLock?: { request(type?: 'screen'): Promise<{ release(): Promise<void> }> };
+        };
+
+        if (!typedNavigator.wakeLock) {
+            return;
+        }
+
+        this.screenLock = typedNavigator.wakeLock.request('screen');
+    }
+
+    protected releaseScreen(): void {
+        if (!this.screenLock) {
+            return;
+        }
+
+        this.screenLock.then(lock => lock.release());
+        this.screenLock = null;
     }
 
 }

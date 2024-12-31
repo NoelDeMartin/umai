@@ -44,6 +44,8 @@ settings:
   language_description: No trobes el teu idioma? [aporta la teva traducció!](https://github.com/NoelDeMartin/umai/blob/main/docs/contribute-translations.md)
   animations: Animacions
   animations_description: Les animacions estan bé, però també està bé tenir bateria. Si vols conservar bateria o el teu dispositiu va lent, pots desactivar les animacions per tenir millor rendiment.
+  wakeLock: Manté la pantalla encesa
+  wakeLock_description: Evita que la pantalla s'apagui mentre cuines. Així no hauràs de tocar el mòbil quan tens les mans en la massa!
   errorReporting: Report d'errors
   errorReporting_description: Si t'estàs trobant amb errors, pots activar el report d'errors per enviar-los a [Sentry](https://sentry.io/). Assegura't que les peticions no s'estan bloquejant. Si els errors són tan greus que no pots ni arribar a aquesta pantalla, sempre pots afegir `?errorReporting=true` a l'url abans d'entrar a l'aplicació.
   proxy: Fes servir un proxy per importar d'altres pàgines web
@@ -401,6 +403,8 @@ viewer:
     creatorPrefix: Recepta creada per
     viewAll: Veure més receptes
     inCookbook: Obrir en el teu llibre receptes
+
+# TODO update
 
 validation:
   required: aquest camp és obligatori

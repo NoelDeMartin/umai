@@ -20,6 +20,15 @@
             :description="$t('settings.animations_description')"
         />
         <hr>
+        <template v-if="$browser.supportsWakeLocking">
+            <CoreToggle
+                v-model="$kitchen.wakeLock"
+                class="p-4"
+                :label="$t('settings.wakeLock')"
+                :description="$t('settings.wakeLock_description')"
+            />
+            <hr>
+        </template>
         <template v-if="$errors.sentryConfigured">
             <CoreToggle
                 v-model="$errors.reporting"

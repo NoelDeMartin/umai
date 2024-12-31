@@ -6,6 +6,7 @@ interface State {
     supportsIndexedDB: boolean | null;
     supportsSharing: boolean;
     supportsPrinting: boolean;
+    supportsWakeLocking: boolean;
     isFirefox: boolean;
 }
 
@@ -23,6 +24,7 @@ export default class BrowserService extends Service<State> {
             supportsIndexedDB: null,
             supportsSharing: 'share' in navigator,
             supportsPrinting: 'print' in window,
+            supportsWakeLocking: 'wakeLock' in navigator,
             isFirefox: !!(navigator && navigator.userAgent && /firefox/i.test(navigator.userAgent)),
         };
     }
