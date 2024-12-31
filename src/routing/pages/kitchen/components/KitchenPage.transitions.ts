@@ -4,7 +4,7 @@ import { slideDown, slideUp } from '@/framework/utils/transitions';
 import { KITCHEN_TRANSITION_DURATION } from '@/routing/pages/kitchen/constants';
 
 export async function showKitchen(element: HTMLElement): Promise<void> {
-    if (Router.previousRouteWas(/^kitchen\.[^.]+$/)) {
+    if (Router.previousRouteWas(/^kitchen(\.[^.]+)?$/)) {
         return;
     }
 
@@ -12,7 +12,7 @@ export async function showKitchen(element: HTMLElement): Promise<void> {
 }
 
 export async function hideKitchen(element: HTMLElement): Promise<void> {
-    if (Router.currentRouteIs(/^kitchen\.[^.]+$/)) {
+    if (Router.currentRouteIs(/^kitchen(\.[^.]+)?$/)) {
         return;
     }
 

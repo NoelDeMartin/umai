@@ -2,9 +2,9 @@
     <div class="fixed inset-0 bg-white z-40">
         <CoreButton
             clear
-            :title="$t('kitchen.close')"
             class="absolute right-4 top-4 md:right-8 md:top-8"
-            @click="$router.push({ name: 'recipes.show', params: { recipe: $route.params.recipe } })"
+            :title="$t('kitchen.close')"
+            @click="$kitchen.close()"
         >
             <i-pepicons-times class="w-8 h-8" aria-hidden="true" />
             <span class="sr-only">{{ $t('kitchen.close') }}</span>

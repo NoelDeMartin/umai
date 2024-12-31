@@ -9,12 +9,14 @@
                 leave-from-class="translate-y-0"
                 leave-to-class="translate-y-[200%]"
             >
-                <div v-if="$kitchen.show" class="flex flex-col space-y-1 items-center">
-                    <CoreButton
-                        class="pointer-events-auto h-12"
-                        route="kitchen.ingredients"
-                        :route-params="{ recipe: $route.params.recipe }"
-                    >
+                <div v-if="$kitchen.dish">
+                    <CoreButton class="pointer-events-auto h-12" @click="$kitchen.open()">
+                        <i-tabler-chef-hat-filled class="w-5 h-5 ml-2" aria-hidden="true" />
+                        <span class="mx-2 uppercase tracking-wider font-semibold text-sm">{{ $t('kitchen.open') }}</span>
+                    </CoreButton>
+                </div>
+                <div v-else-if="$kitchen.show && recipe" class="flex flex-col space-y-1 items-center">
+                    <CoreButton class="pointer-events-auto h-12" @click="recipe && $kitchen.cook(recipe)">
                         <i-tabler-chef-hat-filled class="w-5 h-5 ml-2" aria-hidden="true" />
                         <span class="mx-2 uppercase tracking-wider font-semibold text-sm">{{ $t('kitchen.cook') }}</span>
                     </CoreButton>
@@ -26,3 +28,15 @@
         </div>
     </div>
 </template>
+
+<script setup lang="ts">
+import { computed } from 'vue';
+
+import Router from '@/framework/core/facades/Router';
+
+import Cookbook from '@/services/facades/Cookbook';
+
+const recipe = computed(() => {
+    return Cookbook.recipes.first(recipe => recipe.slug === Router.currentRoute.value.params.recipe);
+});
+</script>

@@ -333,6 +333,7 @@ recipes:
 kitchen:
   title: Cocinando {name}
   cook: ¡Vamos a cocinar!
+  open: Cocina
   dismiss: ahora no
   close: Cierra la cocina
   next: Siguiente
@@ -347,7 +348,7 @@ kitchen:
     emptyTitle: Instrucciones
     empty: Ahora, ¡haz la receta!
 
-  done:
+  completed:
     title: ¡Ya está!
     imageDescription: Felicidades, ¡has acabado la receta! ¿Se parece a la foto? Si no, quizás ahora es un buen momento para actualizarla.
     imageMissingDescription: Felicidades, ¡has acabado la receta! Parece que todavía no has añadido una foto para este plato, quizás ahora es un buen momento para hacerlo.

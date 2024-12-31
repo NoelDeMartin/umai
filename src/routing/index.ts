@@ -11,7 +11,7 @@ import Home from './pages/home/Home.vue';
 import RecipesCreate from './pages/recipes/RecipesCreate.vue';
 import RecipesEdit from './pages/recipes/RecipesEdit.vue';
 import RecipesShow from './pages/recipes/RecipesShow.vue';
-import KitchenDonePage from './pages/kitchen/KitchenDone.vue';
+import KitchenCompletedPage from './pages/kitchen/KitchenCompleted.vue';
 import KitchenIngredientsPage from './pages/kitchen/KitchenIngredients.vue';
 import KitchenInstructionsPage from './pages/kitchen/KitchenInstructions.vue';
 import ViewerPage from './pages/viewer/Viewer.vue';
@@ -185,9 +185,9 @@ export default defineRoutes([
         }),
     },
     {
-        name: 'kitchen.done',
-        path: '/kitchen/:recipe/done',
-        component: KitchenDonePage,
+        name: 'kitchen.completed',
+        path: '/kitchen/:recipe/completed',
+        component: KitchenCompletedPage,
         meta: routeMeta<{ recipe: Recipe }>({
             fullBleedHeader: true,
             title: ({ recipe }) => translate('kitchen.title', { name: recipe.name }),

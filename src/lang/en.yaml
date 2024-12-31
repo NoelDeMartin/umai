@@ -333,6 +333,7 @@ recipes:
 kitchen:
   title: Cooking {name}
   cook: Let's cook!
+  open: Kitchen
   dismiss: not now
   close: Close the kitchen
   next: Next
@@ -347,7 +348,7 @@ kitchen:
     emptyTitle: Instructions
     empty: Now, make the recipe!
 
-  done:
+  completed:
     title: That's it!
     imageDescription: Congrats, you're done with the recipe! Does it look anything like this? If it doesn't maybe this is a good chance to update the picture.
     imageMissingDescription: Congrats, you're done with the recipe! It seems like you don't have a picture for this dish, maybe now is a good chance to add it.

@@ -12,7 +12,7 @@
                 <i-pepicons-arrow-left class="w-4 h-4" aria-hidden="true" />
                 <span class="ml-1">{{ $t('kitchen.previous') }}</span>
             </CoreButton>
-            <CoreButton v-if="!text || position === recipe.instructions?.length" route="kitchen.done" :route-params="{ recipe: recipe.slug }">
+            <CoreButton v-if="!text || position === recipe.instructions?.length" route="kitchen.completed" :route-params="{ recipe: recipe.slug }">
                 <span class="mr-1">{{ $t('kitchen.next') }}</span>
                 <i-pepicons-arrow-right class="w-4 h-4" aria-hidden="true" />
             </CoreButton>

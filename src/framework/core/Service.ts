@@ -22,7 +22,7 @@ export type ServiceConstructor<T extends Service> = Constructor<T> & typeof Serv
 export default class Service<
     State extends ServiceState = DefaultServiceState,
     ComputedState extends ServiceState = DefaultServiceState,
-    ServiceStorage extends Partial<State> = Partial<State>
+    PersistedState extends {} = Partial<State>
 > {
 
     public static persist: string[] = [];
@@ -146,17 +146,15 @@ export default class Service<
     }
 
     protected onStateUpdated(state: Partial<State>): void {
-        const persisted = objectOnly(state, this.static('persist'));
+        const persisted = objectOnly(state, this.static('persist')) as Partial<State>;
 
         if (isEmpty(persisted)) {
             return;
         }
 
-        const storage = Storage.require<ServiceStorage>(this._namespace);
-
         Storage.set(this._namespace, {
-            ...storage,
-            ...this.serializePersistedState(objectDeepClone(persisted) as Partial<State>),
+            ...Storage.require<PersistedState>(this._namespace),
+            ...this.serializePersistedState(objectDeepClone(persisted)),
         });
     }
 
@@ -176,7 +174,11 @@ export default class Service<
         return {} as ComputedStateDefinitions<State, ComputedState>;
     }
 
-    protected serializePersistedState(state: Partial<State>): Partial<State> {
+    protected serializePersistedState(state: Partial<State>): Partial<PersistedState> {
+        return state as PersistedState;
+    }
+
+    protected async restorePersistedState(state: PersistedState): Promise<Partial<State>> {
         return state;
     }
 
@@ -192,14 +194,16 @@ export default class Service<
             return;
 
         if (Storage.has(this._namespace)) {
-            const persisted = Storage.require<ServiceStorage>(this._namespace);
+            const persisted = await this.restorePersistedState(Storage.require<PersistedState>(this._namespace));
 
             this.setState(persisted);
 
             return;
         }
 
-        Storage.set(this._namespace, objectOnly(this.getState(), this.static('persist')));
+        const persisted = objectOnly(objectDeepClone(this.getState()), this.static('persist')) as Partial<State>;
+
+        Storage.set(this._namespace, this.serializePersistedState(persisted));
     }
 
     protected registerStoreModule(): void {
