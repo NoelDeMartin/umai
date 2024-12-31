@@ -29,7 +29,7 @@ export default class ListenersManager<Listener> implements Listeners<Listener> {
 
     public emit<T extends ListenerEvents<Listener>>(event: T, ...args: GetEventArgs<Listener, T>): void {
         for (const listener of this.listeners) {
-            (listener[event] as Closure)(...args);
+            (listener[event] as unknown as Closure)(...args);
         }
     }
 
