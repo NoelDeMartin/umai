@@ -6,9 +6,9 @@
             <li v-for="(ingredient, index) of recipe.ingredients" :key="index">
                 <label class="flex items-center space-x-2">
                     <BaseCheckbox
-                        :model-value="$kitchen.dish.ingredients[ingredient]"
+                        :model-value="$kitchen.dish?.ingredients[ingredient]"
                         class="w-5 h-5"
-                        @update:modelValue="$kitchen.dish.updateIngredient(ingredient, $event)"
+                        @update:modelValue="$kitchen.dish?.updateIngredient(ingredient, $event)"
                     />
                     <CoreMarkdown inline :text="ingredient" />
                 </label>
@@ -36,5 +36,5 @@ defineProps({
     recipe: requiredObjectProp<Recipe>(),
 });
 
-onMounted(() => Kitchen.dish.updateStage('ingredients'));
+onMounted(() => Kitchen.dish?.updateStage('ingredients'));
 </script>

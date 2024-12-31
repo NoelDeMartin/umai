@@ -26,5 +26,5 @@ defineProps({
     recipe: requiredObjectProp<Recipe>(),
 });
 
-onMounted(() => Kitchen.dish.updateStage('completed'));
+onMounted(() => Kitchen.dish?.updateStage('completed'));
 </script>
