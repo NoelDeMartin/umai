@@ -4,10 +4,6 @@ describe('Kitchen', () => {
         cy.task('resetSolidPOD');
         cy.visit('/recipes?authenticator=localStorage');
         cy.startApp();
-    });
-
-    it('Cooks recipes', () => {
-        // Arrange
         cy.createRecipe({
             name: 'Pa amb tomàquet',
             ingredients: ['Bread', '1 Tomato', 'Olive Oil'],
@@ -16,7 +12,10 @@ describe('Kitchen', () => {
             'Slice a tomato in half, and spread it on the bread.',
             'Drizzle some olive oil on top.',
         ]);
+    });
 
+    it('Cooks recipes', () => {
+        // Arrange
         cy.press('Pa amb tomàquet');
 
         // Act & Assert - Ingredients
@@ -49,10 +48,65 @@ describe('Kitchen', () => {
         cy.see('Pa amb tomàquet');
     });
 
+    it('Sets up timers', () => {
+        // Arrange
+        cy.press('Pa amb tomàquet');
+        cy.press('Let\'s cook!');
+        cy.press('Next');
+        cy.press('Show timers');
+
+        // Act
+        cy.press('Add timer');
+        cy.contains('label', 'minutes').within(() => {
+            cy.get('input').clear().type('0');
+        });
+        cy.contains('label', 'seconds').within(() => {
+            cy.get('input').clear().type('3');
+        });
+        cy.press('Create');
+        cy.press('Start');
+        cy.see('Stop');
+        cy.ariaLabel('Close the modal').click();
+        cy.press('Close the kitchen');
+
+        // Assert
+        cy.see('Time\'s up!');
+        cy.see('Timer 1');
+    });
+
+    it('Persists state', () => {
+        // Arrange
+        cy.press('Pa amb tomàquet');
+        cy.press('Let\'s cook!');
+        cy.press('Bread');
+        cy.press('Next');
+        cy.press('Show timers');
+        cy.press('Add timer');
+        cy.press('Create');
+        cy.ariaLabel('Close the modal').click();
+        cy.press('Close the kitchen');
+
+        // Act
+        cy.reload();
+
+        // Assert
+        cy.press('Kitchen');
+        cy.see('Step 1');
+
+        cy.press('Show timers');
+        cy.see('Timer 1');
+
+        cy.ariaLabel('Close the modal').click();
+        cy.press('Show ingredients');
+
+        cy.contains('label', 'Bread').within(() => {
+            cy.get('input').should('match', ':checked');
+        });
+    });
+
     it('Dismisses the kitchen', () => {
         // Arrange
-        cy.createRecipe({ name: 'Ramen' });
-        cy.press('Ramen');
+        cy.press('Pa amb tomàquet');
 
         // Act
         cy.press('not now');
@@ -61,7 +115,7 @@ describe('Kitchen', () => {
         cy.dontSee('Let\'s cook!');
 
         cy.go('back');
-        cy.press('Ramen');
+        cy.press('Pa amb tomàquet');
         cy.wait(1000);
         cy.dontSee('Let\'s cook!');
     });

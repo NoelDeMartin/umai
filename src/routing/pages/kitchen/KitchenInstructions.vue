@@ -1,7 +1,7 @@
 <template>
-    <KitchenPage :title="title">
-        <CoreMarkdown v-if="text" :text="text" class="text-gray-700 mt-2" />
-        <CoreMarkdown v-else :text="$t('kitchen.instructions.empty')" class="text-gray-700 mt-2" />
+    <KitchenPage :recipe="recipe" :title="title">
+        <CoreMarkdown v-if="text" :text="text" class="text-gray-700 mt-2 flex-grow" />
+        <CoreMarkdown v-else :text="$t('kitchen.instructions.empty')" class="text-gray-700 mt-2 flex-grow" />
 
         <div class="flex w-full justify-end space-x-2 mt-3">
             <CoreButton v-if="position === 1" route="kitchen.ingredients" :route-params="{ recipe: recipe.slug }">

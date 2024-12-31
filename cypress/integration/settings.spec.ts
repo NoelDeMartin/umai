@@ -14,7 +14,7 @@ describe('Settings', () => {
         cy.ariaLabel('Open user menu').click();
         cy.press('Settings');
         cy.ariaSelect('Language').select('Català');
-        cy.ariaLabel('Close modal').click();
+        cy.ariaLabel('Close the modal').click();
 
         // Assert
         cy.see('Nova recepta');

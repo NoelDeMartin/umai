@@ -1,9 +1,14 @@
 <template>
-    <KitchenPage :title="$t('kitchen.ingredients.title')">
+    <KitchenPage
+        :recipe="recipe"
+        :title="$t('kitchen.ingredients.title')"
+        :show-ingredients-shortcut="false"
+        :show-timers-shortcut="hasRunningTimers"
+    >
         <CoreMarkdown :text="$t('kitchen.ingredients.description')" class="text-gray-700 mt-1" />
 
-        <ul class="space-y-2 mt-6 flex flex-col items-start">
-            <li v-for="(ingredient, index) of recipe.ingredients" :key="index">
+        <ul class="space-y-2 mt-6 flex flex-col items-start flex-grow">
+            <li v-for="(ingredient, index) of recipe.sortedIngredients" :key="index">
                 <label class="flex items-center space-x-2">
                     <BaseCheckbox
                         :model-value="$kitchen.dish?.ingredients[ingredient]"
@@ -25,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { computed, onMounted } from 'vue';
 
 import { requiredObjectProp } from '@/framework/utils/vue';
 
@@ -35,6 +40,8 @@ import type Recipe from '@/models/Recipe';
 defineProps({
     recipe: requiredObjectProp<Recipe>(),
 });
+
+const hasRunningTimers = computed(() => Kitchen.timers.some(timer => timer.isRunning()));
 
 onMounted(() => Kitchen.dish?.updateStage('ingredients'));
 </script>

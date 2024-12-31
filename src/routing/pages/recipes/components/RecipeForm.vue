@@ -113,7 +113,7 @@
                         class="px-4 space-x-2"
                         @click="initializeIngredients()"
                     >
-                        <i-pepicons-cart class="w-4 h-4" aria-hidden="true" />
+                        <i-pepicons-list class="w-5 h-5" aria-hidden="true" />
                         <span>{{ $t('recipes.ingredients_set') }}</span>
                     </CoreButton>
                     <CoreButton

@@ -343,6 +343,7 @@ kitchen:
 
   ingredients:
     title: Mise en place
+    show: Show ingredients
     description: Before getting started, make sure to have all your ingredients ready.
 
   instructions:
@@ -355,6 +356,26 @@ kitchen:
     imageDescription: Congrats, you're done with the recipe! Does it look anything like this? If it doesn't maybe this is a good chance to update the picture.
     imageMissingDescription: Congrats, you're done with the recipe! It seems like you don't have a picture for this dish, maybe now is a good chance to add it.
     finish: Finish
+
+  timers:
+    title: Timers
+    show: Show timers
+    add: Add timer
+    start: Start
+    stop: Stop
+    delete: Delete
+    overtime: Some timers are running overtime!
+    new:
+      title: New timer
+      name: Name
+      name_default: Timer {count}
+      duration: Duration
+      hours: hours
+      minutes: minutes
+      seconds: seconds
+      submit: Create
+    timeout:
+      title: Time's up!
 
 startupCrash:
   title: Something went wrong!
@@ -416,7 +437,7 @@ ui:
   confirm_accept: OK
   confirm_cancel: Cancel
   error_accept: OK
-  closeModal: Close modal
+  closeModal: Close the modal
   loading: Loading...
 
 time:

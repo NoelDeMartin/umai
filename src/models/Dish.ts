@@ -6,7 +6,7 @@ import ListenersManager from '@/utils/ListenersManager';
 import type Recipe from '@/models/Recipe';
 import type { Listeners } from '@/utils/ListenersManager';
 
-export type KitchenStage = number | 'ingredients' | 'completed';
+export type DishStage = number | 'ingredients' | 'completed';
 
 export interface DishListener {
     onUpdated(): void;
@@ -14,7 +14,7 @@ export interface DishListener {
 
 export interface DishJson {
     recipeId: string;
-    stage: KitchenStage;
+    stage: DishStage;
     ingredients: Record<string, boolean>;
 }
 
@@ -34,10 +34,10 @@ export default class Dish {
 
     public readonly recipe: Recipe;
     private _listeners = new ListenersManager<DishListener>();
-    private _stage: KitchenStage;
+    private _stage: DishStage;
     private _ingredients: Record<string, boolean>;
 
-    constructor(recipe: Recipe, state: { stage?: KitchenStage; ingredients?: Record<string, boolean> } = {}) {
+    constructor(recipe: Recipe, state: { stage?: DishStage; ingredients?: Record<string, boolean> } = {}) {
         this.recipe = recipe;
         this._stage = state.stage ?? 'ingredients';
         this._ingredients = state.ingredients ?? recipe.ingredients.reduce((ingredients, ingredient) => {
@@ -51,7 +51,7 @@ export default class Dish {
         return this._listeners;
     }
 
-    public get stage(): KitchenStage {
+    public get stage(): DishStage {
         return this._stage;
     }
 
@@ -83,7 +83,7 @@ export default class Dish {
         };
     }
 
-    public updateStage(value: KitchenStage): void {
+    public updateStage(value: DishStage): void {
         this._stage = value;
 
         this._listeners.emit('onUpdated');

@@ -7,6 +7,10 @@ export default defineValidationRule(value => {
         return null;
     }
 
+    if (typeof value === 'number') {
+        return null;
+    }
+
     if (typeof value !== 'string' && value) {
         return null;
     }

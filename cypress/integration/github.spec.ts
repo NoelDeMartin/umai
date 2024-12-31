@@ -23,7 +23,7 @@ describe('Github issues', () => {
         cy.press('Public', 'li');
         cy.see('updating permissions');
         cy.see('Public', 'button', { timeout: 10000 });
-        cy.ariaLabel('Close modal').click();
+        cy.ariaLabel('Close the modal').click();
 
         // Act
         cy.press('Edit');

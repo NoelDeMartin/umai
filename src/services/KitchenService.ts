@@ -1,18 +1,25 @@
-import { fail } from '@noeldemartin/utils';
+import { arrayWithout, fail } from '@noeldemartin/utils';
+import { toRaw } from 'vue';
 import type { RouteLocationRaw } from 'vue-router';
 
 import App from '@/framework/core/facades/App';
+import Events from '@/framework/core/facades/Events';
 import Router from '@/framework/core/facades/Router';
 import Service from '@/framework/core/Service';
+import UI from '@/framework/core/facades/UI';
 import type { ComputedStateDefinitions, IService } from '@/framework/core/Service';
 
 import Dish from '@/models/Dish';
+import Timer from '@/models/Timer';
 import Viewer from '@/services/facades/Viewer';
+import KitchenTimeoutModal from '@/routing/pages/kitchen/components/modals/KitchenTimeoutModal.vue';
 import type Recipe from '@/models/Recipe';
 import type { DishJson } from '@/models/Dish';
+import type { TimerJson } from '@/models/Timer';
 
 interface State {
     dish: Dish | null;
+    timers: Timer[];
     dismissed: boolean;
     wakeLock: boolean;
     lastRoute: RouteLocationRaw | null;
@@ -24,15 +31,17 @@ interface ComputedState {
 
 interface PersistedState {
     dish: DishJson | null;
+    timers: TimerJson[];
     wakeLock: boolean;
     lastRoute: RouteLocationRaw | null;
 }
 
 export default class CookbookService extends Service<State, ComputedState, PersistedState> {
 
-    public static persist: Array<keyof PersistedState> = ['wakeLock', 'dish', 'lastRoute'];
+    public static persist: Array<keyof PersistedState> = ['dish', 'timers', 'wakeLock', 'lastRoute'];
 
     private screenLock: Promise<{ release(): Promise<void> }> | null = null;
+    private timeouts: WeakMap<Timer, ReturnType<typeof setTimeout>> = new WeakMap();
 
     public async open(): Promise<void> {
         if (!this.dish) {
@@ -55,7 +64,7 @@ export default class CookbookService extends Service<State, ComputedState, Persi
         const route = this.lastRoute;
         this.lastRoute = null;
 
-        await Router.push(route);
+        await Router.push(toRaw(route));
     }
 
     public async cook(recipe: Recipe): Promise<void> {
@@ -66,6 +75,22 @@ export default class CookbookService extends Service<State, ComputedState, Persi
         this.dish.listeners.add({ onUpdated: () => this.setState({ dish: this.dish }) });
 
         await this.open();
+    }
+
+    public addTimer(timer: Timer): void {
+        this.timers = this.timers.concat([timer]);
+
+        timer.listeners.add({
+            onUpdated: () => this.onTimerUpdated(),
+            onStarted: () => this.onTimerStarted(timer),
+            onStopped: () => this.onTimerStopped(timer),
+        });
+    }
+
+    public removeTimer(timer: Timer): void {
+        this.timers = arrayWithout(this.timers, timer);
+
+        timer.stop();
     }
 
     public async complete(): Promise<void> {
@@ -84,16 +109,35 @@ export default class CookbookService extends Service<State, ComputedState, Persi
         await super.boot();
         await Viewer.booted;
 
+        Events.on('logout', () => {
+            this.timers.forEach(timer => this.onTimerStopped(timer));
+
+            this.setState({ dish: null, timers: [], lastRoute: null });
+        });
+
         if (this.dish) {
             this.lockScreen();
 
             this.dish.listeners.add({ onUpdated: () => this.setState({ dish: this.dish }) });
+
+            this.timers.forEach(timer => {
+                timer.listeners.add({
+                    onUpdated: () => this.onTimerUpdated(),
+                    onStarted: () => this.onTimerStarted(timer),
+                    onStopped: () => this.onTimerStopped(timer),
+                });
+
+                if (timer.isRunning() && !timer.isOverTime()) {
+                    this.onTimerStarted(timer);
+                }
+            });
         }
     }
 
     protected getInitialState(): State {
         return {
             dish: null,
+            timers: [],
             dismissed: false,
             wakeLock: true,
             lastRoute: null,
@@ -123,6 +167,10 @@ export default class CookbookService extends Service<State, ComputedState, Persi
             persistedState.dish = state.dish.toJson();
         }
 
+        if (state.timers) {
+            persistedState.timers = state.timers.map(timer => timer.toJson());
+        }
+
         return persistedState;
     }
 
@@ -130,6 +178,7 @@ export default class CookbookService extends Service<State, ComputedState, Persi
         return {
             ...state,
             dish: state.dish && await Dish.fromJson(state.dish),
+            timers: state.timers.map(json => Timer.fromJson(json)),
         };
     }
 
@@ -152,6 +201,36 @@ export default class CookbookService extends Service<State, ComputedState, Persi
 
         this.screenLock.then(lock => lock.release());
         this.screenLock = null;
+    }
+
+    private onTimerUpdated(): void {
+        this.setState({ timers: this.timers.slice(0) });
+    }
+
+    private onTimerStarted(timer: Timer): void {
+        if (!timer.startedAt || this.timeouts.has(timer)) {
+            return;
+        }
+
+        const timeout = setTimeout(() => {
+            UI.openModal(KitchenTimeoutModal, { timer });
+
+            this.timeouts.delete(timer);
+            this.onTimerUpdated();
+        }, timer.startedAt.getTime() + timer.duration - Date.now());
+
+        this.timeouts.set(timer, timeout);
+    }
+
+    private onTimerStopped(timer: Timer): void {
+        const timeout = this.timeouts.get(timer);
+
+        if (!timeout) {
+            return;
+        }
+
+        clearTimeout(timeout);
+        this.timeouts.delete(timer);
     }
 
 }

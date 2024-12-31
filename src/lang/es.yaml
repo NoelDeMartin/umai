@@ -343,6 +343,7 @@ kitchen:
 
   ingredients:
     title: Mise en place
+    show: Muestra ingredientes
     description: Antes de empezar, asegúrate de tener todos los ingredientes preparados.
 
   instructions:
@@ -355,6 +356,26 @@ kitchen:
     imageDescription: Felicidades, ¡has acabado la receta! ¿Se parece a la foto? Si no, quizás ahora es un buen momento para actualizarla.
     imageMissingDescription: Felicidades, ¡has acabado la receta! Parece que todavía no has añadido una foto para este plato, quizás ahora es un buen momento para hacerlo.
     finish: Acabar
+
+  timers:
+    title: Temporizadores
+    show: Muestra temporizadores
+    add: Añade temporizador
+    start: Empezar
+    stop: Parar
+    delete: Eliminar
+    overtime: ¡Algúnos temporizadores han acabado!
+    new:
+      title: Nuevo temporizador
+      name: Nombre
+      name_default: Temporizador {count}
+      duration: Duración
+      hours: horas
+      minutes: minutos
+      seconds: segundos
+      submit: Crear
+    timeout:
+      title: ¡Se ha acabado el tiempo!
 
 startupCrash:
   title: ¡Algo ha ido mal!
@@ -407,7 +428,7 @@ ui:
   confirm_accept: OK
   confirm_cancel: Cancelar
   error_accept: OK
-  closeModal: Cerrar modal
+  closeModal: Cierra el modal
   loading: Cargando...
 
 time:

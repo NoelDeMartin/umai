@@ -352,6 +352,7 @@ kitchen:
 
   ingredients:
     title: Mise en place
+    show: Mostra ingredients
     description: Abans de començar, assegurat d'enllestir tots els ingredients.
 
   instructions:
@@ -364,6 +365,26 @@ kitchen:
     imageDescription: Felicitats, has acabat de fer la recepta! S'assembla a la foto? Si no, potser ara és un bon moment per actualitzar-la.
     imageMissingDescription: Felicitats, has acabat de fer la recepta! Sembla que encara no has afegit cap foto, potser ara és un bon moment per fer-ho.
     finish: Acabar
+
+timers:
+    title: Temporitzadors
+    show: Mostra temporitzadors
+    add: Afegir temporizador
+    start: Començar
+    stop: Aturar
+    delete: Eliminar
+    overtime: Alguns temporitzadors han acabat!
+    new:
+      title: Nou temporizador
+      name: Nom
+      name_default: Temporitzador {count}
+      duration: Duració
+      hours: hores
+      minutes: minuts
+      seconds: segons
+      submit: Crear
+    timeout:
+      title: S'ha acabat el temps!
 
 startupCrash:
   title: Alguna cosa ha anat malament!
@@ -420,7 +441,7 @@ ui:
   confirm_accept: OK
   confirm_cancel: Cancel·lar
   error_accept: OK
-  closeModal: Tancar modal
+  closeModal: Tanca el modal
   loading: Carregant...
 
 time:
