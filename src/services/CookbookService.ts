@@ -378,7 +378,9 @@ export default class CookbookService extends Service<State, ComputedState> {
             return null;
         }
 
-        return SolidContainer.fromTypeIndex(typeIndexUrl, Recipe);
+        const containers = await SolidContainer.fromTypeIndex(typeIndexUrl, Recipe);
+
+        return containers[0] ?? null;
     }
 
     private async findPublicRecipesList(): Promise<RecipesList | null> {
