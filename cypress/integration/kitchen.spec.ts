@@ -64,8 +64,8 @@ describe('Kitchen', () => {
             cy.get('input').clear().type('3');
         });
         cy.press('Create');
-        cy.press('Start');
-        cy.see('Stop');
+        cy.press('Play');
+        cy.see('Pause');
         cy.ariaLabel('Close the modal').click();
         cy.press('Close the kitchen');
 

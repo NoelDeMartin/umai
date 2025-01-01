@@ -359,9 +359,12 @@ kitchen:
 
   timers:
     title: Timers
+    description: If you need it, you can set some timers to make sure that something is cooked to perfection.
     show: Show timers
     add: Add timer
-    start: Start
+    play: Play
+    pause: Pause
+    resume: Resume
     stop: Stop
     delete: Delete
     overtime: Some timers are running overtime!
@@ -376,6 +379,8 @@ kitchen:
       submit: Create
     timeout:
       title: Time's up!
+      description: "**{name}** has finished, make sure you check out how the dish is doing!"
+      stop: Stop timer
 
 startupCrash:
   title: Something went wrong!

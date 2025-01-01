@@ -82,8 +82,8 @@ export default class CookbookService extends Service<State, ComputedState, Persi
 
         timer.listeners.add({
             onUpdated: () => this.onTimerUpdated(),
-            onStarted: () => this.onTimerStarted(timer),
-            onStopped: () => this.onTimerStopped(timer),
+            onStartedRunning: () => this.onTimerStarted(timer),
+            onStoppedRunning: () => this.onTimerStopped(timer),
         });
     }
 
@@ -123,8 +123,8 @@ export default class CookbookService extends Service<State, ComputedState, Persi
             this.timers.forEach(timer => {
                 timer.listeners.add({
                     onUpdated: () => this.onTimerUpdated(),
-                    onStarted: () => this.onTimerStarted(timer),
-                    onStopped: () => this.onTimerStopped(timer),
+                    onStartedRunning: () => this.onTimerStarted(timer),
+                    onStoppedRunning: () => this.onTimerStopped(timer),
                 });
 
                 if (timer.isRunning() && !timer.isOverTime()) {
@@ -208,7 +208,7 @@ export default class CookbookService extends Service<State, ComputedState, Persi
     }
 
     private onTimerStarted(timer: Timer): void {
-        if (!timer.startedAt || this.timeouts.has(timer)) {
+        if (this.timeouts.has(timer)) {
             return;
         }
 
@@ -217,7 +217,7 @@ export default class CookbookService extends Service<State, ComputedState, Persi
 
             this.timeouts.delete(timer);
             this.onTimerUpdated();
-        }, timer.startedAt.getTime() + timer.duration - Date.now());
+        }, timer.getTimeLeft());
 
         this.timeouts.set(timer, timeout);
     }

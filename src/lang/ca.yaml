@@ -368,9 +368,12 @@ kitchen:
 
 timers:
     title: Temporitzadors
+    description: Aquí pots preparar temporitzadors per assegurar-te que les teves receptes es cuinen a la perfecció.
     show: Mostra temporitzadors
     add: Afegir temporizador
-    start: Començar
+    play: Començar
+    pause: Pausar
+    resume: Continuar
     stop: Aturar
     delete: Eliminar
     overtime: Alguns temporitzadors han acabat!
@@ -385,6 +388,8 @@ timers:
       submit: Crear
     timeout:
       title: S'ha acabat el temps!
+      description: "**{name}** ha acabat, assegura't de mirar com va el plat!"
+      stop: Parar temporitzador
 
 startupCrash:
   title: Alguna cosa ha anat malament!
