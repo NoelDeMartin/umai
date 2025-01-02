@@ -3,6 +3,7 @@ import { toRaw } from 'vue';
 import type { RouteLocationRaw } from 'vue-router';
 
 import App from '@/framework/core/facades/App';
+import Errors from '@/framework/core/facades/Errors';
 import Events from '@/framework/core/facades/Events';
 import Router from '@/framework/core/facades/Router';
 import Service from '@/framework/core/Service';
@@ -40,7 +41,7 @@ export default class CookbookService extends Service<State, ComputedState, Persi
 
     public static persist: Array<keyof PersistedState> = ['dish', 'timers', 'wakeLock', 'lastRoute'];
 
-    private screenLock: Promise<{ release(): Promise<void> }> | null = null;
+    private screenLock: Promise<void | { release(): Promise<void> }> | null = null;
     private timeouts: WeakMap<Timer, ReturnType<typeof setTimeout>> = new WeakMap();
 
     public async open(): Promise<void> {
@@ -191,7 +192,13 @@ export default class CookbookService extends Service<State, ComputedState, Persi
             return;
         }
 
-        this.screenLock = typedNavigator.wakeLock.request('screen');
+        try {
+            this.screenLock = typedNavigator.wakeLock.request('screen').catch((error) => {
+                Errors.reportDevelopmentError(error, 'Could not request screen wake lock');
+            });
+        } catch (error) {
+            Errors.reportDevelopmentError(error, 'Could not request screen wake lock');
+        }
     }
 
     protected releaseScreen(): void {
@@ -199,7 +206,7 @@ export default class CookbookService extends Service<State, ComputedState, Persi
             return;
         }
 
-        this.screenLock.then(lock => lock.release());
+        this.screenLock.then(lock => lock?.release());
         this.screenLock = null;
     }
 

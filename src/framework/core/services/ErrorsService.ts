@@ -71,6 +71,19 @@ export default class ErrorsService extends Service<State, ComputedState> {
         UI.openModal(UI.resolveComponent(ApplicationComponent.ErrorReportModal), { reports });
     }
 
+    public reportDevelopmentError(error: ErrorSource, message?: string): void {
+        if (!App.isDevelopment) {
+            return;
+        }
+
+        if (message) {
+            // eslint-disable-next-line no-console
+            console.warn(message);
+        }
+
+        this.logError(error);
+    }
+
     public async report(error: ErrorSource, message?: string): Promise<void> {
         if (await this.handleError(error)) {
             return;
