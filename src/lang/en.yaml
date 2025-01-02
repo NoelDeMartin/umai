@@ -359,10 +359,10 @@ kitchen:
 
   timers:
     title: Timers
-    description: If you need it, you can set some timers to make sure that something is cooked to perfection.
+    description: Use timers to make sure that your recipes are cooked to perfection.
     show: Show timers
     add: Add timer
-    play: Play
+    play: Start
     pause: Pause
     resume: Resume
     stop: Stop
@@ -379,7 +379,7 @@ kitchen:
       submit: Create
     timeout:
       title: Time's up!
-      description: "**{name}** has finished, make sure you check out how the dish is doing!"
+      description: "**{name}** has finished, check out how the dish is doing!"
       stop: Stop timer
 
 startupCrash:

@@ -368,7 +368,7 @@ kitchen:
 
 timers:
     title: Temporitzadors
-    description: Aquí pots preparar temporitzadors per assegurar-te que les teves receptes es cuinen a la perfecció.
+    description: Fes servir temporitzadors per assegurar-te que les teves receptes es cuinen a la perfecció.
     show: Mostra temporitzadors
     add: Afegir temporizador
     play: Començar
@@ -388,7 +388,7 @@ timers:
       submit: Crear
     timeout:
       title: S'ha acabat el temps!
-      description: "**{name}** ha acabat, assegura't de mirar com va el plat!"
+      description: "**{name}** ha acabat, mira com va el plat!"
       stop: Parar temporitzador
 
 startupCrash:

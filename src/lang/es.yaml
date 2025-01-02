@@ -359,7 +359,7 @@ kitchen:
 
   timers:
     title: Temporizadores
-    description: Aquí puedes preparar temporizadores para asegurarte que tus recetas se cocinan a la perfección.
+    description: Utiliza temporizadores para asegurarte que tus recetas se cocinan a la perfección.
     show: Muestra temporizadores
     add: Añade temporizador
     play: Empezar
@@ -379,7 +379,7 @@ kitchen:
       submit: Crear
     timeout:
       title: ¡Se ha acabado el tiempo!
-      description: "**{name}** ha acabado, ¡asegúrate de mirar cómo va el plato!"
+      description: "**{name}** ha acabado, ¡mira cómo va el plato!"
       stop: Parar temporizador
 
 startupCrash:

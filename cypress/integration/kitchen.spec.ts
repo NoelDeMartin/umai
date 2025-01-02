@@ -48,7 +48,7 @@ describe('Kitchen', () => {
         cy.see('Pa amb tomàquet');
     });
 
-    it('Sets up timers', () => {
+    it('Uses timers', () => {
         // Arrange
         cy.press('Pa amb tomàquet');
         cy.press('Let\'s cook!');
@@ -64,7 +64,7 @@ describe('Kitchen', () => {
             cy.get('input').clear().type('3');
         });
         cy.press('Create');
-        cy.press('Play');
+        cy.press('Start');
         cy.see('Pause');
         cy.ariaLabel('Close the modal').click();
         cy.press('Close the kitchen');
