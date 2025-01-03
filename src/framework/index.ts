@@ -24,23 +24,13 @@ import type { ErrorSource } from '@/framework/core/services/ErrorsService';
 type ErrorHandler = (error: ErrorSource) => boolean;
 
 const frameworkHandler: ErrorHandler = error => {
-    if (!Errors.instance) {
-        // eslint-disable-next-line no-console
-        console.warn('Errors service hasn\'t been initialized properly!');
-
-        // eslint-disable-next-line no-console
-        console.error(error);
-
-        return true;
-    }
-
     Errors.report(error);
 
     return true;
 };
 
 function setUpErrorHandler(baseHandler: ErrorHandler = (() => false)): ErrorHandler {
-    return tap(error => baseHandler(error) || frameworkHandler(error), errorHandler => {
+    return tap((error: ErrorSource) => baseHandler(error) || frameworkHandler(error), errorHandler => {
         window.onerror = (message, _, __, ___, error) => errorHandler(error ?? message);
         window.onunhandledrejection = event => errorHandler(event.reason);
     });

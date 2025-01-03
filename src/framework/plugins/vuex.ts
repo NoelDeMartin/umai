@@ -7,7 +7,7 @@ import Store from '@/framework/core/facades/Store';
 declare module '@vue/runtime-core' {
 
     export interface ComponentCustomProperties {
-        $store: NonNullable<typeof Store['instance']>;
+        $store: NonNullable<typeof Store>;
     }
 
 }
@@ -15,7 +15,7 @@ declare module '@vue/runtime-core' {
 declare module '@/framework/core' {
 
     export interface Services {
-        $store: NonNullable<typeof Store['instance']>;
+        $store: NonNullable<typeof Store>;
     }
 
 }

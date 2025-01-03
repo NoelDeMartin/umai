@@ -2,4 +2,4 @@ import { facade } from '@noeldemartin/utils';
 
 import ElementTransitionsService from '@/framework/core/services/ElementTransitionsService';
 
-export default facade(new ElementTransitionsService);
+export default facade(ElementTransitionsService);

@@ -2,6 +2,7 @@ import {
     PromisedValue,
     arr,
     arrayUnique,
+    fail,
     isObject,
     range,
     requireUrlParentDirectory,

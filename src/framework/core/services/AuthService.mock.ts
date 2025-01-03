@@ -4,6 +4,7 @@ import type { Fetch, SolidUserProfile } from '@noeldemartin/solid-utils';
 import Auth from '@/framework/core/facades/Auth';
 import AuthenticatorMock from '@/framework/auth/Authenticator.mock';
 import type Authenticator from '@/framework/auth/Authenticator';
+import type { AuthSession } from '@/framework/auth/Authenticator';
 
 import type AuthService from './AuthService';
 
@@ -17,7 +18,7 @@ export default class AuthServiceMock implements Pick<AuthService, MockedMethods>
     public use(fetch: Fetch): void {
         Auth.setInstance(mock<AuthService>(this));
 
-        this.user = mock();
+        this.user = mock<SolidUserProfile>();
         this.authenticator = mock<Authenticator>(new AuthenticatorMock(fetch));
     }
 
@@ -25,7 +26,7 @@ export default class AuthServiceMock implements Pick<AuthService, MockedMethods>
         this.user = mock<SolidUserProfile>(user);
     }
 
-    public isLoggedIn(): boolean {
+    public isLoggedIn(): this is { session: AuthSession; user: SolidUserProfile; authenticator: Authenticator } {
         return !!this.user;
     }
 

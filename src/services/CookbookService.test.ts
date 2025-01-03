@@ -5,11 +5,10 @@ jest.mock('@/framework/core/services/UIService.ts', () => class UIService {});
 
 import { bootSolidModels } from 'soukai-solid';
 import { createStore } from 'vuex';
-import { fakeContainerUrl, fakeDocumentUrl, fakeResourceUrl, mockFetch } from '@noeldemartin/solid-utils';
+import { fakeContainerUrl, fakeDocumentUrl, fakeResourceUrl } from '@noeldemartin/testing';
 import { InMemoryEngine, bootModels, setEngine } from 'soukai';
-import { mock } from '@noeldemartin/utils';
+import { FakeResponse, FakeServer, mock } from '@noeldemartin/utils';
 import type { EngineDocument } from 'soukai';
-import type { FetchMock } from '@noeldemartin/solid-utils';
 
 import AuthMock from '@/framework/core/facades/Auth.mock';
 import Browser from '@/framework/core/facades/Browser';
@@ -22,12 +21,12 @@ import RecipesList from '@/models/RecipesList';
 
 describe('Cookbook Service', () => {
 
-    let fetch: FetchMock;
+    let server: FakeServer;
     let engine: InMemoryEngine;
     let cookbook: CookbookService;
 
     beforeEach(async () => {
-        fetch = mockFetch();
+        server = new FakeServer();
         engine = new InMemoryEngine();
         cookbook = new CookbookService();
 
@@ -35,7 +34,7 @@ describe('Cookbook Service', () => {
         bootSolidModels();
         bootModels({ Recipe, RecipesList });
 
-        AuthMock.use(fetch);
+        AuthMock.use(server.fetch);
         CloudMock.use();
         Store.setInstance(createStore({}));
         Browser.setInstance(mock());
@@ -61,32 +60,32 @@ describe('Cookbook Service', () => {
             [recipe.requireDocumentUrl()]: { '@graph': [recipe.toJsonLD()] } as EngineDocument,
         };
 
-        fetch.mockResponse(`
+        server.respond(publicTypeIndexUrl, FakeResponse.success(`
             <> a <http://www.w3.org/ns/solid/terms#TypeIndex> .
 
             <#public-list>
                 a <http://www.w3.org/ns/solid/terms#TypeRegistration>;
                 <http://www.w3.org/ns/solid/terms#forClass> <https://schema.org/ItemList>;
                 <http://www.w3.org/ns/solid/terms#instance> <${listUrl}>.
-        `);
-        fetch.mockResponse(
+        `));
+        server.respond(listDocumentUrl, FakeResponse.success(
             `
                 <#it>
                     a <https://schema.org/ItemList>;
                     <https://schema.org/name> "Public Recipes" .
             `,
             { 'WAC-Allow': 'public="read"' },
-        );
-        fetch.mockResponse();
-        fetch.mockResponse();
+        ));
+        server.respond(listDocumentUrl, FakeResponse.success());
+        server.respond(listDocumentUrl, FakeResponse.success());
 
         // Act
         await cookbook.updatePublicRecipeListing(recipe, true);
 
         // Assert
-        expect(fetch).toHaveBeenCalledTimes(4);
-        expect(fetch).toHaveBeenNthCalledWith(3, listDocumentUrl, { headers: { Accept: 'text/turtle' } });
-        expect(fetch.mock.calls[3]?.[1]?.body).toEqualSparql(`
+        expect(server.getRequests()).toHaveLength(4);
+        expect(server.getRequest('GET', listDocumentUrl)?.headers).toEqual({ Accept: 'text/turtle' });
+        expect(server.getRequest('PATCH', listDocumentUrl)?.body).toEqualSparql(`
             INSERT DATA {
                 <#it> <https://schema.org/itemListElement> <#[[list-item][%uuid%]]> .
 

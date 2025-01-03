@@ -1,4 +1,4 @@
-import { facade } from '@noeldemartin/utils';
+import { facade, fail } from '@noeldemartin/utils';
 import type { Store } from 'vuex';
 
-export default facade<Store<unknown>>();
+export default facade(() => fail<Store<unknown>>('Store facade cannot be initialized lazily'));
