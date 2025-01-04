@@ -51,5 +51,5 @@ const title = computed(() => {
     return translate('kitchen.instructions.title', { step: props.step });
 });
 
-onMounted(() => Kitchen.dish?.updateStage(position.value));
+onMounted(() => Kitchen.findDish(props.recipe)?.updateStage(position.value));
 </script>

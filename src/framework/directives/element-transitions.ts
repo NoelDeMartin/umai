@@ -1,3 +1,5 @@
+import type { Falsy } from '@noeldemartin/utils';
+
 import ElementTransitions from '@/framework/core/facades/ElementTransitions';
 import { defineDirective } from '@/framework/utils/vue';
 import type {
@@ -19,7 +21,11 @@ function isFullConfig(directiveConfig: DirectiveConfig): directiveConfig is Dire
     return 'transitions' in directiveConfig;
 }
 
-function getConfig(directiveConfig: DirectiveConfig): TransitionalElementConfig {
+function getConfig(directiveConfig: DirectiveConfig | Falsy): TransitionalElementConfig | Falsy {
+    if (!directiveConfig) {
+        return;
+    }
+
     const config = isFullConfig(directiveConfig) ? directiveConfig : { transitions: directiveConfig };
 
     return {
@@ -38,7 +44,13 @@ function getConfig(directiveConfig: DirectiveConfig): TransitionalElementConfig 
 
 export default defineDirective({
     beforeMount(el, { value }) {
-        ElementTransitions.registerElementConfig(el, getConfig(value));
+        const config = getConfig(value);
+
+        if (!config) {
+            return;
+        }
+
+        ElementTransitions.registerElementConfig(el, config);
     },
     mounted(el) {
         ElementTransitions.showElement(el);
@@ -47,6 +59,12 @@ export default defineDirective({
         ElementTransitions.hideElement(el);
     },
     updated(el, { value }) {
-        ElementTransitions.updateElementConfig(el, getConfig(value));
+        const config = getConfig(value);
+
+        if (!config) {
+            return;
+        }
+
+        ElementTransitions.updateElementConfig(el, config);
     },
 });

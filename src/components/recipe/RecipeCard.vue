@@ -1,16 +1,6 @@
 <template>
     <li
-        v-element-transitions="{
-            name: 'recipe-card',
-            id: recipe.url,
-            transitions: {
-                'enter': enterTransition,
-                'leave': leaveTransition,
-                'recipe-card': transitionToCard,
-                'recipe-details': transitionToDetails,
-                'viewer-recipe': transitionToViewer,
-            }
-        }"
+        v-element-transitions="transitionsConfig"
         :data-recipe-url="recipe.url"
         :class="[
             'flex overflow-hidden relative flex-col justify-end rounded-lg shadow aspect-[5/2]',
@@ -23,7 +13,7 @@
             <router-link
                 v-focus-visible="setVisibleFocus"
                 class="block w-full h-clickable focus-visible:outline-none"
-                :to="recipe.route($viewer.active ? 'viewer' : 'show')"
+                :to="route ?? recipe.route($viewer.active ? 'viewer' : 'show')"
             >
                 <span aria-hidden="true" class="absolute inset-0" />
                 <div v-if="recipe.name" class="absolute inset-x-0 bottom-0 p-2 recipe-card--title-wrapper">
@@ -36,7 +26,10 @@
 </template>
 
 <script setup lang="ts">
-import { requiredObjectProp } from '@/framework/utils/vue';
+import { computed } from 'vue';
+import type { RouteLocationRaw } from 'vue-router';
+
+import { booleanProp, objectProp, requiredObjectProp } from '@/framework/utils/vue';
 
 import type Recipe from '@/models/Recipe';
 
@@ -48,11 +41,30 @@ import {
     transitionToViewer,
 } from './RecipeCard.transitions';
 
-defineProps({
+const props = defineProps({
     recipe: requiredObjectProp<Recipe>(),
+    route: objectProp<RouteLocationRaw>(),
+    transitions: booleanProp(true),
 });
 
 let visibleFocus = $ref(false);
+const transitionsConfig = computed(() => {
+    if (!props.transitions) {
+        return;
+    }
+
+    return {
+        name: 'recipe-card',
+        id: props.recipe.url,
+        transitions: {
+            'enter': enterTransition,
+            'leave': leaveTransition,
+            'recipe-card': transitionToCard,
+            'recipe-details': transitionToDetails,
+            'viewer-recipe': transitionToViewer,
+        },
+    };
+});
 
 function setVisibleFocus(value: boolean) {
     visibleFocus = value;

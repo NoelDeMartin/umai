@@ -9,7 +9,10 @@
                 leave: {
                     'recipes.edit': $elementTransitions.fadeOut,
                     'recipes.show': $elementTransitions.fadeOut,
+                    'kitchen': () => after({ ms: KITCHEN_TRANSITION_DURATION }),
+                    'kitchen.instructions': () => after({ ms: KITCHEN_TRANSITION_DURATION }),
                     'kitchen.ingredients': () => after({ ms: KITCHEN_TRANSITION_DURATION }),
+                    'kitchen.completed': () => after({ ms: KITCHEN_TRANSITION_DURATION }),
                 },
                 'recipe-card': transitionToCard,
             },

@@ -11,6 +11,7 @@ import Home from './pages/home/Home.vue';
 import RecipesCreate from './pages/recipes/RecipesCreate.vue';
 import RecipesEdit from './pages/recipes/RecipesEdit.vue';
 import RecipesShow from './pages/recipes/RecipesShow.vue';
+import KitchenPage from './pages/kitchen/Kitchen.vue';
 import KitchenCompletedPage from './pages/kitchen/KitchenCompleted.vue';
 import KitchenIngredientsPage from './pages/kitchen/KitchenIngredients.vue';
 import KitchenInstructionsPage from './pages/kitchen/KitchenInstructions.vue';
@@ -154,17 +155,16 @@ export default defineRoutes([
             footer: false,
         }),
     },
-    // {
-    //     // TODO header shouldn't be in header, not even hidden (a11y, etc.)
-    //     name: 'kitchen',
-    //     path: '/kitchen',
-    //     component: KitchenPage,
-    //     meta: {
-    //         fullBleedHeader: false, // TODO same as incoming, leaving... also avoid logo from leaving...
-    //         enter: showKitchen,
-    //         leave: hideKitchen,
-    //     },
-    // },
+    {
+        name: 'kitchen',
+        path: '/kitchen',
+        component: KitchenPage,
+        meta: {
+            fullBleedHeader: false,
+            enter: showKitchen,
+            leave: hideKitchen,
+        },
+    },
     {
         path: '/kitchen/:recipe',
         redirect: '/kitchen/:recipe/ingredients',
@@ -174,7 +174,7 @@ export default defineRoutes([
         path: '/kitchen/:recipe/ingredients',
         component: KitchenIngredientsPage,
         meta: routeMeta<{ recipe: Recipe }>({
-            fullBleedHeader: false, // TODO same as incoming, leaving... also avoid logo from leaving...
+            fullBleedHeader: false,
             title: ({ recipe }) => translate('kitchen.title', { recipe: recipe.name }),
             enter: showKitchen,
             leave: hideKitchen,
@@ -189,7 +189,7 @@ export default defineRoutes([
         path: '/kitchen/:recipe/instructions/:step',
         component: KitchenInstructionsPage,
         meta: routeMeta<{ recipe: Recipe }>({
-            fullBleedHeader: false, // TODO same as incoming, leaving... also avoid logo from leaving...
+            fullBleedHeader: false,
             title: ({ recipe }) => translate('kitchen.title', { recipe: recipe.name }),
             enter: showKitchen,
             leave: hideKitchen,
@@ -200,7 +200,7 @@ export default defineRoutes([
         path: '/kitchen/:recipe/completed',
         component: KitchenCompletedPage,
         meta: routeMeta<{ recipe: Recipe }>({
-            fullBleedHeader: false, // TODO same as incoming, leaving... also avoid logo from leaving...
+            fullBleedHeader: false,
             title: ({ recipe }) => translate('kitchen.title', { recipe: recipe.name }),
             enter: showKitchen,
             leave: hideKitchen,

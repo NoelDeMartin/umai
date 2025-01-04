@@ -333,18 +333,22 @@ recipes:
     update: Guardar
 
 kitchen:
-  title: Cocinando {name}
-  cook: ¡Vamos a cocinar!
+  title: Cocinando {recipe}
+  cook: ¡Vamos a cocinar esto!
   open: Cocina
   dismiss: ahora no
   close: Cierra la cocina
   next: Siguiente
   previous: Anterior
 
+  index:
+    title: ¿Qué estás cocinando?
+    show: Muestra cocina
+
   ingredients:
-    title: Mise en place
+    title: Ingredientes
     show: Muestra ingredientes
-    description: Antes de empezar, asegúrate de tener todos los ingredientes preparados.
+    description: Mise en place! Antes de empezar, asegúrate de tener todos los ingredientes preparados.
 
   instructions:
     title: Paso {step}

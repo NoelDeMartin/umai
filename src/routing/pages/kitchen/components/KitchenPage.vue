@@ -11,8 +11,17 @@
         </CoreButton>
 
         <div class="w-full h-full overflow-auto">
-            <div class="mx-auto max-w-4xl pt-8 pb-8 px-edge md:pt-16 min-h-full flex flex-col">
-                <h1 class="text-2xl font-semibold">
+            <div class="mx-auto max-w-4xl pt-4 pb-8 px-edge md:pt-10 min-h-full flex flex-col">
+                <template v-if="recipe">
+                    <h1 class="text-gray-500 opacity-50 font-medium tracking-wide uppercase text-xs">
+                        {{ $t('kitchen.title', { recipe: recipe.name }) }}
+                    </h1>
+                    <h2 class="text-2xl font-semibold mt-4">
+                        {{ title }}
+                    </h2>
+                </template>
+
+                <h1 v-else class="text-2xl font-semibold mt-4">
                     {{ title }}
                 </h1>
 
@@ -22,16 +31,17 @@
 
         <div class="fixed top-32 right-12 flex flex-col space-y-4">
             <CoreButton
-                v-if="recipe && showIngredientsShortcut"
+                v-if="showKitchenShortcut && $kitchen.dishes.length > 1"
+                :title="$t('kitchen.index.show')"
+                route="kitchen"
                 secondary
-                route="kitchen.ingredients"
-                :route-params="{ recipe: recipe.slug }"
             >
-                <i-pepicons-list class="w-8 h-8" aria-hidden="true" />
-                <span class="sr-only">{{ $t('kitchen.ingredients.show') }}</span>
+                <i-tabler-chef-hat-filled class="w-7 h-7" aria-hidden="true" />
+                <span class="sr-only">{{ $t('kitchen.index.show') }}</span>
             </CoreButton>
             <CoreButton
                 v-if="showTimersShortcut"
+                :title="$t('kitchen.timers.show')"
                 secondary
                 class="relative"
                 @click="$ui.openModal(KitchenTimersModal)"
@@ -43,6 +53,16 @@
                         ({{ $t('kitchen.timers.overtime') }})
                     </span>
                 </div>
+            </CoreButton>
+            <CoreButton
+                v-if="showIngredientsShortcut && recipe"
+                :route-params="{ recipe: recipe.slug }"
+                :title="$t('kitchen.ingredients.show')"
+                route="kitchen.ingredients"
+                secondary
+            >
+                <i-pepicons-list class="w-8 h-8" aria-hidden="true" />
+                <span class="sr-only">{{ $t('kitchen.ingredients.show') }}</span>
             </CoreButton>
         </div>
     </div>
@@ -60,8 +80,9 @@ import KitchenTimersModal from './modals/KitchenTimersModal.vue';
 defineProps({
     title: requiredStringProp(),
     recipe: objectProp<Recipe>(),
-    showIngredientsShortcut: booleanProp(true),
+    showKitchenShortcut: booleanProp(true),
     showTimersShortcut: booleanProp(true),
+    showIngredientsShortcut: booleanProp(true),
 });
 
 const hasOverTimeTimers = computed(() => Kitchen.timers.some(timer => timer.isOverTime()));

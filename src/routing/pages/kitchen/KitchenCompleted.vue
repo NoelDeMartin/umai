@@ -12,7 +12,7 @@
                 <i-pepicons-arrow-left class="w-4 h-4" aria-hidden="true" />
                 <span class="ml-1">{{ $t('kitchen.previous') }}</span>
             </CoreButton>
-            <CoreButton @click="$kitchen.complete()">
+            <CoreButton @click="dish && $kitchen.complete(dish)">
                 <i-zondicons-checkmark class="w-3 h-3" aria-hidden="true" />
                 <span class="ml-1.5">{{ $t('kitchen.completed.finish') }}</span>
             </CoreButton>
@@ -21,16 +21,15 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { computed, onMounted } from 'vue';
 
 import { requiredObjectProp } from '@/framework/utils/vue';
 
 import Kitchen from '@/services/facades/Kitchen';
 import type Recipe from '@/models/Recipe';
 
-defineProps({
-    recipe: requiredObjectProp<Recipe>(),
-});
+const props = defineProps({ recipe: requiredObjectProp<Recipe>() });
+const dish = computed(() => Kitchen.findDish(props.recipe));
 
-onMounted(() => Kitchen.dish?.updateStage('completed'));
+onMounted(() => dish.value?.updateStage('completed'));
 </script>

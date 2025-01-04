@@ -342,18 +342,22 @@ recipes:
 
 
 kitchen:
-  title: Cuinant {name}
-  cook: Anem a cuinar!
+  title: Cuinant {recipe}
+  cook: Anem a cuinar això!
   open: Cuina
   dismiss: ara no
   close: Tanca la cuina
   next: Següent
   previous: Anterior
 
+  index:
+    title: Què estàs cuinant?
+    show: Mostra cuina
+
   ingredients:
-    title: Mise en place
+    title: Ingredients
     show: Mostra ingredients
-    description: Abans de començar, assegurat d'enllestir tots els ingredients.
+    description: Mise en place! Abans de començar, assegurat d'enllestir tots els ingredients.
 
   instructions:
     title: Pas {step}

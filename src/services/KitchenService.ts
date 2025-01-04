@@ -1,4 +1,4 @@
-import { arrayWithout, fail } from '@noeldemartin/utils';
+import { arrayWithout, fail, required } from '@noeldemartin/utils';
 import { toRaw } from 'vue';
 import type { RouteLocationRaw } from 'vue-router';
 
@@ -19,7 +19,7 @@ import type { DishJson } from '@/models/Dish';
 import type { TimerJson } from '@/models/Timer';
 
 interface State {
-    dish: Dish | null;
+    dishes: Dish[];
     timers: Timer[];
     dismissed: boolean;
     wakeLock: boolean;
@@ -31,7 +31,7 @@ interface ComputedState {
 }
 
 interface PersistedState {
-    dish: DishJson | null;
+    dishes: DishJson[];
     timers: TimerJson[];
     wakeLock: boolean;
     lastRoute: RouteLocationRaw | null;
@@ -39,22 +39,34 @@ interface PersistedState {
 
 export default class CookbookService extends Service<State, ComputedState, PersistedState> {
 
-    public static persist: Array<keyof PersistedState> = ['dish', 'timers', 'wakeLock', 'lastRoute'];
+    public static persist: Array<keyof PersistedState> = ['dishes', 'timers', 'wakeLock', 'lastRoute'];
 
     private screenLock: Promise<void | { release(): Promise<void> }> | null = null;
     private timeouts: WeakMap<Timer, ReturnType<typeof setTimeout>> = new WeakMap();
 
-    public async open(): Promise<void> {
-        if (!this.dish) {
+    public findDish(recipe: Recipe): Dish | undefined {
+        return this.dishes.find(dish => dish.recipe.is(recipe));
+    }
+
+    public async open(dish?: Dish): Promise<void> {
+        if (this.dishes.length === 0) {
             return;
         }
 
-        this.lastRoute = {
-            name: Router.currentRoute.value.name ?? fail(),
-            params: Router.currentRoute.value.params,
-        };
+        if (!Router.currentRouteIs(/^kitchen(\.[^.]+)?$/)) {
+            this.lastRoute = {
+                name: Router.currentRoute.value.name ?? fail(),
+                params: Router.currentRoute.value.params,
+            };
+        }
 
-        await Router.push(this.dish.getStageRoute());
+        if (dish || this.dishes.length === 1) {
+            await Router.push(required(dish ?? this.dishes[0]).getStageRoute());
+
+            return;
+        }
+
+        await Router.push({ name: 'kitchen' });
     }
 
     public async close(): Promise<void> {
@@ -69,13 +81,9 @@ export default class CookbookService extends Service<State, ComputedState, Persi
     }
 
     public async cook(recipe: Recipe): Promise<void> {
-        this.dish = new Dish(recipe);
+        const dish = this.findDish(recipe) ?? this.addRecipe(recipe);
 
-        this.lockScreen();
-
-        this.dish.listeners.add({ onUpdated: () => this.setState({ dish: this.dish }) });
-
-        await this.open();
+        await this.open(dish);
     }
 
     public addTimer(timer: Timer): void {
@@ -94,10 +102,12 @@ export default class CookbookService extends Service<State, ComputedState, Persi
         timer.stop();
     }
 
-    public async complete(): Promise<void> {
-        this.dish = null;
+    public async complete(dish: Dish): Promise<void> {
+        this.setState({ dishes: arrayWithout(this.dishes, dish) });
 
-        this.releaseScreen();
+        if (this.dishes.length === 0) {
+            this.releaseScreen();
+        }
 
         await this.close();
     }
@@ -113,13 +123,15 @@ export default class CookbookService extends Service<State, ComputedState, Persi
         Events.on('logout', () => {
             this.timers.forEach(timer => this.onTimerStopped(timer));
 
-            this.setState({ dish: null, timers: [], lastRoute: null });
+            this.setState({ dishes: [], timers: [], lastRoute: null });
         });
 
-        if (this.dish) {
+        if (this.dishes.length > 0) {
             this.lockScreen();
 
-            this.dish.listeners.add({ onUpdated: () => this.setState({ dish: this.dish }) });
+            this.dishes.forEach(dish => {
+                dish.listeners.add({ onUpdated: () => this.setState({ dishes: this.dishes.slice(0) }) });
+            });
 
             this.timers.forEach(timer => {
                 timer.listeners.add({
@@ -137,7 +149,7 @@ export default class CookbookService extends Service<State, ComputedState, Persi
 
     protected getInitialState(): State {
         return {
-            dish: null,
+            dishes: [],
             timers: [],
             dismissed: false,
             wakeLock: true,
@@ -147,12 +159,12 @@ export default class CookbookService extends Service<State, ComputedState, Persi
 
     protected getComputedStateDefinitions(): ComputedStateDefinitions<State, ComputedState> {
         return {
-            show: ({ dismissed, dish }) => {
+            show: ({ dismissed, dishes }) => {
                 if (!App.isMounted || Viewer.active) {
                     return false;
                 }
 
-                if (dish) {
+                if (dishes.length > 0) {
                     return true;
                 }
 
@@ -164,8 +176,8 @@ export default class CookbookService extends Service<State, ComputedState, Persi
     protected serializePersistedState(state: Partial<State>): Partial<PersistedState> {
         const persistedState = state as Partial<PersistedState>;
 
-        if (state.dish) {
-            persistedState.dish = state.dish.toJson();
+        if (state.dishes) {
+            persistedState.dishes = state.dishes.map(dish => dish.toJson());
         }
 
         if (state.timers) {
@@ -178,9 +190,23 @@ export default class CookbookService extends Service<State, ComputedState, Persi
     protected async restorePersistedState(state: PersistedState): Promise<Partial<State>> {
         return {
             ...state,
-            dish: state.dish && await Dish.fromJson(state.dish),
+            dishes: await Promise.all(state.dishes.map(json => Dish.fromJson(json))),
             timers: state.timers.map(json => Timer.fromJson(json)),
         };
+    }
+
+    protected addRecipe(recipe: Recipe): Dish {
+        const dish = new Dish(recipe);
+
+        dish.listeners.add({ onUpdated: () => this.setState({ dishes: this.dishes.slice(0) }) });
+
+        this.dishes.push(dish);
+
+        if (this.dishes.length === 1) {
+            this.lockScreen();
+        }
+
+        return dish;
     }
 
     protected lockScreen(): void {
@@ -210,11 +236,11 @@ export default class CookbookService extends Service<State, ComputedState, Persi
         this.screenLock = null;
     }
 
-    private onTimerUpdated(): void {
+    protected onTimerUpdated(): void {
         this.setState({ timers: this.timers.slice(0) });
     }
 
-    private onTimerStarted(timer: Timer): void {
+    protected onTimerStarted(timer: Timer): void {
         if (this.timeouts.has(timer)) {
             return;
         }
@@ -229,7 +255,7 @@ export default class CookbookService extends Service<State, ComputedState, Persi
         this.timeouts.set(timer, timeout);
     }
 
-    private onTimerStopped(timer: Timer): void {
+    protected onTimerStopped(timer: Timer): void {
         const timeout = this.timeouts.get(timer);
 
         if (!timeout) {

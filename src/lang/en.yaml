@@ -333,18 +333,22 @@ recipes:
     update: Save
 
 kitchen:
-  title: Cooking {name}
-  cook: Let's cook!
+  title: Cooking {recipe}
+  cook: Let's cook this!
   open: Kitchen
   dismiss: not now
   close: Close the kitchen
   next: Next
   previous: Previous
 
+  index:
+    title: What's cooking?
+    show: Show kitchen
+
   ingredients:
-    title: Mise en place
+    title: Ingredients
     show: Show ingredients
-    description: Before getting started, make sure to have all your ingredients ready.
+    description: Mise en place! Before getting started, make sure that all your ingredients are ready.
 
   instructions:
     title: Step {step}
