@@ -89,17 +89,25 @@ export default class Timer {
         return this.duration - Math.round(time - this.startedAt.getTime());
     }
 
-    public setDish(dish: Dish, step: number): void {
+    public setDish(dish: Dish, step?: number): void {
         this.dish = dish;
         this.step = step;
     }
 
-    public hasDish(dish: Dish, step?: number): boolean {
-        if (this.dish !== dish) {
+    public hasDish(dish?: Dish, step?: number): boolean {
+        if (!dish) {
+            return !!this.dish;
+        }
+
+        if (!this.dish?.recipe.is(dish.recipe)) {
             return false;
         }
 
-        return typeof step === undefined || step === this.step;
+        return typeof step === 'undefined' || step === this.step;
+    }
+
+    public hasDishStep(): boolean {
+        return typeof this.step !== 'undefined';
     }
 
     public play(): void {

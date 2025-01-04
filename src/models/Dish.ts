@@ -14,6 +14,7 @@ export interface DishListener {
 
 export interface DishJson {
     recipeId: string;
+    servings: number;
     stage: DishStage;
     ingredients: Record<string, boolean>;
 }
@@ -26,19 +27,25 @@ export default class Dish {
         const recipe = Cookbook.allRecipes.find(recipe => recipe.id === json.recipeId)
             ?? fail<Recipe>(`Could not find recipe with id '${json.recipeId}' for dish`);
 
-        return new Dish(recipe, {
+        return new Dish(recipe, json.servings, {
             stage: json.stage,
             ingredients: json.ingredients,
         });
     }
 
     public readonly recipe: Recipe;
+    public readonly servings: number;
     private _listeners = new ListenersManager<DishListener>();
     private _stage: DishStage;
     private _ingredients: Record<string, boolean>;
 
-    constructor(recipe: Recipe, state: { stage?: DishStage; ingredients?: Record<string, boolean> } = {}) {
+    constructor(
+        recipe: Recipe,
+        servings: number,
+        state: { stage?: DishStage; ingredients?: Record<string, boolean> } = {},
+    ) {
         this.recipe = recipe;
+        this.servings = servings;
         this._stage = state.stage ?? 'ingredients';
         this._ingredients = state.ingredients ?? recipe.ingredients.reduce((ingredients, ingredient) => {
             ingredients[ingredient] = false;
@@ -98,6 +105,7 @@ export default class Dish {
     public toJson(): DishJson {
         return {
             recipeId: this.recipe.id,
+            servings: this.servings,
             stage: this.stage,
             ingredients: this.ingredients,
         };

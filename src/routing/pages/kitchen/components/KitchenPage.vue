@@ -29,7 +29,7 @@
             </div>
         </div>
 
-        <div class="fixed top-32 right-12 flex flex-col space-y-4">
+        <div class="fixed bottom-24 right-8 md:top-32 md:bottom-auto md:right-12 flex flex-col space-y-4">
             <CoreButton
                 v-if="showKitchenShortcut && $kitchen.dishes.length > 1"
                 :title="$t('kitchen.index.show')"
@@ -40,7 +40,6 @@
                 <span class="sr-only">{{ $t('kitchen.index.show') }}</span>
             </CoreButton>
             <CoreButton
-                v-if="showTimersShortcut"
                 :title="$t('kitchen.timers.show')"
                 secondary
                 class="relative"
@@ -53,16 +52,6 @@
                         ({{ $t('kitchen.timers.overtime') }})
                     </span>
                 </div>
-            </CoreButton>
-            <CoreButton
-                v-if="showIngredientsShortcut && recipe"
-                :route-params="{ recipe: recipe.slug }"
-                :title="$t('kitchen.ingredients.show')"
-                route="kitchen.ingredients"
-                secondary
-            >
-                <i-pepicons-list class="w-8 h-8" aria-hidden="true" />
-                <span class="sr-only">{{ $t('kitchen.ingredients.show') }}</span>
             </CoreButton>
         </div>
     </div>
@@ -82,8 +71,6 @@ defineProps({
     title: requiredStringProp(),
     recipe: objectProp<Recipe>(),
     showKitchenShortcut: booleanProp(true),
-    showTimersShortcut: booleanProp(true),
-    showIngredientsShortcut: booleanProp(true),
 });
 
 const hasOverTimeTimers = computed(() => Kitchen.timers.some(timer => timer.isOverTime()));

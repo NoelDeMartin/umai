@@ -227,8 +227,9 @@
 
 <script setup lang="ts">
 import { arrayFilter, arraySorted, arrayUnique, range, urlParse } from '@noeldemartin/utils';
-import { nextTick, watchEffect } from 'vue';
+import { nextTick, watch, watchEffect } from 'vue';
 
+import Events from '@/framework/core/facades/Events';
 import TailwindCSS from '@/framework/utils/tailwindcss';
 import UI from '@/framework/core/facades/UI';
 import { afterAnimationTime } from '@/framework/utils/dom';
@@ -237,9 +238,19 @@ import { objectProp } from '@/framework/utils/vue';
 import { translate } from '@/framework/utils/translate';
 import type { SelectOption } from '@/framework/components/headless/HeadlessSelect';
 
+import { roundIngredientQuantity } from '@/utils/ingredients';
 import type Recipe from '@/models/Recipe';
 
 import type IRecipePage from './RecipePage';
+
+
+declare module '@/framework/core/services/EventsService' {
+
+    export interface EventsPayload {
+        'recipe-servings-updated': number;
+    }
+
+}
 
 const CUSTOM_SERVINGS = -1;
 
@@ -327,14 +338,6 @@ const externalUrls = $computed(
     })),
 );
 
-function roundIngredientQuantity(quantity: number): number {
-    if (quantity < 10) {
-        return Math.round(quantity * 100) / 100;
-    }
-
-    return Math.round(quantity);
-}
-
 watchEffect(async () => {
     if (servings !== CUSTOM_SERVINGS) {
         return;
@@ -356,6 +359,14 @@ watchEffect(async () => {
 
     servings = newServings;
 });
+
+watch($$(servings), () => {
+    if (servings === CUSTOM_SERVINGS) {
+        return;
+    }
+
+    Events.emit('recipe-servings-updated', servings);
+}, { immediate: true });
 
 defineExpose<IRecipePage>({
     showPrimaryPanel: async () => {

@@ -72,7 +72,7 @@
         <div v-if="timer.hasStarted() && !timer.isOverTime()" class="mt-1 w-full h-2 rounded-full bg-gray-200 relative">
             <div
                 class="h-full rounded-full absolute left-0 top-0"
-                :style="`width: ${timer.getTimeLeft() * 100 / timer.duration}%`"
+                :style="`width: ${(timer.duration - timer.getTimeLeft()) * 100 / timer.duration}%`"
                 :class="{
                     'bg-primary-500': !timer.isPaused(),
                     'bg-gray-400': timer.isPaused(),

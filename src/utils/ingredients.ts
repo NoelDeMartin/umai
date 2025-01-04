@@ -199,6 +199,15 @@ export function parseIngredient(ingredient: string): IngredientBreakdown {
     });
 }
 
+export function roundIngredientQuantity(quantity: number): number {
+    if (quantity < 10) {
+        return Math.round(quantity * 100) / 100;
+    }
+
+    return Math.round(quantity);
+}
+
+
 export function sortIngredients(ingredients: IngredientBreakdown[]): IngredientBreakdown[] {
     ingredients.sort((a, b) => compareIngredients(b, a));
 

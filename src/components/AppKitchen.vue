@@ -10,21 +10,18 @@
                 leave-to-class="translate-y-[250%]"
             >
                 <div v-if="$kitchen.show" class="flex flex-col space-y-1 items-center">
-                    <CoreButton v-if="recipe && !recipeIsCooking" class="pointer-events-auto h-12" @click="recipe && $kitchen.cook(recipe)">
-                        <i-tabler-chef-hat-filled class="w-5 h-5 ml-2" aria-hidden="true" />
-                        <span class="mx-2 uppercase tracking-wider font-semibold text-sm">{{ $t('kitchen.cook') }}</span>
-                    </CoreButton>
+                    <template v-if="recipe && $kitchen.dishes.length === 0">
+                        <CoreButton class="pointer-events-auto h-12" @click="recipe && $kitchen.cook(recipe, servings)">
+                            <i-tabler-chef-hat-filled class="w-5 h-5 ml-2" aria-hidden="true" />
+                            <span class="mx-2 uppercase tracking-wider font-semibold text-sm">{{ $t('kitchen.cook') }}</span>
+                        </CoreButton>
+                        <CoreButton class="pointer-events-auto bg-white" clear @click="$kitchen.dismiss()">
+                            <span class="text-sm">{{ $t('kitchen.dismiss') }}</span>
+                        </CoreButton>
+                    </template>
                     <CoreButton v-else class="pointer-events-auto h-12" @click="$kitchen.open()">
                         <i-tabler-chef-hat-filled class="w-5 h-5 ml-2" aria-hidden="true" />
                         <span class="mx-2 uppercase tracking-wider font-semibold text-sm">{{ $t('kitchen.open') }}</span>
-                    </CoreButton>
-                    <CoreButton
-                        v-if="$kitchen.dishes.length === 0"
-                        clear
-                        class="pointer-events-auto"
-                        @click="$kitchen.dismiss()"
-                    >
-                        <span class="text-sm">{{ $t('kitchen.dismiss') }}</span>
                     </CoreButton>
                 </div>
             </Transition>
@@ -33,15 +30,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 import Router from '@/framework/core/facades/Router';
 
 import Cookbook from '@/services/facades/Cookbook';
-import Kitchen from '@/services/facades/Kitchen';
+import { useEvent } from '@/framework/utils/composition/events';
 
 const recipe = computed(() => {
     return Cookbook.recipes.first(recipe => recipe.slug === Router.currentRoute.value.params.recipe);
 });
-const recipeIsCooking = computed(() => recipe.value && !!Kitchen.findDish(recipe.value));
+const servings = ref(recipe.value?.servingsBreakdown?.quantity ?? 1);
+
+useEvent('recipe-servings-updated', (recipeServings) => servings.value = recipeServings);
 </script>

@@ -1,7 +1,7 @@
 <template>
     <AppModal>
         <template #title>
-            <div class="flex items-center">
+            <div class="flex items-center animate-shake">
                 <i-pepicons-alarm class="w-8 h-8" aria-hidden="true" />
                 <span class="ml-2">{{ $t('kitchen.timers.timeout.title') }}</span>
             </div>
@@ -30,11 +30,11 @@ const props = defineProps({ timer: requiredObjectProp<Timer>() });
 const $audio = ref<HTMLAudioElement | null>(null);
 
 watch($audio, async () => {
-    if (!$audio.value) {
-        return;
-    }
-
     for (let i = 0; i < 10; i++) {
+        if (!$audio.value) {
+            return;
+        }
+
         $audio.value.volume = 0.1 * i;
 
         await after({ seconds: 2.5 });
@@ -43,3 +43,24 @@ watch($audio, async () => {
 
 onMounted(() => props.timer.stop());
 </script>
+
+<style>
+.animate-shake {
+    animation: shake 2510ms linear infinite;
+}
+
+@keyframes shake {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    5% { transform: translate(-1px, -2px) rotate(-1deg); }
+    10% { transform: translate(-3px, 0px) rotate(1deg); }
+    15% { transform: translate(3px, 2px) rotate(0deg); }
+    20% { transform: translate(1px, -1px) rotate(1deg); }
+    25% { transform: translate(-1px, 2px) rotate(-1deg); }
+    30% { transform: translate(-3px, 1px) rotate(0deg); }
+    35% { transform: translate(3px, 1px) rotate(-1deg); }
+    40% { transform: translate(-1px, -1px) rotate(1deg); }
+    45% { transform: translate(1px, 2px) rotate(0deg); }
+    50% { transform: translate(1px, -2px) rotate(-1deg); }
+    100% { transform: translate(0, 0) rotate(0); }
+}
+</style>

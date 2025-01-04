@@ -1,6 +1,6 @@
 <template>
     <AppModal :title="$t('kitchen.timers.title')">
-        <CoreMarkdown :text="$t('kitchen.timers.description')" class="text-gray-700 text-sm w-96" />
+        <CoreMarkdown :text="$t('kitchen.timers.description')" class="text-gray-700 text-sm max-w-sm" />
 
         <ul v-if="$kitchen.timers.length > 0" class="mt-5 [&>li:not(:last-child)]:mb-5">
             <li v-for="(timer, index) of $kitchen.timers" :key="index">

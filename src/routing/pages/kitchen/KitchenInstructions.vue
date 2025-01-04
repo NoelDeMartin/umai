@@ -1,8 +1,18 @@
 <template>
     <KitchenPage :recipe="recipe" :title="title">
         <div class="flex-grow">
-            <CoreMarkdown v-if="text" :text="text" class="text-gray-700 mt-2" />
-            <CoreMarkdown v-else :text="$t('kitchen.instructions.empty')" class="text-gray-700 mt-2" />
+            <CoreMarkdown
+                v-if="text"
+                :text="text"
+                class="text-gray-700 mt-2"
+                auto-link="recipes"
+            />
+            <CoreMarkdown
+                v-else
+                :text="$t('kitchen.instructions.empty')"
+                class="text-gray-700 mt-2"
+                auto-link="recipes"
+            />
 
             <template v-if="timers.length > 0">
                 <h3 class="mt-4 font-medium text-lg">

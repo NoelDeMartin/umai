@@ -41,16 +41,20 @@
 </template>
 
 <script setup lang="ts">
+import Router from '@/framework/core/facades/Router';
 import { translate } from '@/framework/utils/translate';
 import { FormInputType, reactiveForm } from '@/framework/forms';
 
 import Timer from '@/models/Timer';
 import Kitchen from '@/services/facades/Kitchen';
+import Cookbook from '@/services/facades/Cookbook';
 
 const form = reactiveForm({
     name: {
         type: FormInputType.String,
-        default: translate('kitchen.timers.new.name_default', { count: Kitchen.timers.length + 1 }),
+        default: translate('kitchen.timers.new.name_default', {
+            count: Kitchen.timers.filter(timer => !timer.hasDishStep()).length + 1,
+        }),
         rules: 'required',
     },
     hours: {
@@ -75,14 +79,19 @@ function clamp(value: number, min: number, max: number): number {
 }
 
 async function submit(close: Function) {
-    Kitchen.addTimer(
-        new Timer(
-            form.name,
-            form.hours * 60 * 60 * 1000
+    const timer = new Timer(
+        form.name,
+        form.hours * 60 * 60 * 1000
                 + clamp(form.minutes, 0, 60) * 60 * 1000
                 + clamp(form.seconds, 0, 60) * 1000,
-        ),
     );
+
+    const recipe = Cookbook.recipes.first(recipe => recipe.slug === Router.currentRoute.value.params.recipe);
+    const dish = recipe && Kitchen.findDish(recipe);
+
+    dish && timer.setDish(dish);
+
+    Kitchen.addTimer(timer);
 
     close();
 }

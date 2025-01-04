@@ -23,7 +23,7 @@ import type { TimerJson } from '@/models/Timer';
 interface State {
     dishes: Dish[];
     timers: Timer[];
-    dismissed: boolean;
+    dismissedAt: Date | null;
     wakeLock: boolean;
     lastPage: {
         route: RouteLocationRaw;
@@ -40,6 +40,7 @@ interface PersistedState {
     dishes: DishJson[];
     timers: TimerJson[];
     wakeLock: boolean;
+    dismissedAt: number | null;
     lastPage: {
         route: RouteLocationRaw;
         showLogo: boolean;
@@ -47,9 +48,11 @@ interface PersistedState {
     } | null;
 }
 
+const DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
+
 export default class CookbookService extends Service<State, ComputedState, PersistedState> {
 
-    public static persist: Array<keyof PersistedState> = ['dishes', 'timers', 'wakeLock', 'lastPage'];
+    public static persist: Array<keyof PersistedState> = ['dishes', 'timers', 'wakeLock', 'dismissedAt', 'lastPage'];
 
     private screenLock: Promise<void | { release(): Promise<void> }> | null = null;
     private timeouts: WeakMap<Timer, ReturnType<typeof setTimeout>> = new WeakMap();
@@ -99,8 +102,8 @@ export default class CookbookService extends Service<State, ComputedState, Persi
         this.lastPage = null;
     }
 
-    public async cook(recipe: Recipe): Promise<void> {
-        const dish = this.findDish(recipe) ?? this.addRecipe(recipe);
+    public async cook(recipe: Recipe, servings: number): Promise<void> {
+        const dish = this.findDish(recipe) ?? this.addRecipe(recipe, servings);
 
         await this.open(dish);
     }
@@ -135,7 +138,7 @@ export default class CookbookService extends Service<State, ComputedState, Persi
     }
 
     public dismiss(): void {
-        this.dismissed = true;
+        this.dismissedAt = new Date();
     }
 
     protected async boot(): Promise<void> {
@@ -173,7 +176,7 @@ export default class CookbookService extends Service<State, ComputedState, Persi
         return {
             dishes: [],
             timers: [],
-            dismissed: false,
+            dismissedAt: null,
             wakeLock: true,
             lastPage: null,
         };
@@ -181,8 +184,8 @@ export default class CookbookService extends Service<State, ComputedState, Persi
 
     protected getComputedStateDefinitions(): ComputedStateDefinitions<State, ComputedState> {
         return {
-            show: ({ dismissed, dishes }) => {
-                if (!App.isMounted || Viewer.active) {
+            show: ({ dismissedAt, dishes }) => {
+                if (!App.isMounted || Viewer.active || Router.currentRouteIs(/^recipes\.(create|edit)$/)) {
                     return false;
                 }
 
@@ -190,7 +193,11 @@ export default class CookbookService extends Service<State, ComputedState, Persi
                     return true;
                 }
 
-                return !dismissed && Router.currentRouteIs(/^kitchen(\.[^.]+)?|recipes\.show$/);
+                if (dismissedAt && dismissedAt.getTime() > Date.now() - DAY_MILLISECONDS) {
+                    return false;
+                }
+
+                return Router.currentRouteIs(/^kitchen(\.[^.]+)?|recipes\.show$/);
             },
         };
     }
@@ -206,6 +213,10 @@ export default class CookbookService extends Service<State, ComputedState, Persi
             persistedState.timers = state.timers.map(timer => timer.toJson());
         }
 
+        if (state.dismissedAt) {
+            persistedState.dismissedAt = state.dismissedAt.getTime();
+        }
+
         return persistedState;
     }
 
@@ -216,11 +227,12 @@ export default class CookbookService extends Service<State, ComputedState, Persi
             ...state,
             dishes,
             timers: state.timers.map(json => Timer.fromJson(json, dishes)),
+            dismissedAt: state.dismissedAt ? new Date(state.dismissedAt) : null,
         };
     }
 
-    protected addRecipe(recipe: Recipe): Dish {
-        const dish = new Dish(recipe);
+    protected addRecipe(recipe: Recipe, servings: number): Dish {
+        const dish = new Dish(recipe, servings);
 
         dish.listeners.add({ onUpdated: () => this.setState({ dishes: this.dishes.slice(0) }) });
 

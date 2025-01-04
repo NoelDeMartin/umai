@@ -24,10 +24,18 @@
         </template>
 
         <template #actions>
-            <div class="space-x-2 space-x-reverse flex flex-row-reverse justify-start w-full">
+            <div class="space-y-2 flex flex-col items-end w-full">
                 <CoreButton
                     secondary
-                    class="h-12"
+                    class="h-12 w-full"
+                    @click="$kitchen.cook(recipe, servings)"
+                >
+                    <i-tabler-chef-hat-filled class="w-5 h-5 ml-2" aria-hidden="true" />
+                    <span class="mx-2 uppercase tracking-wider font-semibold text-sm">{{ $t('recipes.cook') }}</span>
+                </CoreButton>
+                <CoreButton
+                    secondary
+                    class="h-12 w-full"
                     @click="editRecipe"
                 >
                     <i-pepicons-pen class="ml-2 w-4 h-4" aria-hidden="true" />
@@ -35,7 +43,7 @@
                 </CoreButton>
                 <CoreButton
                     secondary
-                    class="h-12"
+                    class="h-12 w-full"
                     @click="$ui.openModal(ShareRecipeModal, { recipe })"
                 >
                     <i-pepicons-share-android class="w-5 h-5 ml-2" aria-hidden="true" />
@@ -48,10 +56,11 @@
 
 <script setup lang="ts">
 import { after } from '@noeldemartin/utils';
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 
 import Router from '@/framework/core/facades/Router';
 import { requiredObjectProp } from '@/framework/utils/vue';
+import { useEvent } from '@/framework/utils/composition/events';
 
 import ShareRecipeModal from '@/components/modals/ShareRecipeModal.vue';
 import { KITCHEN_TRANSITION_DURATION } from '@/routing/pages/kitchen/constants';
@@ -65,11 +74,14 @@ const { recipe } = defineProps({
 });
 
 const $page = $ref<IRecipePage | null>(null);
+const servings = ref(recipe.servingsBreakdown?.quantity ?? 1);
 
 async function editRecipe() {
     await $page?.showPrimaryPanel();
     await Router.push(recipe.route('edit'));
 }
+
+useEvent('recipe-servings-updated', (recipeServings) => servings.value = recipeServings);
 
 onMounted(() => window.scrollTo({ top: 0 }));
 </script>

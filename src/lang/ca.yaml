@@ -219,6 +219,7 @@ recipes:
 
   edit: Editar
   edit_title: Editar {name}
+  cook: Cuinar
   delete: Eliminar
   delete_confirm: |
     Estàs segur que vols eliminar aquesta recepta?

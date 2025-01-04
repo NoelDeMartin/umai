@@ -105,8 +105,8 @@ export default defineConfig(({ mode }) => {
                 },
             },
             terserOptions: {
-            // Needed for image-blob-reduce
-            // See https://github.com/nodeca/image-blob-reduce#known-issues
+                // Needed for image-blob-reduce
+                // See https://github.com/nodeca/image-blob-reduce#known-issues
                 compress: { evaluate: false },
 
                 // Needed to display Error titles in reports
