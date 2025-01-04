@@ -1,5 +1,5 @@
 <template>
-    <div class="fixed bottom-0 left-0 right-0 pointer-events-none p-4 z-30 print:hidden md:p-8">
+    <div class="fixed bottom-6 left-0 right-0 pointer-events-none p-4 z-30 print:hidden md:p-8">
         <div class="max-w-content px-edge w-full m-auto flex justify-center md:justify-end">
             <Transition
                 enter-active-class="transition-transform duration-500 delay-1000"

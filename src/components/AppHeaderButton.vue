@@ -13,9 +13,10 @@
 <script setup lang="ts">
 import App from '@/framework/core/facades/App';
 import Router from '@/framework/core/facades/Router';
+import { value } from '@noeldemartin/utils';
 
 const classes = $computed(() => {
-    if (!Router.currentRoute.value.meta.fullBleedHeader || App.onboardingCompleting) {
+    if (!value(Router.currentRoute.value.meta.fullBleedHeader) || App.onboardingCompleting) {
         return '';
     }
 

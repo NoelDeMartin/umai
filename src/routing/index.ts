@@ -1,9 +1,12 @@
+import type { Falsy } from '@noeldemartin/utils';
+
 import AutoLinking from '@/framework/core/facades/AutoLinking';
 import Router from '@/framework/core/facades/Router';
 import { defineRoutes, routeMeta } from '@/framework/routing/router';
 import { translate } from '@/framework/utils/translate';
 
 import Cookbook from '@/services/facades/Cookbook';
+import Kitchen from '@/services/facades/Kitchen';
 import Recipe from '@/models/Recipe';
 import Viewer from '@/services/facades/Viewer';
 
@@ -23,7 +26,7 @@ declare module '@/framework/routing/router' {
     export interface AppRouteMeta {
         header?: boolean;
         footer?: boolean;
-        fullBleedHeader?: boolean;
+        fullBleedHeader?: boolean | Falsy | (() => boolean | Falsy);
         reconnect?: boolean;
         pageFooter?: boolean;
         enter?: (element: HTMLElement) => Promise<void>;
@@ -160,7 +163,8 @@ export default defineRoutes([
         path: '/kitchen',
         component: KitchenPage,
         meta: {
-            fullBleedHeader: false,
+            title: () => translate('kitchen.index.title'),
+            fullBleedHeader: () => Kitchen.lastPage?.fullBleedHeader,
             enter: showKitchen,
             leave: hideKitchen,
         },
@@ -174,8 +178,8 @@ export default defineRoutes([
         path: '/kitchen/:recipe/ingredients',
         component: KitchenIngredientsPage,
         meta: routeMeta<{ recipe: Recipe }>({
-            fullBleedHeader: false,
             title: ({ recipe }) => translate('kitchen.title', { recipe: recipe.name }),
+            fullBleedHeader: () => Kitchen.lastPage?.fullBleedHeader,
             enter: showKitchen,
             leave: hideKitchen,
         }),
@@ -189,8 +193,8 @@ export default defineRoutes([
         path: '/kitchen/:recipe/instructions/:step',
         component: KitchenInstructionsPage,
         meta: routeMeta<{ recipe: Recipe }>({
-            fullBleedHeader: false,
             title: ({ recipe }) => translate('kitchen.title', { recipe: recipe.name }),
+            fullBleedHeader: () => Kitchen.lastPage?.fullBleedHeader,
             enter: showKitchen,
             leave: hideKitchen,
         }),
@@ -200,8 +204,8 @@ export default defineRoutes([
         path: '/kitchen/:recipe/completed',
         component: KitchenCompletedPage,
         meta: routeMeta<{ recipe: Recipe }>({
-            fullBleedHeader: false,
             title: ({ recipe }) => translate('kitchen.title', { recipe: recipe.name }),
+            fullBleedHeader: () => Kitchen.lastPage?.fullBleedHeader,
             enter: showKitchen,
             leave: hideKitchen,
         }),

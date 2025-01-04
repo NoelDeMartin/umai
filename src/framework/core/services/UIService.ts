@@ -304,7 +304,7 @@ export default class UIService extends Service<State, ComputedState> {
         this.setState({ headerHeight: height });
     }
 
-    public showHeader(): void {
+    public restoreHeader(): void {
         this.setState({ headerHidden: false });
     }
 

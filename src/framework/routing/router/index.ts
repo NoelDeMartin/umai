@@ -97,7 +97,7 @@ function enhancedRouteComponentSetup(pageComponent: ConcreteComponent, meta?: Ap
         if (routeParametersMissing(routeParameters.value)) {
             UI.hideHeader();
         } else {
-            UI.showHeader();
+            UI.restoreHeader();
         }
     }
 
@@ -145,7 +145,7 @@ function enhancedRouteComponentSetup(pageComponent: ConcreteComponent, meta?: Ap
     }
 
     watch(routeTitle, title => updateRouteTitle(title), { immediate: true });
-    onBeforeRouteLeave(() => UI.showHeader());
+    onBeforeRouteLeave(() => UI.restoreHeader());
     onBeforeRouteUpdate(() => updateRouteParameters());
     onUnmounted(() => {
         subscriptions.value.forEach(unsubscribe => unsubscribe());

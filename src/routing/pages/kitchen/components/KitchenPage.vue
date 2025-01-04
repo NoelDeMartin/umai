@@ -70,6 +70,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
+
 import { booleanProp, objectProp, requiredStringProp } from '@/framework/utils/vue';
 
 import Kitchen from '@/services/facades/Kitchen';

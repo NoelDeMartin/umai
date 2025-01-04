@@ -1,3 +1,5 @@
+import { after } from '@noeldemartin/utils';
+
 import ElementTransitions from '@/framework/core/facades/ElementTransitions';
 import Router from '@/framework/core/facades/Router';
 import TailwindCSS from '@/framework/utils/tailwindcss';
@@ -10,7 +12,9 @@ import {
     defineLeaveTransition,
 } from '@/framework/core/services/ElementTransitionsService';
 
+import Kitchen from '@/services/facades/Kitchen';
 import Viewer from '@/services/facades/Viewer';
+import { KITCHEN_TRANSITION_DURATION } from '@/routing/pages/kitchen/constants';
 
 async function transitionToRecipePage(
     $wrapper: HTMLElement,
@@ -100,7 +104,7 @@ export const enterTransition = defineEnterTransition(async ($card, previous) => 
         return;
     }
 
-    if (Router.previousRouteWas('recipes.show')) {
+    if (Router.previousRouteWas(/^kitchen(\.[^.]+)?|recipes\.show$/)) {
         return;
     }
 
@@ -116,6 +120,12 @@ export const leaveTransition = defineLeaveTransition(async wrapper => {
 
     if (Viewer.active) {
         await ElementTransitions.waitElementsReady('viewer-recipe');
+
+        return;
+    }
+
+    if (Kitchen.active) {
+        await after({ ms: KITCHEN_TRANSITION_DURATION });
 
         return;
     }

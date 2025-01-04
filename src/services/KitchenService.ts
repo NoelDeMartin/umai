@@ -1,5 +1,6 @@
-import { arrayWithout, fail, required } from '@noeldemartin/utils';
+import { arrayWithout, fail, required, value } from '@noeldemartin/utils';
 import { toRaw } from 'vue';
+import type { Falsy } from '@noeldemartin/utils';
 import type { RouteLocationRaw } from 'vue-router';
 
 import App from '@/framework/core/facades/App';
@@ -23,7 +24,11 @@ interface State {
     timers: Timer[];
     dismissed: boolean;
     wakeLock: boolean;
-    lastRoute: RouteLocationRaw | null;
+    lastPage: {
+        route: RouteLocationRaw;
+        showLogo: boolean;
+        fullBleedHeader: boolean | Falsy;
+    } | null;
 }
 
 interface ComputedState {
@@ -34,15 +39,23 @@ interface PersistedState {
     dishes: DishJson[];
     timers: TimerJson[];
     wakeLock: boolean;
-    lastRoute: RouteLocationRaw | null;
+    lastPage: {
+        route: RouteLocationRaw;
+        showLogo: boolean;
+        fullBleedHeader: boolean | Falsy;
+    } | null;
 }
 
 export default class CookbookService extends Service<State, ComputedState, PersistedState> {
 
-    public static persist: Array<keyof PersistedState> = ['dishes', 'timers', 'wakeLock', 'lastRoute'];
+    public static persist: Array<keyof PersistedState> = ['dishes', 'timers', 'wakeLock', 'lastPage'];
 
     private screenLock: Promise<void | { release(): Promise<void> }> | null = null;
     private timeouts: WeakMap<Timer, ReturnType<typeof setTimeout>> = new WeakMap();
+
+    public get active(): boolean {
+        return Router.currentRouteIs(/^kitchen(\.[^.]+)?$/);
+    }
 
     public findDish(recipe: Recipe): Dish | undefined {
         return this.dishes.find(dish => dish.recipe.is(recipe));
@@ -53,10 +66,14 @@ export default class CookbookService extends Service<State, ComputedState, Persi
             return;
         }
 
-        if (!Router.currentRouteIs(/^kitchen(\.[^.]+)?$/)) {
-            this.lastRoute = {
-                name: Router.currentRoute.value.name ?? fail(),
-                params: Router.currentRoute.value.params,
+        if (!this.active) {
+            this.lastPage = {
+                showLogo: Router.currentRoute.value.name === 'home',
+                fullBleedHeader: value(Router.currentRoute.value.meta.fullBleedHeader as boolean | Falsy),
+                route: {
+                    name: Router.currentRoute.value.name ?? fail(),
+                    params: Router.currentRoute.value.params,
+                },
             };
         }
 
@@ -70,14 +87,15 @@ export default class CookbookService extends Service<State, ComputedState, Persi
     }
 
     public async close(): Promise<void> {
-        if (!this.lastRoute) {
+        if (!this.lastPage) {
             return;
         }
 
-        const route = this.lastRoute;
-        this.lastRoute = null;
+        const route = this.lastPage.route;
 
         await Router.push(toRaw(route));
+
+        this.lastPage = null;
     }
 
     public async cook(recipe: Recipe): Promise<void> {
@@ -123,7 +141,7 @@ export default class CookbookService extends Service<State, ComputedState, Persi
         Events.on('logout', () => {
             this.timers.forEach(timer => this.onTimerStopped(timer));
 
-            this.setState({ dishes: [], timers: [], lastRoute: null });
+            this.setState({ dishes: [], timers: [], lastPage: null });
         });
 
         if (this.dishes.length > 0) {
@@ -153,7 +171,7 @@ export default class CookbookService extends Service<State, ComputedState, Persi
             timers: [],
             dismissed: false,
             wakeLock: true,
-            lastRoute: null,
+            lastPage: null,
         };
     }
 

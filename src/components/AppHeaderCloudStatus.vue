@@ -14,7 +14,7 @@
                 <div
                     class="flex absolute inset-0 justify-center items-center"
                     :class="[
-                        $route.meta.fullBleedHeader ? 'text-gray-900' : 'text-white',
+                        value($route.meta.fullBleedHeader) ? 'text-gray-900' : 'text-white',
                         $ui.animations ? 'transition-colors duration-700' : '',
                     ]"
                 >
@@ -36,6 +36,7 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
+import { value } from '@noeldemartin/utils';
 
 import Cloud from '@/framework/core/facades/Cloud';
 

@@ -2,9 +2,10 @@
     <header
         ref="$header"
         class="flex relative z-40 flex-col items-center self-stretch pt-edge h-24 shrink-0 print:hidden"
+        :inert="$ui.headerHidden || $app.isOnboarding"
         :class="{
             'invisible': $ui.headerHidden || $app.isOnboarding,
-            'text-white': $route.meta.fullBleedHeader && !$app.onboardingCompleting,
+            'text-white': value($route.meta.fullBleedHeader) && !$app.onboardingCompleting,
             'transition-colors duration-700': $ui.animations,
             'transition-opacity opacity-100': $ui.animations && $app.onboardingCompleting,
         }"
@@ -48,7 +49,7 @@
                     </div>
                 </transition>
             </div>
-            <div v-if="!isViewer" class="flex space-x-2">
+            <div v-if="!$viewer.active" class="flex space-x-2">
                 <AppHeaderCloudStatus v-if="!$auth.dismissed" />
                 <AppHeaderUserMenu />
             </div>
@@ -57,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import { debounce } from '@noeldemartin/utils';
+import { debounce, value } from '@noeldemartin/utils';
 import { watch } from 'vue';
 
 import App from '@/framework/core/facades/App';
@@ -66,18 +67,22 @@ import UI from '@/framework/core/facades/UI';
 import { translate } from '@/framework/utils/translate';
 import { useResizeObserver } from '@/framework/utils/composition/observers';
 
+import Kitchen from '@/services/facades/Kitchen';
 import Viewer from '@/services/facades/Viewer';
 
 let navigationButtonClasses = $ref({ enterFrom: 'opacity-0', leaveTo: 'opacity-0' });
 const $header = $ref<HTMLElement | null>(null);
-const isViewer = $computed(() => Router.currentRouteIs('viewer'));
 const recipe = $computed(() => Viewer.recipe);
 const list = $computed(() => recipe && recipe?.lists?.[0]);
 const container = $computed(() => recipe && Viewer.getRecipeContainer(recipe));
 const collection = $computed(() => list ?? container);
 const navigationButton = $computed(() => {
-    if (isViewer) {
+    if (Viewer.active) {
         return Viewer.recipe && Viewer.hasSeenCollection ? 'back-arrow' : null;
+    }
+
+    if (Kitchen.active) {
+        return Kitchen.lastPage?.showLogo ? 'logo' : 'back-arrow';
     }
 
     if (
@@ -99,7 +104,7 @@ const backText = $computed(() => {
         return 'Noel De Martin\'s Public Recipes';
     }
 
-    if (isViewer) {
+    if (Viewer.active) {
         return collection?.name
             ?? Viewer.collection?.name
             ?? translate('viewer.collection.titleFallback');
@@ -109,7 +114,7 @@ const backText = $computed(() => {
 });
 
 async function goBack() {
-    if (isViewer) {
+    if (Viewer.active) {
         await Router.push({ name: 'viewer', query: { url: collection?.url } });
 
         return;

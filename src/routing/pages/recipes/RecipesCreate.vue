@@ -92,7 +92,7 @@ onMounted(async () => {
             },
         );
     } finally {
-        UI.showHeader();
+        UI.restoreHeader();
         scanning = false;
     }
 });

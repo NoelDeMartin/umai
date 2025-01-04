@@ -10,7 +10,7 @@ export default defineRoutes([
         path: '/:path(.*)*',
         component: {
             created: () => UI.hideHeader(),
-            beforeRouteLeave: () => UI.showHeader(),
+            beforeRouteLeave: () => UI.restoreHeader(),
             render: () => h(UI.resolveComponent(ApplicationComponent.NotFound)),
         },
     },
