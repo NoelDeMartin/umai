@@ -13,7 +13,7 @@
             loop
             volume="0"
         >
-            <source src="@/assets/sounds/timer-ddg.mp3" type="audio/mpeg">
+            <source src="@/assets/sounds/timer.mp3" type="audio/mpeg">
         </audio>
     </AppModal>
 </template>
