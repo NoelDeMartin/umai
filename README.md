@@ -29,3 +29,4 @@ There is currently no documentation for developers, but you can get started by l
 - [Pepicons](https://pepicons.com/) by [CyCraft](https://cycraft.co/).
 - [Zondicons](https://www.zondicons.com/) by [Steve Schoger](https://twitter.com/steveschoger).
 - [Livvic](https://github.com/Fonthausen/Livvic) font by [Jacques Le Bailly](https://github.com/Fonthausen).
+- Timer sound alarm by [DuckDuckGo](https://github.com/duckduckgo/zeroclickinfo-goodies/blob/master/share/goodie/timer/alarm.mp3).

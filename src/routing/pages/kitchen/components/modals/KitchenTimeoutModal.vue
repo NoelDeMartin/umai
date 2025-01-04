@@ -7,17 +7,39 @@
             </div>
         </template>
         <CoreMarkdown class="text-gray-700" :text="$t('kitchen.timers.timeout.description', { name: timer.name })" />
+        <audio
+            ref="$audio"
+            autoplay
+            loop
+            volume="0"
+        >
+            <source src="@/assets/sounds/timer-ddg.mp3" type="audio/mpeg">
+        </audio>
     </AppModal>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { after } from '@noeldemartin/utils';
+import { onMounted, ref, watch } from 'vue';
 
 import { requiredObjectProp } from '@/framework/utils/vue';
 
 import type Timer from '@/models/Timer';
 
 const props = defineProps({ timer: requiredObjectProp<Timer>() });
+const $audio = ref<HTMLAudioElement | null>(null);
+
+watch($audio, async () => {
+    if (!$audio.value) {
+        return;
+    }
+
+    for (let i = 0; i < 10; i++) {
+        $audio.value.volume = 0.1 * i;
+
+        await after({ seconds: 2.5 });
+    }
+});
 
 onMounted(() => props.timer.stop());
 </script>
