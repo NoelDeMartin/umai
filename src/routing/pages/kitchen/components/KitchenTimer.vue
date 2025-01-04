@@ -60,7 +60,7 @@
                     rounded
                     class="self-end"
                     :title="$t('kitchen.timers.delete')"
-                    @click="$kitchen.removeTimer(timer)"
+                    @click="deleteTimer()"
                 >
                     <i-pepicons-trash class="w-4 h-4" aria-hidden="true" />
                     <span class="sr-only">
@@ -85,8 +85,12 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 
+import UI from '@/framework/core/facades/UI';
 import { requiredObjectProp } from '@/framework/utils/vue';
+import { translate } from '@/framework/utils/translate';
 
+import Kitchen from '@/services/facades/Kitchen';
+import { CoreColor } from '@/components/core';
 import { setFrameInterval } from '@/utils/intervals';
 import type Timer from '@/models/Timer';
 
@@ -135,6 +139,22 @@ function stopWatching(): void {
 
     clearFrameInterval = null;
     now.value = null;
+}
+
+async function deleteTimer(): Promise<void> {
+    const confirmed = await UI.confirm({
+        message: translate('kitchen.timers.delete_confirm', {
+            timer: props.timer.name,
+        }),
+        acceptText: translate('kitchen.timers.delete_confirm_accept'),
+        acceptColor: CoreColor.Danger,
+    });
+
+    if (!confirmed) {
+        return;
+    }
+
+    Kitchen.removeTimer(props.timer);
 }
 
 onMounted(() => {

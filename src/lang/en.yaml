@@ -371,10 +371,13 @@ kitchen:
     resume: Resume
     stop: Stop
     delete: Delete
+    delete_confirm: Are you sure that you want to delete **{timer}**?
+    delete_confirm_accept: Yes, delete timer
     overtime: Some timers are running overtime!
     new:
       title: New timer
       name: Name
+      name_dish: "{recipe} step {step}"
       name_default: Timer {count}
       duration: Duration
       hours: hours

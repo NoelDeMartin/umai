@@ -3,11 +3,11 @@
         <div class="max-w-content px-edge w-full m-auto flex justify-center md:justify-end">
             <Transition
                 enter-active-class="transition-transform duration-500 delay-1000"
-                enter-from-class="translate-y-[200%]"
+                enter-from-class="translate-y-[250%]"
                 enter-to-class="translate-y-0"
                 leave-active-class="transition-transform duration-500"
                 leave-from-class="translate-y-0"
-                leave-to-class="translate-y-[200%]"
+                leave-to-class="translate-y-[250%]"
             >
                 <div v-if="$kitchen.show" class="flex flex-col space-y-1 items-center">
                     <CoreButton v-if="recipe && !recipeIsCooking" class="pointer-events-auto h-12" @click="recipe && $kitchen.cook(recipe)">

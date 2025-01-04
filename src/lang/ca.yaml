@@ -380,10 +380,13 @@ timers:
     resume: Continuar
     stop: Aturar
     delete: Eliminar
+    delete_confirm: Estàs segur que vols eliminar **{timer}**?
+    delete_confirm_accept: Sí, eliminar temporitzador
     overtime: Alguns temporitzadors han acabat!
     new:
       title: Nou temporizador
       name: Nom
+      name_dish: "{recipe} pas {step}"
       name_default: Temporitzador {count}
       duration: Duració
       hours: hores

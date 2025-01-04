@@ -1,7 +1,21 @@
 <template>
     <KitchenPage :recipe="recipe" :title="title">
-        <CoreMarkdown v-if="text" :text="text" class="text-gray-700 mt-2 flex-grow" />
-        <CoreMarkdown v-else :text="$t('kitchen.instructions.empty')" class="text-gray-700 mt-2 flex-grow" />
+        <div class="flex-grow">
+            <CoreMarkdown v-if="text" :text="text" class="text-gray-700 mt-2" />
+            <CoreMarkdown v-else :text="$t('kitchen.instructions.empty')" class="text-gray-700 mt-2" />
+
+            <template v-if="timers.length > 0">
+                <h3 class="mt-4 font-medium text-lg">
+                    {{ $t('kitchen.timers.title') }}
+                </h3>
+
+                <ul class="mt-2">
+                    <li v-for="(timer, index) of timers" :key="index" class="bg-gray-100 rounded-lg px-3 py-4 max-w-lg">
+                        <KitchenTimer :timer="timer" />
+                    </li>
+                </ul>
+            </template>
+        </div>
 
         <div class="flex w-full justify-end space-x-2 mt-3">
             <CoreButton v-if="position === 1" route="kitchen.ingredients" :route-params="{ recipe: recipe.slug }">
@@ -39,10 +53,10 @@ const props = defineProps({
 });
 
 const position = computed(() => parseInt(props.step));
+const dish = computed(() => Kitchen.findDish(props.recipe));
 const text = computed(() => {
     return props.recipe.instructions?.find(instructionStep => instructionStep.position === position.value)?.text;
 });
-
 const title = computed(() => {
     if (props.recipe.instructions?.length === 1 || !text.value) {
         return translate('kitchen.instructions.emptyTitle');
@@ -50,6 +64,7 @@ const title = computed(() => {
 
     return translate('kitchen.instructions.title', { step: props.step });
 });
+const timers = computed(() => Kitchen.timers.filter(timer => dish.value && timer.hasDish(dish.value, position.value)));
 
-onMounted(() => Kitchen.findDish(props.recipe)?.updateStage(position.value));
+onMounted(() => dish.value?.updateStage(position.value));
 </script>

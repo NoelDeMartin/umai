@@ -1,4 +1,5 @@
 import ListenersManager from '@/utils/ListenersManager';
+import type Dish from '@/models/Dish';
 import type { Listeners } from '@/utils/ListenersManager';
 
 export interface TimerListener {
@@ -10,14 +11,18 @@ export interface TimerListener {
 export interface TimerJson {
     name: string;
     duration: number;
+    recipeId?: string;
+    recipeStep?: number;
     startedAt?: number;
     pausedAt?: number;
 }
 
 export default class Timer {
 
-    public static fromJson(json: TimerJson): Timer {
+    public static fromJson(json: TimerJson, dishes: Dish[]): Timer {
         return new Timer(json.name, json.duration, {
+            dish: json.recipeId ? dishes.find(dish => dish.recipe.id === json.recipeId) : undefined,
+            step: json.recipeStep,
             startedAt: typeof json.startedAt === 'number' ? new Date(json.startedAt) : undefined,
             pausedAt: typeof json.pausedAt === 'number' ? new Date(json.pausedAt) : undefined,
         });
@@ -25,13 +30,21 @@ export default class Timer {
 
     public readonly name: string;
     public readonly duration: number;
+    private dish?: Dish;
+    private step?: number;
     private startedAt?: Date;
     private pausedAt?: Date;
     private _listeners = new ListenersManager<TimerListener>();
 
-    constructor(name: string, duration: number, state: { startedAt?: Date; pausedAt?: Date } = {}) {
+    constructor(
+        name: string,
+        duration: number,
+        state: { dish?: Dish; step?: number; startedAt?: Date; pausedAt?: Date } = {},
+    ) {
         this.name = name;
         this.duration = duration;
+        this.dish = state.dish;
+        this.step = state.step;
         this.startedAt = state.startedAt;
         this.pausedAt = state.pausedAt;
     }
@@ -76,6 +89,19 @@ export default class Timer {
         return this.duration - Math.round(time - this.startedAt.getTime());
     }
 
+    public setDish(dish: Dish, step: number): void {
+        this.dish = dish;
+        this.step = step;
+    }
+
+    public hasDish(dish: Dish, step?: number): boolean {
+        if (this.dish !== dish) {
+            return false;
+        }
+
+        return typeof step === undefined || step === this.step;
+    }
+
     public play(): void {
         if (this.isPaused()) {
             this.resume();
@@ -118,6 +144,8 @@ export default class Timer {
         return {
             name: this.name,
             duration: this.duration,
+            recipeId: this.dish?.recipe.id,
+            recipeStep: this.step,
             startedAt: this.startedAt ? this.startedAt.getTime() : undefined,
             pausedAt: this.pausedAt ? this.pausedAt.getTime() : undefined,
         };

@@ -371,10 +371,13 @@ kitchen:
     resume: Continuar
     stop: Parar
     delete: Eliminar
+    delete_confirm: ¿Estás seguro de que quieres eliminar **{timer}**?
+    delete_confirm_accept: Sí, eliminar temporizador
     overtime: ¡Algúnos temporizadores han acabado!
     new:
       title: Nuevo temporizador
       name: Nombre
+      name_dish: "{recipe} paso {step}"
       name_default: Temporizador {count}
       duration: Duración
       hours: horas

@@ -1,4 +1,4 @@
-import { arrayWithout, fail, required, value } from '@noeldemartin/utils';
+import { arrayWithout, fail, required, stringMatchAll, value } from '@noeldemartin/utils';
 import { toRaw } from 'vue';
 import type { Falsy } from '@noeldemartin/utils';
 import type { RouteLocationRaw } from 'vue-router';
@@ -9,6 +9,7 @@ import Events from '@/framework/core/facades/Events';
 import Router from '@/framework/core/facades/Router';
 import Service from '@/framework/core/Service';
 import UI from '@/framework/core/facades/UI';
+import { translate } from '@/framework/utils/translate';
 import type { ComputedStateDefinitions, IService } from '@/framework/core/Service';
 
 import Dish from '@/models/Dish';
@@ -121,7 +122,10 @@ export default class CookbookService extends Service<State, ComputedState, Persi
     }
 
     public async complete(dish: Dish): Promise<void> {
-        this.setState({ dishes: arrayWithout(this.dishes, dish) });
+        this.setState({
+            dishes: arrayWithout(this.dishes, dish),
+            timers: this.timers.filter(timer => !timer.hasDish(dish)),
+        });
 
         if (this.dishes.length === 0) {
             this.releaseScreen();
@@ -206,10 +210,12 @@ export default class CookbookService extends Service<State, ComputedState, Persi
     }
 
     protected async restorePersistedState(state: PersistedState): Promise<Partial<State>> {
+        const dishes = await Promise.all(state.dishes.map(json => Dish.fromJson(json)));
+
         return {
             ...state,
-            dishes: await Promise.all(state.dishes.map(json => Dish.fromJson(json))),
-            timers: state.timers.map(json => Timer.fromJson(json)),
+            dishes,
+            timers: state.timers.map(json => Timer.fromJson(json, dishes)),
         };
     }
 
@@ -219,6 +225,24 @@ export default class CookbookService extends Service<State, ComputedState, Persi
         dish.listeners.add({ onUpdated: () => this.setState({ dishes: this.dishes.slice(0) }) });
 
         this.dishes.push(dish);
+
+        recipe.sortedInstructions.forEach(({ position, text }) => {
+            const matches = stringMatchAll<2>(text, /(\d+)\s+minutes?/gi);
+
+            for (const match of matches) {
+                const timer = new Timer(
+                    translate('kitchen.timers.new.name_dish', {
+                        recipe: recipe.name,
+                        step: position,
+                    }),
+                    parseInt(match[1]) * 60 * 1000,
+                );
+
+                timer.setDish(dish, position);
+
+                this.addTimer(timer);
+            }
+        });
 
         if (this.dishes.length === 1) {
             this.lockScreen();
