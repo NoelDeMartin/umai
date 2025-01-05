@@ -11,12 +11,12 @@ jobs:
               with:
                   node-version-file: '.nvmrc'
             - run: npm ci
-            - run: npm ci
-              working-directory: solid-server
+            # - run: npm ci
+            #   working-directory: solid-server
             - run: npm run lint
             - run: npm run build
             - run: npm run test
-            # TODO fix CI
+            # TODO fix CI, getting error "OIDC request failed: SSL is required for client_id authentication unless working locally." :/
             # - run: npm run cy:test
             # - name: Upload Cypress screenshots
             #   uses: actions/upload-artifact@v3
