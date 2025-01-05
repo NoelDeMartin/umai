@@ -4,6 +4,7 @@ import type { Falsy } from '@noeldemartin/utils';
 import type { RouteLocationRaw } from 'vue-router';
 
 import App from '@/framework/core/facades/App';
+import Browser from '@/framework/core/facades/Browser';
 import Errors from '@/framework/core/facades/Errors';
 import Events from '@/framework/core/facades/Events';
 import Router from '@/framework/core/facades/Router';
@@ -151,6 +152,23 @@ export default class CookbookService extends Service<State, ComputedState, Persi
             this.setState({ dishes: [], timers: [], lastPage: null });
         });
 
+        document.addEventListener('visibilitychange', () => {
+            if (this.dishes.length === 0) {
+                return;
+            }
+
+            switch (document.visibilityState) {
+                case 'hidden':
+                    this.releaseScreen();
+
+                    break;
+                case 'visible':
+                    this.lockScreen();
+
+                    break;
+            }
+        });
+
         if (this.dishes.length > 0) {
             this.lockScreen();
 
@@ -268,7 +286,7 @@ export default class CookbookService extends Service<State, ComputedState, Persi
             wakeLock?: { request(type?: 'screen'): Promise<{ release(): Promise<void> }> };
         };
 
-        if (!typedNavigator.wakeLock) {
+        if (!Browser.supportsWakeLocking || !typedNavigator.wakeLock) {
             return;
         }
 
