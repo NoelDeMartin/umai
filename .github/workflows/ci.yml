@@ -13,14 +13,13 @@ jobs:
             - run: npm ci
             - run: npm ci
               working-directory: solid-server
-            - run: npm run lint
-            - run: npm run build
-            - run: npm run test
-            # TODO fix CI
-            # - run: npm run cy:test
-            # - name: Upload Cypress screenshots
-            #   uses: actions/upload-artifact@v3
-            #   if: ${{ failure() }}
-            #   with:
-            #       name: cypress_screenshots
-            #       path: cypress/screenshots
+            # - run: npm run lint
+            # - run: npm run build
+            # - run: npm run test
+            - run: npm run cy:test
+            - name: Upload Cypress screenshots
+              uses: actions/upload-artifact@v3
+              if: ${{ failure() }}
+              with:
+                  name: cypress_screenshots
+                  path: cypress/screenshots
