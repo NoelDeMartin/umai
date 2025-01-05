@@ -9,7 +9,13 @@
                     {{ time }}
                 </span>
             </div>
-            <div class="flex space-x-2 self-center mt-1">
+            <div
+                class="flex self-center mt-1"
+                :class="{
+                    'flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2': timer.isPaused(),
+                    'space-x-2': !timer.isPaused(),
+                }"
+            >
                 <CoreButton
                     v-if="timer.isPaused()"
                     secondary
@@ -63,15 +69,15 @@
                     @click="deleteTimer()"
                 >
                     <i-pepicons-trash class="w-4 h-4" aria-hidden="true" />
-                    <span class="sr-only">
+                    <span class="md:sr-only ml-1 text-xs uppercase font-medium" :class="{ 'sr-only': !timer.isPaused() }">
                         {{ $t('kitchen.timers.delete') }}
                     </span>
                 </CoreButton>
             </div>
         </div>
-        <div v-if="timer.hasStarted() && !timer.isOverTime()" class="mt-1 w-full h-2 rounded-full bg-gray-200 relative">
+        <div v-if="timer.hasStarted() && !timer.isOverTime()" class="mt-1 w-full h-2 rounded-full bg-gray-200 relative overflow-hidden">
             <div
-                class="h-full rounded-full absolute left-0 top-0"
+                class="h-full absolute left-0 top-0"
                 :style="`width: ${(timer.duration - timer.getTimeLeft()) * 100 / timer.duration}%`"
                 :class="{
                     'bg-primary-500': !timer.isPaused(),

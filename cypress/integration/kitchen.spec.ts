@@ -19,7 +19,7 @@ describe('Kitchen', () => {
         cy.press('Pa amb tomàquet');
 
         // Act & Assert - Ingredients
-        cy.press('Let\'s cook!');
+        cy.press('Let\'s cook this!');
         cy.see('Mise en place');
         cy.see('Bread');
         cy.see('1 Tomato');
@@ -51,7 +51,7 @@ describe('Kitchen', () => {
     it('Uses timers', () => {
         // Arrange
         cy.press('Pa amb tomàquet');
-        cy.press('Let\'s cook!');
+        cy.press('Let\'s cook this!');
         cy.press('Next');
         cy.press('Show timers');
 
@@ -77,7 +77,7 @@ describe('Kitchen', () => {
     it('Persists state', () => {
         // Arrange
         cy.press('Pa amb tomàquet');
-        cy.press('Let\'s cook!');
+        cy.press('Let\'s cook this!');
         cy.press('Bread');
         cy.press('Next');
         cy.press('Show timers');
@@ -97,7 +97,7 @@ describe('Kitchen', () => {
         cy.see('Timer 1');
 
         cy.ariaLabel('Close the modal').click();
-        cy.press('Show ingredients');
+        cy.press('Previous');
 
         cy.contains('label', 'Bread').within(() => {
             cy.get('input').should('match', ':checked');
@@ -112,12 +112,12 @@ describe('Kitchen', () => {
         cy.press('not now');
 
         // Assert
-        cy.dontSee('Let\'s cook!');
+        cy.dontSee('Let\'s cook this!');
 
         cy.go('back');
         cy.press('Pa amb tomàquet');
         cy.wait(1000);
-        cy.dontSee('Let\'s cook!');
+        cy.dontSee('Let\'s cook this!');
     });
 
 });

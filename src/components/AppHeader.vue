@@ -100,10 +100,6 @@ const navigationButton = $computed(() => {
     return 'logo';
 });
 const backText = $computed(() => {
-    if (Date.now()) {
-        return 'Noel De Martin\'s Public Recipes';
-    }
-
     if (Viewer.active) {
         return collection?.name
             ?? Viewer.collection?.name

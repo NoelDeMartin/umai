@@ -13,7 +13,7 @@
         <div class="w-full h-full overflow-auto">
             <div class="mx-auto max-w-4xl pt-4 pb-8 px-edge md:pt-10 min-h-full flex flex-col">
                 <template v-if="recipe">
-                    <h1 class="text-gray-500 opacity-50 font-medium tracking-wide uppercase text-xs">
+                    <h1 class="text-gray-500 opacity-50 font-medium tracking-wide uppercase text-xs mr-8">
                         {{ $t('kitchen.title', { recipe: recipe.name }) }}
                     </h1>
                     <h2 class="text-2xl font-semibold mt-4">
@@ -29,16 +29,7 @@
             </div>
         </div>
 
-        <div class="fixed bottom-24 right-8 md:top-32 md:bottom-auto md:right-12 flex flex-col space-y-4 z-10">
-            <CoreButton
-                v-if="showKitchenShortcut && $kitchen.dishes.length > 1"
-                :title="$t('kitchen.index.show')"
-                route="kitchen"
-                secondary
-            >
-                <i-tabler-chef-hat-filled class="w-7 h-7" aria-hidden="true" />
-                <span class="sr-only">{{ $t('kitchen.index.show') }}</span>
-            </CoreButton>
+        <div class="fixed bottom-24 right-8 flex flex-col-reverse space-y-4 space-y-reverse z-10 md:top-32 md:bottom-auto md:right-12 md:flex-col md:space-y-4">
             <CoreButton
                 :title="$t('kitchen.timers.show')"
                 secondary
@@ -52,6 +43,15 @@
                         ({{ $t('kitchen.timers.overtime') }})
                     </span>
                 </div>
+            </CoreButton>
+            <CoreButton
+                v-if="showKitchenShortcut && $kitchen.dishes.length > 1"
+                :title="$t('kitchen.index.show')"
+                route="kitchen"
+                secondary
+            >
+                <i-tabler-chef-hat-filled class="w-7 h-7" aria-hidden="true" />
+                <span class="sr-only">{{ $t('kitchen.index.show') }}</span>
             </CoreButton>
         </div>
     </div>

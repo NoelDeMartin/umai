@@ -128,7 +128,9 @@ export default class CookbookService extends Service<State, ComputedState, Persi
     public async complete(dish: Dish): Promise<void> {
         this.setState({
             dishes: arrayWithout(this.dishes, dish),
-            timers: this.timers.filter(timer => !timer.hasDish(dish)),
+            timers: this.dishes.length === 0
+                ? []
+                : this.timers.filter(timer => !timer.hasDish(dish)),
         });
 
         if (this.dishes.length === 0) {
