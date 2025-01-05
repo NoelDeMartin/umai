@@ -20,7 +20,9 @@ export default defineConfig(({ mode }) => {
     const version = packageJson.version;
     const sourceUrl = packageJson.repository.replace('github:', 'https://github.com/');
     const sourceCommitHash = execSync('git rev-parse HEAD').toString();
+    const isStaging = process.argv.join(' ').includes('--mode staging');
     const isTesting = process.argv.join(' ').includes('--mode testing');
+    const name = isStaging ? 'Umai (Staging)' : 'Umai';
 
     return {
         plugins: [
@@ -29,8 +31,8 @@ export default defineConfig(({ mode }) => {
             VitePWA({
                 registerType: 'autoUpdate',
                 manifest: {
-                    name: 'Umai',
-                    short_name: 'Umai',
+                    name,
+                    short_name: name,
                     description: 'Your favorite recipes manager',
                     theme_color: '#ffffff',
                     icons: [

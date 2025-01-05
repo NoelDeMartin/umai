@@ -29,7 +29,7 @@
             </div>
         </div>
 
-        <div class="fixed bottom-24 right-8 md:top-32 md:bottom-auto md:right-12 flex flex-col space-y-4">
+        <div class="fixed bottom-24 right-8 md:top-32 md:bottom-auto md:right-12 flex flex-col space-y-4 z-10">
             <CoreButton
                 v-if="showKitchenShortcut && $kitchen.dishes.length > 1"
                 :title="$t('kitchen.index.show')"
