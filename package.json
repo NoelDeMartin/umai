@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@headlessui/vue": "^1.7.3",
-    "@inrupt/solid-client-authn-browser": "^1.11.6",
+    "@inrupt/solid-client-authn-browser": "^2.3.0",
     "@noeldemartin/solid-utils": "0.4.0-next.bf5431cf569638e6dbc4cfd22c73be975e28f0a8",
     "@noeldemartin/utils": "0.5.1-next.eea998a4396139c3547f0f4efea28190f20a378d",
     "@sentry/browser": "^7.14.2",
