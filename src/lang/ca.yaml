@@ -45,7 +45,7 @@ settings:
   animations: Animacions
   animations_description: Les animacions estan bé, però també està bé tenir bateria. Si vols conservar bateria o el teu dispositiu va lent, pots desactivar les animacions per tenir millor rendiment.
   wakeLock: Manté la pantalla encesa
-  wakeLock_description: Evita que la pantalla s'apagui mentre cuines. Així no hauràs de tocar el mòbil quan tens les mans en la massa!
+  wakeLock_description: Evita que la pantalla s'apagui mentre cuines. Així no hauràs de tocar el mòbil quan tens les mans a la pasta!
   errorReporting: Report d'errors
   errorReporting_description: Si t'estàs trobant amb errors, pots activar el report d'errors per enviar-los a [Sentry](https://sentry.io/). Assegura't que les peticions no s'estan bloquejant. Si els errors són tan greus que no pots ni arribar a aquesta pantalla, sempre pots afegir `?errorReporting=true` a l'url abans d'entrar a l'aplicació.
   proxy: Fes servir un proxy per importar d'altres pàgines web
@@ -358,7 +358,7 @@ kitchen:
   ingredients:
     title: Ingredients
     show: Mostra ingredients
-    description: Mise en place! Abans de començar, assegurat d'enllestir tots els ingredients.
+    description: Mise en place! Abans de començar, assegura't d'enllestir tots els ingredients.
 
   instructions:
     title: Pas {step}
@@ -368,7 +368,7 @@ kitchen:
   completed:
     title: Ja està!
     imageDescription: Felicitats, has acabat de fer la recepta! S'assembla a la foto? Si no, potser ara és un bon moment per actualitzar-la.
-    imageMissingDescription: Felicitats, has acabat de fer la recepta! Sembla que encara no has afegit cap foto, potser ara és un bon moment per fer-ho.
+    imageMissingDescription: Felicitats, has acabat de fer la recepta! Sembla que encara no n'has afegit cap foto, potser ara és un bon moment per fer-ho.
     finish: Acabar
 
 timers:
@@ -383,7 +383,7 @@ timers:
     delete: Eliminar
     delete_confirm: Estàs segur que vols eliminar **{timer}**?
     delete_confirm_accept: Sí, eliminar temporitzador
-    overtime: Alguns temporitzadors han acabat!
+    overtime: Alguns temporitzadors ja han acabat!
     new:
       title: Nou temporizador
       name: Nom
