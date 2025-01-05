@@ -22,7 +22,7 @@
         <hr>
         <template v-if="$browser.supportsWakeLocking">
             <CoreToggle
-                v-model="$kitchen.wakeLock"
+                v-model="$kitchen.useWakeLock"
                 class="p-4"
                 :label="$t('settings.wakeLock')"
                 :description="$t('settings.wakeLock_description')"

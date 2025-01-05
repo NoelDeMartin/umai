@@ -25,7 +25,7 @@ interface State {
     dishes: Dish[];
     timers: Timer[];
     dismissedAt: Date | null;
-    wakeLock: boolean;
+    useWakeLock: boolean;
     lastPage: {
         route: RouteLocationRaw;
         showLogo: boolean;
@@ -40,7 +40,7 @@ interface ComputedState {
 interface PersistedState {
     dishes: DishJson[];
     timers: TimerJson[];
-    wakeLock: boolean;
+    useWakeLock: boolean;
     dismissedAt: number | null;
     lastPage: {
         route: RouteLocationRaw;
@@ -53,7 +53,13 @@ const DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
 
 export default class CookbookService extends Service<State, ComputedState, PersistedState> {
 
-    public static persist: Array<keyof PersistedState> = ['dishes', 'timers', 'wakeLock', 'dismissedAt', 'lastPage'];
+    public static persist: Array<keyof PersistedState> = [
+        'dishes',
+        'timers',
+        'useWakeLock',
+        'dismissedAt',
+        'lastPage',
+    ];
 
     private screenLock: Promise<void | { release(): Promise<void> }> | null = null;
     private timeouts: WeakMap<Timer, ReturnType<typeof setTimeout>> = new WeakMap();
@@ -197,7 +203,7 @@ export default class CookbookService extends Service<State, ComputedState, Persi
             dishes: [],
             timers: [],
             dismissedAt: null,
-            wakeLock: true,
+            useWakeLock: true,
             lastPage: null,
         };
     }
@@ -288,7 +294,7 @@ export default class CookbookService extends Service<State, ComputedState, Persi
             wakeLock?: { request(type?: 'screen'): Promise<{ release(): Promise<void> }> };
         };
 
-        if (!Browser.supportsWakeLocking || !typedNavigator.wakeLock) {
+        if (!this.useWakeLock || !Browser.supportsWakeLocking || !typedNavigator.wakeLock) {
             return;
         }
 
