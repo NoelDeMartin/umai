@@ -8,7 +8,7 @@
                 </p>
             </div>
             <template v-else>
-                <i-app-umai-xmas class="h-auto w-[250px] max-w-[60vw] fill-primary-500 flex-shrink-0" aria-hidden="true" />
+                <i-app-umai class="h-auto w-[250px] max-w-[60vw] fill-primary-500 flex-shrink-0" aria-hidden="true" />
                 <h1 id="viewer-form-title" class="text-2xl font-medium mt-6">
                     {{ $t('viewer.form.title') }}
                 </h1>
