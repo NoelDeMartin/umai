@@ -438,8 +438,6 @@ viewer:
     viewAll: Veure més receptes
     inCookbook: Obrir en el teu llibre receptes
 
-# TODO update
-
 validation:
   required: aquest camp és obligatori
 
