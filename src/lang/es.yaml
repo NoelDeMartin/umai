@@ -44,7 +44,7 @@ settings:
   language_description: ¿No encuentras tu idioma? [¡Aporta tu traducción!](https://github.com/NoelDeMartin/umai/blob/main/docs/contribute-translations.md)
   animations: Animaciones
   animations_description: Las animaciones molan, pero también mola tener batería. Si quieres conservar batería o tu dispositivo va lento, puedes desactivar las animaciones para tener mejor rendimiento.
-  wakeLock: Manten la pantalla encendida
+  wakeLock: Mantén la pantalla encendida
   wakeLock_description: Evita que la pantalla se apague mientras cocinas. ¡Así no tendrás que tocar el móvil cuando tengas las manos en la masa!
   errorReporting: Reportación de errores
   errorReporting_description: Si estás encontrando errores, puedes activar la reportación de errores para enviarlos a [Sentry](https://sentry.io/). Asegúrate que las peticiones no se están bloqueando con extensiones de tu navegador. Si los errores son tan graves que no puedes llegar a esta pantalla, siempre puedes añadir `?errorReporting=true` en la url antes de entrar a la aplicación.
