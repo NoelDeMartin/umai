@@ -51,7 +51,7 @@ interface PersistedState {
 
 const DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
 
-export default class CookbookService extends Service<State, ComputedState, PersistedState> {
+export default class KitchenService extends Service<State, ComputedState, PersistedState> {
 
     public static persist: Array<keyof PersistedState> = [
         'dishes',
@@ -348,4 +348,4 @@ export default class CookbookService extends Service<State, ComputedState, Persi
 
 }
 
-export default interface CookbookService extends IService<State, ComputedState> {}
+export default interface KitchenService extends IService<State, ComputedState> {}
