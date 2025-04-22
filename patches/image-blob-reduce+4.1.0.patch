@@ -1,0 +1,15 @@
+diff --git a/node_modules/image-blob-reduce/dist/image-blob-reduce.esm.mjs b/node_modules/image-blob-reduce/dist/image-blob-reduce.esm.mjs
+index a3657de..e566c5f 100644
+--- a/node_modules/image-blob-reduce/dist/image-blob-reduce.esm.mjs
++++ b/node_modules/image-blob-reduce/dist/image-blob-reduce.esm.mjs
+@@ -1208,9 +1208,7 @@ module.exports.can_use_canvas = function can_use_canvas(createCanvas) {
+     d = null;
+     d = ctx.getImageData(0, 0, 2, 1);
+ 
+-    if (d.data[0] === 12 && d.data[1] === 23 && d.data[2] === 34 && d.data[3] === 255 && d.data[4] === 45 && d.data[5] === 56 && d.data[6] === 67 && d.data[7] === 255) {
+-      usable = true;
+-    }
++    usable = true;
+   } catch (err) {}
+ 
+   return usable;

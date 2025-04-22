@@ -18,7 +18,8 @@
     "cy:run": "cypress run",
     "cy:dev": "concurrently --kill-others \"npm run test:serve-app\" \"npm run test:serve-pod\" \"npm run cy:open\"",
     "cy:test": "start-server-and-test test:serve-app http-get://localhost:5001 test:serve-pod http-get://localhost:4000 cy:run",
-    "storybook": "start-storybook -p 6006"
+    "storybook": "start-storybook -p 6006",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@headlessui/vue": "^1.7.3",
@@ -69,6 +70,7 @@
     "eslint-plugin-vue": "^7.7.0",
     "jest": "^26.6.3",
     "node-fetch": "^2.6.1",
+    "patch-package": "^8.0.0",
     "postcss": "^8.4.4",
     "postcss-pseudo-classes": "^0.2.1",
     "start-server-and-test": "^1.12.3",
