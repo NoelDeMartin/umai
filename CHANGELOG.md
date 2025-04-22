@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.1.9](https://github.com/NoelDeMartin/umai/releases/tag/v0.1.9) - 2025-04-22
+
+### Fixed
+
+- [#29](https://github.com/NoelDeMartin/umai/issues/29) Using image uploads in environments with fingerprinting protection (for example, Firefox private mode).
+
 ## [v0.1.8](https://github.com/NoelDeMartin/umai/releases/tag/v0.1.8) - 2025-01-05
 
 ### Added
