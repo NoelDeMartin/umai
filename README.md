@@ -1,7 +1,7 @@
 # Umai ![CI](https://github.com/NoelDeMartin/umai/actions/workflows/ci.yml/badge.svg)
 
 <p align="center">
-    <img src="./docs/logo.png" alt="Umai logo">
+    <img src="./docs/logo.png" alt="">
 </p>
 
 Umai is a simple Recipes Manager to collect all your precious recipes.
