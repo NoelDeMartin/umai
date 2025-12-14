@@ -4,7 +4,7 @@
             Umai
         </h1>
 
-        <i-app-umai v-if="!$auth.ongoing" class="h-auto w-[250px] max-w-[60vw] fill-primary-500" aria-hidden="true" />
+        <i-app-umai-xmas v-if="!$auth.ongoing" class="h-auto w-[250px] max-w-[60vw] fill-primary-500" aria-hidden="true" />
 
         <div class="mt-4 flex flex-col items-center justify-center">
             <HomeOnboardingCreateRecipe v-if="creatingNewRecipe" @cancel="creatingNewRecipe = false" />
