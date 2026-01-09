@@ -60,15 +60,9 @@ export default defineConfig(({ mode }) => {
                     app: FileSystemIconLoader('./src/assets/icons'),
                 },
                 iconCustomizer(_, icon, props) {
-                    switch (icon) {
-                        case 'umai':
-                            props.width = '1.2em';
-                            props.height = `${(1.2 * 369) / 1047}em`;
-                            break;
-                        case 'umai-xmas':
-                            props.width = '1.2em';
-                            props.height = `${(1.2 * 484.781) / 1044.344}em`;
-                            break;
+                    if (icon === 'umai') {
+                        props.width = '1.2em';
+                        props.height = `${(1.2 * 369) / 1047}em`;
                     }
                 },
             }),
