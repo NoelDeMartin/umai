@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.1.12](https://github.com/NoelDeMartin/umai/releases/tag/v0.1.12) - 2026-04-15
+
+### Fixed
+
+- [#34](https://github.com/NoelDeMartin/umai/issues/34) Updating recipes visibility.
+
 ## [v0.1.11](https://github.com/NoelDeMartin/umai/releases/tag/v0.1.11) - 2026-01-09
 
 ### Changed
@@ -27,7 +33,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Added
 
 - Cook Mode! You can now follow instructions step by step and set up timers.
-    - [#24](https://github.com/NoelDeMartin/umai/issues/24) Also, the screen will be prevented from sleeping whilst cooking.
+  - [#24](https://github.com/NoelDeMartin/umai/issues/24) Also, the screen will be prevented from sleeping whilst cooking.
 
 ### Changed
 
